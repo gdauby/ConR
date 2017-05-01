@@ -1,0 +1,208 @@
+\name{IUCN.eval}
+\alias{IUCN.eval}
+\title{Preliminary conservation status assessment following IUCN Criterion B}
+\description{
+Given a dataframe of georeferenced occurrences of one, or more, taxa, 
+	this function provide statistics values (Extent of Occurrence, Area of Occupancy, number of locations, number of subpopulations) 
+	and provide a preliminary conservation status following Criterion B of IUCN.
+	A graphical map output is also available.
+}
+\usage{
+IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10, 
+	Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
+	DrawMap = TRUE, add.legend = TRUE, 
+	file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
+	write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, 
+	exclude.area = FALSE, method_protected_area = "no_more_than_one", 
+	ID_shape_PA = "WDPA_PID", 
+	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
+	method.range="convex.hull", verbose=TRUE, showWarnings=TRUE)
+}
+\arguments{
+\item{DATA}{a \code{dataframe} or an object of class \code{spgeoIN} see \code{\link[speciesgeocodeR]{speciesgeocodeR}}. See Details}
+
+\item{country_map}{a \code{SpatialPolygonsDataFrame} or \code{SpatialPolygons} showing for example countries or continent borders. 
+This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO computation if \code{exclude.area} is TRUE. By default, it is \code{land}}
+
+\item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for calculating Area of Occupancy.  By default, equal to 2}
+
+\item{Cell_size_locations}{a numeric, value indicating the grid size in decimal degrees used for calculating the number of location. By default, equal to 10}
+
+\item{Resol_sub_pop}{a numeric, value indicating the radius size in decimal degrees used for calculating the number of sub-population. By default, equal to 5}
+
+\item{DrawMap}{a logical, if TRUE a map is produced for each species in png format, unless map_pdf is TRUE. By default, it is TRUE}
+
+\item{add.legend}{a logical, if TRUE a legend and a submap showing distribution in 'country_map' are displayed for each map. By default, it is TRUE}
+
+\item{method_locations}{a character string,  indicating the method used for calculating the number of locations. 
+"fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
+
+\item{Rel_cell_size}{a numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is 
+given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+
+\item{file_name}{a character string. Name of the file. By default, it is "IUCN_"}
+
+\item{export_shp}{a logical,  if TRUE, shapefiles of \code{SpatialPolygons} used for EOO computation are exported. By default, it is FALSE}
+
+\item{write_shp}{a logical, if TRUE, shapefiles of \code{SpatialPolygons} used for EOO computation 
+are written as ESRI shapefiles in a sub-directory in the working directory. By default, it is FALSE}
+
+\item{write.results}{a logical, if TRUE, results are exported in csv file. By default, it is TRUE}
+
+\item{protec.areas}{a \code{SpatialPolygonsDataFrame}, shapefile with protected areas. 
+If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). 
+By default, no shapefile is provided}
+
+\item{ID_shape_PA}{a character string, indicating the field name of \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of protected areas}
+
+\item{map_pdf}{a logical, if TRUE, maps are exported in one pdf file. Otherwise, each species map is exported in png. By default, it is FALSE}
+
+\item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map} are cropped of \code{SpatialPolygons} used 
+for EOO computation. By default, it is FALSE}
+
+\item{method_protected_area}{a character string. By default is "no_more_than_one"", which means occurrences within protected areas (if provided)
+will not be taken into account for counting the number of locations following the grid system, see Details. By default, it is "no_more_than_one"}
+
+\item{SubPop}{a logical. If TRUE, sub-populations will be computed. By default, it is TRUE}
+
+\item{buff_width}{a numeric. For a specific case where all points of a species are on a straight line, 
+EOO is computed by first drawing this straight line and adding a buffer of \code{buff_width} decimal degrees around this line. By default, it is 0.1}
+
+\item{alpha}{a numeric, if \code{method.range} is "alpha.hull", alpha value for the construction of alpha hull. By default, it is 1}
+
+\item{buff.alpha}{a numeric, if \code{method.range} is "alpha.hull", indicate the buffer added to the alpha hull in decimal degree. By default, it is 0.1}
+
+\item{method.range}{a character string, if "convex.hull", EOO is based on a convex hull.
+	if "alpha.hull", EOO is based on alpha hull of \code{alpha} value. By default, it is "convex.hull"}
+
+
+\item{verbose}{a logical. Wether R should report information on progress}
+
+\item{showWarnings}{a logical. Wether R should report warnings}
+
+}
+
+\details{
+\strong{Input} as a \code{dataframe} should have the following structure:
+
+\strong{It is mandatory to respect field positions, but field names do not matter}
+
+\tabular{ccccc}{
+[,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+[,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+[,3] \tab tax \tab character or factor, taxa names\cr
+[,4] \tab family \tab character, optional field indicating higher taxonomic rank\cr
+[,5] \tab coly \tab numeric, optional field indicating collection year\cr
+}
+
+\code{coly} and \code{family} are optinal fields
+
+If the optional field named 'family' is provided, indicating higher taxonomic rank, this will be displayed in the title of the map 
+if \code{DrawMap} is 'TRUE'.
+  
+If the optional field named 'coly' is provided, indicating collection year, a sub-graph in the map will be 
+displayed (if \code{DrawMap} and \code{add.legend} are both TRUE)
+showing a barplot of collection year
+
+\strong{Estimating number of locations}\cr
+Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for specifying the resolution). The number of locations is simply the number of occupied locations. Note that the grid position is overlaid in order to minimize the number of locations (several translation of the grid are performed and the one providing the minimum number of occupied cells is kept).
+
+\strong{Taking into account protected area for estimating number of locations}\cr
+A location is defined by the IUCN as a "geographically or ecologically distinct area in which a single threatening event can affect all individuals of the taxon". A simple way to include threat level is to rely on a map of protected areas and assume that populations  within and outside protected areas are under different threat level.\cr
+
+If a map of protected area is provided, this one is used for estimating the number of locations by the following procedure:\cr
+- if \code{method_protected_area} is "no_more_than_one", all occurrences within a given protected area will be considered as one location. Occurrences outside protected area will be used for estimating the number of locations using overlaying grid as descrived above. See the vignette for illustration. \cr
+- if \code{method_protected_area} is NOT "no_more_than_one", number of locations will be estimated by the overlaying grid as described above, but by considering differently occurrences outside and inside protected area. See the vignette for illustration. \cr
+
+The protected areas layers should be given as as \code{SpatialPolygonsDataFrame} in \code{protec.areas}.
+The \code{ID_shape_PA} should also be given and should represent the unique ID of each protected area in the provided shapefile.
+This can be checked by the following code:
+
+\code{colnames(ProtectedAreas@data)}
+Where ProtectedAreas is the name of your shapefile.
+
+}
+
+
+\value{
+A \code{dataframe} if 'export_shp' is FALSE.
+A \code{list} if 'export_shp' is TRUE.
+
+If a \code{list}, three elements are provided:
+\enumerate{
+\item{first element} {a \code{dataframe} with results (see field description below)}
+\item{second element} {\code{SpatialPolygons} used for EOO computation}
+\item{third element}  {\code{SpatialPolygons} used for subpopulations}
+}
+
+The \code{dataframe} has as many rows as taxa and the following fields:
+
+\tabular{cccccc}{
+[,1] \tab EOO \tab numeric, EOO (square kilometres)\cr
+[,2] \tab AOO \tab numeric, AOO (square kilometres)\cr
+[,3] \tab Nbe_unique_occ. \tab numeric, Number of unique occurrences\cr
+[,4] \tab Nbe_subPop \tab numeric, Number of subpopulations\cr
+[,5] \tab Nbe_loc numeric, Number of locations\cr
+[,6] \tab Category_CriteriaB \tab character, IUCN threat category according to Criterion B\cr
+[,7] \tab Category_code \tab character, IUCN annotation\cr
+[,8] \tab Category_AOO \tab character, IUCN threat category according to Criterion B ignoring EOO\cr
+[,9] \tab Category_EOO \tab character, IUCN threat category according to Criterion B ignoring AOO\cr
+}
+
+}
+
+\author{
+Gilles Dauby
+
+
+\email{gildauby@gmail.com}
+}
+
+\seealso{
+\code{\link[biogeo]{biogeo}}
+
+
+\code{\link[speciesgeocodeR]{speciesgeocodeR}}
+}
+
+
+\references{
+Gaston KJ & Fuller AF, 2009, The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
+
+
+IUCN Standards and Petitions Subcommitte, 2010, Guidelines for Using the IUCN Red List Categories and Criteria. Version 8.1
+\url{http://www.iucnredlist.org/technical-documents/red-list-training/red-list-guidance-docs}
+
+Rivers CM, Bachman SP & Meagher TR, 2010, Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data, Biodiversity Conservation 19:2071-2085
+}
+
+\examples{
+
+data(dataset.ex)
+data(land)
+\dontrun{
+Results <- IUCN.eval(dataset.ex, country_map=land)
+## A directory has been created in your working directory 
+and maps for each species has been produced
+
+### The method for computing locations is a sliding scale:
+## the grid resolution will be 0.05*the maximum distance separating occurrences
+Results <- IUCN.eval(dataset.ex, 
+                     country_map=land, Cell_size_locations=10,
+                     Resol_sub_pop = 5, Cell_size_AOO = 4, method_locations="sliding scale")
+		}			 
+\dontrun{
+## Install speciesgeocodeR package for an example with their lemurs dataset
+library(speciesgeocodeR)
+data("lemurs_in")
+
+Results <- IUCN.eval(lemurs_in, DrawMap=FALSE, country_map=land, SubPop=FALSE)
+
+
+
+}
+					 
+
+					 
+}
+
