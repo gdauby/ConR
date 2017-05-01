@@ -1,5 +1,5 @@
 
-# Convex.Hull.Poly
+
 .Convex.Hull.Poly <- function(XY) {
   hpts <- chull(x =  XY[,1], y = XY[,2]) ; hpts <- c(hpts, hpts[1])
   coord <- matrix(NA, length(hpts), 2)
@@ -14,7 +14,6 @@
     
   }
   p1 = readWKT(POLY)
-  #   area <- areaPolygon(p1)/1000000
   return(p1)
 }
 
@@ -86,15 +85,10 @@
 
 
 .crop.poly <- function(poly, crop){
-  # if(!any(names(installed.packages()[,1])=="spatstat")) {
-  #   stop("Package spatstat is necessary for the cropping option, please install this package")
-  # }
-  # plot(poly, col="grey")
-  
+
   p1_owin <- as.owin(poly)
   africa_owin <- as.owin(crop)
   
-  # plot(crop, col="blue", add=T)
   if(round(area.owin(union.owin(p1_owin,africa_owin)),3)!=round(area.owin(africa_owin),3)) {
     w <- setminus.owin(p1_owin, africa_owin)
     w2 <- setminus.owin(p1_owin, w)
@@ -108,7 +102,7 @@
   return(list(EOO, poly_masked))
 }
 
-# XY <- list_data[[2]]
+
 .EOO.comp <-  function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="tax", alpha.hull=FALSE, convex.hull=TRUE,
                        alpha=1, buff.alpha=0.1, method.less.than3="not comp", verbose=TRUE) {
   
@@ -179,19 +173,7 @@
   return(OUTPUT)
 }
 
-# 
-# XY=dataset.ex
-# exclude.area=TRUE
-# buff_width=0.1
-# country_map=land
-# Name_Sp="Species1"
-# export_shp=FALSE
-# alpha=1
-# method.range="convex.hull"
-# method.less.than3="not comp"
-# write_shp=FALSE
-# write.results=TRUE
-# file.name="EOO"
+
 
 EOO.computing <- function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="Species1",export_shp=FALSE,
                           alpha=1, buff.alpha=0.1, method.range="convex.hull", write_shp=FALSE, method.less.than3="not comp", write.results=TRUE, 
@@ -333,12 +315,7 @@ subpop.comp <- function(XY, Resol_sub_pop) {
 }
 
 
-# DATA <- list_data[[2]]
-# MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1]))
-# poly_borders=land
-# verbose=TRUE
-# showWarnings=TRUE
-# NamesSp="Aglyptodactylus madagascariensis"
+
 
 .IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, 
                       method_locations=c("fixed_grid"), Rel_cell_size=0.05,

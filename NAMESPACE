@@ -14,6 +14,10 @@ importFrom(rgdal, "writeOGR")
 
 importFrom(spatstat, "union.owin", "area.owin", "setminus.owin", "as.owin")
 
+importFrom(spatstat.utils, "is.hole.xypolygon")
+
+
+
 importFrom(fields, "image.plot", "quilt.plot", "two.colors")
 
 # importFrom(alphahull, "ahull", "anglesArc")
