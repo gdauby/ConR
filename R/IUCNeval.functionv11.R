@@ -158,8 +158,11 @@
         if(Z==dim(hpts)[1]) POLY <- paste(POLY,")", sep="")
       }
       p1 = readWKT(POLY)
-      p1 <- gBuffer(p1, width=buff_width)
       crs(p1) <- "+proj=longlat +datum=WGS84"
+      
+      makeLine(p1) ### Add vertices to line
+      
+      p1 <- gBuffer(p1, width=buff_width) ### Add buffer to line
       
       ## If exclude.area is TRUE
       if(exclude.area) {
@@ -175,8 +178,6 @@
       if(alpha.hull) p1 <- .alpha.hull.poly(cbind(XY[,2],XY[,1]), alpha=alpha, buff=buff.alpha)
       
       if(convex.hull) p1 <- .Convex.Hull.Poly(cbind(XY[,2],XY[,1]))
-      
-      # crs(p1) <- "+proj=longlat +datum=WGS84"
       
       if(exclude.area) {
         croped.EOO <- .crop.poly(poly=p1, crop=country_map)

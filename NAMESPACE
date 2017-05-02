@@ -22,7 +22,7 @@ importFrom(fields, "image.plot", "quilt.plot", "two.colors")
 
 # importFrom(alphahull, "ahull", "anglesArc")
 
-importFrom(geosphere, "areaPolygon", "makePoly")
+importFrom(geosphere, "areaPolygon", "makePoly", "makeLine")
 
 
 
