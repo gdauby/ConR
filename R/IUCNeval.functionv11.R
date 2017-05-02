@@ -109,9 +109,11 @@
   ### Checking if the method of calculating EOO has been chosen
   if(!convex.hull & !alpha.hull) stop("alpha.hull and convex.hull are both FALSE, choose one of them")
   
+  if(nrow(unique(XY))>1) if(max(dist(XY[,2]), na.rm=T)>=180) stop(paste("EOO for species ", 
+                                                                        as.character(Name_Sp),
+                                                                        "cannot be computed because occurrences spans more than 180° longitude"))
   
   ## Check if there are less than 3 unique occurrences
-  
    if(nrow(unique(XY))<3) {
      
      ## if there is only one occurrence, EOO is NA
@@ -184,10 +186,12 @@
     OUTPUT <- list(EOO, p1)
     names(OUTPUT) <- c("EOO", "spatial.polygon")
   }
+  
   if(verbose) cat(" ",paste(Name_Sp,"EOO comp."))
   
   return(OUTPUT)
 }
+
 
 
 EOO.computing <- function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="Species1",export_shp=FALSE,
