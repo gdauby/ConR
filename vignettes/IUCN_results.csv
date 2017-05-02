@@ -1,63 +1,63 @@
 "","EOO","AOO","Nbe_unique_occ.","Nbe_subPop","Nbe_loc","Nbe_loc_PA","Category_CriteriaB","Category_code","Ratio_occ_within_PA","Category_AOO","Category_EOO"
 "Aglyptodactylus laticeps",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Aglyptodactylus madagascariensis","301893.858","148","39",NA,"28","9","LC","LC B1a+B2a","55.4","NT or LC","NT or LC"
+"Aglyptodactylus madagascariensis","301893.858","140","39",NA,"28","9","LC","LC B1a+B2a","55.4","NT or LC","NT or LC"
 "Aglyptodactylus securifer",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Anodonthyla boulengerii","88638.733","96","27",NA,"17","6","LC","LC B1a+B2a","53.2","NT or LC","NT or LC"
+"Anodonthyla boulengerii","88638.733","88","27",NA,"17","6","LC","LC B1a+B2a","53.2","NT or LC","NT or LC"
 "Anodonthyla montana",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Anodonthyla moramora","799.343","36","13",NA,"4","2","EN","EN B1a+B2a","75","EN","EN"
+"Anodonthyla moramora","799.343","32","13",NA,"4","2","EN","EN B1a+B2a","75","EN","EN"
 "Anodonthyla rouxae",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
-"Blommersia blommersae","31093.608","52","13",NA,"9","4","VU","VU B2a","28.9","VU","NT or LC"
+"Blommersia blommersae","31093.608","48","13",NA,"9","4","VU","VU B2a","28.9","VU","NT or LC"
 "Blommersia domerguei",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Blommersia grandisonae","20707.35","32","8",NA,"7","3","VU","VU B2a","55.6","VU","NT or LC"
+"Blommersia grandisonae","20707.35","28","8",NA,"7","3","VU","VU B2a","55.6","VU","NT or LC"
 "Blommersia kely",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
 "Blommersia sarotra",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Blommersia wittei","50743.318","36","9",NA,"5","3","EN","EN B2a","75","EN","NT or LC"
-"Boehmantis microtympanum","659.539","16","4",NA,"3","1","EN","EN B1a+B2a","12.5","EN","EN"
-"Boophis albilabris","37089.427","60","16",NA,"12","7","NT","NT B1a+B2a","44.4","NT or LC","NT or LC"
-"Boophis andohahela","20213.336","24","6",NA,"5","2","EN","EN B2a","45.5","EN","NT or LC"
-"Boophis ankaratra","190.703","16","5",NA,"2","1","EN","EN B1a+B2a","80","EN","EN"
+"Blommersia wittei","50743.318","24","9",NA,"5","3","EN","EN B2a","75","EN","NT or LC"
+"Boehmantis microtympanum","659.539","12","4",NA,"3","1","EN","EN B1a+B2a","12.5","EN","EN"
+"Boophis albilabris","37089.427","60","16",NA,"12","7","LC","LC B1a+B2a","44.4","NT or LC","NT or LC"
+"Boophis andohahela","20213.336","16","6",NA,"5","2","EN","EN B2a","45.5","EN","NT or LC"
+"Boophis ankaratra","190.703","12","5",NA,"2","1","EN","EN B1a+B2a","80","EN","EN"
 "Boophis axelmeyeri",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Boophis boehmei","27731.977","28","9",NA,"6","3","VU","VU B2a","62.1","VU","NT or LC"
-"Boophis bottae","4947.79","16","4",NA,"4","1","EN","EN B1a+B2a","16.7","EN","EN"
-"Boophis brachychir","88863.486","28","9",NA,"5","3","EN","EN B2a","63.6","EN","NT or LC"
+"Boophis boehmei","27731.977","24","9",NA,"6","3","VU","VU B2a","62.1","VU","NT or LC"
+"Boophis bottae","4947.79","8","4",NA,"4","1","EN","EN B1a+B2a","16.7","EN","EN"
+"Boophis brachychir","88863.486","20","9",NA,"5","3","EN","EN B2a","63.6","EN","NT or LC"
 "Boophis burgeri",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Boophis doulioti","69241.743","24","8",NA,"6","3","VU","VU B2a","37.5","VU","NT or LC"
+"Boophis doulioti","69241.743","20","8",NA,"6","3","VU","VU B2a","37.5","VU","NT or LC"
 "Boophis elenae","1638.71","36","9",NA,"5","3","EN","EN B1a+B2a","66.7","EN","EN"
-"Boophis erythrodactylus","38094.388","20","6",NA,"5","2","EN","EN B2a","27.3","EN","NT or LC"
+"Boophis erythrodactylus","38094.388","12","6",NA,"5","2","EN","EN B2a","27.3","EN","NT or LC"
 "Boophis feonnyala",NA,"8","2",NA,"2","1","EN","EN B2a","33.33","EN",NA
-"Boophis goudotii","36354.317","60","17",NA,"13","6","NT","NT B1a+B2a","23.4","NT or LC","NT or LC"
-"Boophis guibei","11080.727","28","7",NA,"5","2","EN","EN B2a","51.5","EN","VU"
+"Boophis goudotii","36354.317","60","17",NA,"13","6","LC","LC B1a+B2a","23.4","NT or LC","NT or LC"
+"Boophis guibei","11080.727","24","7",NA,"5","2","EN","EN B2a","51.5","EN","VU"
 "Boophis haematopus",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Boophis idae",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
 "Boophis laurenti",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Boophis liami","190.303","16","4",NA,"3","1","EN","EN B1a+B2a","14.3","EN","EN"
+"Boophis liami","190.303","12","4",NA,"3","1","EN","EN B1a+B2a","14.3","EN","EN"
 "Boophis lichenoides",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
 "Boophis lilianae",NA,"8","2",NA,"2","1","EN","EN B2a","33.33","EN",NA
-"Boophis luteus","125342.749","100","25",NA,"16","7","LC","LC B1a+B2a","38.9","NT or LC","NT or LC"
-"Boophis madagascariensis","84504.942","132","41",NA,"18","7","LC","LC B1a+B2a","52.5","NT or LC","NT or LC"
-"Boophis majori","40597.984","44","13",NA,"5","2","EN","EN B2a","95","EN","NT or LC"
-"Boophis mandraka","990.336","16","4",NA,"3","1","EN","EN B1a+B2a","14.3","EN","EN"
-"Boophis marojezensis","4604.309","32","8",NA,"4","1","EN","EN B1a+B2a","40","EN","EN"
+"Boophis luteus","125342.749","88","25",NA,"16","7","LC","LC B1a+B2a","38.9","NT or LC","NT or LC"
+"Boophis madagascariensis","84504.942","128","41",NA,"18","7","LC","LC B1a+B2a","52.5","NT or LC","NT or LC"
+"Boophis majori","40597.984","32","13",NA,"5","2","EN","EN B2a","95","EN","NT or LC"
+"Boophis mandraka","990.336","4","4",NA,"3","1","EN","EN B1a+B2a","14.3","EN","EN"
+"Boophis marojezensis","4604.309","28","8",NA,"4","1","EN","EN B1a+B2a","40","EN","EN"
 "Boophis microtympanum",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Boophis miniatus","21014.748","36","10",NA,"5","3","EN","EN B2a","56.8","EN","NT or LC"
+"Boophis miniatus","21014.748","32","10",NA,"5","3","EN","EN B2a","56.8","EN","NT or LC"
 "Boophis occidentalis",NA,"8","2",NA,"2","1","EN","EN B2a","33.33","EN",NA
-"Boophis opisthodon","203720.681","44","11",NA,"11","1","NT","NT B1a+B2a","7.7","NT or LC","NT or LC"
+"Boophis opisthodon","203720.681","36","11",NA,"11","1","LC","LC B1a+B2a","7.7","NT or LC","NT or LC"
 "Boophis pauliani",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Boophis periegetes","10507.537","40","14",NA,"4","4","LC","EN B2a","100","EN","VU"
-"Boophis picturatus","3306.52","48","13",NA,"4","2","EN","EN B1a+B2a","88.9","EN","EN"
-"Boophis pyrrhus","24039.993","24","6",NA,"6","2","VU","VU B2a","15.4","VU","NT or LC"
+"Boophis periegetes","10507.537","36","14",NA,"4","4","NT or LC","EN B2a","100","EN","VU"
+"Boophis picturatus","3306.52","40","13",NA,"4","2","EN","EN B1a+B2a","88.9","EN","EN"
+"Boophis pyrrhus","24039.993","16","6",NA,"6","2","VU","VU B2a","15.4","VU","NT or LC"
 "Boophis rappiodes","16077.07","36","10",NA,"8","2","VU","VU B1a+B2a","13.3","VU","VU"
-"Boophis reticulatus","29631.507","60","20",NA,"8","4","VU","VU B2a","80.8","VU","NT or LC"
-"Boophis rhodoscelis","462.173","20","5",NA,"4","2","EN","EN B1a+B2a","37.5","EN","EN"
+"Boophis reticulatus","29631.507","56","20",NA,"8","4","VU","VU B2a","80.8","VU","NT or LC"
+"Boophis rhodoscelis","462.173","16","5",NA,"4","2","EN","EN B1a+B2a","37.5","EN","EN"
 "Boophis rufioculis",NA,"8","2",NA,"2","1","EN","EN B2a","66.67","EN",NA
-"Boophis sambirano","3384.639","12","5",NA,"2","1","EN","EN B1a+B2a","62.5","EN","EN"
+"Boophis sambirano","3384.639","8","5",NA,"2","1","EN","EN B1a+B2a","62.5","EN","EN"
 "Boophis schuboeae","523.118","16","5",NA,"3","1","EN","EN B1a+B2a","33.3","EN","EN"
 "Boophis septentrionalis",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Boophis sibilans","7247.974","20","5",NA,"4","0","EN","EN B2a","0","EN","VU"
+"Boophis sibilans","7247.974","16","5",NA,"4","0","EN","EN B2a","0","EN","VU"
 "Boophis solomaso",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
-"Boophis tasymena","7512.751","24","6",NA,"5","3","EN","EN B2a","60","EN","VU"
-"Boophis tephraeomystax","493796.921","132","33",NA,"26","6","LC","LC B1a+B2a","18.6","NT or LC","NT or LC"
-"Boophis viridis","23286.769","40","14",NA,"8","3","VU","VU B2a","53.3","VU","NT or LC"
+"Boophis tasymena","7512.751","20","6",NA,"5","3","EN","EN B2a","60","EN","VU"
+"Boophis tephraeomystax","493796.921","128","33",NA,"26","6","LC","LC B1a+B2a","18.6","NT or LC","NT or LC"
+"Boophis viridis","23286.769","36","14",NA,"8","3","VU","VU B2a","53.3","VU","NT or LC"
 "Boophis vittatus",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Boophis williamsi",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
 "Boophis xerophilus",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
@@ -67,136 +67,136 @@
 "Cophyla phyllodactyla",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Dyscophus antongilii",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
 "Dyscophus guineti",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Dyscophus insularis","23379.195","12","3",NA,"3","2","EN","EN B2a","66.7","EN","NT or LC"
-"Gephyromantis asper","62440.398","104","28",NA,"13","5","NT","NT B1a+B2a","62.3","NT or LC","NT or LC"
+"Dyscophus insularis","23379.195","8","3",NA,"3","2","EN","EN B2a","66.7","EN","NT or LC"
+"Gephyromantis asper","62440.398","96","28",NA,"13","5","LC","LC B1a+B2a","62.3","NT or LC","NT or LC"
 "Gephyromantis azzurrae",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Gephyromantis blanci","124.302","16","4",NA,"2","2","LC","EN B1a+B2a","100","EN","EN"
-"Gephyromantis boulengeri","56192.829","56","14",NA,"12","3","NT","NT B1a+B2a","7.9","NT or LC","NT or LC"
-"Gephyromantis cornutus","7420.497","36","9",NA,"5","3","EN","EN B2a","77.8","EN","VU"
-"Gephyromantis decaryi","7079.429","24","6",NA,"6","2","VU","VU B1a+B2a","37.5","VU","VU"
+"Gephyromantis blanci","124.302","8","4",NA,"2","2","NT or LC","EN B1a+B2a","100","EN","EN"
+"Gephyromantis boulengeri","56192.829","52","14",NA,"12","3","LC","LC B1a+B2a","7.9","NT or LC","NT or LC"
+"Gephyromantis cornutus","7420.497","28","9",NA,"5","3","EN","EN B2a","77.8","EN","VU"
+"Gephyromantis decaryi","7079.429","20","6",NA,"6","2","VU","VU B1a+B2a","37.5","VU","VU"
 "Gephyromantis eiselti","28448.986","24","6",NA,"6","3","VU","VU B2a","50","VU","NT or LC"
-"Gephyromantis enki","4136.62","32","8",NA,"4","2","EN","EN B1a+B2a","69.2","EN","EN"
-"Gephyromantis granulatus","20772.979","24","6",NA,"4","1","EN","EN B2a","42.9","EN","NT or LC"
+"Gephyromantis enki","4136.62","28","8",NA,"4","2","EN","EN B1a+B2a","69.2","EN","EN"
+"Gephyromantis granulatus","20772.979","20","6",NA,"4","1","EN","EN B2a","42.9","EN","NT or LC"
 "Gephyromantis klemmeri",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
 "Gephyromantis leucomaculatus","15724.267","44","11",NA,"4","1","EN","EN B2a","72.7","EN","VU"
-"Gephyromantis luteus","83433.889","112","28",NA,"16","8","LC","LC B1a+B2a","29.9","NT or LC","NT or LC"
-"Gephyromantis malagasius","37970.233","44","11",NA,"9","3","VU","VU B2a","30.8","VU","NT or LC"
+"Gephyromantis luteus","83433.889","108","28",NA,"16","8","LC","LC B1a+B2a","29.9","NT or LC","NT or LC"
+"Gephyromantis malagasius","37970.233","36","11",NA,"9","3","VU","VU B2a","30.8","VU","NT or LC"
 "Gephyromantis moseri",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Gephyromantis plicifer","248878.847","28","8",NA,"6","3","VU","VU B2a","41.2","VU","NT or LC"
-"Gephyromantis redimitus","28994.346","56","14",NA,"8","4","VU","VU B2a","55.6","VU","NT or LC"
+"Gephyromantis plicifer","248878.847","20","8",NA,"6","3","VU","VU B2a","41.2","VU","NT or LC"
+"Gephyromantis redimitus","28994.346","48","14",NA,"8","4","VU","VU B2a","55.6","VU","NT or LC"
 "Gephyromantis rivicola",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
 "Gephyromantis runewsweeki",NA,"8","2",NA,"1","1","LC","LC B2a","100","LC",NA
 "Gephyromantis salegy",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Gephyromantis sculpturatus","9554.335","32","9",NA,"5","2","EN","EN B2a","23.1","EN","VU"
+"Gephyromantis sculpturatus","9554.335","28","9",NA,"5","2","EN","EN B2a","23.1","EN","VU"
 "Gephyromantis spiniferus",NA,"8","2",NA,"2","2","LC","LC B2a","100","LC",NA
-"Gephyromantis tschenki","8053.042","24","6",NA,"4","2","EN","EN B2a","42.9","EN","VU"
+"Gephyromantis tschenki","8053.042","16","6",NA,"4","2","EN","EN B2a","42.9","EN","VU"
 "Gephyromantis ventrimaculatus",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
-"Gephyromantis webbi","1814.162","20","5",NA,"3","2","EN","EN B1a+B2a","66.7","EN","EN"
+"Gephyromantis webbi","1814.162","16","5",NA,"3","2","EN","EN B1a+B2a","66.7","EN","EN"
 "Gephyromantis zavona",NA,"8","2",NA,"2","2","LC","LC B2a","100","LC",NA
-"Grandisonia alternans","1091.288","16","4",NA,"4","0","EN","EN B1a+B2a","0","EN","EN"
+"Grandisonia alternans","1091.288","12","4",NA,"4","0","EN","EN B1a+B2a","0","EN","EN"
 "Grandisonia sechellensis",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Guibemantis albolineatus","22432.278","40","12",NA,"10","5","VU","VU B2a","60","VU","NT or LC"
-"Guibemantis bicalcaratus","88739.719","68","21",NA,"12","5","NT","NT B1a+B2a","62.9","NT or LC","NT or LC"
-"Guibemantis depressiceps","77661.17","72","19",NA,"11","6","NT","NT B1a+B2a","50.7","NT or LC","NT or LC"
-"Guibemantis flavobrunneus","24697.718","48","14",NA,"6","2","VU","VU B2a","66.7","VU","NT or LC"
+"Guibemantis albolineatus","22432.278","36","12",NA,"10","5","VU","VU B2a","60","VU","NT or LC"
+"Guibemantis bicalcaratus","88739.719","64","21",NA,"12","5","LC","LC B1a+B2a","62.9","NT or LC","NT or LC"
+"Guibemantis depressiceps","77661.17","68","19",NA,"11","6","LC","LC B1a+B2a","50.7","NT or LC","NT or LC"
+"Guibemantis flavobrunneus","24697.718","40","14",NA,"6","2","VU","VU B2a","66.7","VU","NT or LC"
 "Guibemantis kathrinae",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Guibemantis liber","61479.462","96","33",NA,"12","6","NT","NT B1a+B2a","82.5","NT or LC","NT or LC"
-"Guibemantis pulcher","71484.653","104","31",NA,"12","5","NT","NT B1a+B2a","77.1","NT or LC","NT or LC"
-"Guibemantis punctatus","8082.65","16","4",NA,"4","2","EN","EN B2a","33.3","EN","VU"
-"Guibemantis timidus","21512.98","24","6",NA,"6","2","VU","VU B2a","25","VU","NT or LC"
+"Guibemantis liber","61479.462","88","33",NA,"12","6","LC","LC B1a+B2a","82.5","NT or LC","NT or LC"
+"Guibemantis pulcher","71484.653","96","31",NA,"12","5","LC","LC B1a+B2a","77.1","NT or LC","NT or LC"
+"Guibemantis punctatus","8082.65","12","4",NA,"4","2","EN","EN B2a","33.3","EN","VU"
+"Guibemantis timidus","21512.98","20","6",NA,"6","2","VU","VU B2a","25","VU","NT or LC"
 "Guibemantis tornieri","19267.451","36","10",NA,"7","1","VU","VU B1a+B2a","12.5","VU","VU"
-"Heterixalus alboguttatus","11190.89","24","6",NA,"6","1","VU","VU B1a+B2a","9.1","VU","VU"
+"Heterixalus alboguttatus","11190.89","12","6",NA,"6","1","VU","VU B1a+B2a","9.1","VU","VU"
 "Heterixalus andrakata",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Heterixalus betsileo","201259.38","80","21",NA,"19","5","LC","LC B1a+B2a","23.5","NT or LC","NT or LC"
-"Heterixalus boettgeri","1180.858","48","13",NA,"8","1","VU","VU B1a+B2a","2.5","VU","VU"
-"Heterixalus luteostriatus","42189.626","12","4",NA,"3","1","EN","EN B2a","20","EN","NT or LC"
-"Heterixalus madagascariensis","48869.836","40","10",NA,"9","1","VU","VU B2a","10","VU","NT or LC"
-"Heterixalus punctatus","3670.905","16","5",NA,"4","2","EN","EN B1a+B2a","60","EN","EN"
+"Heterixalus betsileo","201259.38","76","21",NA,"19","5","LC","LC B1a+B2a","23.5","NT or LC","NT or LC"
+"Heterixalus boettgeri","1180.858","40","13",NA,"8","1","VU","VU B1a+B2a","2.5","VU","VU"
+"Heterixalus luteostriatus","42189.626","8","4",NA,"3","1","EN","EN B2a","20","EN","NT or LC"
+"Heterixalus madagascariensis","48869.836","32","10",NA,"9","1","VU","VU B2a","10","VU","NT or LC"
+"Heterixalus punctatus","3670.905","8","5",NA,"4","2","EN","EN B1a+B2a","60","EN","EN"
 "Heterixalus rutenbergi",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Heterixalus tricolor","100988.966","12","3",NA,"3","2","EN","EN B2a","50","EN","NT or LC"
+"Heterixalus tricolor","100988.966","8","3",NA,"3","2","EN","EN B2a","50","EN","NT or LC"
 "Hoplobatrachus tigerinus",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Hyperolius viridiflavus","14842832.567","808","208",NA,"182","0","LC","LC B1a+B2a","0","NT or LC","NT or LC"
-"Hypogeophis rostratus","818.854","44","12",NA,"6","0","VU","VU B1a+B2a","0","VU","VU"
-"Laliostoma labrosum","286906.483","52","13",NA,"12","2","NT","NT B1a+B2a","16.7","NT or LC","NT or LC"
-"Madecassophryne truebae","24643.171","16","4",NA,"4","0","EN","EN B2a","0","EN","NT or LC"
-"Mantella aurantiaca","5583.221","12","4",NA,"4","2","EN","EN B2a","50","EN","VU"
-"Mantella baroni","25017.299","68","19",NA,"8","5","VU","VU B2a","95.6","VU","NT or LC"
-"Mantella bernhardi","2442.445","16","4",NA,"4","1","EN","EN B1a+B2a","7.1","EN","EN"
+"Hyperolius viridiflavus","14842832.567","792","208",NA,"182","0","LC","LC B1a+B2a","0","NT or LC","NT or LC"
+"Hypogeophis rostratus","818.854","40","12",NA,"6","0","VU","VU B1a+B2a","0","VU","VU"
+"Laliostoma labrosum","286906.483","44","13",NA,"12","2","LC","LC B1a+B2a","16.7","NT or LC","NT or LC"
+"Madecassophryne truebae","24643.171","12","4",NA,"4","0","EN","EN B2a","0","EN","NT or LC"
+"Mantella aurantiaca","5583.221","8","4",NA,"4","2","EN","EN B2a","50","EN","VU"
+"Mantella baroni","25017.299","60","19",NA,"8","5","VU","VU B2a","95.6","VU","NT or LC"
+"Mantella bernhardi","2442.445","12","4",NA,"4","1","EN","EN B1a+B2a","7.1","EN","EN"
 "Mantella betsileo","222195.704","44","13",NA,"10","3","VU","VU B2a","35.7","VU","NT or LC"
 "Mantella crocea",NA,"8","2",NA,"2","1","EN","EN B2a","20","EN",NA
 "Mantella haraldmeieri",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Mantella laevigata","10343.794","32","9",NA,"6","3","VU","VU B1a+B2a","66.7","VU","VU"
-"Mantella madagascariensis","8769.183","24","6",NA,"4","3","EN","EN B2a","83.3","EN","VU"
-"Mantella nigricans","2651.664","28","7",NA,"3","2","EN","EN B1a+B2a","85.7","EN","EN"
+"Mantella madagascariensis","8769.183","20","6",NA,"4","3","EN","EN B2a","83.3","EN","VU"
+"Mantella nigricans","2651.664","24","7",NA,"3","2","EN","EN B1a+B2a","85.7","EN","EN"
 "Mantella pulchra",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Mantidactylus aerumnalis","44234.888","40","11",NA,"10","5","VU","VU B2a","45","VU","NT or LC"
-"Mantidactylus albofrenatus","69733.103","64","17",NA,"13","6","NT","NT B1a+B2a","50","NT or LC","NT or LC"
-"Mantidactylus alutus","54570.586","20","5",NA,"5","3","EN","EN B2a","33.3","EN","NT or LC"
+"Mantidactylus aerumnalis","44234.888","36","11",NA,"10","5","VU","VU B2a","45","VU","NT or LC"
+"Mantidactylus albofrenatus","69733.103","60","17",NA,"13","6","LC","LC B1a+B2a","50","NT or LC","NT or LC"
+"Mantidactylus alutus","54570.586","16","5",NA,"5","3","EN","EN B2a","33.3","EN","NT or LC"
 "Mantidactylus ambohimitombi",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Mantidactylus argenteus","9699.66","20","6",NA,"5","3","EN","EN B2a","66.7","EN","VU"
-"Mantidactylus betsileanus","242125.683","200","57",NA,"33","9","LC","LC B1a+B2a","24","NT or LC","NT or LC"
-"Mantidactylus biporus","55808.389","96","27",NA,"15","5","LC","LC B1a+B2a","21.1","NT or LC","NT or LC"
+"Mantidactylus argenteus","9699.66","16","6",NA,"5","3","EN","EN B2a","66.7","EN","VU"
+"Mantidactylus betsileanus","242125.683","196","57",NA,"33","9","LC","LC B1a+B2a","24","NT or LC","NT or LC"
+"Mantidactylus biporus","55808.389","92","27",NA,"15","5","LC","LC B1a+B2a","21.1","NT or LC","NT or LC"
 "Mantidactylus bourgati",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Mantidactylus charlotteae",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Mantidactylus cowanii","14147.329","32","8",NA,"6","2","VU","VU B1a+B2a","37.5","VU","VU"
-"Mantidactylus curtus","68736.238","24","6",NA,"6","0","VU","VU B2a","0","VU","NT or LC"
+"Mantidactylus cowanii","14147.329","24","8",NA,"6","2","VU","VU B1a+B2a","37.5","VU","VU"
+"Mantidactylus curtus","68736.238","20","6",NA,"6","0","VU","VU B2a","0","VU","NT or LC"
 "Mantidactylus femoralis","118890.777","120","36",NA,"21","7","LC","LC B1a+B2a","54.5","NT or LC","NT or LC"
-"Mantidactylus grandidieri","107025.682","100","27",NA,"17","6","LC","LC B1a+B2a","31.6","NT or LC","NT or LC"
-"Mantidactylus guttulatus","186287.48","84","21",NA,"15","5","LC","LC B1a+B2a","33.9","NT or LC","NT or LC"
-"Mantidactylus lugubris","275330.989","128","35",NA,"26","6","LC","LC B1a+B2a","26.7","NT or LC","NT or LC"
+"Mantidactylus grandidieri","107025.682","92","27",NA,"17","6","LC","LC B1a+B2a","31.6","NT or LC","NT or LC"
+"Mantidactylus guttulatus","186287.48","80","21",NA,"15","5","LC","LC B1a+B2a","33.9","NT or LC","NT or LC"
+"Mantidactylus lugubris","275330.989","116","35",NA,"26","6","LC","LC B1a+B2a","26.7","NT or LC","NT or LC"
 "Mantidactylus madecassus",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Mantidactylus majori","50669.372","80","23",NA,"12","5","NT","NT B1a+B2a","50.5","NT or LC","NT or LC"
+"Mantidactylus majori","50669.372","72","23",NA,"12","5","LC","LC B1a+B2a","50.5","NT or LC","NT or LC"
 "Mantidactylus melanopleura","7010.296","24","7",NA,"4","2","EN","EN B2a","62.5","EN","VU"
 "Mantidactylus mocquardi","28567.217","52","15",NA,"8","4","VU","VU B2a","58.8","VU","NT or LC"
 "Mantidactylus noralottae",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Mantidactylus opiparis","76590.652","108","30",NA,"15","5","LC","LC B1a+B2a","26.5","NT or LC","NT or LC"
-"Mantidactylus tricinctus","31771.42","16","4",NA,"4","0","EN","EN B2a","0","EN","NT or LC"
-"Mantidactylus ulcerosus","184686.638","32","9",NA,"8","4","VU","VU B2a","27.3","VU","NT or LC"
+"Mantidactylus opiparis","76590.652","104","30",NA,"15","5","LC","LC B1a+B2a","26.5","NT or LC","NT or LC"
+"Mantidactylus tricinctus","31771.42","12","4",NA,"4","0","EN","EN B2a","0","EN","NT or LC"
+"Mantidactylus ulcerosus","184686.638","28","9",NA,"8","4","VU","VU B2a","27.3","VU","NT or LC"
 "Mantidactylus zipperi",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
 "Mantidactylus zolitschka",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Paradoxophyla palmata","774.795","16","4",NA,"4","2","EN","EN B1a+B2a","12.5","EN","EN"
-"Platypelis barbouri","6142.649","12","3",NA,"3","1","EN","EN B2a","50","EN","VU"
-"Platypelis grandis","77775.855","88","22",NA,"16","5","LC","LC B1a+B2a","23.7","NT or LC","NT or LC"
+"Paradoxophyla palmata","774.795","8","4",NA,"4","2","EN","EN B1a+B2a","12.5","EN","EN"
+"Platypelis barbouri","6142.649","8","3",NA,"3","1","EN","EN B2a","50","EN","VU"
+"Platypelis grandis","77775.855","84","22",NA,"16","5","LC","LC B1a+B2a","23.7","NT or LC","NT or LC"
 "Platypelis milloti",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Platypelis pollicaris","17297.885","44","12",NA,"6","2","VU","VU B1a+B2a","77.8","VU","VU"
-"Platypelis tetra","257.778","12","3",NA,"3","1","EN","EN B1a+B2a","33.3","EN","EN"
-"Platypelis tuberifera","43260.179","80","21",NA,"9","4","VU","VU B2a","55.2","VU","NT or LC"
-"Plethodontohyla bipunctata","737.917","12","3",NA,"3","2","EN","EN B1a+B2a","66.7","EN","EN"
-"Plethodontohyla brevipes","4","4","3",NA,"1","1","LC","CR B1a","100","EN","CR"
-"Plethodontohyla guentheri","62.092","16","7",NA,"2","1","EN","EN B1a+B2a","88.9","EN","EN"
-"Plethodontohyla inguinalis","21318.893","48","12",NA,"8","4","VU","VU B2a","57.9","VU","NT or LC"
-"Plethodontohyla mihanika","6618.6","16","4",NA,"4","2","EN","EN B2a","40","EN","VU"
-"Plethodontohyla notosticta","60978.518","80","21",NA,"16","5","LC","LC B1a+B2a","25.7","NT or LC","NT or LC"
-"Plethodontohyla ocellata","39852.124","24","6",NA,"6","0","VU","VU B2a","0","VU","NT or LC"
+"Platypelis pollicaris","17297.885","40","12",NA,"6","2","VU","VU B1a+B2a","77.8","VU","VU"
+"Platypelis tetra","257.778","4","3",NA,"3","1","EN","EN B1a+B2a","33.3","EN","EN"
+"Platypelis tuberifera","43260.179","76","21",NA,"9","4","VU","VU B2a","55.2","VU","NT or LC"
+"Plethodontohyla bipunctata","737.917","8","3",NA,"3","2","EN","EN B1a+B2a","66.7","EN","EN"
+"Plethodontohyla brevipes","4","4","3",NA,"1","1","NT or LC","CR B1a","100","EN","CR"
+"Plethodontohyla guentheri","62.092","12","7",NA,"2","1","EN","EN B1a+B2a","88.9","EN","EN"
+"Plethodontohyla inguinalis","21318.893","40","12",NA,"8","4","VU","VU B2a","57.9","VU","NT or LC"
+"Plethodontohyla mihanika","6618.6","12","4",NA,"4","2","EN","EN B2a","40","EN","VU"
+"Plethodontohyla notosticta","60978.518","64","21",NA,"16","5","LC","LC B1a+B2a","25.7","NT or LC","NT or LC"
+"Plethodontohyla ocellata","39852.124","20","6",NA,"6","0","VU","VU B2a","0","VU","NT or LC"
 "Plethodontohyla tuberata",NA,"8","2",NA,"1","1","LC","LC B2a","100","LC",NA
-"Ptychadena aequiplicata","23669875.597","372","95",NA,"90","1","LC","LC B1a+B2a","9.6","NT or LC","NT or LC"
-"Ptychadena mascareniensis","33749778.896","1388","354",NA,"315","14","LC","LC B1a+B2a","7.2","NT or LC","NT or LC"
+"Ptychadena aequiplicata","23669875.597","364","95",NA,"90","1","LC","LC B1a+B2a","9.6","NT or LC","NT or LC"
+"Ptychadena mascareniensis","33749778.896","1372","354",NA,"315","14","LC","LC B1a+B2a","7.2","NT or LC","NT or LC"
 "Rhombophryne alluaudi","919.522","20","5",NA,"3","1","EN","EN B1a+B2a","41.7","EN","EN"
 "Rhombophryne coronata",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Rhombophryne coudreaui",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
 "Rhombophryne laevipes",NA,"8","2",NA,"2","1","EN","EN B2a","75","EN",NA
 "Rhombophryne minuta",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
-"Rhombophryne testudo","238.924","12","3",NA,"2","0","EN","EN B1a+B2a","0","EN","EN"
-"Scaphiophryne brevis","1050.531","36","13",NA,"4","2","EN","EN B1a+B2a","64.3","EN","EN"
-"Scaphiophryne calcarata","151292.216","32","8",NA,"6","1","VU","VU B2a","9.7","VU","NT or LC"
-"Scaphiophryne madagascariensis","1929.489","12","3",NA,"3","0","EN","EN B1a+B2a","0","EN","EN"
-"Scaphiophryne marmorata","5110.19","36","9",NA,"9","4","VU","VU B1a+B2a","66.7","VU","VU"
+"Rhombophryne testudo","238.924","8","3",NA,"2","0","EN","EN B1a+B2a","0","EN","EN"
+"Scaphiophryne brevis","1050.531","32","13",NA,"4","2","EN","EN B1a+B2a","64.3","EN","EN"
+"Scaphiophryne calcarata","151292.216","24","8",NA,"6","1","VU","VU B2a","9.7","VU","NT or LC"
+"Scaphiophryne madagascariensis","1929.489","8","3",NA,"3","0","EN","EN B1a+B2a","0","EN","EN"
+"Scaphiophryne marmorata","5110.19","32","9",NA,"9","4","VU","VU B1a+B2a","66.7","VU","VU"
 "Scaphiophryne menabensis",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Scaphiophryne spinosa",NA,"4","1",NA,"1","0","CR","CR B2a","0","CR",NA
 "Sechellophryne gardineri",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
 "Sooglossus sechellensis",NA,"8","2",NA,"1","0","CR","CR B2a","0","CR",NA
 "Sooglossus thomasseti",NA,"8","2",NA,"1","0","CR","CR B2a","0","CR",NA
-"Spinomantis aglavei","45065.722","64","17",NA,"9","5","VU","VU B2a","75","VU","NT or LC"
-"Spinomantis bertini","17558.079","28","8",NA,"4","4","LC","EN B2a","100","EN","VU"
+"Spinomantis aglavei","45065.722","60","17",NA,"9","5","VU","VU B2a","75","VU","NT or LC"
+"Spinomantis bertini","17558.079","24","8",NA,"4","4","NT or LC","EN B2a","100","EN","VU"
 "Spinomantis elegans",NA,"8","2",NA,"2","2","LC","LC B2a","100","LC",NA
 "Spinomantis fimbriatus","16486.008","44","11",NA,"6","4","VU","VU B1a+B2a","81.8","VU","VU"
 "Spinomantis guibei",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Spinomantis peraccae","3282.952","36","10",NA,"3","1","EN","EN B1a+B2a","90","EN","EN"
+"Spinomantis peraccae","3282.952","32","10",NA,"3","1","EN","EN B1a+B2a","90","EN","EN"
 "Spinomantis phantasticus",NA,"8","2",NA,"2","0","EN","EN B2a","0","EN",NA
-"Stumpffia grandis","67110.607","32","8",NA,"7","3","VU","VU B2a","73.3","VU","NT or LC"
-"Stumpffia psologlossa","37179.945","32","9",NA,"7","1","VU","VU B2a","6.7","VU","NT or LC"
+"Stumpffia grandis","67110.607","24","8",NA,"7","3","VU","VU B2a","73.3","VU","NT or LC"
+"Stumpffia psologlossa","37179.945","28","9",NA,"7","1","VU","VU B2a","6.7","VU","NT or LC"
 "Stumpffia roseifemoralis",NA,"8","2",NA,"2","1","EN","EN B2a","50","EN",NA
-"Stumpffia tetradactyla","31140.102","16","4",NA,"4","1","EN","EN B2a","20","EN","NT or LC"
+"Stumpffia tetradactyla","31140.102","12","4",NA,"4","1","EN","EN B2a","20","EN","NT or LC"
 "Stumpffia tridactyla",NA,"4","1",NA,"1","1","EN","EN B2a","100","EN",NA
-"Tachycnemis seychellensis","1168.83","20","5",NA,"4","0","EN","EN B1a+B2a","0","EN","EN"
+"Tachycnemis seychellensis","1168.83","16","5",NA,"4","0","EN","EN B1a+B2a","0","EN","EN"
 "Wakea madinika",NA,"8","2",NA,"2","1","EN","EN B2a","80","EN",NA

@@ -85,7 +85,6 @@
    }else{
      stop("The package alpha.hull is required for this procedure, please install it")
    }
-   
 }
 
 
@@ -201,9 +200,16 @@
 
 
 
-EOO.computing <- function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="Species1",export_shp=FALSE,
-                          alpha=1, buff.alpha=0.1, method.range="convex.hull", write_shp=FALSE, method.less.than3="not comp", write.results=TRUE, 
-                          file.name="EOO.results", verbose=TRUE) {
+# EOO.computing <- function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="Species1",export_shp=FALSE,
+#                           alpha=1, buff.alpha=0.1, method.range="convex.hull", write_shp=FALSE, method.less.than3="not comp", write.results=TRUE, 
+#                           file.name="EOO.results", verbose=TRUE)
+  
+EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_shp=FALSE, 
+                            alpha=1, buff.alpha=0.1, method.range="convex.hull",
+                            Name_Sp="Species1", 
+                            buff_width=0.1, method.less.than3="not comp",
+                            write.results=TRUE, 
+                            file.name="EOO.results", verbose=TRUE){
   
   if(any(is.na(XY[,c(1:2)]))) {
     length(which(rowMeans(is.na(XY[,1:2]))>0))
@@ -998,12 +1004,26 @@ subpop.comp <- function(XY, Resol_sub_pop) {
 
 
 
-IUCN.eval <- function (DATA, country_map=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, method_locations="fixed_grid", Rel_cell_size=0.05, DrawMap=TRUE, 
-                       add.legend=TRUE,
-                       file_name=NULL, export_shp=FALSE, write_shp=FALSE, write.results=TRUE,
-                       protec.areas=NULL, map_pdf=FALSE, exclude.area=FALSE, method_protected_area="no_more_than_one",
-                       ID_shape_PA="WDPA_PID", buff_width=0.1, SubPop=TRUE,
-                       alpha=1, buff.alpha=0.1, method.range="convex.hull", nbe.rep.rast.AOO=NULL, verbose=TRUE, showWarnings=TRUE) {
+
+
+# IUCN.eval <- function (DATA, country_map=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, method_locations="fixed_grid", Rel_cell_size=0.05, DrawMap=TRUE, 
+#                        add.legend=TRUE,
+#                        file_name=NULL, export_shp=FALSE, write_shp=FALSE, write.results=TRUE,
+#                        protec.areas=NULL, map_pdf=FALSE, exclude.area=FALSE, method_protected_area="no_more_than_one",
+#                        ID_shape_PA="WDPA_PID", buff_width=0.1, SubPop=TRUE,
+#                        alpha=1, buff.alpha=0.1, method.range="convex.hull", nbe.rep.rast.AOO=NULL, verbose=TRUE, showWarnings=TRUE) 
+
+
+IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10, 
+                       Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
+                       DrawMap = TRUE, add.legend = TRUE, 
+                       file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
+                       write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, 
+                       exclude.area = FALSE, method_protected_area = "no_more_than_one", 
+                       ID_shape_PA = "WDPA_PID", 
+                       buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
+                       method.range="convex.hull", nbe.rep.rast.AOO=NULL,
+                       verbose=TRUE, showWarnings=TRUE) {
   
   if(class(DATA)=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
@@ -1033,7 +1053,6 @@ IUCN.eval <- function (DATA, country_map=NULL, Cell_size_AOO=2, Cell_size_locati
     if(is.null(country_map)) {
       data('land', package='ConR', envir=environment()) 
       land <- get("land", envir=environment()) 
-      # data(land, envir = environment())
       country_map <- land
     }
   

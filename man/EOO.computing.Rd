@@ -6,17 +6,16 @@ Compute extent of occurrences (EOO) for multiple taxa in square kilometres using
 and provide \code{SpatialPolygons} used for EOO computation 
 }
 \usage{
-EOO.computing(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, 
-	Name_Sp="Species1", export_shp=FALSE,
-                          alpha=1, buff.alpha=0.1, method.range="convex.hull", 
-						  write_shp=FALSE, 
-						  method.less.than3="not comp", 
-						  write.results=TRUE, 
-                          file.name="EOO.results", verbose=TRUE)
+EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_shp=FALSE, 
+	alpha=1, buff.alpha=0.1, method.range="convex.hull",
+	Name_Sp="Species1", 
+	buff_width=0.1, method.less.than3="not comp",
+	write.results=TRUE, 
+	file.name="EOO.results", verbose=TRUE)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}
-	
+
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map} are cropped of \code{SpatialPolygons} used for calculating EOO. By default is FALSE}
 
 \item{country_map}{a \code{SpatialPolygonsDataFrame} or \code{SpatialPolygons} showing for example countries or continent borders. This shapefile will be used for cropping the \code{SpatialPolygons}l if exclude.area is TRUE}

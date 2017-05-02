@@ -16,7 +16,7 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 	exclude.area = FALSE, method_protected_area = "no_more_than_one", 
 	ID_shape_PA = "WDPA_PID", 
 	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
-	method.range="convex.hull", nbe.rep.rast.AOO=nbe.rep.rast.AOO, 
+	method.range="convex.hull", nbe.rep.rast.AOO=NULL,
 	verbose=TRUE, showWarnings=TRUE)
 }
 \arguments{
@@ -76,9 +76,7 @@ EOO is computed by first drawing this straight line and adding a buffer of \code
 \item{method.range}{a character string, if "convex.hull", EOO is based on a convex hull.
 	if "alpha.hull", EOO is based on alpha hull of \code{alpha} value. By default, it is "convex.hull"}
 
-
 \item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is NULL but some minimal translation of the raster are still done}
-
 
 \item{verbose}{a logical. Wether R should report information on progress}
 

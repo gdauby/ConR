@@ -95,9 +95,9 @@ head(dataset.ex)
 ```
 The following dataset include occurrences of Malagasy amphibian:
 ```
-data(Malagasy_amphibian)
-head(Malagasy_amphibian)
-?Malagasy_amphibian ## if you want to have information on this dataset
+data(Malagasy.amphibian)
+head(Malagasy.amphibian)
+?Malagasy.amphibian ## if you want to have information on this dataset
 ```
 
 
@@ -496,8 +496,8 @@ If the optional fields *higher.tax.rank* and *coly* are provided, output maps di
 <img src="MyIUCNresults_results_map/MyIUCNresultsBerlinia_bruneelii.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 
 ```{r include=FALSE, echo=FALSE}
-data(Malagasy_amphibian)
-MyData <- Malagasy_amphibian[which(Malagasy_amphibian[,"tax"] %in% c("Anodonthyla moramora")),]
+data(Malagasy.amphibian)
+MyData <- Malagasy.amphibian[which(Malagasy.amphibian[,"tax"] %in% c("Anodonthyla moramora")),]
 IUCN.eval(MyData, Cell_size_locations = 10)
 ```
 
@@ -565,8 +565,8 @@ Below is an example for amphibian species of Madagascar.
 
 First, for the example, I select one species among the Malagasy amphibians example dataset included in the package loaded by using the `data()` function:
 ```{r include=TRUE}
-data(Malagasy_amphibian)
-MyData <- Malagasy_amphibian[which(Malagasy_amphibian[,"tax"] %in% c("Anodonthyla moramora")),]
+data(Malagasy.amphibian)
+MyData <- Malagasy.amphibian[which(Malagasy.amphibian[,"tax"] %in% c("Anodonthyla moramora")),]
 ```
 
 
@@ -692,20 +692,20 @@ Below, preliminary conservation status of all malagasy amphibian species of the 
 This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient.
 ```{r include=F, echo=F}
 data(Madagascar.protec)
-data(Malagasy_amphibian)
-MyResults <- IUCN.eval(Malagasy_amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE)
+data(Malagasy.amphibian)
+MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE)
 ```
 
 ```
 data(Madagascar.protec)
-data(Malagasy_amphibian)
-MyResults <- IUCN.eval(Malagasy_amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE)
+data(Malagasy.amphibian)
+MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE)
 ```
 
 You can map the result by using the following code:
 ```
 data(land)
-map.res(MyResults, Occurrences=Malagasy_amphibian, country_map=land, export_map=TRUE, threshold=3, 
+map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
  	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
 ```
 The argument `Occurrences` should include the input file.
@@ -724,7 +724,7 @@ The arguments `LatMin`, `LatMax`, `LongMin` and `LongMax` are minimum/maximum la
 
 ```{r include=F, echo=F}
 MyResults <- read.csv("IUCN_results.csv", row.names=1)
-map.res(MyResults, Occurrences=Malagasy_amphibian, country_map=land, export_map=TRUE, threshold=3, 
+map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
  	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
 ```
 
