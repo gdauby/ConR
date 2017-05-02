@@ -14,6 +14,8 @@
     
   }
   p1 = readWKT(POLY)
+  crs(p1) <- "+proj=longlat +datum=WGS84"
+  makePoly(p1)
   return(p1)
 }
 
@@ -63,6 +65,7 @@
 .alpha.hull.poly <- function(XY, alpha=1, buff=0.1){
    Used_data=unique(XY)
    if (any(rownames(installed.packages())=="alphahull")) {
+     
      loadNamespace("alphahull")
      ahull.obj <- alphahull::ahull(Used_data[,c(1,2)], alpha = alpha)
      y.as.spldf <- .ahull_to_SPLDF(ahull.obj)
@@ -72,12 +75,12 @@
      holes <- lapply(NZp, function(x) sapply(slot(x, "Polygons"), slot, 
                                              "hole"))
      res <- lapply(1:length(NZp), function(i) slot(NZp[[i]], 
-                                                   "Polygons")[!holes[[i]]]) 
+                                                   "Polygons")[!holes[[i]]])
      IDs <- row.names(y.as.spldf_buff)
      NZfill <- SpatialPolygons(lapply(1:length(res), function(i) 
        Polygons(res[[i]], ID=IDs[i])), proj4string=CRS(proj4string(y.as.spldf_buff)))
      NZfill
-     
+     crs(NZfill) <- "+proj=longlat +datum=WGS84"
    }else{
      stop("The package alpha.hull is required for this procedure, please install it")
    }
@@ -101,6 +104,7 @@
   EOO <- round(areaPolygon(poly_masked)/1000000,1)  
   return(list(EOO, poly_masked))
 }
+
 
 
 .EOO.comp <-  function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="tax", alpha.hull=FALSE, convex.hull=TRUE,
@@ -172,7 +176,7 @@
       
       if(convex.hull) p1 <- .Convex.Hull.Poly(cbind(XY[,2],XY[,1]))
       
-      crs(p1) <- "+proj=longlat +datum=WGS84"
+      # crs(p1) <- "+proj=longlat +datum=WGS84"
       
       if(exclude.area) {
         croped.EOO <- .crop.poly(poly=p1, crop=country_map)
