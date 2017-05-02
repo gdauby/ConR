@@ -16,7 +16,8 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 	exclude.area = FALSE, method_protected_area = "no_more_than_one", 
 	ID_shape_PA = "WDPA_PID", 
 	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
-	method.range="convex.hull", verbose=TRUE, showWarnings=TRUE)
+	method.range="convex.hull", nbe.rep.rast.AOO=nbe.rep.rast.AOO, 
+	verbose=TRUE, showWarnings=TRUE)
 }
 \arguments{
 \item{DATA}{a \code{dataframe} or an object of class \code{spgeoIN} see \code{\link[speciesgeocodeR]{speciesgeocodeR}}. See Details}
@@ -24,17 +25,17 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 \item{country_map}{a \code{SpatialPolygonsDataFrame} or \code{SpatialPolygons} showing for example countries or continent borders. 
 This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO computation if \code{exclude.area} is TRUE. By default, it is \code{land}}
 
-\item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for calculating Area of Occupancy.  By default, equal to 2}
+\item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for estimating Area of Occupancy.  By default, equal to 2}
 
-\item{Cell_size_locations}{a numeric, value indicating the grid size in decimal degrees used for calculating the number of location. By default, equal to 10}
+\item{Cell_size_locations}{a numeric, value indicating the grid size in decimal degrees used for estimating the number of location. By default, equal to 10}
 
-\item{Resol_sub_pop}{a numeric, value indicating the radius size in decimal degrees used for calculating the number of sub-population. By default, equal to 5}
+\item{Resol_sub_pop}{a numeric, value indicating the radius size in decimal degrees used for estimating the number of sub-population. By default, equal to 5}
 
 \item{DrawMap}{a logical, if TRUE a map is produced for each species in png format, unless map_pdf is TRUE. By default, it is TRUE}
 
 \item{add.legend}{a logical, if TRUE a legend and a submap showing distribution in 'country_map' are displayed for each map. By default, it is TRUE}
 
-\item{method_locations}{a character string,  indicating the method used for calculating the number of locations. 
+\item{method_locations}{a character string,  indicating the method used for estimating the number of locations. 
 "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
 
 \item{Rel_cell_size}{a numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is 
@@ -61,9 +62,9 @@ By default, no shapefile is provided}
 for EOO computation. By default, it is FALSE}
 
 \item{method_protected_area}{a character string. By default is "no_more_than_one"", which means occurrences within protected areas (if provided)
-will not be taken into account for counting the number of locations following the grid system, see Details. By default, it is "no_more_than_one"}
+will not be taken into account for estimating the number of locations following the grid system, see Details. By default, it is "no_more_than_one"}
 
-\item{SubPop}{a logical. If TRUE, sub-populations will be computed. By default, it is TRUE}
+\item{SubPop}{a logical. If TRUE, sub-populations will be estimated. By default, it is TRUE}
 
 \item{buff_width}{a numeric. For a specific case where all points of a species are on a straight line, 
 EOO is computed by first drawing this straight line and adding a buffer of \code{buff_width} decimal degrees around this line. By default, it is 0.1}
@@ -74,6 +75,9 @@ EOO is computed by first drawing this straight line and adding a buffer of \code
 
 \item{method.range}{a character string, if "convex.hull", EOO is based on a convex hull.
 	if "alpha.hull", EOO is based on alpha hull of \code{alpha} value. By default, it is "convex.hull"}
+
+
+\item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is NULL but some minimal translation of the raster are still done}
 
 
 \item{verbose}{a logical. Wether R should report information on progress}
@@ -104,10 +108,14 @@ If the optional field named 'coly' is provided, indicating collection year, a su
 displayed (if \code{DrawMap} and \code{add.legend} are both TRUE)
 showing a barplot of collection year
 
+\strong{Starting position of the raster used for estimating the Area Of Occupancy}\cr
+Different starting position of the raster used for estimate the AOO may provide different number of occupied cells. Hence, by default, 4 different translations of the raster is done (fixed increment of 1/4 resolution north and east) and the minimum number of occupied cells is used for estimating AOO. It is also possible to define a given number of random starting position of the raster using the argument \code{nbe.rep.rast.AOO}\cr
+
+
 \strong{Estimating number of locations}\cr
 Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for specifying the resolution). The number of locations is simply the number of occupied locations. Note that the grid position is overlaid in order to minimize the number of locations (several translation of the grid are performed and the one providing the minimum number of occupied cells is kept).
 
-\strong{Taking into account protected area for estimating number of locations}\cr
+\strong{Taking into account protected area for estimating the number of locations}\cr
 A location is defined by the IUCN as a "geographically or ecologically distinct area in which a single threatening event can affect all individuals of the taxon". A simple way to include threat level is to rely on a map of protected areas and assume that populations  within and outside protected areas are under different threat level.\cr
 
 If a map of protected area is provided, this one is used for estimating the number of locations by the following procedure:\cr
