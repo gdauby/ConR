@@ -107,7 +107,6 @@
 }
 
 
-
 .EOO.comp <-  function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="tax", alpha.hull=FALSE, convex.hull=TRUE,
                        alpha=1, buff.alpha=0.1, method.less.than3="not comp", verbose=TRUE) {
   
@@ -199,11 +198,6 @@
 }
 
 
-
-# EOO.computing <- function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="Species1",export_shp=FALSE,
-#                           alpha=1, buff.alpha=0.1, method.range="convex.hull", write_shp=FALSE, method.less.than3="not comp", write.results=TRUE, 
-#                           file.name="EOO.results", verbose=TRUE)
-  
 EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_shp=FALSE, 
                             alpha=1, buff.alpha=0.1, method.range="convex.hull",
                             Name_Sp="Species1", 
@@ -364,7 +358,6 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-
 .AOO.estimation <- function(coordEAC, Cell_size_AOO=2, nbe.rep.rast.AOO=NULL, poly_borders=poly_borders) {
   
   Corners <- rbind(c(min(coordEAC[,1]), max(coordEAC[,1])), c(min(coordEAC[,2]), max(coordEAC[,2])))
@@ -415,8 +408,6 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
   return(AOO)
 }
-
-
 
 
 .IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, 
@@ -988,9 +979,6 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-
-
-
 IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10, 
                        Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
                        DrawMap = TRUE, add.legend = TRUE, 
@@ -1102,7 +1090,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   Results
 }
 
-
+### Internal function used within map.res function
 .prop_threat <- function(Cell_count, threshold) {
   NbeRec <- nrow(Cell_count)
   if(NbeRec >= threshold) {
@@ -1118,7 +1106,6 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
 
 map.res <- function(Results, Occurrences, country_map=NULL, Resol=1, threshold=0, LatMin=NULL, LatMax=NULL, LongMin=NULL, 
                     LongMax=NULL, export_map=FALSE, file_name=NULL, export_data=FALSE) {
-  
   
   if(nrow(Results)!=length(unique(as.character(Occurrences[,3])))) stop("Results and Occurrences input files have different number of species")
   
