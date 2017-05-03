@@ -740,6 +740,8 @@ map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=
 ```{r include=F, echo=F}
 files <- list.files(paste(getwd(), "/MyIUCNresults_results_map/", sep=""), full.names = T)
 file.remove(files[-grep("Berlinia_bruneelii", files)])
+#files <- list.files(paste(getwd(), "/", sep=""), full.names = T)
+#unlink(files[grep("Berlinia_bruneelii", files)])
 ```
 
 

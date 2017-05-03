@@ -143,7 +143,7 @@
        }
      }
      
-     OUTPUT <- round(EOO, 3)
+     OUTPUT <- round(EOO, 0)
      
   }else{
     
@@ -171,7 +171,7 @@
         p1 <- croped.EOO[[2]]
         EOO <- croped.EOO[[1]]
       }else{
-        EOO <- round(areaPolygon(p1)/1000000,3)
+        EOO <- round(areaPolygon(p1)/1000000,0)
       }
       
     }else{
@@ -186,7 +186,7 @@
       }
       
       ## If exclude.area is TRUE
-      if(exclude.area) {EOO <- croped.EOO[[1]]}else{EOO <- round(areaPolygon(p1)/1000000,3)}
+      if(exclude.area) {EOO <- croped.EOO[[1]]}else{EOO <- round(areaPolygon(p1)/1000000,0)}
     }
     
     OUTPUT <- list(EOO, p1)
@@ -339,7 +339,9 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
 }
 
 
-subpop.comp <- function(XY, Resol_sub_pop) {
+subpop.comp <- function(XY, Resol_sub_pop=NULL) {
+  
+  if(is.null(Resol_sub_pop)) stop("Resol_sub_pop is missing, please provide a value")
   
   if(any(is.na(XY[,c(1,2)]))) {
     length(which(rowMeans(is.na(XY[,1:2]))>0))
@@ -363,19 +365,75 @@ subpop.comp <- function(XY, Resol_sub_pop) {
 
 
 
+.AOO.estimation <- function(coordEAC, Cell_size_AOO=2, nbe.rep.rast.AOO=NULL, poly_borders=poly_borders) {
+  
+  Corners <- rbind(c(min(coordEAC[,1]), max(coordEAC[,1])), c(min(coordEAC[,2]), max(coordEAC[,2])))
+  
+  ## if nbe.rep.rast.AOO is not provided, translations of 1/4 of resolution for varying the position of the raster
+  if(is.null(nbe.rep.rast.AOO)) {
+    Occupied_cells <- c()
+    decal <- c(0,1,2,3)
+    for (h in decal) {
+      ext = extent(floor(Corners[1,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[1,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000, 
+                   floor(Corners[2,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[2,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000)
+      r = raster(ext, resolution=Cell_size_AOO*1000,crs=crs(poly_borders))
+      r2_AOO <- rasterize(coordEAC, r)
+      OCC <- length(which(!is.na(values(r2_AOO))))
+      Occupied_cells <- c(Occupied_cells, OCC)
+      
+      ### If only one occupied cell, stop the production of raster
+      if(OCC==1) break
+    }
+    h <- decal[which.min(Occupied_cells)]
+    Occupied_cells <- min(Occupied_cells)
+  }
+  
+  ## if nbe.rep.rast.AOO is provided, random starting position of the raster
+  if(!is.null(nbe.rep.rast.AOO)) {
+    Occupied_cells <- c()
+    # rd.1.vec <- c()
+    # rd.2.vec <- c()
+    for (h in 1:nbe.rep.rast.AOO) {
+      rd.1 <- runif(1)*Cell_size_AOO*1000
+      rd.2 <- runif(1)*Cell_size_AOO*1000
+      
+      ext = extent(floor(Corners[1,1])-rd.1-2*Cell_size_AOO*1000, floor(Corners[1,2])+rd.1+2*Cell_size_AOO*1000, 
+                   floor(Corners[2,1])-rd.2-2*Cell_size_AOO*1000, floor(Corners[2,2])+rd.2+2*Cell_size_AOO*1000)
+      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs(poly_borders))
+      r
+      r2_AOO <- rasterize(coordEAC, r)
+      OCC <- length(which(!is.na(values(r2_AOO))))
+      Occupied_cells <- c(Occupied_cells, OCC)
+      # rd.1.vec <- c(rd.1.vec, rd.1)
+      # rd.2.vec <- c(rd.2.vec, rd.2)
+      if(OCC==1) break
+    }
+  }
+  h <- decal[which.min(Occupied_cells)]
+  Occupied_cells <- min(Occupied_cells)
+  
+  AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
+  return(AOO)
+}
+
+
+
 
 .IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, 
                       method_locations=c("fixed_grid"), Rel_cell_size=0.05,
                       protec.areas=NULL, exclude.area=FALSE, method_protected_area="no_more_than_one",
                       ID_shape_PA="WDPA_PID", buff_width=0.1, NamesSp="species1", write_shp=FALSE,
-                      file_name=NULL, add.legend=TRUE, DrawMap=T, map_pdf=FALSE, SubPop=TRUE, MinMax,
+                      file_name=NULL, add.legend=TRUE, DrawMap=T, map_pdf=FALSE, draw.poly.EOO=TRUE, SubPop=TRUE, MinMax,
                       alpha=1, buff.alpha=0.1, method.range="convex.hull", nbe.rep.rast.AOO=NULL, verbose=TRUE, showWarnings=TRUE) {
   
+  
+  ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
   if(DrawMap) {
     full_poly_borders <- poly_borders
-    poly_borders <- crop(poly_borders, extent(MinMax)+20)
+    poly_borders <- crop(poly_borders, extent(MinMax)+30)
   }
   
+  ### Getting by default land map if poly_borders is not provided
   if(is.null(poly_borders)) {
     data('land', package='ConR', envir=environment()) 
     land <- get("land", envir=environment()) 
@@ -383,10 +441,10 @@ subpop.comp <- function(XY, Resol_sub_pop) {
       poly_borders=land
     }
   
-  ## Equal Area cylindrical projection
+  ## Equal Area cylindrical projection used for AOO estimation
   projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
   
-  ## Evaluation following Criteria B
+  ## Initialization of data frame for stocking results
   if(is.null(protec.areas)){
     Results <- as.data.frame(matrix(NA,9,1))
     colnames(Results) <- NamesSp
@@ -403,11 +461,12 @@ subpop.comp <- function(XY, Resol_sub_pop) {
   if(verbose) cat(" ",paste("Evaluation of", as.character(NamesSp)))
   
   XY <- DATA[,c(2:1)]
+  ### Projection into equal area cylindrical
   coordEAC <- as.data.frame(matrix(unlist(rgdal::project(as.matrix(XY),proj=as.character(projEAC),inv=FALSE)), ncol=2))
   rownames(coordEAC) <- seq(1,nrow(coordEAC),1)
   
-  ############################################################## 
-  ##############################  Sub-populations############################## 
+  ##########################################################################################
+  ##############################  Sub-populations estimations ############################## 
   
   if(SubPop) {
     subpop_stats <- subpop.comp(DATA, Resol_sub_pop=Resol_sub_pop)
@@ -415,13 +474,17 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     NbeSubPop <- subpop_stats[[1]]
   }
   
+  
   ##########################################################################################
-  ###############
-  ### Locations
-  ###############
+  ##############################  Estimations of number of Locations ####################### 
+  
+  ## range of lat and long
   Corners <- rbind(c(min(XY[,1]), max(XY[,1])), c(min(XY[,2]), max(XY[,2])))
+  
+  ## geographical distances for all pairs of occurrences
   if(nrow(coordEAC)>1) pairwise_dist <- dist(coordEAC,  upper = F)
   
+  ## resolution definition
   if(any(method_locations=="fixed_grid")) Resolution <- Cell_size_locations*1000
   if(any(method_locations=="sliding scale")){
     if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size
@@ -430,15 +493,15 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     }
   }
   
-  ### Convert resolution of grid in km into decimal degrees after projection, taking mean X and Y of occurrences
+  ## Convert resolution of grid in km into decimal degrees after projection, taking mean X and Y of occurrences
   border_to_center <- as.data.frame(matrix(NA, 2, 2))
   border_to_center[1,] <- c(mean(coordEAC[,1]), mean(coordEAC[,2]))
   border_to_center[2,] <- c( border_to_center[1,1]+Resolution,  border_to_center[1,2])
   DIST_circle <- matrix(unlist(rgdal::project(as.matrix(border_to_center),proj=as.character(projEAC),inv =T)), ncol=2)
-  
   cell_size_deg <- abs((DIST_circle[1,1]-DIST_circle[2,1]))
   
-  if(!is.null(protec.areas)) { ### Taking into account Protected Areas
+  
+  if(!is.null(protec.areas)) { ### Taking into account Protected Areas if provided
     DATA_SF <- as.data.frame(XY)
     colnames(DATA_SF) <- c("ddlon","ddlat")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
@@ -568,11 +631,11 @@ subpop.comp <- function(XY, Resol_sub_pop) {
   }
   
   
-  ###############
-  ### EOO
-  ###############
-
-  if(nrow(unique(XY))>2) {
+   
+  if(nrow(unique(XY))>2) { ### if more than 2 uniques occurrences
+    
+  ##########################################################################################
+  ##############################  EOO estimation              ##############################
     
     EOO_ <- EOO.computing(XY[,c(2,1)], exclude.area=exclude.area, country_map=poly_borders, Name_Sp=NamesSp, 
                           buff_width=buff_width, export_shp=TRUE,
@@ -580,111 +643,14 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     p1 <- EOO_[[1]][[2]]
     EOO <- EOO_[[1]][[1]]
     
+  ##########################################################################################
+  ##############################  AOO estimation              ##############################
     
-    ###############
-    ### AOO
-    ###############
-    Corners <- rbind(c(min(XY[,1]), max(XY[,1])), c(min(XY[,2]), max(XY[,2])))
-    
-    # border_to_center <- as.data.frame(matrix(NA, 2, 2))
-    # border_to_center[1,] <- c(mean(coordEAC[,1]), mean(coordEAC[,2]))
-    # border_to_center[2,] <- c( border_to_center[1,1]+Cell_size_AOO*1000,  border_to_center[1,2])
-    # DIST_circle <- matrix(unlist(rgdal::project(as.matrix(border_to_center),proj=as.character(projEAC),inv =T)), ncol=2)
-    # cell_size_deg <- abs((DIST_circle[1,1]-DIST_circle[2,1]))
-    # 
-    # Occupied_cells <- c()
-    # decal <- c(0,1,2,3)
-    # for (h in decal) {
-    #   ext = extent(floor(Corners[1,1])-h*(cell_size_deg/4)-2, floor(Corners[1,2])+h*(cell_size_deg/4)+2, 
-    #                floor(Corners[2,1])-h*(cell_size_deg/4)-2, floor(Corners[2,2])+h*(cell_size_deg/4)+2)
-    #   r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-    #   r2_AOO <- rasterize(XY, r)
-    #   OCC <- length(which(!is.na(values(r2_AOO))))
-    #   Occupied_cells <- c(Occupied_cells, OCC)
-    #   
-    #   ### If only one occupied cell, stop the production of raster
-    #   if(OCC==1) break
-    # }
-    # h <- decal[which.min(Occupied_cells)]
-    # Occupied_cells <- min(Occupied_cells)
-    
-    Corners <- rbind(c(min(coordEAC[,1]), max(coordEAC[,1])), c(min(coordEAC[,2]), max(coordEAC[,2])))
-    
-    if(is.null(nbe.rep.rast.AOO)) {
-      Occupied_cells <- c()
-      decal <- c(0,1,2,3)
-      for (h in decal) {
-        ext = extent(floor(Corners[1,1])-h*(Cell_size_AOO*1000/4)-2, floor(Corners[1,2])+h*(Cell_size_AOO*1000/4)+2, 
-                     floor(Corners[2,1])-h*(Cell_size_AOO*1000/4)-2, floor(Corners[2,2])+h*(Cell_size_AOO*1000/4)+2)
-        r = raster(ext, resolution=Cell_size_AOO*1000,crs=crs(poly_borders))
-        r2_AOO <- rasterize(coordEAC, r)
-        OCC <- length(which(!is.na(values(r2_AOO))))
-        Occupied_cells <- c(Occupied_cells, OCC)
-        
-        ### If only one occupied cell, stop the production of raster
-        if(OCC==1) break
-      }
-      h <- decal[which.min(Occupied_cells)]
-      Occupied_cells <- min(Occupied_cells)
-    }
-    
-    # if(!is.null(nbe.rep.rast.AOO)) {
-    #   Occupied_cells <- c()
-    #   # rd.1.vec <- c()
-    #   # rd.2.vec <- c()
-    #   for (h in 1:nbe.rep.rast.AOO) {
-    #     rd.1 <- runif(1)*cell_size_deg
-    #     rd.2 <- runif(1)*cell_size_deg
-    #     
-    #     ext = extent(floor(Corners[1,1])-rd.1-2, floor(Corners[1,2])+rd.1+2, 
-    #                  floor(Corners[2,1])-rd.2-2, floor(Corners[2,2])+rd.2+2)
-    #     r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-    #     r
-    #     r2_AOO <- rasterize(XY, r)
-    #     OCC <- length(which(!is.na(values(r2_AOO))))
-    #     Occupied_cells <- c(Occupied_cells, OCC)
-    #     # rd.1.vec <- c(rd.1.vec, rd.1)
-    #     # rd.2.vec <- c(rd.2.vec, rd.2)
-    #     if(OCC==1) break
-    #   }
-    # }
-    # h <- decal[which.min(Occupied_cells)]
-    # Occupied_cells <- min(Occupied_cells)
-    
-
-    if(!is.null(nbe.rep.rast.AOO)) {
-      Occupied_cells <- c()
-      # rd.1.vec <- c()
-      # rd.2.vec <- c()
-      for (h in 1:nbe.rep.rast.AOO) {
-        rd.1 <- runif(1)*Cell_size_AOO*1000
-        rd.2 <- runif(1)*Cell_size_AOO*1000
-        
-        ext = extent(floor(Corners[1,1])-rd.1-2, floor(Corners[1,2])+rd.1+2, 
-                     floor(Corners[2,1])-rd.2-2, floor(Corners[2,2])+rd.2+2)
-        r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs(poly_borders))
-        r
-        r2_AOO <- rasterize(coordEAC, r)
-        OCC <- length(which(!is.na(values(r2_AOO))))
-        Occupied_cells <- c(Occupied_cells, OCC)
-        # rd.1.vec <- c(rd.1.vec, rd.1)
-        # rd.2.vec <- c(rd.2.vec, rd.2)
-        if(OCC==1) break
-      }
-    }
-    h <- decal[which.min(Occupied_cells)]
-    Occupied_cells <- min(Occupied_cells)
-    
-    
-    
-    
-    
-    AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
+    AOO <- .AOO.estimation(coordEAC, Cell_size_AOO = Cell_size_AOO, nbe.rep.rast.AOO = nbe.rep.rast.AOO, poly_borders = poly_borders)
     
     if(EOO<AOO) EOO <- AOO ### If EOO is < AOO, EOO is put equal to AOO
     
-    
-    
+    ## recording results
     Results["EOO",1] <- as.numeric(EOO)
     Results["AOO",1] <- AOO
     if(SubPop) Results["Nbe_subPop",1] <- NbeSubPop
@@ -699,7 +665,7 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     Nbe_Loc <- as.numeric(Results["Nbe_loc",1])
     
     ##################
-    ### Criteria B assessment
+    ### Criteria B assessment following IUCN thresholds
     if(EOO<20000){
       Rank_EOO <- 3
       if(EOO<5000){
@@ -731,11 +697,9 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     if(Rank_CriteriaB==1) Cat <- "CR"
     if(Rank_CriteriaB==2) Cat <- "EN"
     if(Rank_CriteriaB==3 && Nbe_Loc>0 && Nbe_Loc<11) Cat <- "VU"
-    # if(Rank_CriteriaB==3 && Nbe_Loc==6) Cat <- "VU"
-    
+
     if(Rank_CriteriaB>3 && Nbe_Loc>=0) Cat <- "LC" ### 
-    # if(Rank_CriteriaB>3 && Nbe_Loc>13) Cat <- "LC"
-    
+
     if(Rank_B1a>Rank_B2a) Cat_Code <- paste(Cat,"B2a")
     if(Rank_B1a<Rank_B2a) Cat_Code <- paste(Cat,"B1a")
     if(Rank_B1a==Rank_B2a) Cat_Code <- paste(Cat,"B1a+B2a")
@@ -763,9 +727,21 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     if(Rank_B1a==3) Results["Category_EOO",1] <- "VU"
     if(Rank_B1a>3) Results["Category_EOO",1] <- "NT or LC"
     
-  }else{
-    p1 <- NULL
-    AOO <- nrow(unique(floor((unique(coordEAC))/(Cell_size_AOO*1000))))*Cell_size_AOO*Cell_size_AOO  ### AOO
+  }else{ ### if less than 3 uniques occurrences
+    
+    p1 <- NULL ## EOO shapefile is NULL
+    
+    
+    if(nrow(coordEAC)==2) { ## if two uniques occurrences
+      if(pairwise_dist<=Resolution) {
+        AOO <- Cell_size_AOO*Cell_size_AOO ## 1 occupied cell if distance <= resolution
+      }else{
+        AOO <- 2*Cell_size_AOO*Cell_size_AOO ## 2 occupied cells if distance > resolution
+      }
+    }else{
+      AOO <- Cell_size_AOO*Cell_size_AOO ## 1 occupied cell if one unique occurrence
+    }
+    
     Results["AOO",1] <- AOO
     if(SubPop) Results["Nbe_subPop",1] <- NbeSubPop
     Results["Nbe_unique_occ.",1] <- nrow(unique(XY))
@@ -776,26 +752,31 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     if(!is.null(protec.areas)) Results["Nbe_loc",1] <- LocNatParks + LocOutNatParks
     if(!is.null(protec.areas)) Results["Nbe_loc_PA",1] <- LocNatParks
     
+    
     if(!is.null(protec.areas)){
-      if(as.numeric(Results["Ratio_occ_within_PA",1])==100){ ### If all occurences are found within protected areas, the species is considered as not threatened
-        Results["Category_CriteriaB",1] <- "LC"
+      if(as.numeric(Results["Ratio_occ_within_PA",1])==100){
+        ### If all occurences are found within protected areas, the species is considered as not threatened
+        Results["Category_CriteriaB",1] <- "LC or NT"
       }else{
         if(Results["Nbe_loc",1]==1 & Results["AOO",1]<10){
+          ### If one location and AOO<10 --> CR
           Results["Category_CriteriaB",1] <- "CR"
           Results["Category_AOO",1] <- "CR"
         }
         if(Results["Nbe_loc",1]>1 & Results["AOO",1]<10) {
+          ### If more than one location and AOO<10 --> EN
           Results["Category_CriteriaB",1] <- "EN"
           Results["Category_AOO",1] <- "EN"
         }
       }
-      
     }else{
       if(Results["Nbe_loc",1]==1 & Results["AOO",1]<10){
+        ### If one location and AOO<10 --> CR
         Results["Category_CriteriaB",1] <- "CR"
         Results["Category_AOO",1] <- "CR"
       }
       if(Results["Nbe_loc",1]>1 & Results["AOO",1]<10) {
+        ### If more than one location and AOO<10 --> EN
         Results["Category_CriteriaB",1] <- "EN"
         Results["Category_AOO",1] <- "EN"
       }
@@ -810,8 +791,8 @@ subpop.comp <- function(XY, Resol_sub_pop) {
           Results["Category_CriteriaB",1] <- "VU"
           Results["Category_AOO",1] <- "VU"
         }else{
-          Results["Category_CriteriaB",1] <- "LC"
-          Results["Category_AOO",1] <- "LC"
+          Results["Category_CriteriaB",1] <- "LC or NT"
+          Results["Category_AOO",1] <- "LC or NT"
         }
       }
     }
@@ -835,10 +816,14 @@ subpop.comp <- function(XY, Resol_sub_pop) {
     
     if(!map_pdf) png(paste(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")),"/",NAME_FILE,".png", sep=""), width=2000, height=2000)
     
+    
+    ### Layout of the map
     par(mar=c(10, 12, 10, 2), xpd=FALSE, las=1)
     if(add.legend & !any(colnames(DATA)=="coly")) nf <- layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), c(4,1.5), c(4,1.5))
     if(any(colnames(DATA)=="coly") & add.legend) nf <- layout(matrix(c(1,1,1,1,1,1,2,3,4), 3, 3, byrow = TRUE), c(2,1.5,1.5), c(4,1.5,1.5))
     
+    
+    ### Mapping 
     if(!is.null(protec.areas)){
       if(LocOutNatParks==0){
         plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
@@ -869,7 +854,7 @@ subpop.comp <- function(XY, Resol_sub_pop) {
       }
     }
     
-    if(!is.null(p1)) plot(p1, add=T, col=rgb(red=0.2, green=0.2, blue=0.2, alpha=0.1))
+    if(!is.null(p1) & draw.poly.EOO) plot(p1, add=T, col=rgb(red=0.2, green=0.2, blue=0.2, alpha=0.1))
     
     plot(poly_borders, axes=FALSE, lty=1, add=T, lwd=1)
     
@@ -1006,19 +991,11 @@ subpop.comp <- function(XY, Resol_sub_pop) {
 
 
 
-# IUCN.eval <- function (DATA, country_map=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, method_locations="fixed_grid", Rel_cell_size=0.05, DrawMap=TRUE, 
-#                        add.legend=TRUE,
-#                        file_name=NULL, export_shp=FALSE, write_shp=FALSE, write.results=TRUE,
-#                        protec.areas=NULL, map_pdf=FALSE, exclude.area=FALSE, method_protected_area="no_more_than_one",
-#                        ID_shape_PA="WDPA_PID", buff_width=0.1, SubPop=TRUE,
-#                        alpha=1, buff.alpha=0.1, method.range="convex.hull", nbe.rep.rast.AOO=NULL, verbose=TRUE, showWarnings=TRUE) 
-
-
 IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10, 
                        Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
                        DrawMap = TRUE, add.legend = TRUE, 
                        file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
-                       write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, 
+                       write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
                        exclude.area = FALSE, method_protected_area = "no_more_than_one", 
                        ID_shape_PA = "WDPA_PID", 
                        buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
@@ -1091,7 +1068,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                                                      ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
                                                      MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
                                                      alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-                                                     nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings))
+                                                     nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO))
 
     if(map_pdf) dev.off()
 

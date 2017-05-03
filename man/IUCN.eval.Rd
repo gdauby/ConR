@@ -12,7 +12,7 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 	Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
 	DrawMap = TRUE, add.legend = TRUE, 
 	file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
-	write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, 
+	write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE,
 	exclude.area = FALSE, method_protected_area = "no_more_than_one", 
 	ID_shape_PA = "WDPA_PID", 
 	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
@@ -57,6 +57,8 @@ By default, no shapefile is provided}
 \item{ID_shape_PA}{a character string, indicating the field name of \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of protected areas}
 
 \item{map_pdf}{a logical, if TRUE, maps are exported in one pdf file. Otherwise, each species map is exported in png. By default, it is FALSE}
+
+\item{draw.poly.EOO}{a logical, if TRUE, the polygon used for estimating EOO is drawn. By default, it is TRUE}
 
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map} are cropped of \code{SpatialPolygons} used 
 for EOO computation. By default, it is FALSE}
