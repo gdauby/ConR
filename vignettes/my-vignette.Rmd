@@ -196,7 +196,7 @@ For using this function, you first has to install (if not yet installed) and loa
 `library(maptools)`
 
 For example, for importing a shapefile named *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly(MyShapefile, proj4string=CRS ("+proj=longlat +datum=WGS84"))`
+`readShapePoly("MyShapefile", proj4string=CRS("+proj=longlat +datum=WGS84"))`
 
 ---------------------------------------
 
@@ -671,7 +671,7 @@ IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec2", protec.areas 
 **Note 1:**
 Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://r-how.com/packages/maptools/readShapePoly). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
 For example, for importing a shapefile names *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly(MyShapefile, proj4string=CRS ("+proj=longlat +datum=WGS84"))`.
+`readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))`.
 
 **Note 2:**
 The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in the argument `protec.areas` as above. The argument `ID_shape_PA` should also be given and should represent the unique ID of each protected area in the provided shapefile. This can be checked by the following code:
@@ -727,6 +727,10 @@ MyResults <- read.csv("IUCN_results.csv", row.names=1)
 map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
  	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
 ```
+
+
+Maps should have been created in your working directory.
+
 
 <img src="IUCN__results_map/number_threatened_sp.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 

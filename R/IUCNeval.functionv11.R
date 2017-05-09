@@ -20,6 +20,9 @@
 }
 
 
+## The function XXX was originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
+## in a now broken link. It is also used in github functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
+
 .ahull_to_SPLDF <- function(x, proj4string=NA)
 {
   if(class(x) != 'ahull')
