@@ -17,3 +17,5 @@ LazyData: true
 Suggests: knitr,
     rmarkdown, alphahull
 VignetteBuilder: knitr
+URL: https://github.com/gdauby/ConR
+BugReports: https://github.com/gdauby/ConR/issues
