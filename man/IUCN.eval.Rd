@@ -167,7 +167,7 @@ Gilles Dauby
 }
 
 \seealso{
-\code{\link[biogeo]{biogeo}}
+\code{\link[biogeo]{https://CRAN.R-project.org/package=biogeo}}
 
 
 \code{\link[speciesgeocodeR]{speciesgeocodeR}}
