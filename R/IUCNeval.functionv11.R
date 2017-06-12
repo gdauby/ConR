@@ -220,7 +220,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
   
   if(exclude.area & is.null(country_map)) stop("exclude.area is TRUE but no country_map is provided")
   if(buff_width>80) stop("buff_width has unrealistic value")
-  if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are out of expected range")
+  if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
   
   if(method.range=="convex.hull") {
     convex.hull=TRUE
@@ -329,7 +329,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     XY <- XY[which(!is.na(XY[,2])),]
   }
   
-  if(any(XY[,1]>180) || any(XY[,1]< -180)|| any(XY[,2]< -180) || any(XY[,2]>180)) stop("coordinates are out of expected range")
+  if(any(XY[,1]>180) || any(XY[,1]< -180)|| any(XY[,2]< -180) || any(XY[,2]>180)) stop("coordinates are outside of expected range")
   
   colnames(XY)[1:3] <- c("ddlat","ddlon","tax")
   XY$tax <- as.character(XY$tax)
@@ -991,7 +991,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   if(is.factor(DATA[,"tax"])) DATA[,"tax"] <- as.character(DATA[,"tax"])
   
   if(!is.numeric(DATA[,1]) || !is.numeric(DATA[,2])) stop("coordinates in DATA should be numeric")
-  if(any(DATA[,1]>180) || any(DATA[,1]< -180)|| any(DATA[,2]< -180) || any(DATA[,2]>180)) stop("coordinates are out of expected range")
+  if(any(DATA[,1]>180) || any(DATA[,1]< -180)|| any(DATA[,2]< -180) || any(DATA[,2]>180)) stop("coordinates are outside of expected range")
   if(!is.null(country_map)) if(!class(country_map)=="SpatialPolygonsDataFrame") stop("Country_map should be a spatialpolygondataframe")
   if(!is.null(protec.areas)) {
     if(!class(protec.areas)=="SpatialPolygonsDataFrame") stop("protec.areas should be a spatialpolygondataframe")
