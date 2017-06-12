@@ -68,6 +68,12 @@ For the very specific (and infrequent) case where all occurrences
 are localized on a straight line (in which case EOO would be null),
 EOO is estimated by the area of polygon surrounding this straight line with a buffer of \code{buff.alpha} decimal degree.
 There is a warning when this happen.
+
+\strong{Limitation}\cr
+
+For a species whose occurrences span more than 180°, EOO is not computed.
+This is the case for example for species whose distribution span the 180th meridian.
+
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field containing EOO in square kilometres.

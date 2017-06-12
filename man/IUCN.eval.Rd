@@ -129,6 +129,11 @@ This can be checked by the following code:
 \code{colnames(ProtectedAreas@data)}
 Where ProtectedAreas is the name of your shapefile.
 
+\strong{Limitation in the estimations of EOO}\cr
+
+For a species whose occurrences span more than 180°, EOO is not computed.
+This is the case for example for species whose distribution span the 180th meridian.
+
 }
 
 
@@ -150,7 +155,7 @@ The \code{dataframe} has as many rows as taxa and the following fields:
 [,2] \tab AOO \tab numeric, AOO (square kilometres)\cr
 [,3] \tab Nbe_unique_occ. \tab numeric, Number of unique occurrences\cr
 [,4] \tab Nbe_subPop \tab numeric, Number of subpopulations\cr
-[,5] \tab Nbe_loc numeric, Number of locations\cr
+[,5] \tab Nbe_loc \tab numeric, Number of locations\cr
 [,6] \tab Category_CriteriaB \tab character, IUCN threat category according to Criterion B\cr
 [,7] \tab Category_code \tab character, IUCN annotation\cr
 [,8] \tab Category_AOO \tab character, IUCN threat category according to Criterion B ignoring EOO\cr
@@ -167,8 +172,7 @@ Gilles Dauby
 }
 
 \seealso{
-\code{\link[biogeo]{https://CRAN.R-project.org/package=biogeo}}
-
+\url{https://CRAN.R-project.org/package=biogeo}
 
 \code{\link[speciesgeocodeR]{speciesgeocodeR}}
 }
