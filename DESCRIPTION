@@ -8,14 +8,15 @@ Description: Multi-species estimation of geographical range parameters
 	for preliminary assessment of conservation status following Criterion B of the 
 	International Union for Conservation of Nature (IUCN, 
 	see <http://www.iucnredlist.org>).
-Depends: 
+Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
 Imports: fields, geosphere, grDevices, maptools, methods,
         rgdal, rgeos, spatstat, spatstat.utils
 LazyData: true
 Suggests: knitr,
-    rmarkdown, alphahull
+    rmarkdown, alphahull,
+    testthat
 VignetteBuilder: knitr
 URL: https://github.com/gdauby/ConR
 BugReports: https://github.com/gdauby/ConR/issues
