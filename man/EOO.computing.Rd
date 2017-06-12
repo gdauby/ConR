@@ -71,7 +71,7 @@ There is a warning when this happen.
 
 \strong{Limitation}\cr
 
-For a species whose occurrences span more than 180°, EOO is not computed.
+For a species whose occurrences span more than 180 degrees, EOO is not computed.
 This is the case for example for species whose distribution span the 180th meridian.
 
 }
