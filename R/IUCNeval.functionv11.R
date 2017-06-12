@@ -1,5 +1,4 @@
 
-
 .Convex.Hull.Poly <- function(XY) {
   hpts <- chull(x =  XY[,1], y = XY[,2]) ; hpts <- c(hpts, hpts[1])
   coord <- matrix(NA, length(hpts), 2)
@@ -289,25 +288,6 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
     XY <- XY[,c(2,1)]
     coordEAC <- as.data.frame(matrix(unlist(rgdal::project(as.matrix(XY),proj=as.character(projEAC),inv=FALSE)), ncol=2))
     rownames(coordEAC) <- seq(1,nrow(coordEAC),1)
-    
-    # unique_occ <- unique(XY)
-    # 
-    # border_to_center <- as.data.frame(matrix(NA, 2, 2))
-    # border_to_center[1,] <- c(mean(coordEAC[,1]), mean(coordEAC[,2]))
-    # border_to_center[2,] <- c(border_to_center[1,1]+Resol_sub_pop*1000, border_to_center[1,2])
-    # DIST_circle <- matrix(unlist(rgdal::project(as.matrix(border_to_center), 
-    #                                             proj=as.character(projEAC),inv =T)), ncol=2)
-    # cell_size_subpop <- abs((DIST_circle[1,1]-DIST_circle[2,1]))
-    
-    # p2=readWKT(paste("POINT(",mean(unique_occ[1,1])," ", mean(unique_occ[1,2]),")", sep=""))
-    # p2_Buffered1 <- gBuffer(p2, width = cell_size_subpop, id=1)
-    # if(nrow(unique_occ)>1){
-    #   for (LL in 2:nrow(unique_occ)){
-    #     p2=readWKT(paste("POINT(",mean(unique_occ[LL,1])," ", mean(unique_occ[LL,2]),")", sep=""))
-    #     p2_Buffered <- gBuffer(p2, width = cell_size_subpop, id=LL)
-    #     p2_Buffered1 <- gUnion(p2_Buffered1, p2_Buffered)
-    #   }
-    # }
     
     p2=readWKT(paste("POINT(",mean(unique(coordEAC)[1,1])," ", mean(unique(coordEAC)[1,2]),")", sep=""))
     p2_Buffered1 <- gBuffer(p2, width = Resol_sub_pop*1000, id=1)
@@ -1037,7 +1017,6 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   #####
   
   list_data <- split(DATA, f = DATA$tax)
-#   ptm <- proc.time()
 
   if(map_pdf){
     if(!is.null(file_name)) {
@@ -1050,8 +1029,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
     
     pdf(paste(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep=""),"/","results.pdf", sep=""), width=25, height=25)
   }
-
-
+  
   Results <- lapply(list_data, function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
                                                      write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
                                                      Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
@@ -1060,23 +1038,22 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                                                      MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
                                                      alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
                                                      nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO))
-
-    if(map_pdf) dev.off()
-
-    Results_short <- lapply(Results, `[`, 1)
-    Results_short <- as.data.frame(matrix(unlist(Results_short), nrow=nrow(Results[[1]][[1]])))
-    rownames(Results_short) <- rownames(Results[[1]][[1]])
-    colnames(Results_short) <- names(Results)
-    Results_short <- as.data.frame(t(Results_short))
-    
+  
+  if(map_pdf) dev.off()
+  
+  Results_short <- lapply(Results, `[`, 1)
+  Results_short <- lapply(Results_short, FUN = function(x) t(x[[1]]))
+  Results_short <- as.data.frame(do.call(rbind, Results_short), stringsAsFactors=FALSE)
+  Results_short[,1:4] <- apply(Results_short[,1:4], MARGIN = 2, as.numeric)
+  
   if(write.results) {
-    if(!is.null(file_name)) {
-      NAME_FILE <- file_name
+      if(!is.null(file_name)) {
+        NAME_FILE <- file_name
     }else{
-      NAME_FILE <- "IUCN_results"
-    }
+        NAME_FILE <- "IUCN_results"
+  }
     
-    write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
+  write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
     
   }
 
