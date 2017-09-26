@@ -10,7 +10,7 @@ subpop.comp(XY,Resol_sub_pop)
 \arguments{
 \item{XY}{Dataframe, coordinates in decimal degrees of one species, latitude in first colum,, longitude in second column}
 
-\item{Resol_sub_pop}{Numeric, radius of circles in km}
+\item{Resol_sub_pop}{Numeric, radius of circles in kilometres}
 
 }
 

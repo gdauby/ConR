@@ -29,7 +29,7 @@ This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO
 
 \item{Cell_size_locations}{a numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
-\item{Resol_sub_pop}{a numeric, value indicating the radius size in decimal degrees used for estimating the number of sub-population. By default, equal to 5}
+\item{Resol_sub_pop}{a numeric, value indicating the radius size in kilometres used for estimating the number of sub-population. By default, equal to 5}
 
 \item{DrawMap}{a logical, if TRUE a map is produced for each species in png format, unless map_pdf is TRUE. By default, it is TRUE}
 
