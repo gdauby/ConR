@@ -12,6 +12,8 @@ importFrom(rgeos, "readWKT", "gBuffer", "gUnion")
 
 importFrom(rgdal, "writeOGR")
 
+importFrom(tibble, "is_tibble")
+
 importFrom(spatstat, "union.owin", "area.owin", "setminus.owin", "as.owin")
 
 importFrom(spatstat.utils, "is.hole.xypolygon")
