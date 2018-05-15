@@ -993,6 +993,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   
   if(is.factor(DATA[,"tax"])) DATA[,"tax"] <- as.character(DATA[,"tax"])
   
+  
   if(!is.numeric(DATA[,1]) || !is.numeric(DATA[,2]) || !is.double(DATA[,1]) || !is.double(DATA[,2])) stop("coordinates in DATA should be numeric")
   if(any(DATA[,1]>180) || any(DATA[,1]< -180)|| any(DATA[,2]< -180) || any(DATA[,2]>180)) stop("coordinates are outside of expected range")
   if(!is.null(country_map)) if(!class(country_map)=="SpatialPolygonsDataFrame") stop("Country_map should be a spatialpolygondataframe")
