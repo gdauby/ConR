@@ -735,41 +735,56 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
         ### If all occurences are found within protected areas, the species is considered as not threatened
         Results["Category_CriteriaB",1] <- "LC or NT"
       }else{
-        if(Results["Nbe_loc",1]==1 & Results["AOO",1]<10){
-          ### If one location and AOO<10 --> CR
-          Results["Category_CriteriaB",1] <- "CR"
+        if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
           Results["Category_AOO",1] <- "CR"
-        }
-        if(Results["Nbe_loc",1]>1 & Results["AOO",1]<10) {
-          ### If more than one location and AOO<10 --> EN
-          Results["Category_CriteriaB",1] <- "EN"
-          Results["Category_AOO",1] <- "EN"
+          
+        }else{
+          if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+            Results["Category_AOO",1] <- "EN"
+            
+          }else{
+            if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+              Results["Category_AOO",1] <- "VU"
+              
+            }else{
+              Results["Category_AOO",1] <- "LC or NT"
+            }
+          }
         }
       }
     }else{
-      if(Results["Nbe_loc",1]==1 & Results["AOO",1]<10){
-        ### If one location and AOO<10 --> CR
-        Results["Category_CriteriaB",1] <- "CR"
+      if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
         Results["Category_AOO",1] <- "CR"
-      }
-      if(Results["Nbe_loc",1]>1 & Results["AOO",1]<10) {
-        ### If more than one location and AOO<10 --> EN
-        Results["Category_CriteriaB",1] <- "EN"
-        Results["Category_AOO",1] <- "EN"
+      }else{
+        if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+          Results["Category_AOO",1] <- "EN"
+          
+        }else{
+          if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+            Results["Category_AOO",1] <- "VU"
+            
+          }else{
+            Results["Category_AOO",1] <- "LC or NT"
+          }
+        }
       }
     }
     
     if(is.na(Results["Category_AOO",1])) {
-      if(Results["AOO",1] < 500) {
-          Results["Category_CriteriaB",1] <- "EN"
-          Results["Category_AOO",1] <- "EN"
+      if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
+        Results["Category_AOO",1] <- "CR"
+        
       }else{
-        if(Results["AOO",1] < 2000) {
-          Results["Category_CriteriaB",1] <- "VU"
-          Results["Category_AOO",1] <- "VU"
+        if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+          Results["Category_AOO",1] <- "EN"
+          
         }else{
-          Results["Category_CriteriaB",1] <- "LC or NT"
-          Results["Category_AOO",1] <- "LC or NT"
+          if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+            Results["Category_AOO",1] <- "VU"
+            
+          }else{
+            Results["Category_AOO",1] <- "LC or NT"
+          }
         }
       }
     }
