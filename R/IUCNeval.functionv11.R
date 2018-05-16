@@ -989,7 +989,8 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                        ID_shape_PA = "WDPA_PID", 
                        buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
                        method.range="convex.hull", nbe.rep.rast.AOO=NULL,
-                       verbose=TRUE, showWarnings=TRUE) {
+                       verbose=TRUE, showWarnings=TRUE,
+                       write_file_option="excel") {
   
   if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
