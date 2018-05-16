@@ -10,7 +10,7 @@ EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_s
 	alpha=1, buff.alpha=0.1, method.range="convex.hull",
 	Name_Sp="Species1", 
 	buff_width=0.1, method.less.than3="not comp",
-	write.results=TRUE, 
+	write_results=TRUE, 
 	file.name="EOO.results", verbose=TRUE)
 }
 \arguments{
@@ -38,7 +38,7 @@ EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_s
 
 \item{method.less.than3}{a character string. If equal to "arbitrary", will give a value to species with two unique occurrences, see Details. By default is "not comp"}
 
-\item{write.results}{a logical. If TRUE, results will be exported in the working environment as a csv file. By default is TRUE}
+\item{write_results}{a logical. If TRUE, results will be exported in the working environment as a csv file. By default is TRUE}
 
 \item{file.name}{a character string. Name file for exported results in csv file. By default is "EOO.results"}
 

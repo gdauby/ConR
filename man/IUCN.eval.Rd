@@ -12,7 +12,7 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 	Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
 	DrawMap = TRUE, add.legend = TRUE, 
 	file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
-	write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE,
+	write_results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE,
 	exclude.area = FALSE, method_protected_area = "no_more_than_one", 
 	ID_shape_PA = "WDPA_PID", 
 	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
@@ -48,7 +48,9 @@ given by the maximum distance separating two occurrences multiplied by \code{Rel
 \item{write_shp}{a logical, if TRUE, shapefiles of \code{SpatialPolygons} used for EOO computation 
 are written as ESRI shapefiles in a sub-directory in the working directory. By default, it is FALSE}
 
-\item{write.results}{a logical, if TRUE, results are exported in csv file. By default, it is TRUE}
+\item{write_results}{a logical, if TRUE, results are exported in a file which can csv or excel, see write_file_option. By default, it is TRUE}
+
+\item{write_file_option}{a character, if "excel", results are exported in excel file, if "csv", results are exported in csv. By default, it is "excel"}
 
 \item{protec.areas}{a \code{SpatialPolygonsDataFrame}, shapefile with protected areas. 
 If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). 

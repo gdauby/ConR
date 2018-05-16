@@ -207,7 +207,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
                             alpha=1, buff.alpha=0.1, method.range="convex.hull",
                             Name_Sp="Species1", 
                             buff_width=0.1, method.less.than3="not comp",
-                            write.results=TRUE, 
+                            write_results=TRUE, 
                             file.name="EOO.results", verbose=TRUE){
   
   if(any(is.na(XY[,c(1:2)]))) {
@@ -278,7 +278,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
   Results_short <- as.data.frame(t(Results_short))
   colnames(Results_short) <- "EOO"
   
-  if(write.results) write.csv(Results_short, paste(getwd(),"/", file.name, ".csv", sep=""))
+  if(write_results) write.csv(Results_short, paste(getwd(),"/", file.name, ".csv", sep=""))
   
   if(!export_shp) OUTPUT <- Results_short
   
@@ -616,7 +616,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     
     EOO_ <- EOO.computing(XY[,c(2,1)], exclude.area=exclude.area, country_map=poly_borders, Name_Sp=NamesSp, 
                           buff_width=buff_width, export_shp=TRUE,
-                          alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, write.results=FALSE, verbose=FALSE)
+                          alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, write_results=FALSE, verbose=FALSE)
     p1 <- EOO_[[1]][[2]]
     EOO <- EOO_[[1]][[1]]
     
@@ -984,7 +984,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                        Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
                        DrawMap = TRUE, add.legend = TRUE, 
                        file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
-                       write.results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
+                       write_results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
                        exclude.area = FALSE, method_protected_area = "no_more_than_one", 
                        ID_shape_PA = "WDPA_PID", 
                        buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
@@ -1070,20 +1070,19 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   Results_short <- as.data.frame(do.call(rbind, Results_short), stringsAsFactors=FALSE)
   Results_short[,1:4] <- apply(Results_short[,1:4], MARGIN = 2, as.numeric)
   
-  if(write.results) {
+  if(write_results) {
       if(!is.null(file_name)) {
         NAME_FILE <- file_name
     }else{
         NAME_FILE <- "IUCN_results"
-  }
+    }
     
-  # write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
-  
-  
-  Results_short <- data.frame(taxa=rownames(Results_short), Results_short)
-  
-  writexl::write_xlsx(Results_short, path = paste(getwd(),"/", NAME_FILE, ".xlsx", sep=""))
-  
+    if(write_file_option=="csv") write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
+
+    if(write_file_option=="excel") {
+      Results_short <- data.frame(taxa=rownames(Results_short), Results_short)
+      writexl::write_xlsx(Results_short, path = paste(getwd(),"/", NAME_FILE, ".xlsx", sep=""))
+    }
   
   }
 
