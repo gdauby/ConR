@@ -405,7 +405,7 @@ IUCN.eval(MyData)
 ```
 Because the EOO computation (using `EOO.computing`, see 1.3) is included within `IUCN.eval` function, we have the **same arguments** available (see 1.3) and the **same warnings** (see 1.3.6)
 
-## Output values: IUCN categories and parameters estimation
+## Output: IUCN categories and parameters estimation
 
 The output of the function is a data frame that provides several paramaters as well as the preliminary IUCN category.  
 
@@ -418,13 +418,17 @@ MyResults <- IUCN.eval(MyData)
 head(MyResults)
 ```
 
-Note that by default, a csv file has been created in your working directory *Your_R_directory*. 
+Note that by default, an excel file has been created in your working directory *Your_R_directory*. 
+If you prefer to have your output exported as csv file, you can do it by changing the argument *write_file_option*:
+```
+IUCN.eval(DATA = MyData, write_file_option = "csv")
+```
 
 ```{r include=T, echo=FALSE}
 knitr::kable(head(MyResults))
 ```
 
-This csv file is named by default *IUCN_results.csv*
+This excel file is named by default *IUCN_results.xlsx*
 But you can change the file name using the following code:
 
 ```
