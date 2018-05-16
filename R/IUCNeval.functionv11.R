@@ -998,7 +998,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   }
   colnames(DATA)[1:3] <- c("ddlat","ddlon","tax")
   
-  if(is.tibble(DATA)) DATA <- as.data.frame(DATA)
+  if(tibble::is.tibble(DATA)) DATA <- as.data.frame(DATA)
   
   if(any(is.na(DATA[,1:2]))) {
     length(which(rowMeans(is.na(DATA[,1:2]))>0))
