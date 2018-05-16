@@ -991,7 +991,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                        method.range="convex.hull", nbe.rep.rast.AOO=NULL,
                        verbose=TRUE, showWarnings=TRUE) {
   
-  if(class(DATA)=="spgeoIN") {
+  if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
     DATA <- DATA_2[,c(2,1,3)]
   }
@@ -1077,8 +1077,14 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
         NAME_FILE <- "IUCN_results"
   }
     
-  write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
-    
+  # write.csv(Results_short, paste(getwd(),"/", NAME_FILE, ".csv", sep=""))
+  
+  
+  Results_short <- data.frame(taxa=rownames(Results_short), Results_short)
+  
+  writexl::write_xlsx(Results_short, path = paste(getwd(),"/", NAME_FILE, ".xlsx", sep=""))
+  
+  
   }
 
   if(!export_shp) {
