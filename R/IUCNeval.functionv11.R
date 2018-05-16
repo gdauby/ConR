@@ -736,35 +736,35 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
         Results["Category_CriteriaB",1] <- "LC or NT"
       }else{
         if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
-          Results["Category_AOO",1] <- "CR"
+          Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "CR"
           
         }else{
           if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
-            Results["Category_AOO",1] <- "EN"
+            Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "EN"
             
           }else{
             if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
-              Results["Category_AOO",1] <- "VU"
+              Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "VU"
               
             }else{
-              Results["Category_AOO",1] <- "LC or NT"
+              Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "LC or NT"
             }
           }
         }
       }
     }else{
       if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
-        Results["Category_AOO",1] <- "CR"
+        Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "CR"
       }else{
         if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
-          Results["Category_AOO",1] <- "EN"
+          Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "EN"
           
         }else{
           if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
-            Results["Category_AOO",1] <- "VU"
+            Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "VU"
             
           }else{
-            Results["Category_AOO",1] <- "LC or NT"
+            Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "LC or NT"
           }
         }
       }
