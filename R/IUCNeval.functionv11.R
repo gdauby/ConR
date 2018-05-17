@@ -197,7 +197,7 @@
     names(OUTPUT) <- c("EOO", "spatial.polygon")
   }
   
-  if(verbose) cat(" ",paste(Name_Sp,"EOO comp."))
+  # if(verbose) cat(" ",paste(Name_Sp,"EOO comp."))
   
   return(OUTPUT)
 }
@@ -435,7 +435,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
                            "Category_AOO","Category_EOO")
   }
   
-  if(verbose) cat(" ",paste("Evaluation of", as.character(NamesSp)))
+  # if(verbose) cat(" ",paste("Evaluation of", as.character(NamesSp)))
   
   XY <- DATA[,c(2:1)]
   ### Projection into equal area cylindrical
@@ -1055,14 +1055,48 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
     pdf(paste(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep=""),"/","results.pdf", sep=""), width=25, height=25)
   }
   
-  Results <- lapply(list_data, function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
+  
+  # system.time(Results <- lapply(list_data, function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
+  #                                                    write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
+  #                                                    Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
+  #                                                    method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
+  #                                                    ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
+  #                                                    MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
+  #                                                    alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
+  #                                                    nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO))
+  # )
+  
+  # pb <- progress_bar$new(total = length(list_data))
+  # 
+  # Results <- list()
+  # 
+  #   for (i in 1:length(list_data)) {
+  #     pb$tick()
+  #     
+  #     Results[[i]] <-
+  #       .IUCN.comp(list_data[[i]], NamesSp=as.character(unique(list_data[[i]]$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
+  #                  write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
+  #                  Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
+  #                  method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
+  #                  ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
+  #                  MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
+  #                  alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
+  #                  nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
+  #     
+  #     
+  #   }
+  
+  Results <-
+      plyr::llply(list_data, .fun=function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
                                                      write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
                                                      Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
                                                      method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
                                                      ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
                                                      MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
                                                      alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-                                                     nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO))
+                                                     nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
+                                                     showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO), .progress = "text")
+
   
   if(map_pdf) dev.off()
   

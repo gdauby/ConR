@@ -16,6 +16,10 @@ importFrom(tibble, "is_tibble")
 
 importFrom(writexl, "write_xlsx")
 
+# importFrom(progress, "progress_bar")
+
+importFrom(plyr, "llply")
+
 importFrom(spatstat, "union.owin", "area.owin", "setminus.owin", "as.owin")
 
 importFrom(spatstat.utils, "is.hole.xypolygon")
