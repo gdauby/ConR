@@ -675,7 +675,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     if(Rank_CriteriaB==2) Cat <- "EN"
     if(Rank_CriteriaB==3 && Nbe_Loc>0 && Nbe_Loc<11) Cat <- "VU"
 
-    if(Rank_CriteriaB>3 && Nbe_Loc>=0) Cat <- "LC" ### 
+    if(Rank_CriteriaB>3 && Nbe_Loc>=0) Cat <- "LC or NT" ### 
 
     if(Rank_B1a>Rank_B2a) Cat_Code <- paste(Cat,"B2a")
     if(Rank_B1a<Rank_B2a) Cat_Code <- paste(Cat,"B1a")
@@ -683,7 +683,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     
     if(!is.null(protec.areas)) {
       if(as.numeric(Results["Ratio_occ_within_PA",1])==100){
-        Results["Category_CriteriaB",1] <- "NT or LC"
+        Results["Category_CriteriaB",1] <- "LC or NT"
         Results["Category_code",1] <- Cat_Code 
       }else{
         Results["Category_CriteriaB",1] <- Cat
@@ -697,12 +697,12 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     if(Rank_B2a==1) Results["Category_AOO",1] <- "CR"
     if(Rank_B2a==2) Results["Category_AOO",1] <- "EN"
     if(Rank_B2a==3) Results["Category_AOO",1] <- "VU"
-    if(Rank_B2a>3) Results["Category_AOO",1] <- "NT or LC"
+    if(Rank_B2a>3) Results["Category_AOO",1] <- "LC or NT"
     
     if(Rank_B1a==1) Results["Category_EOO",1] <- "CR"
     if(Rank_B1a==2) Results["Category_EOO",1] <- "EN"
     if(Rank_B1a==3) Results["Category_EOO",1] <- "VU"
-    if(Rank_B1a>3) Results["Category_EOO",1] <- "NT or LC"
+    if(Rank_B1a>3) Results["Category_EOO",1] <- "LC or NT"
     
   }else{ ### if less than 3 uniques occurrences
     

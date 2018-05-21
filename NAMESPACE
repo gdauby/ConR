@@ -16,7 +16,6 @@ importFrom(tibble, "is_tibble")
 
 importFrom(writexl, "write_xlsx")
 
-# importFrom(progress, "progress_bar")
 
 importFrom(plyr, "llply")
 
