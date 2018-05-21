@@ -86,6 +86,10 @@ EOO is computed by first drawing this straight line and adding a buffer of \code
 
 \item{showWarnings}{a logical. Wether R should report warnings}
 
+\item{parallel}{a logical. Wether running in parallel. By default, it is FALSE}
+
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+
 }
 
 \details{

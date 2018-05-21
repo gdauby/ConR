@@ -990,7 +990,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                        buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
                        method.range="convex.hull", nbe.rep.rast.AOO=NULL,
                        verbose=TRUE, showWarnings=TRUE,
-                       write_file_option="excel") {
+                       write_file_option="excel", parallel=F, NbeCores=2) {
   
   if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
@@ -1097,7 +1097,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   #                                                    nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
   #                                                    showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO), .progress = "text")
 
-  doParallel::registerDoParallel(2)
+  if(parallel) doParallel::registerDoParallel(NbeCores)
   
   Results <- plyr::llply(list_data, .fun=function(x) {
     .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
@@ -1110,10 +1110,10 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
                showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
                 }
-                , .progress = "text", .parallel=T)
+                , .progress = "win", .parallel=parallel)
   
   
-  doParallel::stopImplicitCluster()
+  if(parallel) doParallel::stopImplicitCluster()
   
   if(map_pdf) dev.off()
   
