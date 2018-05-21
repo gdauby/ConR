@@ -1086,17 +1086,34 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   #     
   #   }
   
-  Results <-
-      plyr::llply(list_data, .fun=function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
-                                                     write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
-                                                     Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
-                                                     method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
-                                                     ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
-                                                     MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-                                                     alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-                                                     nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
-                                                     showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO), .progress = "text")
+  # Results <-
+  #     plyr::llply(list_data, .fun=function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
+  #                                                    write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
+  #                                                    Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
+  #                                                    method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
+  #                                                    ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
+  #                                                    MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
+  #                                                    alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
+  #                                                    nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
+  #                                                    showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO), .progress = "text")
 
+  doParallel::registerDoParallel(2)
+  
+  Results <- plyr::llply(list_data, .fun=function(x) {
+    .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
+               write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
+               Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
+               method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
+               ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
+               MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
+               alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
+               nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
+               showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
+                }
+                , .progress = "text", .parallel=T)
+  
+  
+  stopImplicitCluster()
   
   if(map_pdf) dev.off()
   
