@@ -1113,7 +1113,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                 , .progress = "text", .parallel=T)
   
   
-  stopImplicitCluster()
+  doParallel::stopImplicitCluster()
   
   if(map_pdf) dev.off()
   
