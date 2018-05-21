@@ -16,6 +16,8 @@ importFrom(tibble, "is_tibble")
 
 importFrom(writexl, "write_xlsx")
 
+importFrom("registerDoParallel", "stopImplicitCluster")
+
 
 importFrom(plyr, "llply")
 
