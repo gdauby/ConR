@@ -18,7 +18,6 @@ importFrom(writexl, "write_xlsx")
 
 importFrom(doParallel, "registerDoParallel", "stopImplicitCluster")
 
-
 importFrom(plyr, "llply")
 
 importFrom(spatstat, "union.owin", "area.owin", "setminus.owin", "as.owin")
