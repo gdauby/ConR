@@ -1,7 +1,7 @@
 Package: ConR
 Type: Package
 Title: Computation of Parameters Used in Preliminary Assessment of Conservation Status
-Version: 1.2.1
+Version: 1.2.2
 Author: Gilles Dauby
 Maintainer: Gilles Dauby <gildauby@gmail.com>
 Description: Multi-species estimation of geographical range parameters
@@ -12,7 +12,7 @@ Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
 Imports: fields, geosphere, grDevices, maptools, methods,
-        rgdal, rgeos, spatstat, spatstat.utils
+        rgdal, rgeos, spatstat, spatstat.utils, tibble, writexl, doParallel, plyr
 LazyData: true
 Suggests: knitr,
     rmarkdown, alphahull,
