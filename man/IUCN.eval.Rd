@@ -17,10 +17,11 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 	ID_shape_PA = "WDPA_PID", 
 	buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
 	method.range="convex.hull", nbe.rep.rast.AOO=NULL,
-	verbose=TRUE, showWarnings=TRUE)
+	showWarnings=TRUE, write_file_option="excel", 
+	parallel=F, NbeCores=2)
 }
 \arguments{
-\item{DATA}{a \code{dataframe} or an object of class \code{spgeoIN} see \code{\link[speciesgeocodeR]{speciesgeocodeR}}. See Details}
+\item{DATA}{a \code{dataframe} or an object of class \code{spgeoIN} see \url{https://github.com/azizka/speciesgeocodeR}. See Details}
 
 \item{country_map}{a \code{SpatialPolygonsDataFrame} or \code{SpatialPolygons} showing for example countries or continent borders. 
 This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO computation if \code{exclude.area} is TRUE. By default, it is \code{land}}
@@ -81,8 +82,6 @@ EOO is computed by first drawing this straight line and adding a buffer of \code
 	if "alpha.hull", EOO is based on alpha hull of \code{alpha} value. By default, it is "convex.hull"}
 
 \item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is NULL but some minimal translation of the raster are still done}
-
-\item{verbose}{a logical. Wether R should report information on progress}
 
 \item{showWarnings}{a logical. Wether R should report warnings}
 
@@ -180,7 +179,7 @@ Gilles Dauby
 \seealso{
 \url{https://CRAN.R-project.org/package=biogeo}
 
-\code{\link[speciesgeocodeR]{speciesgeocodeR}}
+\url{https://github.com/azizka/speciesgeocodeR}
 }
 
 
