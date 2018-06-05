@@ -44,7 +44,7 @@ This should be done everytime you open R.
 ```
 library(ConR)
 ```
-```{r include=FALSE}
+```{r loadData,include=FALSE}
 library(ConR)
 data(dataset.ex)
 MyData <- dataset.ex
@@ -72,7 +72,7 @@ The Extent of Occurrence (EOO) is
 ## Input file
 You can prepare an excel file with three different columns:
 
-```{r include=TRUE, echo=FALSE}
+```{r TableData,include=TRUE, echo=FALSE}
 knitr::kable(head(MyData))
 ```
 
@@ -694,16 +694,17 @@ Maps are drawn in fixed grid cells whose resolution and extent can be defined.
 Below, preliminary conservation status of all malagasy amphibian species of the example dataset are assessed by using the `IUCN.eval` function. Results are stored in an object MyResults.
 
 This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient.
+For a high number of species, parallelizing is a good option for fastening the computation.
 ```{r include=F, echo=F}
 data(Madagascar.protec)
 data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE)
+MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE)
 ```
 
 ```
 data(Madagascar.protec)
 data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", verbose=FALSE, showWarnings = FALSE)
+MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE)
 ```
 
 You can map the result by using the following code:
