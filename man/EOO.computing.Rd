@@ -11,7 +11,7 @@ EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_s
 	Name_Sp="Species1", 
 	buff_width=0.1, method.less.than3="not comp",
 	write_results=TRUE, 
-	file.name="EOO.results", verbose=TRUE)
+	file.name="EOO.results", parallel = F, NbeCores = 2, show_progress=F)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}
@@ -42,7 +42,13 @@ EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_s
 
 \item{file.name}{a character string. Name file for exported results in csv file. By default is "EOO.results"}
 
-\item{verbose}{a logical. Wether R should report information on progress}
+\item{parallel}{a logical. Wether running in parallel. By default, it is FALSE}
+
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+
+\item{show_progress}{a logical. Whether a bar showing progress in computation should be shown. By default, it is FALSE}
+
+
 	}
 	
 	
@@ -98,8 +104,7 @@ Gilles Dauby
 \seealso{
   \code{\link[alphahull]{ahull}}
   
-  
-  \code{\link[speciesgeocodeR]{CalcRange}}
+  \url{https://github.com/azizka/speciesgeocodeR}
 }
 
 \references{
