@@ -249,7 +249,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
   #                                                   alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
   #                                                   method.less.than3=method.less.than3)) # , verbose=verbose
   
-  if(show_progress) prog. <- "win"
+  if(show_progress) prog. <- "text"
   if(!show_progress) prog. <- "none"
 
   if(parallel) registerDoParallel(NbeCores)
@@ -1129,7 +1129,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
                nbe.rep.rast.AOO=nbe.rep.rast.AOO, #verbose=TRUE, verbose=verbose, 
                showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
                 }
-                , .progress = "win", .parallel=parallel)
+                , .progress = "text", .parallel=parallel)
   
   
   if(parallel) stopImplicitCluster()
