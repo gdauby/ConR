@@ -13,12 +13,12 @@ devtools::install_github("gdauby/ConR")
 ```
 
 
-See the associated [vignette](https://cran.r-project.org/web/packages/ConR/vignettes/my-vignette.html) for a overview of the different functions.
+See the associated [vignette](https://CRAN.R-project.org/package=ConR/vignettes/my-vignette.html) for a overview of the different functions.
 
 
 *__UPDATE June 2018__*
 
-It is not possible to run the analysis in parallel which can fasten considerably the computation for large datasets (it does not a significant difference for small datasets or when mapping is not requested).
+It is now possible to run the analysis in parallel which can fasten considerably the computation for large datasets (it does not a significant difference for small datasets or when mapping is not requested).
 
 The example below run the evaluation in 4 cores in parallel.
 
