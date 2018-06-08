@@ -187,7 +187,7 @@ plot(land, add=T)
 
 
   You may want to **use your own land cover background shapefile**.
-This is easily done by using the function [```readShapePoly```](https://r-how.com/packages/maptools/readShapePoly).
+This is easily done by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools).
 
 For using this function, you first has to install (if not yet installed) and load the package 
 [maptools](https://CRAN.R-project.org/package=maptools).
@@ -673,7 +673,7 @@ IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec2", protec.areas 
 <img src="protec2_results_map/protec2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 
 **Note 1:**
-Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://r-how.com/packages/maptools/readShapePoly). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
+Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
 For example, for importing a shapefile names *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
 `readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))`.
 
@@ -682,6 +682,21 @@ The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in t
 
 `colnames(Madagascar.protec@data)` with the malagasy protected area shapefile.
 
+
+*****
+*****
+# Compute in parallel
+
+For large datasets (typically more than 100 species or when producing maps is required), I recommand to run the computation in parallel, which is feasible by using the following code.
+
+
+```
+data(Madagascar.protec)
+IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, parallel=T, NbeCores=4)
+```
+   
+The argument `NbeCores` indicate the number of cores on which you want to run the analysis.
+For more information, see the package [doparallel](https://CRAN.R-project.org/package=doParallel).
 
 
 *****
@@ -698,7 +713,7 @@ For a high number of species, parallelizing is a good option for fastening the c
 ```{r include=F, echo=F}
 data(Madagascar.protec)
 data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE)
+MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE, write_file_option="csv")
 ```
 
 ```
