@@ -70,7 +70,7 @@
 .alpha.hull.poly <- function(XY, alpha=1, buff=0.1){
   
    Used_data=unique(XY)
-   Used_data <- round(Used_data, 2)
+   Used_data <- apply(Used_data,2,jitter)
    if (any(rownames(installed.packages())=="alphahull")) {
      
      loadNamespace("alphahull")
