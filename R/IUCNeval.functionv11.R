@@ -755,15 +755,15 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
         ### If all occurences are found within protected areas, the species is considered as not threatened
         Results["Category_CriteriaB",1] <- "LC or NT"
       }else{
-        if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
+        if(as.numeric(Results["AOO",1]) < 10 & as.numeric(Results["Nbe_loc",1])==1) {
           Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "CR"
           
         }else{
-          if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+          if(as.numeric(Results["AOO",1]) < 500 & as.numeric(Results["Nbe_loc",1])<6) {
             Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "EN"
             
           }else{
-            if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+            if(as.numeric(Results["AOO",1]) < 2000 & as.numeric(Results["Nbe_loc",1])<11) {
               Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "VU"
               
             }else{
@@ -773,14 +773,14 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
         }
       }
     }else{
-      if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
+      if(as.numeric(Results["AOO",1]) < 10 & as.numeric(Results["Nbe_loc",1])==1) {
         Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "CR"
       }else{
-        if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+        if(as.numeric(Results["AOO",1]) < 500 & as.numeric(Results["Nbe_loc",1])<6) {
           Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "EN"
           
         }else{
-          if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+          if(as.numeric(Results["AOO",1]) < 2000 & as.numeric(Results["Nbe_loc",1])<11) {
             Results["Category_AOO",1] <- Results["Category_CriteriaB",1] <- "VU"
             
           }else{
@@ -791,15 +791,15 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     }
     
     if(is.na(Results["Category_AOO",1])) {
-      if(Results["AOO",1] < 10 & Results["Nbe_loc",1]==1) {
+      if(as.numeric(Results["AOO",1]) < 10 & as.numeric(Results["Nbe_loc",1])==1) {
         Results["Category_AOO",1] <- "CR"
         
       }else{
-        if(Results["AOO",1] < 500 & Results["Nbe_loc",1]<6) {
+        if(as.numeric(Results["AOO",1]) < 500 & as.numeric(Results["Nbe_loc",1])<6) {
           Results["Category_AOO",1] <- "EN"
           
         }else{
-          if(Results["AOO",1] < 2000 & Results["Nbe_loc",1]<11) {
+          if(as.numeric(Results["AOO",1]) < 2000 & as.numeric(Results["Nbe_loc",1])<11) {
             Results["Category_AOO",1] <- "VU"
             
           }else{
