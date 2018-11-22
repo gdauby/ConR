@@ -649,7 +649,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     
     ## recording results
     Results["EOO",1] <- as.numeric(EOO)
-    Results["AOO",1] <- AOO
+    Results["AOO",1] <- as.numeric(AOO)
     if(SubPop) Results["Nbe_subPop",1] <- NbeSubPop
     Results["Nbe_unique_occ.",1] <- nrow(unique(XY))
     
