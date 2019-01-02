@@ -253,7 +253,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
 
   if(parallel) registerDoParallel(NbeCores)
 
-  OUTPUT <- llply(list_data, .fun=function(x) {
+  OUTPUT <- plyr::llply(list_data, .fun=function(x) {
     .EOO.comp(x, Name_Sp=ifelse(ncol(XY)>2, as.character(unique(x$tax)), Name_Sp),
               exclude.area=exclude.area, buff_width=buff_width, country_map=country_map,
               alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
@@ -500,7 +500,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     DATA_SF <- as.data.frame(XY)
     colnames(DATA_SF) <- c("ddlon","ddlat")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
-    crs(DATA_SF) <- crs("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+    crs(DATA_SF) <- crs(protec.areas)
     Links_NatParks <- over(DATA_SF, protec.areas)
     
     if(length(which(!is.na(Links_NatParks[,1])))!=0){
@@ -1117,7 +1117,7 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
 
   if(parallel) registerDoParallel(NbeCores)
   
-  Results <- llply(list_data, .fun=function(x) {
+  Results <- plyr::llply(list_data, .fun=function(x) {
     .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
                write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
                Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
