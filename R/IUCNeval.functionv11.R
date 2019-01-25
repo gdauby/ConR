@@ -87,7 +87,7 @@
      return(NZfill)
      crs(NZfill) <- "+proj=longlat +datum=WGS84"
    }else{
-     stop("The package alpha.hull is required for this procedure, please install it")
+     stop("The package alphahull is required for this procedure, please install it")
    }
 }
 
