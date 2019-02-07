@@ -414,18 +414,34 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-.IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, Resol_sub_pop=5, 
-                      method_locations=c("fixed_grid"), Rel_cell_size=0.05,
-                      protec.areas=NULL, exclude.area=FALSE, method_protected_area="no_more_than_one",
-                      ID_shape_PA="WDPA_PID", buff_width=0.1, NamesSp="species1", write_shp=FALSE,
-                      file_name=NULL, add.legend=TRUE, DrawMap=T, map_pdf=FALSE, draw.poly.EOO=TRUE, SubPop=TRUE, MinMax,
-                      alpha=1, buff.alpha=0.1, method.range="convex.hull", nbe.rep.rast.AOO=NULL, verbose=TRUE, showWarnings=TRUE) {
-  
+.IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, 
+                       Resol_sub_pop=5, 
+                       method_locations=c("fixed_grid"), 
+                       Rel_cell_size=0.05, 
+                       protec.areas=NULL, exclude.area=FALSE, 
+                       method_protected_area="no_more_than_one",
+                       ID_shape_PA="WDPA_PID", 
+                       buff_width=0.1, 
+                       NamesSp="species1", 
+                       write_shp=FALSE, 
+                       file_name=NULL, 
+                       add.legend=TRUE, 
+                       DrawMap=T, 
+                       map_pdf=FALSE, 
+                       draw.poly.EOO=TRUE, 
+                       SubPop=TRUE, 
+                       MinMax,
+                       alpha=1, 
+                       buff.alpha=0.1, 
+                       method.range="convex.hull", 
+                       nbe.rep.rast.AOO=NULL, 
+                       verbose=TRUE, 
+                       showWarnings=TRUE) {
   
   ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
   if(DrawMap) {
-    full_poly_borders <- poly_borders
-    poly_borders <- crop(poly_borders, extent(MinMax)+30)
+      full_poly_borders <- poly_borders
+      poly_borders <- crop(poly_borders, extent(MinMax)+30)
   }
   
   ### Getting by default land map if poly_borders is not provided
@@ -998,11 +1014,17 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10, 
-                       Resol_sub_pop = 5, method_locations = "fixed_grid", Rel_cell_size = 0.05, 
-                       DrawMap = TRUE, add.legend = TRUE, 
+IUCN.eval <- function (DATA, country_map = NULL, 
+                       Cell_size_AOO = 2, 
+                       Cell_size_locations = 10, 
+                       Resol_sub_pop = 5, 
+                       method_locations = "fixed_grid", 
+                       Rel_cell_size = 0.05, 
+                       DrawMap = TRUE, 
+                       add.legend = TRUE, 
                        file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
-                       write_results=TRUE, protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
+                       write_results=TRUE, 
+                       protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
                        exclude.area = FALSE, method_protected_area = "no_more_than_one", 
                        ID_shape_PA = "WDPA_PID", 
                        buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
@@ -1118,15 +1140,29 @@ IUCN.eval <- function (DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_lo
   if(parallel) registerDoParallel(NbeCores)
   
   Results <- plyr::llply(list_data, .fun=function(x) {
-    .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
-               write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
-               Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
-               method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
-               ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
+    .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), 
+               DrawMap=DrawMap, 
+               exclude.area=exclude.area,
+               write_shp=write_shp, 
+               poly_borders=country_map, 
+               method_protected_area=method_protected_area, 
+               Cell_size_AOO=Cell_size_AOO, 
+               Cell_size_locations=Cell_size_locations, 
+               Resol_sub_pop=Resol_sub_pop,
+               method_locations=method_locations, 
+               Rel_cell_size=Rel_cell_size,
+               file_name=file_name, 
+               buff_width=buff_width, 
+               map_pdf=map_pdf,
+               ID_shape_PA=ID_shape_PA, 
+               SubPop=SubPop,protec.areas=protec.areas, 
                MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-               alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
+               alpha=alpha, 
+               buff.alpha=buff.alpha, 
+               method.range=method.range, 
                nbe.rep.rast.AOO=nbe.rep.rast.AOO, #verbose=TRUE, verbose=verbose, 
-               showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
+               showWarnings=showWarnings, 
+               draw.poly.EOO=draw.poly.EOO)
                 }
                 , .progress = "text", .parallel=parallel)
   
