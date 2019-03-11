@@ -522,7 +522,8 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     if(length(which(!is.na(Links_NatParks[,1])))!=0){
       if(method_protected_area=="no_more_than_one"){
         ## if method is 'no_more_than_one' the number of location is the number of occupied protected areas
-        LocNatParks <- length(unique(Links_NatParks[which(!is.na(Links_NatParks[,1])),ID_shape_PA]))
+        LocNatParks <- 
+          length(unique(Links_NatParks[which(!is.na(Links_NatParks[,1])), ID_shape_PA]))
       }else{ #### If method for accounting Protected areas should superimpose a grid
         if(length(which(!is.na(Links_NatParks[,1])))>1) {
           
@@ -1014,7 +1015,8 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-IUCN.eval <- function (DATA, country_map = NULL, 
+IUCN.eval <- function (DATA, 
+                       country_map = NULL, 
                        Cell_size_AOO = 2, 
                        Cell_size_locations = 10, 
                        Resol_sub_pop = 5, 
@@ -1022,15 +1024,26 @@ IUCN.eval <- function (DATA, country_map = NULL,
                        Rel_cell_size = 0.05, 
                        DrawMap = TRUE, 
                        add.legend = TRUE, 
-                       file_name = NULL, export_shp = FALSE, write_shp = FALSE, 
+                       file_name = NULL, 
+                       export_shp = FALSE, 
+                       write_shp = FALSE, 
                        write_results=TRUE, 
-                       protec.areas = NULL, map_pdf = FALSE, draw.poly.EOO=TRUE, 
-                       exclude.area = FALSE, method_protected_area = "no_more_than_one", 
+                       protec.areas = NULL, 
+                       map_pdf = FALSE, 
+                       draw.poly.EOO = TRUE, 
+                       exclude.area = FALSE, 
+                       method_protected_area = "no_more_than_one", 
                        ID_shape_PA = "WDPA_PID", 
-                       buff_width = 0.1, SubPop=TRUE, alpha=1, buff.alpha=0.1, 
-                       method.range="convex.hull", nbe.rep.rast.AOO=NULL,
-                        showWarnings=TRUE, # verbose=TRUE,
-                       write_file_option="excel", parallel=F, NbeCores=2) {
+                       buff_width = 0.1, 
+                       SubPop=TRUE, 
+                       alpha=1, 
+                       buff.alpha=0.1, 
+                       method.range="convex.hull", 
+                       nbe.rep.rast.AOO=NULL,
+                       showWarnings=TRUE, # verbose=TRUE,
+                       write_file_option="excel", 
+                       parallel=F, 
+                       NbeCores=2) {
   
   if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
@@ -1139,7 +1152,8 @@ IUCN.eval <- function (DATA, country_map = NULL,
 
   if(parallel) registerDoParallel(NbeCores)
   
-  Results <- plyr::llply(list_data, .fun=function(x) {
+  Results <- 
+    plyr::llply(list_data, .fun=function(x) {
     .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), 
                DrawMap=DrawMap, 
                exclude.area=exclude.area,
@@ -1219,10 +1233,20 @@ IUCN.eval <- function (DATA, country_map = NULL,
 }
 
 
-map.res <- function(Results, Occurrences, country_map=NULL, Resol=1, threshold=0, LatMin=NULL, LatMax=NULL, LongMin=NULL, 
-                    LongMax=NULL, export_map=FALSE, file_name=NULL, export_data=FALSE) {
+map.res <- function(Results, 
+                    Occurrences, 
+                    country_map=NULL, 
+                    Resol=1, 
+                    threshold=0, 
+                    LatMin=NULL, 
+                    LatMax=NULL, 
+                    LongMin=NULL, 
+                    LongMax=NULL, 
+                    export_map=FALSE, 
+                    file_name=NULL, 
+                    export_data=FALSE) {
   
-  if(nrow(Results)!=length(unique(as.character(Occurrences[,3])))) stop("Results and Occurrences input files have different number of species")
+  if(nrow(Results)!=length(unique(as.character(Occurrences[[3]])))) stop("Results and Occurrences input files have different number of species")
   
   if(class(Occurrences)=="spgeoIN") {
     DATA_2 <- cbind(Occurrences$species_coordinates, Occurrences$identifier)
