@@ -258,7 +258,7 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
               alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
               method.less.than3=method.less.than3) # , verbose=verbose
   }
-  , .progress = prog., .parallel=parallel)
+  , .progress = prog., .parallel=parallel, .paropts = "ConR")
 
 
   if(parallel) stopImplicitCluster()
@@ -460,7 +460,7 @@ AOO.computing <- function(XY, show_progress=TRUE, parallel=FALSE, NbeCores=2) {
                     nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
                     poly_borders = NULL) # , verbose=verbose
   }
-  , .progress = prog., .parallel=parallel)
+  , .progress = prog., .parallel=parallel, .paropts = "ConR")
   
   
   if(parallel) stopImplicitCluster()
@@ -1240,7 +1240,7 @@ IUCN.eval <- function (DATA,
                showWarnings=showWarnings, 
                draw.poly.EOO=draw.poly.EOO)
                 }
-                , .progress = "text", .parallel=parallel)
+                , .progress = "text", .parallel=parallel, .paropts = "ConR")
   
   
   if(parallel) stopImplicitCluster()
