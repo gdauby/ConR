@@ -362,51 +362,49 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 
 
 .AOO.estimation <- function(coordEAC, 
-                            Cell_size_AOO = 2, 
-                            nbe.rep.rast.AOO = NULL, 
+                            cell_size = 2, 
+                            nbe_rep = 0, 
                             poly_borders = NULL) {
   
   if(is.null(poly_borders)) crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
-  if(!is.null(poly_borders)) crs_proj <- crs(poly_borders)
+  if(!is.null(poly_borders)) crs_proj <- raster::crs(poly_borders)
   
-  Corners <- rbind(c(min(coordEAC[,1]), max(coordEAC[,1])), c(min(coordEAC[,2]), max(coordEAC[,2])))
+  Corners <- rbind(c(min(coordEAC[,1]), 
+                     max(coordEAC[,1])), 
+                   c(min(coordEAC[,2]), 
+                     max(coordEAC[,2])))
   
-  ## if nbe.rep.rast.AOO is not provided, translations of 1/4 of resolution for varying the position of the raster
-  if(is.null(nbe.rep.rast.AOO)) {
-    Occupied_cells <- c()
+  if(nbe_rep==0) {
+    Occupied_cells <- vector(mode = "numeric", length = 4)
     decal <- c(0,1,2,3)
     for (h in decal) {
-      ext = extent(floor(Corners[1,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[1,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000, 
-                   floor(Corners[2,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[2,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000)
-      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
-      r2_AOO <- rasterize(coordEAC[,1:2], r)
-      OCC <- length(which(!is.na(values(r2_AOO))))
-      Occupied_cells <- c(Occupied_cells, OCC)
+      ext = raster::extent(floor(Corners[1,1])-h*(cell_size*1000/4)-2*cell_size*1000, floor(Corners[1,2])+h*(cell_size*1000/4)+2*cell_size*1000, 
+                           floor(Corners[2,1])-h*(cell_size*1000/4)-2*cell_size*1000, floor(Corners[2,2])+h*(cell_size*1000/4)+2*cell_size*1000)
+      r = raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
+      r2_AOO <- raster::rasterize(coordEAC[,1:2], r)
+      OCC <- length(which(!is.na(raster::values(r2_AOO))))
+      Occupied_cells[h+1] <- OCC
       
       ### If only one occupied cell, stop the production of raster
       if(OCC==1) break
     }
-    h <- decal[which.min(Occupied_cells)]
-    Occupied_cells <- min(Occupied_cells)
+    # h <- decal[which.min(Occupied_cells)]
+    # Occupied_cells <- min(Occupied_cells)
   }
   
-  ## if nbe.rep.rast.AOO is provided, random starting position of the raster
-  
-  if(!is.null(nbe.rep.rast.AOO)) {
-    Occupied_cells <- vector(mode = "numeric", length = nbe.rep.rast.AOO)
-    Occupied_cells <- c()
-    # rd.1.vec <- c()
-    # rd.2.vec <- c()
-    for (h in 1:nbe.rep.rast.AOO) {
-      rd.1 <- runif(1)*Cell_size_AOO*1000
-      rd.2 <- runif(1)*Cell_size_AOO*1000
+  if(nbe_rep>0) {
+    Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
+    
+    for (h in 1:nbe_rep) {
+      rd.1 <- runif(1)*cell_size*1000
+      rd.2 <- runif(1)*cell_size*1000
       
-      ext = extent(floor(Corners[1,1])-rd.1-2*Cell_size_AOO*1000, floor(Corners[1,2])+rd.1+2*Cell_size_AOO*1000, 
-                   floor(Corners[2,1])-rd.2-2*Cell_size_AOO*1000, floor(Corners[2,2])+rd.2+2*Cell_size_AOO*1000)
-      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
+      ext = raster::extent(floor(Corners[1,1])-rd.1-2*cell_size*1000, floor(Corners[1,2])+rd.1+2*cell_size*1000, 
+                           floor(Corners[2,1])-rd.2-2*cell_size*1000, floor(Corners[2,2])+rd.2+2*cell_size*1000)
+      r = raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
       # r
-      r2_AOO <- rasterize(coordEAC[,1:2], r)
-      OCC <- length(which(!is.na(values(r2_AOO))))
+      r2_AOO <- raster::rasterize(coordEAC[,1:2], r)
+      OCC <- length(which(!is.na(raster::values(r2_AOO))))
       Occupied_cells[h] <- OCC
       # rd.1.vec <- c(rd.1.vec, rd.1)
       # rd.2.vec <- c(rd.2.vec, rd.2)
@@ -414,18 +412,19 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     }
   }
   
-  # h <- decal[which.min(Occupied_cells)]
+  
   Occupied_cells <- min(Occupied_cells)
   
-  AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
+  AOO <- Occupied_cells*cell_size*cell_size  ### AOO
   return(AOO)
+  
 }
 
 
 
 AOO.computing <- function(XY, 
                           Cell_size_AOO = 2,
-                          nbe.rep.rast.AOO = NULL,
+                          nbe.rep.rast.AOO = 0,
                           show_progress=TRUE, 
                           parallel = FALSE, 
                           NbeCores=2) {
@@ -456,21 +455,57 @@ AOO.computing <- function(XY,
   if(show_progress) prog. <- "text"
   if(!show_progress) prog. <- "none"
   
-  if(parallel) registerDoParallel(NbeCores)
+  pb <- 
+    utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
   
-  
-  OUTPUT <- plyr::llply(list_data, .fun=function(x) {
-    .AOO.estimation(x, 
-                    Cell_size_AOO = Cell_size_AOO, 
-                    nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
-                    poly_borders = NULL) # , verbose=verbose
+  if(parallel) {
+    if("doParallel" %in% 
+       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    
+    library(doParallel)
+    
+    registerDoParallel(NbeCores)
+    message('doParallel running with ',
+            NbeCores, ' cores')
+    `%d%` <- `%dopar%`
+  }else{
+    `%d%` <- `%do%`
   }
-  , .progress = prog., .parallel=parallel, .paropts = "ConR")
+  
+  output <- 
+    foreach(x=1:length(list_data), .combine='c', 
+            arg1 = rep(Cell_size_AOO, length(list_data)), 
+            arg2 = rep(nbe.rep.rast.AOO, length(list_data))) %d% {
+              source("./R/IUCNeval.functionv11.R")
+              utils::setTxtProgressBar(pb, x)
+              # utils::setTxtProgressBar(pb, x)
+              
+              res <- .AOO.estimation(coordEAC = list_data[[x]], 
+                                     cell_size = arg1, nbe_rep = arg2)
+              
+              res
+            }
+  
+  
+  # OUTPUT <- plyr::llply(list_data, .fun=function(x) {
+  #   source("./R/IUCNeval.functionv11.R")
+  #   # Cell_size_AOO=2
+  #   # nbe.rep.rast.AOO=NULL
+  #   .AOO.estimation(x, 
+  #                   cell_size = Cell_size_AOO, 
+  #                   nbe_rep = nbe.rep.rast.AOO, 
+  #                   poly_borders = NULL) # , verbose=verbose
+  # }
+  # , .progress = prog., .parallel=parallel, 
+  # .paropts = list(.packages = c("ConR"), 
+  #                 .combine = c, 
+  #                 Cell_size_AOO = Cell_size_AOO,
+  #                 nbe_rep = nbe.rep.rast.AOO))
   
   
   if(parallel) stopImplicitCluster()
   
-  return(unlist(OUTPUT))
+  return(unlist(output))
 }
 
 
@@ -723,8 +758,8 @@ AOO.computing <- function(XY,
     
     AOO <- 
       .AOO.estimation(coordEAC, 
-                      Cell_size_AOO = Cell_size_AOO, 
-                      nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
+                      cell_size = Cell_size_AOO, 
+                      nbe_rep = nbe.rep.rast.AOO, 
                       poly_borders = poly_borders)
     
     if(EOO<AOO) EOO <- AOO ### If EOO is < AOO, EOO is put equal to AOO
