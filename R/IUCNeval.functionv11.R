@@ -363,7 +363,6 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 
 .AOO.estimation <- function(coordEAC, 
                             Cell_size_AOO = 2, 
-                            Cell_size_AOO = 2,
                             nbe.rep.rast.AOO = NULL, 
                             poly_borders = NULL) {
   
