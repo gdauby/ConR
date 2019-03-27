@@ -209,8 +209,8 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
                             file.name="EOO.results", parallel=F, NbeCores=2, show_progress=F){ # , verbose=TRUE
   
   if(any(is.na(XY[,c(1:2)]))) {
-    length(which(rowMeans(is.na(XY[,1:2]))>0))
-    unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])
+    # length(which(rowMeans(is.na(XY[,1:2]))>0))
+    # unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])
     print(paste("Skipping",length(which(rowMeans(is.na(XY[,1:2]))>0)) ,"occurrences because of missing coordinates for",  # if(verbose) 
                 paste(as.character(unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])), collapse=" AND ") ))
     XY <- XY[which(!is.na(XY[,1])),]
@@ -361,7 +361,13 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 }
 
 
-.AOO.estimation <- function(coordEAC, Cell_size_AOO=2, nbe.rep.rast.AOO=NULL, poly_borders=poly_borders) {
+.AOO.estimation <- function(coordEAC, 
+                            Cell_size_AOO=2, 
+                            nbe.rep.rast.AOO=NULL, 
+                            poly_borders=NULL) {
+  
+  if(is.null(poly_borders)) crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
+  if(!is.null(poly_borders)) crs_proj <- crs(poly_borders)
   
   Corners <- rbind(c(min(coordEAC[,1]), max(coordEAC[,1])), c(min(coordEAC[,2]), max(coordEAC[,2])))
   
@@ -372,7 +378,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     for (h in decal) {
       ext = extent(floor(Corners[1,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[1,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000, 
                    floor(Corners[2,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[2,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000)
-      r = raster(ext, resolution=Cell_size_AOO*1000,crs=crs(poly_borders))
+      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
       r2_AOO <- rasterize(coordEAC, r)
       OCC <- length(which(!is.na(values(r2_AOO))))
       Occupied_cells <- c(Occupied_cells, OCC)
@@ -385,6 +391,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   }
   
   ## if nbe.rep.rast.AOO is provided, random starting position of the raster
+  Occupied_cells <- vector(mode = "numeric", length = nbe.rep.rast.AOO)
   if(!is.null(nbe.rep.rast.AOO)) {
     Occupied_cells <- c()
     # rd.1.vec <- c()
@@ -395,17 +402,18 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
       
       ext = extent(floor(Corners[1,1])-rd.1-2*Cell_size_AOO*1000, floor(Corners[1,2])+rd.1+2*Cell_size_AOO*1000, 
                    floor(Corners[2,1])-rd.2-2*Cell_size_AOO*1000, floor(Corners[2,2])+rd.2+2*Cell_size_AOO*1000)
-      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs(poly_borders))
-      r
+      r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
+      # r
       r2_AOO <- rasterize(coordEAC, r)
       OCC <- length(which(!is.na(values(r2_AOO))))
-      Occupied_cells <- c(Occupied_cells, OCC)
+      Occupied_cells[h] <- OCC
       # rd.1.vec <- c(rd.1.vec, rd.1)
       # rd.2.vec <- c(rd.2.vec, rd.2)
       if(OCC==1) break
     }
   }
-  h <- decal[which.min(Occupied_cells)]
+  
+  # h <- decal[which.min(Occupied_cells)]
   Occupied_cells <- min(Occupied_cells)
   
   AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
@@ -657,7 +665,11 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   ##########################################################################################
   ##############################  AOO estimation              ##############################
     
-    AOO <- .AOO.estimation(coordEAC, Cell_size_AOO = Cell_size_AOO, nbe.rep.rast.AOO = nbe.rep.rast.AOO, poly_borders = poly_borders)
+    AOO <- 
+      .AOO.estimation(coordEAC, 
+                      Cell_size_AOO = Cell_size_AOO, 
+                      nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
+                      poly_borders = poly_borders)
     
     if(EOO<AOO) EOO <- AOO ### If EOO is < AOO, EOO is put equal to AOO
     
