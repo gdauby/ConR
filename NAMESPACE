@@ -4,7 +4,11 @@ exportPattern(".")
 import(raster)
 import(sp)
 import(maptools)
+import(maptools)
 
+
+
+importFrom(foreach, "foreach")
 
 importFrom(grDevices, "chull")
 
