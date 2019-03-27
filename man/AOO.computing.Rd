@@ -5,10 +5,14 @@
 Compute areas of occupancy (AOO) for multiple taxa in square kilometres
 }
 \usage{
-AOO.computing(XY, parallel = FALSE, NbeCores = 2, show_progress=FALSE)
+AOO.computing(XY, Cell_size_AOO = 2, nbe.rep.rast.AOO = NULL, parallel = FALSE, NbeCores = 2, show_progress=FALSE)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}
+
+\item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for estimating Area of Occupancy.  By default, equal to 2}
+
+\item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is NULL but some minimal translation of the raster are still done}
 
 \item{parallel}{a logical. Wether running in parallel. By default, it is FALSE}
 
