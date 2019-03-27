@@ -362,9 +362,10 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 
 
 .AOO.estimation <- function(coordEAC, 
-                            Cell_size_AOO=2, 
-                            nbe.rep.rast.AOO=NULL, 
-                            poly_borders=NULL) {
+                            Cell_size_AOO = 2, 
+                            Cell_size_AOO = 2,
+                            nbe.rep.rast.AOO = NULL, 
+                            poly_borders = NULL) {
   
   if(is.null(poly_borders)) crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
   if(!is.null(poly_borders)) crs_proj <- crs(poly_borders)
@@ -423,7 +424,12 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 
 
 
-AOO.computing <- function(XY, show_progress=TRUE, parallel=FALSE, NbeCores=2) {
+AOO.computing <- function(XY, 
+                          Cell_size_AOO = 2,
+                          nbe.rep.rast.AOO = NULL,
+                          show_progress=TRUE, 
+                          parallel = FALSE, 
+                          NbeCores=2) {
   
   if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
   if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
