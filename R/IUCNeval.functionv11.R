@@ -379,7 +379,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
       ext = extent(floor(Corners[1,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[1,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000, 
                    floor(Corners[2,1])-h*(Cell_size_AOO*1000/4)-2*Cell_size_AOO*1000, floor(Corners[2,2])+h*(Cell_size_AOO*1000/4)+2*Cell_size_AOO*1000)
       r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
-      r2_AOO <- rasterize(coordEAC, r)
+      r2_AOO <- rasterize(coordEAC[,1:2], r)
       OCC <- length(which(!is.na(values(r2_AOO))))
       Occupied_cells <- c(Occupied_cells, OCC)
       
@@ -391,8 +391,9 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   }
   
   ## if nbe.rep.rast.AOO is provided, random starting position of the raster
-  Occupied_cells <- vector(mode = "numeric", length = nbe.rep.rast.AOO)
+  
   if(!is.null(nbe.rep.rast.AOO)) {
+    Occupied_cells <- vector(mode = "numeric", length = nbe.rep.rast.AOO)
     Occupied_cells <- c()
     # rd.1.vec <- c()
     # rd.2.vec <- c()
@@ -404,7 +405,7 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
                    floor(Corners[2,1])-rd.2-2*Cell_size_AOO*1000, floor(Corners[2,2])+rd.2+2*Cell_size_AOO*1000)
       r = raster(ext, resolution=Cell_size_AOO*1000, crs=crs_proj)
       # r
-      r2_AOO <- rasterize(coordEAC, r)
+      r2_AOO <- rasterize(coordEAC[,1:2], r)
       OCC <- length(which(!is.na(values(r2_AOO))))
       Occupied_cells[h] <- OCC
       # rd.1.vec <- c(rd.1.vec, rd.1)
@@ -419,6 +420,56 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   AOO <- Occupied_cells*Cell_size_AOO*Cell_size_AOO  ### AOO
   return(AOO)
 }
+
+
+
+AOO.computing <- function(XY, show_progress=TRUE, parallel=FALSE, NbeCores=2) {
+  
+  if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
+  if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
+  
+  ## Equal Area cylindrical projection used for AOO estimation
+  projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  
+  coordEAC <- 
+    data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]),proj=as.character(projEAC),inv=FALSE)), 
+                      ncol=2),
+               tax = XY$tax)
+  
+  ## if any missing coordinates
+  if(any(is.na(coordEAC[,c(1:2)]))) {
+    print(paste("Skipping",length(which(rowMeans(is.na(coordEAC[,1:2]))>0)),
+                "occurrences because of missing coordinates for", 
+                paste(as.character(unique(coordEAC[which(rowMeans(is.na(coordEAC[,1:2]))>0),3])), collapse=" AND ") ))
+    coordEAC <- coordEAC[which(!is.na(coordEAC[,1])),]
+    coordEAC <- coordEAC[which(!is.na(coordEAC[,2])),]
+  }
+  
+  coordEAC$tax <- as.character(coordEAC$tax)
+  list_data <- split(coordEAC, f = coordEAC$tax)
+  
+  if(show_progress) prog. <- "text"
+  if(!show_progress) prog. <- "none"
+  
+  if(parallel) registerDoParallel(NbeCores)
+  
+  
+  OUTPUT <- plyr::llply(list_data, .fun=function(x) {
+    .AOO.estimation(x, 
+                    Cell_size_AOO = Cell_size_AOO, 
+                    nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
+                    poly_borders = NULL) # , verbose=verbose
+  }
+  , .progress = prog., .parallel=parallel)
+  
+  
+  if(parallel) stopImplicitCluster()
+  
+  return(unlist(OUTPUT))
+}
+
+
+
 
 
 .IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, 
