@@ -297,12 +297,14 @@ EOO.computing <- function(XY,
   
   # ,
   # .packages = c("rgeos", "geosphere", "raster")
+  # ,
+  # arg3 = rep(ifelse(is.null(country_map), FALSE, TRUE), length(list_data))
   
   output <- 
-    foreach(x=1:length(list_data), .combine='c', 
+    foreach(x = 1:length(list_data), 
+            .combine='c', 
             arg1 = rep(exclude.area, length(list_data)), 
             arg2 = rep(buff_width, length(list_data)),
-            arg3 = rep(ifelse(is.null(country_map), 0, country_map), length(list_data)),
             arg4 = names_,
             arg5 = rep(alpha.hull, length(list_data)),
             arg6 = rep(convex.hull, length(list_data)),
@@ -312,11 +314,15 @@ EOO.computing <- function(XY,
             # source("./R/IUCNeval.functionv11.R")
             if(show_progress)  utils::setTxtProgressBar(pb, x)
               
+              # if(arg3) countr <- country_map
+              # if(!arg3) countr <- FALSE
+              
+              
               res <- 
                 .EOO.comp(XY = list_data[[x]], 
                 exclude.area = arg1,
                 buff_width = arg2, 
-                country_map = ifelse(arg3==0, NULL, arg3),
+                country_map = country_map,
                 Name_Sp = arg4,
                 alpha.hull = arg5, 
                 convex.hull = arg6, 
@@ -328,6 +334,8 @@ EOO.computing <- function(XY,
               if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
               
               res
+              
+              
             }
   
   if(parallel) stopImplicitCluster()
