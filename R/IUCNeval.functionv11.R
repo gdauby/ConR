@@ -110,15 +110,21 @@
 }
 
 
-.EOO.comp <-  function(XY, exclude.area=FALSE, buff_width=0.1, country_map=NULL, Name_Sp="tax", alpha.hull=FALSE, convex.hull=TRUE,
+.EOO.comp <-  function(XY, 
+                       exclude.area=FALSE, 
+                       buff_width=0.1, 
+                       country_map=NULL, 
+                       Name_Sp="tax", 
+                       alpha.hull=FALSE, 
+                       convex.hull=TRUE,
                        alpha=1, buff.alpha=0.1, method.less.than3="not comp") { # , verbose=TRUE
   
   ### Checking if the method of calculating EOO has been chosen
-  if(!convex.hull & !alpha.hull) stop("alpha.hull and convex.hull are both FALSE, choose one of them")
+  if(!convex.hull & !alpha.hull) 
+    stop("alpha.hull and convex.hull are both FALSE, choose one of them")
   
-  if(nrow(unique(XY))>1) if(max(dist(XY[,2]), na.rm=T)>=180) stop(paste("EOO for species ", 
-                                                                        as.character(Name_Sp),
-                                                                        "cannot be computed because occurrences spans more than 180 degrees longitude"))
+  if(nrow(unique(XY))>1) if(max(dist(XY[,2]), na.rm=T)>=180) 
+    stop(paste("EOO for species", as.character(Name_Sp),"cannot be computed because occurrences spans more than 180 degrees longitude"))
   
   ## Check if there are less than 3 unique occurrences
    if(nrow(unique(XY))<3) {
@@ -126,7 +132,7 @@
      ## if there is only one occurrence, EOO is NA
      if(nrow(unique(XY))<2) {
        EOO <- NA
-       warning(paste("EOO for ", as.character(Name_Sp),"is not computed because there is only 1 unique occurrence"))
+       message(paste("EOO for", as.character(Name_Sp),"is not computed because there is only 1 unique occurrence"))
       
      }else{
        if(method.less.than3=="arbitrary") {
@@ -140,19 +146,20 @@
        if(method.less.than3=="not comp") {
          
          ## if there are two unique occurences, EOO is not computed neither
-         warning(paste("EOO for ", as.character(Name_Sp),"is not computed because there is less than 3 unique occurrences"))
+         message(paste("EOO for", as.character(Name_Sp),"is not computed because there is less than 3 unique occurrences"))
          EOO <- NA
        }
      }
      
      OUTPUT <- round(EOO, 0)
+     names(OUTPUT) <- c("EOO")
      
   }else{
     
     ### Checking if all occurrences are on a straight line
     if(length(unique(XY[,1]))==1 || length(unique(XY[,2]))==1 || round(abs(cor(XY[,1],XY[,2])),6)==1) {
       ## If so, a straight line is built and a buffer of buff_width is added
-      warning(paste("Occurrences of",as.character(Name_Sp),"follow a straight line, thus EOO is based on an artificial polygon using buff_width"))
+      message(paste("Occurrences of",as.character(Name_Sp),"follow a straight line, thus EOO is based on an artificial polygon using buff_width"))
       hpts <- unique(XY[,c(2,1)])
       POLY <- "LINESTRING("
       for (Z in 1:dim(hpts)[1]){
@@ -201,16 +208,24 @@
 }
 
 
-EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_shp=FALSE, 
-                            alpha=1, buff.alpha=0.1, method.range="convex.hull",
-                            Name_Sp="Species1", 
-                            buff_width=0.1, method.less.than3="not comp",
-                            write_results=TRUE, 
-                            file.name="EOO.results", parallel=F, NbeCores=2, show_progress=F){ # , verbose=TRUE
+EOO.computing <- function(XY, 
+                          exclude.area=FALSE, 
+                          country_map=NULL, 
+                          export_shp=FALSE, 
+                          write_shp=FALSE, 
+                          alpha=1, 
+                          buff.alpha=0.1, 
+                          method.range="convex.hull", 
+                          Name_Sp="species1", 
+                          buff_width=0.1, 
+                          method.less.than3="not comp",
+                          write_results=TRUE, 
+                          file.name="EOO.results", 
+                          parallel=FALSE, 
+                          NbeCores=2, 
+                          show_progress=FALSE){ # , verbose=TRUE
   
   if(any(is.na(XY[,c(1:2)]))) {
-    # length(which(rowMeans(is.na(XY[,1:2]))>0))
-    # unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])
     print(paste("Skipping",length(which(rowMeans(is.na(XY[,1:2]))>0)) ,"occurrences because of missing coordinates for",  # if(verbose) 
                 paste(as.character(unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])), collapse=" AND ") ))
     XY <- XY[which(!is.na(XY[,1])),]
@@ -227,11 +242,11 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
     convex.hull=TRUE
     alpha.hull=FALSE
   }
+  
   if(method.range=="alpha.hull") {
     convex.hull=FALSE
     alpha.hull=TRUE
   }
-  
   
   if(ncol(XY)>2) {
     colnames(XY)[1:3] <- c("ddlat","ddlon","tax")
@@ -247,59 +262,110 @@ EOO.computing <- function(XY, exclude.area=FALSE, country_map=NULL, export_shp=F
   #                                                   alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
   #                                                   method.less.than3=method.less.than3)) # , verbose=verbose
   
-  if(show_progress) prog. <- "text"
-  if(!show_progress) prog. <- "none"
-
-  if(parallel) registerDoParallel(NbeCores)
-
-  OUTPUT <- plyr::llply(list_data, .fun=function(x) {
-    .EOO.comp(x, Name_Sp=ifelse(ncol(XY)>2, as.character(unique(x$tax)), Name_Sp),
-              exclude.area=exclude.area, buff_width=buff_width, country_map=country_map,
-              alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
-              method.less.than3=method.less.than3) # , verbose=verbose
+  # if(show_progress) prog. <- "text"
+  # if(!show_progress) prog. <- "none"
+  # 
+  # if(parallel) registerDoParallel(NbeCores)
+  # 
+  # OUTPUT <- plyr::llply(list_data, .fun=function(x) {
+  #   .EOO.comp(x, Name_Sp=ifelse(ncol(XY)>2, as.character(unique(x$tax)), Name_Sp),
+  #             exclude.area=exclude.area, buff_width=buff_width, country_map=country_map,
+  #             alpha=alpha, buff.alpha=buff.alpha, alpha.hull=alpha.hull, convex.hull=convex.hull,
+  #             method.less.than3=method.less.than3) # , verbose=verbose
+  # }
+  # , .progress = prog., .parallel=parallel, .paropts = "ConR")
+  
+  
+  if(parallel) {
+    if("doParallel" %in% 
+       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    
+    library(doParallel)
+    
+    registerDoParallel(NbeCores)
+    message('doParallel running with ',
+            NbeCores, ' cores')
+    `%d%` <- `%dopar%`
+  }else{
+    `%d%` <- `%do%`
   }
-  , .progress = prog., .parallel=parallel, .paropts = "ConR")
-
-
+  
+  if(show_progress)  pb <- 
+    utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
+  
+  if(is.null(names(list_data))) names_ <- rep(Name_Sp, length(list_data)) else names_ <- names(list_data)
+  
+  # ,
+  # .packages = c("rgeos", "geosphere", "raster")
+  
+  output <- 
+    foreach(x=1:length(list_data), .combine='c', 
+            arg1 = rep(exclude.area, length(list_data)), 
+            arg2 = rep(buff_width, length(list_data)),
+            arg3 = rep(ifelse(is.null(country_map), 0, country_map), length(list_data)),
+            arg4 = names_,
+            arg5 = rep(alpha.hull, length(list_data)),
+            arg6 = rep(convex.hull, length(list_data)),
+            arg7 = rep(alpha, length(list_data)),
+            arg8 = rep(buff.alpha, length(list_data)),
+            arg9 = rep(method.less.than3, length(list_data))) %d% {
+            # source("./R/IUCNeval.functionv11.R")
+            if(show_progress)  utils::setTxtProgressBar(pb, x)
+              
+              res <- 
+                .EOO.comp(XY = list_data[[x]], 
+                exclude.area = arg1,
+                buff_width = arg2, 
+                country_map = ifelse(arg3==0, NULL, arg3),
+                Name_Sp = arg4,
+                alpha.hull = arg5, 
+                convex.hull = arg6, 
+                alpha = arg7,
+                buff.alpha = arg8, 
+                method.less.than3 = arg9)
+                
+              names(res)[1] <- paste0(names(res)[1], "_" ,x)
+              if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
+              
+              res
+            }
+  
   if(parallel) stopImplicitCluster()
   
-  
-  
-  if(length(OUTPUT)==1) names(OUTPUT) <- Name_Sp
+  if(length(output)==1) names(output) <- Name_Sp
   
   if(write_shp) {
     dir.create(file.path(paste(getwd(),"/shapesIUCN", sep="")), showWarnings = FALSE)
-    for (i in 1:length(OUTPUT)) {
+    output_spatial <- unlist(output[grep("spatial", names(output))])
+    id_spatial <- as.numeric(unlist(lapply(strsplit(names(output_spatial), "_"), function(x) x[[2]])))
+    for (i in 1:length(output_spatial)) {
       
-      if(!is.na(OUTPUT[[i]][[1]])) {
+      # if(!is.na(output[[i]][[1]])) {
         
         if(length(list.files(paste(getwd(),"/shapesIUCN", sep="")))>0){
-          if(length(grep(paste(names(OUTPUT)[i],"_EOO_poly", sep=""), unique(sub("....$", '', list.files(paste(getwd(),"/shapesIUCN", sep=""))))))>0) 
+          if(length(grep(paste(names(output)[i],"_EOO_poly", sep=""), unique(sub("....$", '', list.files(paste(getwd(),"/shapesIUCN", sep=""))))))>0) 
             {
             FILES <- list.files(paste(getwd(),"/shapesIUCN", sep=""), full.names = TRUE)
-            file.remove(FILES[grep(paste(names(OUTPUT)[i],"_EOO_poly", sep=""), FILES)])
+            file.remove(FILES[grep(paste(names(output)[i],"_EOO_poly", sep=""), FILES)])
             }
                                                                       }
-        NAME <- names(OUTPUT[[i]][[2]])
-        OUTPUT[[i]][[2]]@polygons[[1]]@ID <- "1"
-        ConvexHulls_poly_dataframe <- SpatialPolygonsDataFrame(OUTPUT[[i]][[2]], data=as.data.frame(names(OUTPUT[[i]][[2]])))
-        colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(names(OUTPUT)[i], "[ ]")), 0, 3), collapse = '')
-        writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(names(OUTPUT)[i],"_EOO_poly", sep=""),driver="ESRI Shapefile")
-      }
+        NAME <- names_[id_spatial[i]]
+        output_spatial[[i]]@polygons[[1]]@ID <- "1"
+        ConvexHulls_poly_dataframe <- SpatialPolygonsDataFrame(output_spatial[[i]], data=as.data.frame(names(output_spatial[[i]])))
+        colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
+        writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN", paste(names_[id_spatial[i]],"_EOO_poly", sep=""), driver="ESRI Shapefile", overwrite_layer = TRUE)
+      # }
     }
   }
   
-  Results_short <- lapply(OUTPUT, `[`, 1)
-  Results_short <- as.data.frame(matrix(unlist(Results_short), nrow=1))
-  colnames(Results_short) <- names(OUTPUT)
-  Results_short <- as.data.frame(t(Results_short))
-  colnames(Results_short) <- "EOO"
+  Results_short <- data.frame(EOO = unlist(output[grep("EOO", names(output))]))
+  row.names(Results_short) <- names_
   
   if(write_results) write.csv(Results_short, paste(getwd(),"/", file.name, ".csv", sep=""))
   
-  if(!export_shp) OUTPUT <- Results_short
+  if(!export_shp) output <- Results_short
   
-  OUTPUT
+  output
 }
 
 
@@ -378,11 +444,17 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
     Occupied_cells <- vector(mode = "numeric", length = 4)
     decal <- c(0,1,2,3)
     for (h in decal) {
-      ext = raster::extent(floor(Corners[1,1])-h*(cell_size*1000/4)-2*cell_size*1000, floor(Corners[1,2])+h*(cell_size*1000/4)+2*cell_size*1000, 
-                           floor(Corners[2,1])-h*(cell_size*1000/4)-2*cell_size*1000, floor(Corners[2,2])+h*(cell_size*1000/4)+2*cell_size*1000)
-      r = raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
-      r2_AOO <- raster::rasterize(coordEAC[,1:2], r)
-      OCC <- length(which(!is.na(raster::values(r2_AOO))))
+      ext <- 
+        raster::extent(floor(Corners[1,1])-h*(cell_size*1000/4)-2*cell_size*1000, 
+                           floor(Corners[1,2])+h*(cell_size*1000/4)+2*cell_size*1000, 
+                           floor(Corners[2,1])-h*(cell_size*1000/4)-2*cell_size*1000, 
+                           floor(Corners[2,2])+h*(cell_size*1000/4)+2*cell_size*1000)
+      r <- 
+        raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
+      r2_AOO <- 
+        raster::rasterize(coordEAC[,1:2], r)
+      OCC <- 
+        length(which(!is.na(raster::values(r2_AOO))))
       Occupied_cells[h+1] <- OCC
       
       ### If only one occupied cell, stop the production of raster
@@ -410,9 +482,10 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
       # rd.2.vec <- c(rd.2.vec, rd.2)
       if(OCC==1) break
     }
+    
   }
   
-  
+  Occupied_cells <- Occupied_cells[Occupied_cells>0]
   Occupied_cells <- min(Occupied_cells)
   
   AOO <- Occupied_cells*cell_size*cell_size  ### AOO
@@ -436,9 +509,10 @@ AOO.computing <- function(XY,
   projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
   
   coordEAC <- 
-    data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]),proj=as.character(projEAC),inv=FALSE)), 
+    data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]), 
+                                            proj=as.character(projEAC),inv=FALSE)), 
                       ncol=2),
-               tax = XY$tax)
+               tax = XY[,3])
   
   ## if any missing coordinates
   if(any(is.na(coordEAC[,c(1:2)]))) {
