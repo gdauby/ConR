@@ -505,7 +505,10 @@ AOO.computing <- function(XY,
   
   if(parallel) stopImplicitCluster()
   
-  return(unlist(output))
+  res <- unlist(output)
+  names(res) <- names(list_data)
+  
+  return(res)
 }
 
 
