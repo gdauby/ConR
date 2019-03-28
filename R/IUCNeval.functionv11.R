@@ -476,7 +476,7 @@ AOO.computing <- function(XY,
     foreach(x=1:length(list_data), .combine='c', 
             arg1 = rep(Cell_size_AOO, length(list_data)), 
             arg2 = rep(nbe.rep.rast.AOO, length(list_data))) %d% {
-              source("./R/IUCNeval.functionv11.R")
+              # source("./R/IUCNeval.functionv11.R")
               utils::setTxtProgressBar(pb, x)
               # utils::setTxtProgressBar(pb, x)
               
@@ -532,7 +532,7 @@ AOO.computing <- function(XY,
                        alpha=1, 
                        buff.alpha=0.1, 
                        method.range="convex.hull", 
-                       nbe.rep.rast.AOO=NULL, 
+                       nbe.rep.rast.AOO=0, 
                        verbose=TRUE, 
                        showWarnings=TRUE) {
   
@@ -1141,7 +1141,7 @@ IUCN.eval <- function (DATA,
                        alpha=1, 
                        buff.alpha=0.1, 
                        method.range="convex.hull", 
-                       nbe.rep.rast.AOO=NULL,
+                       nbe.rep.rast.AOO=0,
                        showWarnings=TRUE, # verbose=TRUE,
                        write_file_option="excel", 
                        parallel=F, 
