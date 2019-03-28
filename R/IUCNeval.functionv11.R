@@ -452,10 +452,10 @@ AOO.computing <- function(XY,
   coordEAC$tax <- as.character(coordEAC$tax)
   list_data <- split(coordEAC, f = coordEAC$tax)
   
-  if(show_progress) prog. <- "text"
-  if(!show_progress) prog. <- "none"
+  # if(show_progress) prog. <- "text"
+  # if(!show_progress) prog. <- "none"
   
-  pb <- 
+  if(show_progress)  pb <- 
     utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
   
   if(parallel) {
@@ -477,7 +477,7 @@ AOO.computing <- function(XY,
             arg1 = rep(Cell_size_AOO, length(list_data)), 
             arg2 = rep(nbe.rep.rast.AOO, length(list_data))) %d% {
               # source("./R/IUCNeval.functionv11.R")
-              utils::setTxtProgressBar(pb, x)
+              if(show_progress)  utils::setTxtProgressBar(pb, x)
               # utils::setTxtProgressBar(pb, x)
               
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
