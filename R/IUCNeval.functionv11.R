@@ -400,10 +400,6 @@ EOO.computing <- function(XY,
     
     SubPopPoly <- sp::spTransform(SubPopPoly, CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
     
-    # splited_pol <- lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
-    # NbeSubPop <- length(splited_pol)
-    # 
-    # SubPopPoly = SpatialPolygons(Srl=list(p2_Buffered1@polygons[[1]]), pO=as.integer(1), proj4string=crs("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
     OUTPUT <- list(NbeSubPop, SubPopPoly)
     names(OUTPUT) <- c("Number of subpopulation","subpop.poly")
     return(OUTPUT)
@@ -835,8 +831,8 @@ AOO.computing <- function(XY,
     EOO_ <- EOO.computing(XY[,c(2,1)], exclude.area=exclude.area, country_map=poly_borders, Name_Sp=NamesSp, 
                           buff_width=buff_width, export_shp=TRUE,
                           alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, write_results=FALSE) # , verbose=FALSE
-    p1 <- EOO_[[1]][[2]]
-    EOO <- EOO_[[1]][[1]]
+    p1 <- EOO_[[2]]
+    EOO <- EOO_[[1]]
     
   ##########################################################################################
   ##############################  AOO estimation              ##############################
@@ -1209,7 +1205,7 @@ IUCN.eval <- function (DATA,
                        Resol_sub_pop = 5, 
                        method_locations = "fixed_grid", 
                        Rel_cell_size = 0.05, 
-                       DrawMap = TRUE, 
+                       DrawMap = FALSE, 
                        add.legend = TRUE, 
                        file_name = NULL, 
                        export_shp = FALSE, 
@@ -1273,9 +1269,6 @@ IUCN.eval <- function (DATA,
     if(!identicalCRS(protec.areas, land)) crs(protec.areas) <-crs(land)
   }
   
-  #if(is.null(country_map)) stop("country_map is mandatory")
-
-  
   if(length(grep("[?]", DATA[,3]))>0) DATA[,3] <- gsub("[?]", "_", DATA[,3])
   if(length(grep("[/]", DATA[,3]))>0) DATA[,3] <- gsub("[/]", "_", DATA[,3])
   
@@ -1295,48 +1288,6 @@ IUCN.eval <- function (DATA,
     pdf(paste(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep=""),"/","results.pdf", sep=""), width=25, height=25)
   }
   
-  
-  # system.time(Results <- lapply(list_data, function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
-  #                                                    write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
-  #                                                    Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
-  #                                                    method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
-  #                                                    ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
-  #                                                    MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-  #                                                    alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-  #                                                    nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO))
-  # )
-  
-  # pb <- progress_bar$new(total = length(list_data))
-  # 
-  # Results <- list()
-  # 
-  #   for (i in 1:length(list_data)) {
-  #     pb$tick()
-  #     
-  #     Results[[i]] <-
-  #       .IUCN.comp(list_data[[i]], NamesSp=as.character(unique(list_data[[i]]$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
-  #                  write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
-  #                  Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
-  #                  method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
-  #                  ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
-  #                  MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-  #                  alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-  #                  nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO)
-  #     
-  #     
-  #   }
-  
-  # Results <-
-  #     plyr::llply(list_data, .fun=function(x) .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), DrawMap=DrawMap, exclude.area=exclude.area,
-  #                                                    write_shp=write_shp, poly_borders=country_map, method_protected_area=method_protected_area, 
-  #                                                    Cell_size_AOO=Cell_size_AOO, Cell_size_locations=Cell_size_locations, Resol_sub_pop=Resol_sub_pop,
-  #                                                    method_locations=method_locations,file_name=file_name, buff_width=buff_width, map_pdf=map_pdf,
-  #                                                    ID_shape_PA=ID_shape_PA, SubPop=SubPop,protec.areas=protec.areas, 
-  #                                                    MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-  #                                                    alpha=alpha, buff.alpha=buff.alpha, method.range=method.range, 
-  #                                                    nbe.rep.rast.AOO=nbe.rep.rast.AOO, verbose=verbose, 
-  #                                                    showWarnings=showWarnings, draw.poly.EOO=draw.poly.EOO), .progress = "text")
-
   if(parallel) registerDoParallel(NbeCores)
   
   Results <- 
