@@ -93,15 +93,15 @@
 
 .crop.poly <- function(poly, crop){
 
-  p1_owin <- as.owin(poly)
-  africa_owin <- as.owin(crop)
+  p1_owin <- spatstat::as.owin(poly)
+  africa_owin <- spatstat::as.owin(crop)
   
   if(round(area.owin(union.owin(p1_owin,africa_owin)),3)!=round(area.owin(africa_owin),3)) {
-    w <- setminus.owin(p1_owin, africa_owin)
-    w2 <- setminus.owin(p1_owin, w)
+    w <- spatstat::setminus.owin(p1_owin, africa_owin)
+    w2 <- spatstat::setminus.owin(p1_owin, w)
     poly_masked <- as(w2, "SpatialPolygons")
     
-    crs(poly_masked) <- crs(crop)
+    raster::crs(poly_masked) <- raster::crs(crop)
   }else{
     poly_masked <- poly
   }
@@ -275,19 +275,18 @@ EOO.computing <- function(XY,
   # }
   # , .progress = prog., .parallel=parallel, .paropts = "ConR")
   
-  
   if(parallel) {
     if("doParallel" %in% 
        rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
     
     library(doParallel)
     
-    registerDoParallel(NbeCores)
+    doParallel::registerDoParallel(NbeCores)
     message('doParallel running with ',
-            NbeCores, ' cores')
-    `%d%` <- `%dopar%`
+            NbeCores, ' cores - progressbar not valid')
+    `%d%` <- foreach::`%dopar%`
   }else{
-    `%d%` <- `%do%`
+    `%d%` <- foreach::`%do%`
   }
   
   if(show_progress)  pb <- 
@@ -338,7 +337,7 @@ EOO.computing <- function(XY,
               
             }
   
-  if(parallel) stopImplicitCluster()
+  if(parallel) doParallel::stopImplicitCluster()
   
   if(length(output)==1) names(output) <- Name_Sp
   
@@ -593,7 +592,10 @@ AOO.computing <- function(XY,
 
 
 
-.IUCN.comp <- function(DATA, poly_borders=NULL, Cell_size_AOO=2, Cell_size_locations=10, 
+.IUCN.comp <- function(DATA, 
+                       poly_borders=NULL, 
+                       Cell_size_AOO=2, 
+                       Cell_size_locations=10, 
                        Resol_sub_pop=5, 
                        method_locations=c("fixed_grid"), 
                        Rel_cell_size=0.05, 
@@ -605,7 +607,7 @@ AOO.computing <- function(XY,
                        write_shp=FALSE, 
                        file_name=NULL, 
                        add.legend=TRUE, 
-                       DrawMap=T, 
+                       DrawMap=TRUE, 
                        map_pdf=FALSE, 
                        draw.poly.EOO=TRUE, 
                        SubPop=TRUE, 
@@ -617,19 +619,21 @@ AOO.computing <- function(XY,
                        verbose=TRUE, 
                        showWarnings=TRUE) {
   
-  ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
-  if(DrawMap) {
-      full_poly_borders <- poly_borders
-      poly_borders <- crop(poly_borders, extent(MinMax)+30)
-  }
-  
   ### Getting by default land map if poly_borders is not provided
   if(is.null(poly_borders)) {
     data('land', package='ConR', envir=environment()) 
     land <- get("land", envir=environment()) 
-      # data(land, envir = environment())
-      poly_borders=land
-    }
+    # data(land, envir = environment())
+    poly_borders=land
+  }
+  
+  ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
+  if(DrawMap) {
+      full_poly_borders <- poly_borders
+      if(!is.null(poly_borders)) poly_borders <- raster::crop(poly_borders, extent(MinMax)+30)
+  }
+  
+
   
   ## Equal Area cylindrical projection used for AOO estimation
   projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
@@ -1288,38 +1292,119 @@ IUCN.eval <- function (DATA,
     pdf(paste(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep=""),"/","results.pdf", sep=""), width=25, height=25)
   }
   
-  if(parallel) registerDoParallel(NbeCores)
+  if(parallel) {
+    if("doParallel" %in% 
+       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    
+    library(doParallel)
+    
+    doParallel::registerDoParallel(NbeCores)
+    message('doParallel running with ',
+            NbeCores, ' cores')
+    `%d%` <- foreach::`%dopar%`
+  }else{
+    `%d%` <- foreach::`%do%`
+  }
   
+  pb <- 
+    utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
+  
+  # if(parallel) doParallel::registerDoParallel(NbeCores)
+
   Results <- 
-    plyr::llply(list_data, .fun=function(x) {
-    .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), 
-               DrawMap=DrawMap, 
-               exclude.area=exclude.area,
-               write_shp=write_shp, 
-               poly_borders=country_map, 
-               method_protected_area=method_protected_area, 
-               Cell_size_AOO=Cell_size_AOO, 
-               Cell_size_locations=Cell_size_locations, 
-               Resol_sub_pop=Resol_sub_pop,
-               method_locations=method_locations, 
-               Rel_cell_size=Rel_cell_size,
-               file_name=file_name, 
-               buff_width=buff_width, 
-               map_pdf=map_pdf,
-               ID_shape_PA=ID_shape_PA, 
-               SubPop=SubPop,protec.areas=protec.areas, 
-               MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
-               alpha=alpha, 
-               buff.alpha=buff.alpha, 
-               method.range=method.range, 
-               nbe.rep.rast.AOO=nbe.rep.rast.AOO, #verbose=TRUE, verbose=verbose, 
-               showWarnings=showWarnings, 
-               draw.poly.EOO=draw.poly.EOO)
-                }
-                , .progress = "text", .parallel=parallel, .paropts = "ConR")
+    foreach::foreach(x = 1:length(list_data), 
+                     # .combine='c', 
+                     arg1 = names(list_data), 
+                     arg2 = rep(DrawMap, length(list_data)),
+                     arg3 = rep(exclude.area, length(list_data)),
+                     arg4 = rep(write_shp, length(list_data)),
+                     arg6 = rep(method_protected_area, length(list_data)),
+                     arg7 = rep(Cell_size_AOO, length(list_data)),
+                     arg8 = rep(Cell_size_locations, length(list_data)),
+                     arg9 = rep(Resol_sub_pop, length(list_data)),
+                     arg10 = rep(method_locations, length(list_data)),
+                     arg11 = rep(Rel_cell_size, length(list_data)),
+                     arg12 = rep(ifelse(is.null(file_name), NA, file_name), length(list_data)),
+                     arg13 = rep(buff_width, length(list_data)),
+                     arg14 = rep(map_pdf, length(list_data)),
+                     arg15 = rep(ID_shape_PA, length(list_data)),
+                     arg16 = rep(SubPop, length(list_data)),
+                     arg17 = rep(ifelse(is.null(protec.areas), NA, protec.areas), length(list_data)),
+                     arg18 = rep(add.legend, length(list_data)),
+                     arg20 = rep(alpha, length(list_data)),
+                     arg21 = rep(buff.alpha, length(list_data)),
+                     arg22 = rep(method.range, length(list_data)),
+                     arg23 = rep(nbe.rep.rast.AOO, length(list_data)),
+                     arg24 = rep(showWarnings, length(list_data))) %d% {
+                       # source("./R/IUCNeval.functionv11.R")
+                       utils::setTxtProgressBar(pb, x)
+                       cat(" ", x)
+                       
+                       if(is.na(arg12)) arg_file_name <- NULL
+                       if(is.na(arg17)) arg_protec.areas <- NULL
+                       res <- 
+                         .IUCN.comp(DATA = list_data[[x]],
+                                    NamesSp = arg1, 
+                                    DrawMap = arg2, 
+                                    exclude.area = arg3, 
+                                    write_shp = arg4, 
+                                    method_protected_area = arg6, 
+                                    Cell_size_AOO = arg7, 
+                                    Cell_size_locations = arg8, 
+                                    Resol_sub_pop = arg9, 
+                                    method_locations = arg10, 
+                                    Rel_cell_size = arg11, 
+                                    poly_borders = country_map, 
+                                    file_name = arg_file_name, 
+                                    buff_width = arg13, 
+                                    map_pdf = arg14, 
+                                    ID_shape_PA = arg15, 
+                                    SubPop = arg16, 
+                                    protec.areas = arg_protec.areas, 
+                                    add.legend = arg18,
+                                    alpha = arg20, 
+                                    buff.alpha = arg21, 
+                                    method.range = arg22, 
+                                    nbe.rep.rast.AOO = arg23, 
+                                    showWarnings = arg24,
+                                    MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
+                       
+                       # names(res)[1] <- paste0(names(res)[1], "_" ,x)
+                       # if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
+                       
+                       res
+                     }
+  
+  # Results <- 
+  #   plyr::llply(list_data, .fun=function(x) {
+  #   .IUCN.comp(x, NamesSp=as.character(unique(x$tax)), 
+  #              DrawMap=DrawMap, 
+  #              exclude.area=exclude.area,
+  #              write_shp=write_shp, 
+  #              poly_borders=country_map, 
+  #              method_protected_area=method_protected_area, 
+  #              Cell_size_AOO=Cell_size_AOO, 
+  #              Cell_size_locations=Cell_size_locations, 
+  #              Resol_sub_pop=Resol_sub_pop,
+  #              method_locations=method_locations, 
+  #              Rel_cell_size=Rel_cell_size,
+  #              file_name=file_name, 
+  #              buff_width=buff_width, 
+  #              map_pdf=map_pdf,
+  #              ID_shape_PA=ID_shape_PA, 
+  #              SubPop=SubPop,protec.areas=protec.areas, 
+  #              MinMax=c(min(DATA[,2]), max(DATA[,2]), min(DATA[,1]), max(DATA[,1])),
+  #              alpha=alpha, 
+  #              buff.alpha=buff.alpha, 
+  #              method.range=method.range, 
+  #              nbe.rep.rast.AOO=nbe.rep.rast.AOO, #verbose=TRUE, verbose=verbose, 
+  #              showWarnings=showWarnings, 
+  #              draw.poly.EOO=draw.poly.EOO)
+  #               }
+  #               , .progress = "text", .parallel=parallel, .paropts = "ConR")
   
   
-  if(parallel) stopImplicitCluster()
+  if(parallel) doParallel::stopImplicitCluster()
   
   if(map_pdf) dev.off()
   
