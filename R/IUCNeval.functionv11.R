@@ -599,7 +599,8 @@ AOO.computing <- function(XY,
                        Resol_sub_pop=5, 
                        method_locations=c("fixed_grid"), 
                        Rel_cell_size=0.05, 
-                       protec.areas=NULL, exclude.area=FALSE, 
+                       protec.areas=NULL, 
+                       exclude.area=FALSE, 
                        method_protected_area="no_more_than_one",
                        ID_shape_PA="WDPA_PID", 
                        buff_width=0.1, 
@@ -1308,12 +1309,9 @@ IUCN.eval <- function (DATA,
   
   pb <- 
     utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
-  
-  # if(parallel) doParallel::registerDoParallel(NbeCores)
 
   Results <- 
     foreach::foreach(x = 1:length(list_data), 
-                     # .combine='c', 
                      arg1 = names(list_data), 
                      arg2 = rep(DrawMap, length(list_data)),
                      arg3 = rep(exclude.area, length(list_data)),
@@ -1329,7 +1327,6 @@ IUCN.eval <- function (DATA,
                      arg14 = rep(map_pdf, length(list_data)),
                      arg15 = rep(ID_shape_PA, length(list_data)),
                      arg16 = rep(SubPop, length(list_data)),
-                     arg17 = rep(ifelse(is.null(protec.areas), NA, protec.areas), length(list_data)),
                      arg18 = rep(add.legend, length(list_data)),
                      arg20 = rep(alpha, length(list_data)),
                      arg21 = rep(buff.alpha, length(list_data)),
@@ -1341,7 +1338,7 @@ IUCN.eval <- function (DATA,
                        cat(" ", x)
                        
                        if(is.na(arg12)) arg_file_name <- NULL
-                       if(is.na(arg17)) arg_protec.areas <- NULL
+                       
                        res <- 
                          .IUCN.comp(DATA = list_data[[x]],
                                     NamesSp = arg1, 
@@ -1360,7 +1357,7 @@ IUCN.eval <- function (DATA,
                                     map_pdf = arg14, 
                                     ID_shape_PA = arg15, 
                                     SubPop = arg16, 
-                                    protec.areas = arg_protec.areas, 
+                                    protec.areas = protec.areas, 
                                     add.legend = arg18,
                                     alpha = arg20, 
                                     buff.alpha = arg21, 
@@ -1368,10 +1365,6 @@ IUCN.eval <- function (DATA,
                                     nbe.rep.rast.AOO = arg23, 
                                     showWarnings = arg24,
                                     MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
-                       
-                       # names(res)[1] <- paste0(names(res)[1], "_" ,x)
-                       # if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
-                       
                        res
                      }
   
