@@ -32,7 +32,7 @@ This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO
 
 \item{Resol_sub_pop}{a numeric, value indicating the radius size in kilometres used for estimating the number of sub-population. By default, equal to 5}
 
-\item{DrawMap}{a logical, if TRUE a map is produced for each species in png format, unless map_pdf is TRUE. By default, it is TRUE}
+\item{DrawMap}{a logical, if TRUE a map is produced for each species in png format, unless map_pdf is TRUE. By default, it is FALSE}
 
 \item{add.legend}{a logical, if TRUE a legend and a submap showing distribution in 'country_map' are displayed for each map. By default, it is TRUE}
 
