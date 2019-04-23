@@ -316,6 +316,19 @@ EOO.computing <- function(XY,
               # if(arg3) countr <- country_map
               # if(!arg3) countr <- FALSE
               
+              # res <- 
+              #   .EOO.comp(XY = list_data[[x]], 
+              #             exclude.area = exclude.area,
+              #             buff_width = buff_width, 
+              #             country_map = country_map,
+              #             Name_Sp = names_,
+              #             alpha.hull = alpha.hull, 
+              #             convex.hull = convex.hull, 
+              #             alpha = alpha,
+              #             buff.alpha = buff.alpha, 
+              #             method.less.than3 = method.less.than3)
+              
+              
               
               res <- 
                 .EOO.comp(XY = list_data[[x]], 
@@ -338,6 +351,9 @@ EOO.computing <- function(XY,
             }
   
   if(parallel) doParallel::stopImplicitCluster()
+  
+  Results_short <- data.frame(EOO = unlist(output[grep("EOO", names(output))]))
+  row.names(Results_short) <- names_
   
   if(length(output)==1) names(output) <- Name_Sp
   
@@ -364,9 +380,7 @@ EOO.computing <- function(XY,
       # }
     }
   }
-  
-  Results_short <- data.frame(EOO = unlist(output[grep("EOO", names(output))]))
-  row.names(Results_short) <- names_
+
   
   if(write_results) write.csv(Results_short, paste(getwd(),"/", file.name, ".csv", sep=""))
   
