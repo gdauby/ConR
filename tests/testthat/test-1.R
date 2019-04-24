@@ -17,12 +17,12 @@ test_that("EOO.computing", {
   
   EOO <- EOO.computing(dataset.ex, export_shp = T)
   
-  expect_output(str(EOO), "List of 2")
-  expect_is(EOO[[1]][[2]], "SpatialPolygons")
+  expect_output(str(EOO), "List of 11")
+  expect_is(EOO$spatial.polygon_1, "SpatialPolygons")
   
-  EOO <- EOO.computing(dataset.ex, method.range = "alpha.hull")
+  EOO <- EOO.computing(dataset.ex)
   
-  expect_equal(154205, EOO[1,1])
+  expect_equal(2635042, EOO$EOO[1])
 
   
 })
