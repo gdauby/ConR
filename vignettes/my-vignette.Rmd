@@ -49,6 +49,7 @@ library(ConR)
 data(dataset.ex)
 MyData <- dataset.ex
 MyData <- MyData[which(!MyData[,3] %in% c("species_1", "species_2")),]
+MyData$tax <- as.character(MyData$tax)
 ```
 
 **Help files**
@@ -164,7 +165,7 @@ EOO.results <- EOO.computing(MyData, export_shp = T)
 Then, for the first species (mapped in grey color):
 
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
-plot(EOO.results[[1]][[2]], col="grey")
+plot(EOO.results$spatial.polygon_1, col="grey")
 ```
 
 You can add a **background** showing the land cover. ConR include a shape file of land cover representing a default world land map, which can be loaded by running the following code (to be done only once during your working session, it attachs the object land in the R environment:
@@ -174,14 +175,14 @@ data(land)
 
 Now you can add the land cover as a background by running the following code:
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
-plot(EOO.results[[1]][[2]], col="grey")
+plot(EOO.results$spatial.polygon_1, col="grey")
 plot(land, add=T)
 ```
 
 For mapping the convex hull of the second species (mapped in red)
 
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
-plot(EOO.results[[2]][[2]], col="red")
+plot(EOO.results$spatial.polygon_2, col="red")
 plot(land, add=T)
 ```
 
@@ -227,7 +228,7 @@ EOO.computing(MyData, exclude.area = F, country_map = land)
 The result can be visually verified by mapping the spatial polygon:
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=4)}
 EOO.results <- EOO.computing(MyData, exclude.area = T, country_map = land, export_shp = T)
-plot(EOO.results[[2]][[2]], col="red")
+plot(EOO.results$spatial.polygon_2, col="red")
 plot(land, add=T)
 ```
 
@@ -242,7 +243,7 @@ EOO.computing(MyData, method.range = "alpha.hull")
 To visually map the result:
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T)
-plot(EOO.results[[1]][[2]], col="red")
+plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
 
@@ -250,14 +251,14 @@ The alpha parameter of the alpha-hull can be modified by the `alpha` argument.
 Below an example with the second species:
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5)
-plot(EOO.results[[2]][[2]], col="red")
+plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
 
 Alpha hull can be equally cropped for unsuitable area:
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5, exclude.area = T, country_map = land)
-plot(EOO.results[[2]][[2]], col="red")
+plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
   
@@ -276,7 +277,7 @@ MyData <- MyData[which(MyData[,3] %in% c("species_2")),]
 As an illustration, see this example below with an hypothetical species of three occurrences
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
 EOO.results <- EOO.computing(MyData, export_shp = T)
-plot(EOO.results[[1]][[2]], col="red")
+plot(EOO.results$spatial.polygon_1, col="red")
 points(MyData[,2], MyData[,1], pch=19) ### map the occurrences.
 ```
 

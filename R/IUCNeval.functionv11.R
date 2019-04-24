@@ -207,7 +207,6 @@
   return(OUTPUT)
 }
 
-
 EOO.computing <- function(XY, 
                           exclude.area=FALSE, 
                           country_map=NULL, 
@@ -276,14 +275,14 @@ EOO.computing <- function(XY,
   # , .progress = prog., .parallel=parallel, .paropts = "ConR")
   
   if(parallel) {
-    if("doParallel" %in% 
-       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    
-    library(doParallel)
+    # if("doParallel" %in% 
+    #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    # 
+    # library(doParallel)
     
     doParallel::registerDoParallel(NbeCores)
     message('doParallel running with ',
-            NbeCores, ' cores - progressbar not valid')
+            NbeCores, ' cores - progressbar not shown')
     `%d%` <- foreach::`%dopar%`
   }else{
     `%d%` <- foreach::`%do%`
@@ -294,53 +293,48 @@ EOO.computing <- function(XY,
   
   if(is.null(names(list_data))) names_ <- rep(Name_Sp, length(list_data)) else names_ <- names(list_data)
   
-  # ,
-  # .packages = c("rgeos", "geosphere", "raster")
-  # ,
-  # arg3 = rep(ifelse(is.null(country_map), FALSE, TRUE), length(list_data))
+
+  # , 
+  # arg1 = rep(exclude.area, length(list_data)), 
+  # arg2 = rep(buff_width, length(list_data)),
+  # arg4 = names_,
+  # arg5 = rep(alpha.hull, length(list_data)),
+  # arg6 = rep(convex.hull, length(list_data)),
+  # arg7 = rep(alpha, length(list_data)),
+  # arg8 = rep(buff.alpha, length(list_data)),
+  # arg9 = rep(method.less.than3, length(list_data))
   
+  x <- NULL
   output <- 
     foreach(x = 1:length(list_data), 
-            .combine='c', 
-            arg1 = rep(exclude.area, length(list_data)), 
-            arg2 = rep(buff_width, length(list_data)),
-            arg4 = names_,
-            arg5 = rep(alpha.hull, length(list_data)),
-            arg6 = rep(convex.hull, length(list_data)),
-            arg7 = rep(alpha, length(list_data)),
-            arg8 = rep(buff.alpha, length(list_data)),
-            arg9 = rep(method.less.than3, length(list_data))) %d% {
+            .combine='c') %d% {
             # source("./R/IUCNeval.functionv11.R")
             if(show_progress)  utils::setTxtProgressBar(pb, x)
               
-              # if(arg3) countr <- country_map
-              # if(!arg3) countr <- FALSE
+              res <- 
+                .EOO.comp(XY = list_data[[x]], 
+                          exclude.area = exclude.area,
+                          buff_width = buff_width, 
+                          country_map = country_map,
+                          Name_Sp = names_[x],
+                          alpha.hull = alpha.hull, 
+                          convex.hull = convex.hull, 
+                          alpha = alpha,
+                          buff.alpha = buff.alpha, 
+                          method.less.than3 = method.less.than3)
+              
               
               # res <- 
               #   .EOO.comp(XY = list_data[[x]], 
-              #             exclude.area = exclude.area,
-              #             buff_width = buff_width, 
-              #             country_map = country_map,
-              #             Name_Sp = names_,
-              #             alpha.hull = alpha.hull, 
-              #             convex.hull = convex.hull, 
-              #             alpha = alpha,
-              #             buff.alpha = buff.alpha, 
-              #             method.less.than3 = method.less.than3)
-              
-              
-              
-              res <- 
-                .EOO.comp(XY = list_data[[x]], 
-                exclude.area = arg1,
-                buff_width = arg2, 
-                country_map = country_map,
-                Name_Sp = arg4,
-                alpha.hull = arg5, 
-                convex.hull = arg6, 
-                alpha = arg7,
-                buff.alpha = arg8, 
-                method.less.than3 = arg9)
+              #   exclude.area = arg1,
+              #   buff_width = arg2, 
+              #   country_map = country_map,
+              #   Name_Sp = arg4,
+              #   alpha.hull = arg5, 
+              #   convex.hull = arg6, 
+              #   alpha = arg7,
+              #   buff.alpha = arg8, 
+              #   method.less.than3 = arg9)
                 
               names(res)[1] <- paste0(names(res)[1], "_" ,x)
               if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
@@ -515,9 +509,9 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
 AOO.computing <- function(XY, 
                           Cell_size_AOO = 2,
                           nbe.rep.rast.AOO = 0,
-                          show_progress=TRUE, 
                           parallel = FALSE, 
-                          NbeCores=2) {
+                          NbeCores=2,
+                          show_progress= FALSE) {
   
   if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
   if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
@@ -550,29 +544,35 @@ AOO.computing <- function(XY,
     utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
   
   if(parallel) {
-    if("doParallel" %in% 
-       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    
-    library(doParallel)
+    # if("doParallel" %in% 
+    #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    # 
+    # library(doParallel)
     
     registerDoParallel(NbeCores)
     message('doParallel running with ',
             NbeCores, ' cores')
-    `%d%` <- `%dopar%`
+    `%d%` <- foreach::`%dopar%`
   }else{
-    `%d%` <- `%do%`
+    `%d%` <- foreach::`%do%`
   }
   
+  
+  # , 
+  # arg1 = rep(Cell_size_AOO, length(list_data)), 
+  # arg2 = rep(nbe.rep.rast.AOO, length(list_data))
+  
+  x <- NULL
   output <- 
-    foreach(x=1:length(list_data), .combine='c', 
-            arg1 = rep(Cell_size_AOO, length(list_data)), 
-            arg2 = rep(nbe.rep.rast.AOO, length(list_data))) %d% {
+    foreach(x=1:length(list_data), .combine='c') %d% {
               # source("./R/IUCNeval.functionv11.R")
               if(show_progress)  utils::setTxtProgressBar(pb, x)
               # utils::setTxtProgressBar(pb, x)
               
+              # res <- .AOO.estimation(coordEAC = list_data[[x]], 
+              #                        cell_size = arg1, nbe_rep = arg2)
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
-                                     cell_size = arg1, nbe_rep = arg2)
+                                     cell_size = Cell_size_AOO, nbe_rep = nbe.rep.rast.AOO)
               
               res
             }
@@ -1244,7 +1244,7 @@ IUCN.eval <- function (DATA,
                        nbe.rep.rast.AOO=0,
                        showWarnings=TRUE, # verbose=TRUE,
                        write_file_option="excel", 
-                       parallel=F, 
+                       parallel=FALSE, 
                        NbeCores=2) {
   
   if(class(DATA)[1]=="spgeoIN") {
@@ -1308,10 +1308,10 @@ IUCN.eval <- function (DATA,
   }
   
   if(parallel) {
-    if("doParallel" %in% 
-       rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    
-    library(doParallel)
+    # if("doParallel" %in% 
+    #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
+    # 
+    # library(doParallel)
     
     doParallel::registerDoParallel(NbeCores)
     message('doParallel running with ',
@@ -1321,64 +1321,98 @@ IUCN.eval <- function (DATA,
     `%d%` <- foreach::`%do%`
   }
   
+  
+  # , 
+  # arg1 = names(list_data), 
+  # arg2 = rep(DrawMap, length(list_data)),
+  # arg3 = rep(exclude.area, length(list_data)),
+  # arg4 = rep(write_shp, length(list_data)),
+  # arg6 = rep(method_protected_area, length(list_data)),
+  # arg7 = rep(Cell_size_AOO, length(list_data)),
+  # arg8 = rep(Cell_size_locations, length(list_data)),
+  # arg9 = rep(Resol_sub_pop, length(list_data)),
+  # arg10 = rep(method_locations, length(list_data)),
+  # arg11 = rep(Rel_cell_size, length(list_data)),
+  # arg12 = rep(ifelse(is.null(file_name), NA, file_name), length(list_data)),
+  # arg13 = rep(buff_width, length(list_data)),
+  # arg14 = rep(map_pdf, length(list_data)),
+  # arg15 = rep(ID_shape_PA, length(list_data)),
+  # arg16 = rep(SubPop, length(list_data)),
+  # arg18 = rep(add.legend, length(list_data)),
+  # arg20 = rep(alpha, length(list_data)),
+  # arg21 = rep(buff.alpha, length(list_data)),
+  # arg22 = rep(method.range, length(list_data)),
+  # arg23 = rep(nbe.rep.rast.AOO, length(list_data)),
+  # arg24 = rep(showWarnings, length(list_data))
+  
+  
   pb <- 
     utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
 
+  x <- NULL
   Results <- 
-    foreach::foreach(x = 1:length(list_data), 
-                     arg1 = names(list_data), 
-                     arg2 = rep(DrawMap, length(list_data)),
-                     arg3 = rep(exclude.area, length(list_data)),
-                     arg4 = rep(write_shp, length(list_data)),
-                     arg6 = rep(method_protected_area, length(list_data)),
-                     arg7 = rep(Cell_size_AOO, length(list_data)),
-                     arg8 = rep(Cell_size_locations, length(list_data)),
-                     arg9 = rep(Resol_sub_pop, length(list_data)),
-                     arg10 = rep(method_locations, length(list_data)),
-                     arg11 = rep(Rel_cell_size, length(list_data)),
-                     arg12 = rep(ifelse(is.null(file_name), NA, file_name), length(list_data)),
-                     arg13 = rep(buff_width, length(list_data)),
-                     arg14 = rep(map_pdf, length(list_data)),
-                     arg15 = rep(ID_shape_PA, length(list_data)),
-                     arg16 = rep(SubPop, length(list_data)),
-                     arg18 = rep(add.legend, length(list_data)),
-                     arg20 = rep(alpha, length(list_data)),
-                     arg21 = rep(buff.alpha, length(list_data)),
-                     arg22 = rep(method.range, length(list_data)),
-                     arg23 = rep(nbe.rep.rast.AOO, length(list_data)),
-                     arg24 = rep(showWarnings, length(list_data))) %d% {
+    foreach::foreach(x = 1:length(list_data)) %d% {
                        # source("./R/IUCNeval.functionv11.R")
                        utils::setTxtProgressBar(pb, x)
-                       cat(" ", x)
                        
-                       if(is.na(arg12)) arg_file_name <- NULL
+                       # if(is.na(arg12)) arg_file_name <- NULL
                        
                        res <- 
                          .IUCN.comp(DATA = list_data[[x]],
-                                    NamesSp = arg1, 
-                                    DrawMap = arg2, 
-                                    exclude.area = arg3, 
-                                    write_shp = arg4, 
-                                    method_protected_area = arg6, 
-                                    Cell_size_AOO = arg7, 
-                                    Cell_size_locations = arg8, 
-                                    Resol_sub_pop = arg9, 
-                                    method_locations = arg10, 
-                                    Rel_cell_size = arg11, 
+                                    NamesSp = names(list_data)[x], 
+                                    DrawMap = DrawMap, 
+                                    exclude.area = exclude.area, 
+                                    write_shp = write_shp, 
+                                    method_protected_area = method_protected_area, 
+                                    Cell_size_AOO = Cell_size_AOO, 
+                                    Cell_size_locations = Cell_size_locations, 
+                                    Resol_sub_pop = Resol_sub_pop, 
+                                    method_locations = method_locations, 
+                                    Rel_cell_size = Rel_cell_size, 
                                     poly_borders = country_map, 
-                                    file_name = arg_file_name, 
-                                    buff_width = arg13, 
-                                    map_pdf = arg14, 
-                                    ID_shape_PA = arg15, 
-                                    SubPop = arg16, 
+                                    file_name = file_name, 
+                                    buff_width = buff_width, 
+                                    map_pdf = map_pdf, 
+                                    ID_shape_PA = ID_shape_PA, 
+                                    SubPop = SubPop, 
                                     protec.areas = protec.areas, 
-                                    add.legend = arg18,
-                                    alpha = arg20, 
-                                    buff.alpha = arg21, 
-                                    method.range = arg22, 
-                                    nbe.rep.rast.AOO = arg23, 
-                                    showWarnings = arg24,
+                                    add.legend = add.legend,
+                                    alpha = alpha, 
+                                    buff.alpha = buff.alpha, 
+                                    method.range = method.range, 
+                                    nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
+                                    showWarnings = showWarnings,
                                     MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
+                       
+                       
+                       
+                       
+                       # res <- 
+                       #   .IUCN.comp(DATA = list_data[[x]],
+                       #              NamesSp = arg1, 
+                       #              DrawMap = arg2, 
+                       #              exclude.area = arg3, 
+                       #              write_shp = arg4, 
+                       #              method_protected_area = arg6, 
+                       #              Cell_size_AOO = arg7, 
+                       #              Cell_size_locations = arg8, 
+                       #              Resol_sub_pop = arg9, 
+                       #              method_locations = arg10, 
+                       #              Rel_cell_size = arg11, 
+                       #              poly_borders = country_map, 
+                       #              file_name = arg_file_name, 
+                       #              buff_width = arg13, 
+                       #              map_pdf = arg14, 
+                       #              ID_shape_PA = arg15, 
+                       #              SubPop = arg16, 
+                       #              protec.areas = protec.areas, 
+                       #              add.legend = arg18,
+                       #              alpha = arg20, 
+                       #              buff.alpha = arg21, 
+                       #              method.range = arg22, 
+                       #              nbe.rep.rast.AOO = arg23, 
+                       #              showWarnings = arg24,
+                       #              MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
                        res
                      }
   
