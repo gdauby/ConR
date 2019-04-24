@@ -12,7 +12,7 @@ Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
 Imports: fields, geosphere, grDevices, maptools, methods,
-        rgdal, rgeos, spatstat, spatstat.utils, tibble, writexl, doParallel, plyr
+        rgdal, rgeos, spatstat, spatstat.utils, tibble, writexl, doParallel, foreach
 LazyData: true
 Suggests: knitr,
     rmarkdown, alphahull,

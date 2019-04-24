@@ -8,10 +8,10 @@ and provide \code{SpatialPolygons} used for EOO computation
 \usage{
 EOO.computing(XY, exclude.area=FALSE, country_map=NULL, export_shp=FALSE,write_shp=FALSE, 
 	alpha=1, buff.alpha=0.1, method.range="convex.hull",
-	Name_Sp="Species1", 
+	Name_Sp="species1", 
 	buff_width=0.1, method.less.than3="not comp",
 	write_results=TRUE, 
-	file.name="EOO.results", parallel = F, NbeCores = 2, show_progress=F)
+	file.name="EOO.results", parallel = FALSE, NbeCores = 2, show_progress=FALSE)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}

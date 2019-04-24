@@ -4,9 +4,8 @@ exportPattern(".")
 import(raster)
 import(sp)
 import(maptools)
-import(foreach)
 
-
+importFrom(foreach, "foreach")
 
 importFrom(grDevices, "chull")
 
@@ -16,11 +15,11 @@ importFrom(rgdal, "writeOGR")
 
 importFrom(tibble, "is_tibble")
 
+importFrom(doParallel, "registerDoParallel", "stopImplicitCluster")
+
 importFrom(writexl, "write_xlsx")
 
 importFrom(doParallel, "registerDoParallel", "stopImplicitCluster")
-
-importFrom(plyr, "llply")
 
 importFrom(spatstat, "union.owin", "area.owin", "setminus.owin", "as.owin")
 
