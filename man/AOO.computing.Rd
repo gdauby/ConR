@@ -13,7 +13,7 @@ AOO.computing(XY, Cell_size_AOO = 2, nbe.rep.rast.AOO = 0,
 
 \item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for estimating Area of Occupancy.  By default, equal to 2}
 
-\item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is NULL but some minimal translation of the raster are still done}
+\item{nbe.rep.rast.AOO}{a numeric, indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done}
 
 \item{parallel}{a logical. Wether running in parallel. By default, it is FALSE}
 

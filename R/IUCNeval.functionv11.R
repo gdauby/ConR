@@ -658,10 +658,12 @@ locations.comp <- function(XY,
                            method = "fixed_grid",
                            nbe_rep = 0,
                            protec.areas = NULL, 
-                           Cell_size_locations = 10, 
-                           parallel=FALSE,
+                           Cell_size_locations = 10,
                            method_protected_area="no_more_than_one", 
-                           ID_shape_PA="WDPA_PID") {
+                           ID_shape_PA="WDPA_PID", 
+                           Rel_cell_size=0.05,
+                           parallel=FALSE,
+                           NbeCores=2) {
   
   if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
   if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
@@ -709,7 +711,7 @@ locations.comp <- function(XY,
     if(any(method=="fixed_grid"))
       Resolution <- Cell_size_locations
     if(any(method=="sliding scale")){
-      if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size
+      if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size/1000
       }else{
         Resolution <- 10
       }
@@ -1137,6 +1139,7 @@ locations.comp <- function(XY,
   
   if(any(method_locations=="fixed_grid")) Resolution <- Cell_size_locations*1000
   if(any(method_locations=="sliding scale")){
+    pairwise_dist <- dist(coordEAC,  upper = F)
     if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size
     }else{
       Resolution <- 10000

@@ -118,7 +118,7 @@ Different starting position of the raster used for estimate the AOO may provide 
 
 
 \strong{Estimating number of locations}\cr
-Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for specifying the resolution). The number of locations is simply the number of occupied locations. Note that the grid position is overlaid in order to minimize the number of locations (several translation of the grid are performed and the one providing the minimum number of occupied cells is kept).
+Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for specifying the resolution). The number of locations is simply the number of occupied locations. Note that the grid position is overlaid in order to minimize the number of locations (several translation of the grid are performed and the one providing the minimum number of occupied cells is provided).
 
 \strong{Taking into account protected area for estimating the number of locations}\cr
 A location is defined by the IUCN as a "geographically or ecologically distinct area in which a single threatening event can affect all individuals of the taxon". A simple way to include threat level is to rely on a map of protected areas and assume that populations  within and outside protected areas are under different threat level.\cr
