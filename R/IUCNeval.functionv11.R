@@ -518,7 +518,8 @@ AOO.computing <- function(XY,
                           nbe.rep.rast.AOO = 0,
                           parallel = FALSE, 
                           NbeCores=2,
-                          show_progress= FALSE) {
+                          show_progress= FALSE,
+                          export_shp=FALSE) {
   
   if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
   if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
@@ -575,17 +576,27 @@ AOO.computing <- function(XY,
               #                        cell_size = arg1, nbe_rep = arg2)
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
                                      cell_size = Cell_size_AOO, 
-                                     nbe_rep = nbe.rep.rast.AOO)
-              
+                                     nbe_rep = nbe.rep.rast.AOO, 
+                                     export_shp =export_shp)
+              if(export_shp)
+                names(res) <- c("aoo", "spatial")
               res
             }
   
   if(parallel) stopImplicitCluster()
+  if(!export_shp) {
+    res <- unlist(output)
+    names(res) <- names(list_data)    
+  }
+  if(export_shp) {
+    res <- unlist(output[names(output)=="aoo"])
+    names(res) <- names(list_data)
+    shapes <-  unlist(output[names(output)=="spatial"])
+    names(shapes) <- names(list_data)
+  }
   
-  res <- unlist(output)
-  names(res) <- names(list_data)
-  
-  return(res)
+  if(!export_shp) return(res)
+  if(export_shp) return(list(res, shapes))
 }
 
 
