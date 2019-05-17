@@ -742,8 +742,8 @@ locations.comp <- function(XY,
   }
   
   if(!is.null(protec.areas)) { ### Taking into account Protected Areas if provided
-    DATA_SF <- as.data.frame(XY)
-    colnames(DATA_SF) <- c("ddlon","ddlat")
+    DATA_SF <- as.data.frame(XY[,1:2])
+    colnames(DATA_SF) <- c("ddlat", "ddlon")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
     crs(DATA_SF) <- crs(protec.areas)
     Links_NatParks <- over(DATA_SF, protec.areas)
