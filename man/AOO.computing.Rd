@@ -6,7 +6,7 @@ Compute areas of occupancy (AOO) for multiple taxa in square kilometres
 }
 \usage{
 AOO.computing(XY, Cell_size_AOO = 2, nbe.rep.rast.AOO = 0, 
-  parallel = FALSE, NbeCores = 2, show_progress=FALSE)
+  parallel = FALSE, NbeCores = 2, show_progress=FALSE, export_shp=FALSE)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}
@@ -21,6 +21,7 @@ AOO.computing(XY, Cell_size_AOO = 2, nbe.rep.rast.AOO = 0,
 
 \item{show_progress}{a logical. Whether a bar showing progress in computation should be shown. By default, it is FALSE}
 
+\item{export_shp}{a logical. Whether a shapefile of occupied cells should be exported. By Wdefault, it is FALSE}
 
 	}
 	

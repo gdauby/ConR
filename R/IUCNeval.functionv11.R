@@ -568,12 +568,8 @@ AOO.computing <- function(XY,
   x <- NULL
   output <- 
     foreach(x=1:length(list_data), .combine='c') %d% {
-              # source("./R/IUCNeval.functionv11.R")
               if(show_progress)  utils::setTxtProgressBar(pb, x)
-              # utils::setTxtProgressBar(pb, x)
-              
-              # res <- .AOO.estimation(coordEAC = list_data[[x]], 
-              #                        cell_size = arg1, nbe_rep = arg2)
+      
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
                                      cell_size = Cell_size_AOO, 
                                      nbe_rep = nbe.rep.rast.AOO, 
@@ -703,16 +699,6 @@ locations.comp <- function(XY,
   
   crs_proj <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
   
-  # crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
-  
-  # if(!is.null(poly_borders)) crs_proj <- raster::crs(poly_borders)
-  
-  # # coordEAC <- as.data.frame(matrix(unlist(rgdal::project(as.matrix(XY),proj=as.character(projEAC),inv=FALSE)), ncol=2))
-  # rownames(coordEAC) <- seq(1,nrow(coordEAC),1)
-  
-  # ## range of lat and long
-  # Corners <- rbind(c(min(XY[,1]), max(XY[,1])), c(min(XY[,2]), max(XY[,2])))
-  
   ## geographical distances for all pairs of occurrences
   
   if(is.null(protec.areas)) {
@@ -773,7 +759,9 @@ locations.comp <- function(XY,
         ## if method is 'no_more_than_one' the number of location is the number of occupied protected areas
         
         loc_pa <- 
-          by(coordEAC_pa[,c("tax", "id_pa")], coordEAC_pa[,"tax"], FUN = function(x) length(unique(x$id_pa)))
+          by(coordEAC_pa[,c("tax", "id_pa")], coordEAC_pa[,"tax"], 
+             FUN = function(x) length(unique(x$id_pa)))
+        names(loc_pa) <- gsub(pattern = " ", replacement = "_", names(loc_pa))
         LocNatParks[names(LocNatParks) %in% names(loc_pa)] <-
           loc_pa
         r2_PA <- NA
@@ -790,7 +778,7 @@ locations.comp <- function(XY,
         if(any(method=="fixed_grid"))
           Resolution <- Cell_size_locations
         if(any(method=="sliding scale")){
-          if(nrow(coordEAC_pa)>1) {Resolution <- max(pairwise_dist_pa)*Rel_cell_size
+          if(nrow(coordEAC_pa)>1) {Resolution <- max(pairwise_dist_pa)/1000*Rel_cell_size
           }else{
             Resolution <- 10
           }
@@ -880,10 +868,7 @@ locations.comp <- function(XY,
     }
 
   }
-    
-  #   
-  #   if(length(which(!is.na(Links_NatParks[,1])))!=0){
-  
+
   if(!is.null(protec.areas)) return(list(r2, r2_PA, LocNatParks, LocOutNatParks))
   if(is.null(protec.areas)) return(list(r2, Locations))
   
@@ -996,157 +981,6 @@ locations.comp <- function(XY,
     Links_NatParks <- over(DATA_SF, protec.areas)    
   }
 
-  
-  # ## geographical distances for all pairs of occurrences
-  # if(nrow(coordEAC)>1) pairwise_dist <- dist(coordEAC,  upper = F)
-  # 
-  # ## resolution definition
-  # if(any(method_locations=="fixed_grid")) Resolution <- Cell_size_locations*1000
-  # if(any(method_locations=="sliding scale")){
-  #   if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size
-  #   }else{
-  #     Resolution <- 10000
-  #   }
-  # }
-  # 
-  # ## Convert resolution of grid in km into decimal degrees after projection, taking mean X and Y of occurrences
-  # border_to_center <- as.data.frame(matrix(NA, 2, 2))
-  # border_to_center[1,] <- c(mean(coordEAC[,1]), mean(coordEAC[,2]))
-  # border_to_center[2,] <- c( border_to_center[1,1]+Resolution,  border_to_center[1,2])
-  # DIST_circle <- matrix(unlist(rgdal::project(as.matrix(border_to_center),proj=as.character(projEAC),inv =T)), ncol=2)
-  # cell_size_deg <- abs((DIST_circle[1,1]-DIST_circle[2,1]))
-  # 
-  # 
-  # if(!is.null(protec.areas)) { ### Taking into account Protected Areas if provided
-  #   DATA_SF <- as.data.frame(XY)
-  #   colnames(DATA_SF) <- c("ddlon","ddlat")
-  #   coordinates(DATA_SF) <-  ~ddlon+ddlat
-  #   crs(DATA_SF) <- crs(protec.areas)
-  #   Links_NatParks <- over(DATA_SF, protec.areas)
-  #   
-  #   if(length(which(!is.na(Links_NatParks[,1])))!=0){
-  #     if(method_protected_area=="no_more_than_one"){
-  #       ## if method is 'no_more_than_one' the number of location is the number of occupied protected areas
-  #       LocNatParks <- 
-  #         length(unique(Links_NatParks[which(!is.na(Links_NatParks[,1])), ID_shape_PA]))
-  #     }else{ #### If method for accounting Protected areas should superimpose a grid
-  #       if(length(which(!is.na(Links_NatParks[,1])))>1) {
-  #         
-  #         ### By default, rasters with different starting position are created
-  #         ## by doing translation of 1/4 increment north and east
-  #         LocNatParks <- c()
-  #         decal <- c(0,1,2,3)
-  #         
-  #         for (h in decal) {
-  #           ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                        floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #           r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #           r2_PA <- rasterize(XY[which(!is.na(Links_NatParks[,1])),], r)
-  #           LOC <- length(which(!is.na(values(r2_PA))))
-  #           LocNatParks <- c(LocNatParks, LOC)
-  #           
-  #           ### stop to produce rasters with different starting position if number of locations is 1 or >10
-  #           if(LOC>10 || LOC==1) break 
-  #         }
-  #         
-  #         ### The minimum number is chosen
-  #         h <- decal[which.min(LocNatParks)]
-  #         LocNatParks <- min(LocNatParks)
-  #         
-  #         ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                      floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #         r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #         r2_PA <- rasterize(XY[which(!is.na(Links_NatParks[,1])),], r)
-  #         
-  #       }else{LocNatParks <- 1
-  #             ext = extent(floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3, 
-  #                          floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3)
-  #             r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #             r2_PA <- rasterize(XY[which(!is.na(Links_NatParks[,1])),], r)
-  #       }
-  #     }
-  #   }else{LocNatParks <- 0}
-  #   
-  #   if(length(which(is.na(Links_NatParks[,1])))!=0){
-  #     if(length(which(is.na(Links_NatParks[,1])))>1){
-  #       pairwise_dist <- dist(coordEAC[which(is.na(Links_NatParks[,1])),],  upper = F)
-  #       
-  #       ### By default, rasters with different starting position are created
-  #       ## by doing translation of 1/4 increment north and east
-  #       LocOutNatParks <- c()
-  #       decal <- c(0,1,2,3)
-  #       for (h in decal) {
-  #         ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                      floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #         r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #         r2 <- rasterize(XY[which(is.na(Links_NatParks[,1])),], r)
-  #         LOC <- length(which(!is.na(values(r2))))
-  #         LocOutNatParks <- c(LocOutNatParks, LOC)
-  #         
-  #         ### stop to produce rasters with different starting position if number of locations is 1 or >10
-  #         if(LOC>10 || LOC==1) break
-  #       }
-  #       
-  #       ### The minimum number is chosen
-  #       h <- decal[which.min(LocOutNatParks)]
-  #       LocOutNatParks <- min(LocOutNatParks)
-  #       ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                    floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #       r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #       r2 <- rasterize(XY[which(is.na(Links_NatParks[,1])),], r)
-  #     }else{LocOutNatParks <- 1
-  #           ext = extent(floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3, 
-  #                        floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3)
-  #           r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #           r2 <- rasterize(XY[which(is.na(Links_NatParks[,1])),], r)
-  #     }
-  #   }else{LocOutNatParks <- 0}
-  #   
-  # }else{
-  #   if(nrow(coordEAC)>1) {
-  #     
-  #     ### If protected areas are not taken into account and the number of occurrence i > 1
-  #     if(max(pairwise_dist) > Resolution) {
-  #       
-  #       ### By default, rasters with different starting position are created
-  #       ## by doing translation of 1/4 increment north and east
-  #       Locations <- c()
-  #       decal <- c(0,1,2,3)
-  #       for (h in decal) {
-  #         ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                      floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #         r = raster(ext, resolution=cell_size_deg, crs=crs(poly_borders))
-  #         r2 <- rasterize(XY, r)
-  #         LOC <- length(which(!is.na(values(r2))))
-  #         Locations <- c(Locations, LOC)
-  #         
-  #         ### stop to produce rasters with different starting position if number of locations is 1 or >10
-  #         if(LOC>10 || LOC==1) break
-  #       }
-  #       
-  #       ### The minimum number is chosen
-  #       h <- decal[which.min(Locations)]
-  #       Locations <- min(Locations)
-  #       ext = extent(floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4), 
-  #                    floor(min(Corners[,1]))-3+h*(cell_size_deg/4), floor(max(Corners[,2]))+3+h*(cell_size_deg/4))
-  #       r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #       r2 <- rasterize(XY, r)
-  #       
-  #     }else{Locations <- 1
-  #           ext = extent(floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3, 
-  #                        floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3)
-  #           r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #           r2 <- rasterize(XY, r)
-  #     }
-  #   }else{
-  #     Locations <- 1
-  #     ext = extent(floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3, 
-  #                  floor(min(Corners[,1]))-3, floor(max(Corners[,2]))+3)
-  #     r = raster(ext, resolution=cell_size_deg,crs=crs(poly_borders))
-  #     r2 <- rasterize(XY, r)
-  #   }
-  # }
-  
   
   if(any(method_locations=="fixed_grid")) Resolution <- Cell_size_locations*1000
   if(any(method_locations=="sliding scale")){
@@ -1640,12 +1474,7 @@ IUCN.eval <- function (DATA,
   x <- NULL
   Results <- 
     foreach::foreach(x = 1:length(list_data)) %d% {
-                       # source("./R/IUCNeval.functionv11.R")
                        utils::setTxtProgressBar(pb, x)
-                       
-                       # if(is.na(arg12)) arg_file_name <- NULL
-                       
-      # for (x in 1:length(list_data)) {
                        res <- 
                          .IUCN.comp(DATA = list_data[[x]],
                                     NamesSp = names(list_data)[x], 
@@ -1674,35 +1503,7 @@ IUCN.eval <- function (DATA,
                                     MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
                        
                        
-                       
-                       
-                       # res <- 
-                       #   .IUCN.comp(DATA = list_data[[x]],
-                       #              NamesSp = arg1, 
-                       #              DrawMap = arg2, 
-                       #              exclude.area = arg3, 
-                       #              write_shp = arg4, 
-                       #              method_protected_area = arg6, 
-                       #              Cell_size_AOO = arg7, 
-                       #              Cell_size_locations = arg8, 
-                       #              Resol_sub_pop = arg9, 
-                       #              method_locations = arg10, 
-                       #              Rel_cell_size = arg11, 
-                       #              poly_borders = country_map, 
-                       #              file_name = arg_file_name, 
-                       #              buff_width = arg13, 
-                       #              map_pdf = arg14, 
-                       #              ID_shape_PA = arg15, 
-                       #              SubPop = arg16, 
-                       #              protec.areas = protec.areas, 
-                       #              add.legend = arg18,
-                       #              alpha = arg20, 
-                       #              buff.alpha = arg21, 
-                       #              method.range = arg22, 
-                       #              nbe.rep.rast.AOO = arg23, 
-                       #              showWarnings = arg24,
-                       #              MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
-                       res
+                          res
                      }
   
   if(parallel) doParallel::stopImplicitCluster()
@@ -1798,7 +1599,6 @@ map.res <- function(Results,
   if(is.null(country_map))  {
     data('land', package='ConR', envir=environment()) 
     land <- get("land", envir=environment()) 
-    # data(land, envir = environment())
     country_map=land
   }
   
@@ -1947,7 +1747,6 @@ map.res <- function(Results,
   box()
   if (export_map) dev.off()
   
-##########################################
   if(export_data) return(threatened_rec_cut)
   
 }

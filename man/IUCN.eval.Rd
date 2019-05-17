@@ -187,8 +187,8 @@ Gilles Dauby
 Gaston KJ & Fuller AF, 2009, The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
 
 
-IUCN Standards and Petitions Subcommitte, 2010, Guidelines for Using the IUCN Red List Categories and Criteria. Version 8.1
-\url{http://www.iucnredlist.org/technical-documents/red-list-training/red-list-guidance-docs}
+IUCN Standards and Petitions Subcommitte, 2010, Guidelines for Using the IUCN Red List Categories and Criteria.
+\url{https://www.iucnredlist.org/resources/categories-and-criteria}
 
 Rivers CM, Bachman SP & Meagher TR, 2010, Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data, Biodiversity Conservation 19:2071-2085
 }
