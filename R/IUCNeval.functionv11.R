@@ -1432,7 +1432,7 @@ IUCN.eval <- function (DATA,
     }
   
   if(!is.null(protec.areas)) {
-    if(!identicalCRS(protec.areas, land)) crs(protec.areas) <-crs(land)
+    if(!identicalCRS(protec.areas, country_map)) crs(protec.areas) <- crs(land)
   }
   
   if(length(grep("[?]", DATA[,3]))>0) DATA[,3] <- gsub("[?]", "_", DATA[,3])
