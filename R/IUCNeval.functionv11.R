@@ -974,7 +974,7 @@ locations.comp <- function(XY,
   }
   
   if(!is.null(protec.areas)) {
-    DATA_SF <- as.data.frame(XY)
+    DATA_SF <- as.data.frame(unique(XY))
     colnames(DATA_SF) <- c("ddlon","ddlat")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
     crs(DATA_SF) <- crs(protec.areas)
