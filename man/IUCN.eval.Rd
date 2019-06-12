@@ -26,7 +26,7 @@ IUCN.eval(DATA, country_map = NULL, Cell_size_AOO = 2, Cell_size_locations = 10,
 \item{country_map}{a \code{SpatialPolygonsDataFrame} or \code{SpatialPolygons} showing for example countries or continent borders. 
 This shapefile will be used for cropping the \code{SpatialPolygons} used for EOO computation if \code{exclude.area} is TRUE. By default, it is \code{land}}
 
-\item{Cell_size_AOO}{a numeric, value indicating the grid size in decimal degrees used for estimating Area of Occupancy.  By default, equal to 2}
+\item{Cell_size_AOO}{a numeric, value indicating the grid size in kilometres used for estimating Area of Occupancy.  By default, equal to 2}
 
 \item{Cell_size_locations}{a numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
