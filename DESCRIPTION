@@ -20,3 +20,4 @@ Suggests: knitr,
 VignetteBuilder: knitr
 URL: https://github.com/gdauby/ConR
 BugReports: https://github.com/gdauby/ConR/issues
+RoxygenNote: 6.1.1
