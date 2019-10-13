@@ -93,19 +93,30 @@
 
 .crop.poly <- function(poly, crop){
 
+  crs_crop <- crs(crop)
+  
+  raster::crs(poly) <- NA
+  raster::crs(crop) <- NA
+  
   p1_owin <- spatstat::as.owin(poly)
   africa_owin <- spatstat::as.owin(crop)
   
-  if(round(area.owin(union.owin(p1_owin,africa_owin)),3)!=round(area.owin(africa_owin),3)) {
+  if(round(spatstat::area.owin(spatstat::union.owin(p1_owin,africa_owin)),3) != round(spatstat::area.owin(africa_owin),3)) {
+    
     w <- spatstat::setminus.owin(p1_owin, africa_owin)
     w2 <- spatstat::setminus.owin(p1_owin, w)
     poly_masked <- as(w2, "SpatialPolygons")
     
-    raster::crs(poly_masked) <- raster::crs(crop)
+    raster::crs(poly_masked) <- crs_crop
+    
   }else{
+    
     poly_masked <- poly
+    
   }
-  EOO <- round(areaPolygon(poly_masked)/1000000,1)  
+  
+  EOO <- round(areaPolygon(poly_masked)/1000000,1)
+  
   return(list(EOO, poly_masked))
 }
 
@@ -172,7 +183,7 @@
       
       makeLine(p1) ### Add vertices to line
       
-      p1 <- gBuffer(p1, width=buff_width) ### Add buffer to line
+      p1 <- suppressWarnings(gBuffer(p1, width=buff_width)) ### Add buffer to line
       
       ## If exclude.area is TRUE
       if(exclude.area) {
