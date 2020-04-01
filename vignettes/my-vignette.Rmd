@@ -26,11 +26,17 @@ Now you can set your working directory by the following code:
 setwd("C:/Your_R_directory/"")
 ```
 
-**Third step**, copy the file *ConR_1.0.tar.gz* in this directory.
-Do not unzip this file.
-Now you can install the ConR package using the following line code:
+**Third step**. Install ConR package (one of the two following) :
+
+To install the version on CRAN
 ```
-install.packages(pkgs="C:/Your_R_directory/ConR_1.0.tar.gz", repos=NULL, type="source")
+install.packages("ConR")
+```
+
+To install the version under development.
+```
+install.packages("devtools")
+devtools::install_github("gdauby/ConR")
 ```
 
 Note that the above procedures should be done only once, except the code for setting the working directory (second step).
@@ -156,7 +162,7 @@ It is possible to extract and map these objects by using the code below.
 
 First, store your results into the object here named `EOO.results`:
 ```
-EOO.results <- EOO.computing(MyData)
+EOO.results <- EOO.computing(MyData, export_shp = T)
 ```
 ```{r include=FALSE, echo = FALSE}
 EOO.results <- EOO.computing(MyData, export_shp = T)
