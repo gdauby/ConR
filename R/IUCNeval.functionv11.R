@@ -13,9 +13,16 @@
     coord[i,2] <- XY[hpts[i],1]
     
   }
-  p1 = readWKT(POLY)
-  crs(p1) <- "+proj=longlat +datum=WGS84"
-  makePoly(p1)
+  # p1 <- rgeos::readWKT(POLY)
+  # raster::crs(p1) <- "+proj=longlat +datum=WGS84"
+  # geosphere::makePoly(p1)
+  
+  p1 <- rgeos::readWKT(POLY)
+  crs <- CRS("+proj=longlat +datum=WGS84")
+  raster::crs(p1) <- crs
+  suppressWarnings(geosphere::makePoly(p1))
+  
+  
   return(p1)
 }
 
@@ -49,17 +56,20 @@
     y <- cc[2] + r * sin(seqang)
     
     # convert to line segment
-    l.list[[i]] <- Line(cbind(x,y))
+    l.list[[i]] <- sp::Line(cbind(x,y))
   }
   
   # promote to Lines class, then to SpatialLines class
-  l <- Lines(l.list, ID=1)
+  l <- sp::Lines(l.list, ID=1)
   
   # copy over CRS data from original point data
-  l.spl <- SpatialLines(list(l), proj4string=CRS(as.character(NA)))
+  l.spl <-
+    sp::SpatialLines(list(l), proj4string = sp::CRS(as.character(NA)))
   
   # promote to SpatialLinesDataFrame, required for export to GRASS / OGR
-  l.spldf <- SpatialLinesDataFrame(l.spl, data=data.frame(id=1), match.ID=FALSE)
+  l.spldf <-
+    sp::SpatialLinesDataFrame(l.spl, data = data.frame(id = 1), match.ID =
+                                FALSE)
   
   return(l.spldf)
 }
@@ -71,20 +81,34 @@
    if (any(rownames(installed.packages())=="alphahull")) {
      
      loadNamespace("alphahull")
-     ahull.obj <- alphahull::ahull(Used_data[,c(1,2)], alpha = alpha)
+     ahull.obj <-
+       alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha)
      y.as.spldf <- .ahull_to_SPLDF(ahull.obj)
-     y.as.spldf_buff <- gBuffer(y.as.spldf, width=buff)
+     y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
      
      NZp <- slot(y.as.spldf_buff, "polygons")
-     holes <- lapply(NZp, function(x) sapply(slot(x, "Polygons"), slot, 
-                                             "hole"))
-     res <- lapply(1:length(NZp), function(i) slot(NZp[[i]], 
-                                                   "Polygons")[!holes[[i]]])
+     holes <-
+       lapply(NZp, function(x)
+         sapply(slot(x, "Polygons"), slot,
+                "hole"))
+     res <- lapply(1:length(NZp), function(i)
+       slot(NZp[[i]],
+            "Polygons")[!holes[[i]]])
      IDs <- row.names(y.as.spldf_buff)
-     NZfill <- SpatialPolygons(lapply(1:length(res), function(i) 
-       Polygons(res[[i]], ID=IDs[i])), proj4string=CRS(proj4string(y.as.spldf_buff)))
+     NZfill <- SpatialPolygons(lapply(1:length(res), function(i)
+       Polygons(res[[i]], ID = IDs[i])),
+       proj4string = sp::CRS(proj4string(y.as.spldf_buff)))
+     
+     
+     crs <- CRS("+proj=longlat +datum=WGS84")
+     raster::crs(NZfill) <- crs
+     
      return(NZfill)
-     crs(NZfill) <- "+proj=longlat +datum=WGS84"
+     
+     # raster::crs(NZfill) <- "+proj=longlat +datum=WGS84"
+     
+
+     
    }else{
      stop("The package alphahull is required for this procedure, please install it")
    }
@@ -93,7 +117,7 @@
 
 .crop.poly <- function(poly, crop){
 
-  crs_crop <- crs(crop)
+  crs_crop <- raster::crs(crop)
   
   raster::crs(poly) <- NA
   raster::crs(crop) <- NA
@@ -101,21 +125,19 @@
   p1_owin <- spatstat::as.owin(poly)
   africa_owin <- spatstat::as.owin(crop)
   
-  if(round(spatstat::area.owin(spatstat::union.owin(p1_owin,africa_owin)),3) != round(spatstat::area.owin(africa_owin),3)) {
-    
+  if (round(spatstat::area.owin(spatstat::union.owin(p1_owin, africa_owin)), 3) != round(spatstat::area.owin(africa_owin), 3)) {
     w <- spatstat::setminus.owin(p1_owin, africa_owin)
     w2 <- spatstat::setminus.owin(p1_owin, w)
     poly_masked <- as(w2, "SpatialPolygons")
     
     raster::crs(poly_masked) <- crs_crop
     
-  }else{
-    
+  } else{
     poly_masked <- poly
     
   }
   
-  EOO <- round(areaPolygon(poly_masked)/1000000,1)
+  EOO <- round(suppressWarnings(geosphere::areaPolygon(poly_masked))/1000000,1)
   
   return(list(EOO, poly_masked))
 }
@@ -149,7 +171,17 @@
        if(method.less.than3=="arbitrary") {
          
          ## if there are two unique occurences, EOO is 1/10 of the distance between the two points
-         projEAC=crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+         # projEAC=crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+         
+         if (utils::packageVersion("sp") >= "1.3.3") {
+           wkt_crs <- 
+             rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+           projEAC <- sp::CRS(SRS_string = wkt_crs)
+         }
+         
+         if (utils::packageVersion("sp") < "1.3.3")
+           projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+         
          coordEAC <- as.data.frame(matrix(unlist(rgdal::project(as.matrix(unique(XY)[,1:2]),proj=as.character(projEAC),inv=FALSE)), ncol=2))
          EOO <- as.numeric(dist(coordEAC/1000)*0.1*dist(coordEAC/1000))  #
        }
@@ -178,12 +210,17 @@
         if(Z!=dim(hpts)[1]) POLY <- paste(POLY,", ", sep="")
         if(Z==dim(hpts)[1]) POLY <- paste(POLY,")", sep="")
       }
-      p1 = readWKT(POLY)
-      crs(p1) <- "+proj=longlat +datum=WGS84"
+      p1 <- rgeos::readWKT(POLY)
       
-      makeLine(p1) ### Add vertices to line
+      p1 <- rgeos::readWKT(POLY)
+      raster::crs(p1) <- CRS("+proj=longlat +datum=WGS84")
       
-      p1 <- suppressWarnings(gBuffer(p1, width=buff_width)) ### Add buffer to line
+      # crs <- CRS("+proj=longlat +datum=WGS84")
+      # crs(p1) <- crs
+      
+      p1 <- suppressWarnings(geosphere::makeLine(p1)) ### Add vertices to line
+      
+      p1 <- suppressWarnings(rgeos::gBuffer(p1, width=buff_width)) ### Add buffer to line
       
       ## If exclude.area is TRUE
       if(exclude.area) {
@@ -191,7 +228,7 @@
         p1 <- croped.EOO[[2]]
         EOO <- croped.EOO[[1]]
       }else{
-        EOO <- round(areaPolygon(p1)/1000000,0)
+        EOO <- round(suppressWarnings(geosphere::areaPolygon(p1))/1000000,0)
       }
       
     }else{
@@ -206,7 +243,7 @@
       }
       
       ## If exclude.area is TRUE
-      if(exclude.area) {EOO <- croped.EOO[[1]]}else{EOO <- round(areaPolygon(p1)/1000000,0)}
+      if(exclude.area) {EOO <- croped.EOO[[1]]}else{EOO <- round(suppressWarnings(geosphere::areaPolygon(p1))/1000000,0)}
     }
     
     OUTPUT <- list(EOO, p1)
@@ -218,52 +255,68 @@
   return(OUTPUT)
 }
 
-EOO.computing <- function(XY, 
-                          exclude.area=FALSE, 
-                          country_map=NULL, 
-                          export_shp=FALSE, 
-                          write_shp=FALSE, 
-                          alpha=1, 
-                          buff.alpha=0.1, 
-                          method.range="convex.hull", 
-                          Name_Sp="species1", 
-                          buff_width=0.1, 
-                          method.less.than3="not comp",
-                          write_results=TRUE, 
-                          file.name="EOO.results", 
-                          parallel=FALSE, 
-                          NbeCores=2, 
-                          show_progress=FALSE){ # , verbose=TRUE
+EOO.computing <- function(XY,
+                          exclude.area = FALSE,
+                          country_map = NULL,
+                          export_shp = FALSE,
+                          write_shp = FALSE,
+                          alpha = 1,
+                          buff.alpha = 0.1,
+                          method.range = "convex.hull",
+                          Name_Sp = "species1",
+                          buff_width = 0.1,
+                          method.less.than3 = "not comp",
+                          write_results = TRUE,
+                          file.name = "EOO.results",
+                          parallel = FALSE,
+                          NbeCores = 2,
+                          show_progress = FALSE
+){ # , verbose=TRUE
   
-  if(any(is.na(XY[,c(1:2)]))) {
-    print(paste("Skipping",length(which(rowMeans(is.na(XY[,1:2]))>0)) ,"occurrences because of missing coordinates for",  # if(verbose) 
-                paste(as.character(unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])), collapse=" AND ") ))
-    XY <- XY[which(!is.na(XY[,1])),]
-    XY <- XY[which(!is.na(XY[,2])),]
+  if (any(is.na(XY[, c(1:2)]))) {
+    print(paste(
+      "Skipping",
+      length(which(rowMeans(is.na(
+        XY[, 1:2]
+      )) > 0)) ,
+      "occurrences because of missing coordinates for",
+      # if(verbose)
+      paste(as.character(unique(XY[which(rowMeans(is.na(XY[, 1:2])) >
+                                           0), 3])), collapse = " AND ")
+    ))
+    XY <- XY[which(!is.na(XY[, 1])),]
+    XY <- XY[which(!is.na(XY[, 2])),]
   }
   
   XY <- as.data.frame(XY)
   
-  if(exclude.area & is.null(country_map)) stop("exclude.area is TRUE but no country_map is provided")
-  if(buff_width>80) stop("buff_width has unrealistic value")
-  if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
+  if (exclude.area &
+      is.null(country_map))
+    stop("exclude.area is TRUE but no country_map is provided")
+  if (buff_width > 80)
+    stop("buff_width has unrealistic value")
+  if (any(XY[, 2] > 180) ||
+      any(XY[, 2] < -180) ||
+      any(XY[, 1] < -180) ||
+      any(XY[, 1] > 180))
+    stop("coordinates are outside of expected range")
   
-  if(method.range=="convex.hull") {
-    convex.hull=TRUE
-    alpha.hull=FALSE
+  if (method.range == "convex.hull") {
+    convex.hull = TRUE
+    alpha.hull = FALSE
   }
   
-  if(method.range=="alpha.hull") {
-    convex.hull=FALSE
-    alpha.hull=TRUE
+  if (method.range == "alpha.hull") {
+    convex.hull = FALSE
+    alpha.hull = TRUE
   }
   
-  if(ncol(XY)>2) {
-    colnames(XY)[1:3] <- c("ddlat","ddlon","tax")
+  if (ncol(XY) > 2) {
+    colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
     XY$tax <- as.character(XY$tax)
     list_data <- split(XY, f = XY$tax)
-  }else{
-    colnames(XY)[1:2] <- c("ddlat","ddlon")
+  } else{
+    colnames(XY)[1:2] <- c("ddlat", "ddlon")
     list_data <- list(XY)
   }
   
@@ -285,24 +338,32 @@ EOO.computing <- function(XY,
   # }
   # , .progress = prog., .parallel=parallel, .paropts = "ConR")
   
-  if(parallel) {
-    # if("doParallel" %in% 
+  if (parallel) {
+    # if("doParallel" %in%
     #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    # 
+    #
     # library(doParallel)
     
     doParallel::registerDoParallel(NbeCores)
     message('doParallel running with ',
-            NbeCores, ' cores - progressbar not shown')
+            NbeCores,
+            ' cores - progressbar not shown')
     `%d%` <- foreach::`%dopar%`
-  }else{
+  } else{
     `%d%` <- foreach::`%do%`
   }
   
-  if(show_progress)  pb <- 
-    utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
+  if (show_progress)
+    pb <-
+    utils::txtProgressBar(min = 0,
+                          max = length(list_data),
+                          style = 3)
   
-  if(is.null(names(list_data))) names_ <- rep(Name_Sp, length(list_data)) else names_ <- names(list_data)
+  if (is.null(names(list_data)))
+    names_ <-
+    rep(Name_Sp, length(list_data))
+  else
+    names_ <- names(list_data)
   
 
   # , 
@@ -316,23 +377,26 @@ EOO.computing <- function(XY,
   # arg9 = rep(method.less.than3, length(list_data))
   
   x <- NULL
-  output <- 
-    foreach(x = 1:length(list_data), 
-            .combine='c') %d% {
-            # source("./R/IUCNeval.functionv11.R")
-            if(show_progress)  utils::setTxtProgressBar(pb, x)
-              
-              res <- 
-                .EOO.comp(XY = list_data[[x]], 
-                          exclude.area = exclude.area,
-                          buff_width = buff_width, 
-                          country_map = country_map,
-                          Name_Sp = names_[x],
-                          alpha.hull = alpha.hull, 
-                          convex.hull = convex.hull, 
-                          alpha = alpha,
-                          buff.alpha = buff.alpha, 
-                          method.less.than3 = method.less.than3)
+  output <-
+    foreach::foreach(x = 1:length(list_data),
+                     .combine = 'c') %d% {
+                       # source("./R/IUCNeval.functionv11.R")
+                       if (show_progress)
+                         utils::setTxtProgressBar(pb, x)
+                       
+                       res <-
+                         .EOO.comp(
+                           XY = list_data[[x]],
+                           exclude.area = exclude.area,
+                           buff_width = buff_width,
+                           country_map = country_map,
+                           Name_Sp = names_[x],
+                           alpha.hull = alpha.hull,
+                           convex.hull = convex.hull,
+                           alpha = alpha,
+                           buff.alpha = buff.alpha,
+                           method.less.than3 = method.less.than3
+                         )
               
               
               # res <- 
@@ -347,103 +411,175 @@ EOO.computing <- function(XY,
               #   buff.alpha = arg8, 
               #   method.less.than3 = arg9)
                 
-              names(res)[1] <- paste0(names(res)[1], "_" ,x)
-              if(length(res)>1) names(res)[2] <- paste0(names(res)[2], "_" ,x)
-              
-              res
+                       names(res)[1] <- paste0(names(res)[1], "_" , x)
+                       if (length(res) > 1)
+                         names(res)[2] <- paste0(names(res)[2], "_" , x)
+                       
+                       res
               
               
             }
   
-  if(parallel) doParallel::stopImplicitCluster()
+  if (parallel)
+    doParallel::stopImplicitCluster()
   
-  Results_short <- data.frame(EOO = unlist(output[grep("EOO", names(output))]))
+  Results_short <-
+    data.frame(EOO = unlist(output[grep("EOO", names(output))]))
   row.names(Results_short) <- names_
   
-  if(length(output)==1) names(output) <- Name_Sp
+  if (length(output) == 1)
+    names(output) <- Name_Sp
   
   if(write_shp) {
-    dir.create(file.path(paste(getwd(),"/shapesIUCN", sep="")), showWarnings = FALSE)
+    
+    dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     output_spatial <- unlist(output[grep("spatial", names(output))])
-    id_spatial <- as.numeric(unlist(lapply(strsplit(names(output_spatial), "_"), function(x) x[[2]])))
+    id_spatial <-
+      as.numeric(unlist(lapply(strsplit(
+        names(output_spatial), "_"
+      ), function(x)
+        x[[2]])))
     for (i in 1:length(output_spatial)) {
       
       # if(!is.na(output[[i]][[1]])) {
-        
-        if(length(list.files(paste(getwd(),"/shapesIUCN", sep="")))>0){
-          if(length(grep(paste(names(output)[i],"_EOO_poly", sep=""), unique(sub("....$", '', list.files(paste(getwd(),"/shapesIUCN", sep=""))))))>0) 
-            {
-            FILES <- list.files(paste(getwd(),"/shapesIUCN", sep=""), full.names = TRUE)
-            file.remove(FILES[grep(paste(names(output)[i],"_EOO_poly", sep=""), FILES)])
-            }
-                                                                      }
-        NAME <- names_[id_spatial[i]]
-        output_spatial[[i]]@polygons[[1]]@ID <- "1"
-        ConvexHulls_poly_dataframe <- SpatialPolygonsDataFrame(output_spatial[[i]], data=as.data.frame(names(output_spatial[[i]])))
-        colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
-        writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN", paste(names_[id_spatial[i]],"_EOO_poly", sep=""), driver="ESRI Shapefile", overwrite_layer = TRUE)
+      
+      if (length(list.files(paste(getwd(), "/shapesIUCN", sep = ""))) >
+          0) {
+        if (length(grep(paste(names(output)[i], "_EOO_poly", sep = ""), unique(sub(
+          "....$", '', list.files(paste(getwd(), "/shapesIUCN", sep = ""))
+        )))) > 0)
+        {
+          FILES <-
+            list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
+          file.remove(FILES[grep(paste(names(output)[i], "_EOO_poly", sep =
+                                         ""), FILES)])
+        }
+      }
+      NAME <- names_[id_spatial[i]]
+      output_spatial[[i]]@polygons[[1]]@ID <- "1"
+      ConvexHulls_poly_dataframe <-
+        SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
+      colnames(ConvexHulls_poly_dataframe@data) <-
+        paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
+      rgdal::writeOGR(
+        ConvexHulls_poly_dataframe,
+        "shapesIUCN",
+        paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
+        driver = "ESRI Shapefile",
+        overwrite_layer = TRUE
+      )
       # }
     }
   }
   
-  if(write_results) write.csv(Results_short, paste(getwd(),"/", file.name, ".csv", sep=""))
+  if (write_results)
+    write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
-  if(!export_shp) output <- Results_short
+  if (!export_shp)
+    output <- Results_short
   
   output
 }
 
 
-.subpop.comp <- function(XY, Resol_sub_pop,
-                        projEAC=crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")) {
-    XY <- XY[,c(2,1)]
-    coordEAC <- as.data.frame(matrix(unlist(rgdal::project(as.matrix(XY),proj=as.character(projEAC),inv=FALSE)), ncol=2))
-    rownames(coordEAC) <- seq(1,nrow(coordEAC),1)
-    
-    p2=readWKT(paste("POINT(",mean(unique(coordEAC)[1,1])," ", mean(unique(coordEAC)[1,2]),")", sep=""))
-    p2_Buffered1 <- gBuffer(p2, width = Resol_sub_pop*1000, id=1)
-    if(nrow(unique(coordEAC))>1){
-      for (LL in 2:nrow(unique(coordEAC))){
-        p2=readWKT(paste("POINT(",mean(unique(coordEAC)[LL,1])," ", mean(unique(coordEAC)[LL,2]),")", sep=""))
-        p2_Buffered <- gBuffer(p2, width = Resol_sub_pop*1000, id=LL)
-        p2_Buffered1 <- gUnion(p2_Buffered1, p2_Buffered)
-      }
+.subpop.comp <- function(XY,
+                         Resol_sub_pop) {
+  
+  
+  # ,
+  # projEAC = raster::crs(
+  #   "+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"
+  # )
+  
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <- 
+      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+    projEAC <- sp::CRS(SRS_string = wkt_crs)
+  }
+
+  if (utils::packageVersion("sp") < "1.3.3")
+    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  XY <- XY[, c(2, 1)]
+  coordEAC <-
+    as.data.frame(matrix(unlist(
+      rgdal::project(as.matrix(XY), proj = as.character(projEAC), inv = FALSE)
+    ), ncol = 2))
+  rownames(coordEAC) <- seq(1, nrow(coordEAC), 1)
+  
+  p2 <-
+    rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[1, 1]), " ", mean(unique(coordEAC)[1, 2]), ")", sep =
+                           ""))
+  p2_Buffered1 <-
+    rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = 1)
+  if (nrow(unique(coordEAC)) > 1) {
+    for (LL in 2:nrow(unique(coordEAC))) {
+      p2 <-
+        rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[LL, 1]), " ", mean(unique(coordEAC)[LL, 2]), ")", sep =
+                               ""))
+      p2_Buffered <-
+        rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = LL)
+      p2_Buffered1 <- rgeos::gUnion(p2_Buffered1, p2_Buffered)
     }
-    splited_pol <- lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
-    NbeSubPop <- length(splited_pol)
-    
-    SubPopPoly <- SpatialPolygons(Srl=list(p2_Buffered1@polygons[[1]]), pO=as.integer(1), 
-                                 proj4string=crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"))
-    
-    SubPopPoly <- sp::spTransform(SubPopPoly, CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
-    
-    OUTPUT <- list(NbeSubPop, SubPopPoly)
-    names(OUTPUT) <- c("Number of subpopulation","subpop.poly")
-    return(OUTPUT)
+  }
+  
+  splited_pol <-
+    lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
+  NbeSubPop <- length(splited_pol)
+  
+  SubPopPoly <-
+    sp::SpatialPolygons(
+      Srl = list(p2_Buffered1@polygons[[1]]),
+      pO = as.integer(1),
+      proj4string = projEAC
+    )
+  
+  SubPopPoly <-
+    sp::spTransform(SubPopPoly,
+                    sp::CRS("+proj=longlat +datum=WGS84"))
+  
+  OUTPUT <- list(NbeSubPop, SubPopPoly)
+  names(OUTPUT) <- c("Number of subpopulation", "subpop.poly")
+  return(OUTPUT)
 }
 
 
 subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   
-  if(is.null(Resol_sub_pop)) stop("Resol_sub_pop is missing, please provide a value")
+  if (is.null(Resol_sub_pop))
+    stop("Resol_sub_pop is missing, please provide a value")
   
-  if(any(is.na(XY[,c(1,2)]))) {
-    length(which(rowMeans(is.na(XY[,1:2]))>0))
-    unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])
-    print(paste("Skipping",length(which(rowMeans(is.na(XY[,1:2]))>0)) ,"occurrences because of missing coordinates for", 
-                paste(as.character(unique(XY[which(rowMeans(is.na(XY[,1:2]))>0),3])), collapse=" AND ") ))
-    XY <- XY[which(!is.na(XY[,1])),]
-    XY <- XY[which(!is.na(XY[,2])),]
+  if (any(is.na(XY[, c(1, 2)]))) {
+    length(which(rowMeans(is.na(XY[, 1:2])) > 0))
+    unique(XY[which(rowMeans(is.na(XY[, 1:2])) > 0), 3])
+    print(paste(
+      "Skipping",
+      length(which(rowMeans(is.na(
+        XY[, 1:2]
+      )) > 0)) ,
+      "occurrences because of missing coordinates for",
+      paste(as.character(unique(XY[which(rowMeans(is.na(XY[, 1:2])) >
+                                           0), 3])), collapse = " AND ")
+    ))
+    XY <- XY[which(!is.na(XY[, 1])), ]
+    XY <- XY[which(!is.na(XY[, 2])), ]
   }
   
-  if(any(XY[,1]>180) || any(XY[,1]< -180)|| any(XY[,2]< -180) || any(XY[,2]>180)) stop("coordinates are outside of expected range")
+  if (any(XY[, 1] > 180) ||
+      any(XY[, 1] < -180) ||
+      any(XY[, 2] < -180) ||
+      any(XY[, 2] > 180))
+    stop("coordinates are outside of expected range")
   
-  colnames(XY)[1:3] <- c("ddlat","ddlon","tax")
+  colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
   XY$tax <- as.character(XY$tax)
   list_data <- split(XY, f = XY$tax)
   
-  OUTPUT <- lapply(list_data, function(x) .subpop.comp(x, Resol_sub_pop=Resol_sub_pop))
-  if(length(OUTPUT)==1) OUTPUT <- OUTPUT[[1]]
+  OUTPUT <-
+    lapply(list_data, function(x)
+      .subpop.comp(x, Resol_sub_pop = Resol_sub_pop))
+  if (length(OUTPUT) == 1)
+    OUTPUT <- OUTPUT[[1]]
   return(OUTPUT)
 }
 
@@ -454,61 +590,92 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
                             # poly_borders = NULL, 
                             export_shp=FALSE) {
   
-  crs_proj <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <- 
+      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+    crs_proj <- sp::CRS(SRS_string = wkt_crs)
+  }
+  
+  if (utils::packageVersion("sp") < "1.3.3")
+    crs_proj <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  
+  # crs_proj <-
+  #   crs(
+  #     "+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"
+  #   )
   
   # if(is.null(poly_borders)) crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
   # if(!is.null(poly_borders)) crs_proj <- raster::crs(poly_borders)
   
-  res <- 
-    .cell.occupied(nbe_rep = nbe_rep, size = cell_size, crs_proj = crs_proj, 
-                   coord = coordEAC, export_shp=export_shp)
+  res <-
+    .cell.occupied(
+      nbe_rep = nbe_rep,
+      size = cell_size,
+      crs_proj = crs_proj,
+      coord = coordEAC,
+      export_shp = export_shp
+    )
   
-  Corners <- rbind(c(min(coordEAC[,1]), 
-                     max(coordEAC[,1])), 
-                   c(min(coordEAC[,2]), 
-                     max(coordEAC[,2])))
+  Corners <- rbind(c(min(coordEAC[, 1]),
+                     max(coordEAC[, 1])),
+                   c(min(coordEAC[, 2]),
+                     max(coordEAC[, 2])))
   
-  if(nbe_rep==0) {
+  if (nbe_rep == 0) {
     Occupied_cells <- vector(mode = "numeric", length = 4)
-    decal <- c(0,1,2,3)
+    decal <- c(0, 1, 2, 3)
     for (h in decal) {
-      ext <- 
-        raster::extent(floor(Corners[1,1])-h*(cell_size*1000/4)-2*cell_size*1000, 
-                           floor(Corners[1,2])+h*(cell_size*1000/4)+2*cell_size*1000, 
-                           floor(Corners[2,1])-h*(cell_size*1000/4)-2*cell_size*1000, 
-                           floor(Corners[2,2])+h*(cell_size*1000/4)+2*cell_size*1000)
-      r <- 
-        raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
-      r2_AOO <- 
-        raster::rasterize(coordEAC[,1:2], r)
-      OCC <- 
+      ext <-
+        raster::extent(
+          floor(Corners[1, 1]) - h * (cell_size * 1000 / 4) - 2 * cell_size * 1000,
+          floor(Corners[1, 2]) + h * (cell_size * 1000 /
+                                        4) + 2 * cell_size * 1000,
+          floor(Corners[2, 1]) - h * (cell_size * 1000 /
+                                        4) - 2 * cell_size * 1000,
+          floor(Corners[2, 2]) + h * (cell_size * 1000 /
+                                        4) + 2 * cell_size * 1000
+        )
+      r <-
+        raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
+      r2_AOO <-
+        raster::rasterize(coordEAC[, 1:2], r)
+      OCC <-
         length(which(!is.na(raster::values(r2_AOO))))
-      Occupied_cells[h+1] <- OCC
+      Occupied_cells[h + 1] <- OCC
       
       ### If only one occupied cell, stop the production of raster
-      if(OCC==1) break
+      if (OCC == 1)
+        break
     }
     # h <- decal[which.min(Occupied_cells)]
     # Occupied_cells <- min(Occupied_cells)
   }
   
-  if(nbe_rep>0) {
+  if (nbe_rep > 0) {
     Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
     
     for (h in 1:nbe_rep) {
-      rd.1 <- runif(1)*cell_size*1000
-      rd.2 <- runif(1)*cell_size*1000
+      rd.1 <- runif(1) * cell_size * 1000
+      rd.2 <- runif(1) * cell_size * 1000
       
-      ext = raster::extent(floor(Corners[1,1])-rd.1-2*cell_size*1000, floor(Corners[1,2])+rd.1+2*cell_size*1000, 
-                           floor(Corners[2,1])-rd.2-2*cell_size*1000, floor(Corners[2,2])+rd.2+2*cell_size*1000)
-      r = raster::raster(ext, resolution=cell_size*1000, crs=crs_proj)
+      ext = raster::extent(
+        floor(Corners[1, 1]) - rd.1 - 2 * cell_size * 1000,
+        floor(Corners[1, 2]) + rd.1 + 2 * cell_size * 1000,
+        floor(Corners[2, 1]) - rd.2 - 2 * cell_size *
+          1000,
+        floor(Corners[2, 2]) + rd.2 + 2 * cell_size * 1000
+      )
+      r = raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
       # r
-      r2_AOO <- raster::rasterize(coordEAC[,1:2], r)
+      r2_AOO <- raster::rasterize(coordEAC[, 1:2], r)
       OCC <- length(which(!is.na(raster::values(r2_AOO))))
       Occupied_cells[h] <- OCC
       # rd.1.vec <- c(rd.1.vec, rd.1)
       # rd.2.vec <- c(rd.2.vec, rd.2)
-      if(OCC==1) break
+      if (OCC == 1)
+        break
     }
     
   }
@@ -516,9 +683,11 @@ subpop.comp <- function(XY, Resol_sub_pop=NULL) {
   # Occupied_cells <- Occupied_cells[Occupied_cells>0]
   # Occupied_cells <- min(Occupied_cells)
   
-  AOO <- res[[2]]*cell_size*cell_size  ### AOO
-  if(export_shp) return(list(AOO, res[[1]]))
-  if(!export_shp) return(AOO)
+  AOO <- res[[2]] * cell_size * cell_size  ### AOO
+  if (export_shp)
+    return(list(AOO, res[[1]]))
+  if (!export_shp)
+    return(AOO)
   
 }
 
@@ -536,7 +705,16 @@ AOO.computing <- function(XY,
   if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
   
   ## Equal Area cylindrical projection used for AOO estimation
-  projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  # projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <- 
+      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+    projEAC <- sp::CRS(SRS_string = wkt_crs)
+  }
+  
+  if (utils::packageVersion("sp") < "1.3.3")
+    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
   coordEAC <- 
     data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]), 
@@ -578,7 +756,7 @@ AOO.computing <- function(XY,
   
   x <- NULL
   output <- 
-    foreach(x=1:length(list_data), .combine='c') %d% {
+    foreach::foreach(x=1:length(list_data), .combine='c') %d% {
               if(show_progress)  utils::setTxtProgressBar(pb, x)
       
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
@@ -590,7 +768,7 @@ AOO.computing <- function(XY,
               res
             }
   
-  if(parallel) stopImplicitCluster()
+  if(parallel) doParallel::stopImplicitCluster()
   if(!export_shp) {
     res <- unlist(output)
     names(res) <- names(list_data)    
@@ -663,9 +841,9 @@ AOO.computing <- function(XY,
   Occupied_cells <- Occupied_cells[Occupied_cells>0]
   Occupied_cells <- min(Occupied_cells)
   
-  if(export_shp) r2_ <- projectRaster(from = r2_, crs = "+proj=longlat +datum=WGS84 +no_defs")
+  if(export_shp) r2_ <- raster::projectRaster(from = r2_, crs = "+proj=longlat +datum=WGS84 +no_defs")
   
-  if(export_shp) r2_pol <- rasterToPolygons(r2_, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
+  if(export_shp) r2_pol <- raster::rasterToPolygons(r2_, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
   
   if(export_shp) return(list(r2_pol, Occupied_cells))
   if(!export_shp) return(list(NA, Occupied_cells))
@@ -683,72 +861,107 @@ locations.comp <- function(XY,
                            parallel=FALSE,
                            NbeCores=2) {
   
-  if(!any(class(XY)=="data.frame")) XY <- as.data.frame(XY)
-  if(any(XY[,2]>180) || any(XY[,2]< -180)|| any(XY[,1]< -180) || any(XY[,1]>180)) stop("coordinates are outside of expected range")
+  if (!any(class(XY) == "data.frame"))
+    XY <- as.data.frame(XY)
+  if (any(XY[, 2] > 180) ||
+      any(XY[, 2] < -180) ||
+      any(XY[, 1] < -180) ||
+      any(XY[, 1] > 180))
+    stop("coordinates are outside of expected range")
   
   ## Equal Area cylindrical projection used for AOO estimation
-  projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  # projEAC <-
+  #   crs(
+  #     "+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"
+  #   )
   
-  coordEAC <- 
-    data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]), 
-                                            proj=as.character(projEAC),inv=FALSE)), 
-                      ncol=2),
-               tax = XY[,3])
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <- 
+      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+    projEAC <- sp::CRS(SRS_string = wkt_crs)
+  }
+  
+  if (utils::packageVersion("sp") < "1.3.3")
+    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  coordEAC <-
+    data.frame(matrix(unlist(
+      rgdal::project(as.matrix(XY[, c(2, 1)]),
+                     proj = as.character(projEAC), inv =
+                       FALSE)
+    ),
+    ncol = 2),
+    tax = XY[, 3])
+  
   
   ## if any missing coordinates
-  if(any(is.na(coordEAC[,c(1:2)]))) {
-    print(paste("Skipping",length(which(rowMeans(is.na(coordEAC[,1:2]))>0)),
-                "occurrences because of missing coordinates for", 
-                paste(as.character(unique(coordEAC[which(rowMeans(is.na(coordEAC[,1:2]))>0),3])), collapse=" AND ") ))
-    coordEAC <- coordEAC[which(!is.na(coordEAC[,1])),]
-    coordEAC <- coordEAC[which(!is.na(coordEAC[,2])),]
+  if (any(is.na(coordEAC[, c(1:2)]))) {
+    print(paste(
+      "Skipping",
+      length(which(rowMeans(is.na(
+        coordEAC[, 1:2]
+      )) > 0)),
+      "occurrences because of missing coordinates for",
+      paste(as.character(unique(coordEAC[which(rowMeans(is.na(coordEAC[, 1:2])) >
+                                                 0), 3])), collapse = " AND ")
+    ))
+    coordEAC <- coordEAC[which(!is.na(coordEAC[, 1])), ]
+    coordEAC <- coordEAC[which(!is.na(coordEAC[, 2])), ]
   }
   
   coordEAC$tax <- as.character(coordEAC$tax)
   list_data <- split(coordEAC, f = coordEAC$tax)
   
   
-  crs_proj <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  crs_proj <- projEAC
   
   ## geographical distances for all pairs of occurrences
   
   if(is.null(protec.areas)) {
-    if(nrow(coordEAC)>1) pairwise_dist <- dist(coordEAC[,1:2],  upper = F)
+    if (nrow(coordEAC) > 1)
+      pairwise_dist <- dist(coordEAC[, 1:2],  upper = F)
     
     ## resolution definition
-    if(any(method=="fixed_grid"))
+    if (any(method == "fixed_grid"))
       Resolution <- Cell_size_locations
-    if(any(method=="sliding scale")){
-      if(nrow(coordEAC)>1) {Resolution <- max(pairwise_dist)*Rel_cell_size/1000
-      }else{
+    if (any(method == "sliding scale")) {
+      if (nrow(coordEAC) > 1) {
+        Resolution <- max(pairwise_dist) * Rel_cell_size / 1000
+      } else{
         Resolution <- 10
       }
     }
     
-    if(parallel) {
+    if (parallel) {
       registerDoParallel(NbeCores)
       message('doParallel running with ',
               NbeCores, ' cores')
       `%d%` <- foreach::`%dopar%`
-    }else{
+    } else{
       `%d%` <- foreach::`%do%`
     }
     
     x <- NULL
-    output <- 
-      foreach(x=1:length(list_data), .combine='c') %d% {
-        res <- .cell.occupied(size = Resolution, 
-                              crs_proj = crs_proj, 
-                              coord = list_data[[x]], 
-                              nbe_rep=nbe_rep)
+    output <-
+      foreach::foreach(x = 1:length(list_data), .combine = 'c') %d% {
+        res <- .cell.occupied(
+          size = Resolution,
+          crs_proj = crs_proj,
+          coord = list_data[[x]],
+          nbe_rep = nbe_rep
+        )
         
         names(res) <- c("spatial", "nbe_occ")
         res
       }
     
-    Locations <- unlist(output[names(output)=="nbe_occ"])
-    r2 <- unlist(output[names(output)=="spatial"])[[1]]
-    names(Locations) <- names(r2) <- gsub(pattern = " ", replacement = "_", names(list_data))
+    Locations <- unlist(output[names(output) == "nbe_occ"])
+    r2 <- unlist(output[names(output) == "spatial"])[[1]]
+    names(Locations) <-
+      names(r2) <-
+      gsub(pattern = " ",
+           replacement = "_",
+           names(list_data))
     
   }
   
@@ -756,8 +969,8 @@ locations.comp <- function(XY,
     DATA_SF <- as.data.frame(XY[,1:2])
     colnames(DATA_SF) <- c("ddlat", "ddlon")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
-    crs(DATA_SF) <- crs(protec.areas)
-    Links_NatParks <- over(DATA_SF, protec.areas)
+    crs(DATA_SF) <- raster::crs(protec.areas)
+    Links_NatParks <- sp::over(DATA_SF, protec.areas)
     
     coordEAC_pa <- coordEAC[!is.na(Links_NatParks[,1]),]
     coordEAC_pa <- cbind(coordEAC_pa, id_pa=Links_NatParks[which(!is.na(Links_NatParks[,1])), ID_shape_PA])
@@ -786,39 +999,46 @@ locations.comp <- function(XY,
         if(nrow(coordEAC_pa)>1) pairwise_dist_pa <- dist(coordEAC_pa[,1:2],  upper = F)
         
         ## resolution definition
-        if(any(method=="fixed_grid"))
+        if (any(method == "fixed_grid"))
           Resolution <- Cell_size_locations
-        if(any(method=="sliding scale")){
-          if(nrow(coordEAC_pa)>1) {Resolution <- max(pairwise_dist_pa)/1000*Rel_cell_size
-          }else{
+        if (any(method == "sliding scale")) {
+          if (nrow(coordEAC_pa) > 1) {
+            Resolution <- max(pairwise_dist_pa) / 1000 * Rel_cell_size
+          } else{
             Resolution <- 10
           }
         }
         
-        if(parallel) {
+        if (parallel) {
           registerDoParallel(NbeCores)
           message('doParallel running with ',
                   NbeCores, ' cores')
           `%d%` <- foreach::`%dopar%`
-        }else{
+        } else{
           `%d%` <- foreach::`%do%`
         }
         
         x <- NULL
-        output <- 
-          foreach(x=1:length(list_data_pa), .combine='c') %d% {
-            res <- .cell.occupied(size = Resolution, 
-                                  crs_proj = crs_proj, 
-                                  coord = list_data_pa[[x]], 
-                                  nbe_rep=nbe_rep)
+        output <-
+          foreach::foreach(x = 1:length(list_data_pa), .combine = 'c') %d% {
+            res <- .cell.occupied(
+              size = Resolution,
+              crs_proj = crs_proj,
+              coord = list_data_pa[[x]],
+              nbe_rep = nbe_rep
+            )
             
             names(res) <- c("spatial", "nbe_occ")
             res
           }
         
-        loc_pa <- unlist(output[names(output)=="nbe_occ"])
-        r2_PA <- unlist(output[names(output)=="spatial"])[[1]]
-        names(loc_pa) <- names(r2_PA) <- gsub(pattern = " ", replacement = "_", names(list_data_pa))
+        loc_pa <- unlist(output[names(output) == "nbe_occ"])
+        r2_PA <- unlist(output[names(output) == "spatial"])[[1]]
+        names(loc_pa) <-
+          names(r2_PA) <-
+          gsub(pattern = " ",
+               replacement = "_",
+               names(list_data_pa))
         LocNatParks[names(LocNatParks) %in% names(loc_pa)] <-
           loc_pa
       }
@@ -826,9 +1046,11 @@ locations.comp <- function(XY,
       r2_PA <- NA
     }
     
-    coordEAC_not_pa <- coordEAC[is.na(Links_NatParks[,1]),]
-    LocOutNatParks <- vector(mode = "numeric", length = length(list_data))
-    names(LocOutNatParks) <- gsub(pattern = " ", replacement = "_", names(list_data))
+    coordEAC_not_pa <- coordEAC[is.na(Links_NatParks[, 1]), ]
+    LocOutNatParks <-
+      vector(mode = "numeric", length = length(list_data))
+    names(LocOutNatParks) <-
+      gsub(pattern = " ", replacement = "_", names(list_data))
     
     if(nrow(coordEAC_not_pa)>0) {
       coordEAC_not_pa$tax <- as.character(coordEAC_not_pa$tax)
@@ -838,39 +1060,46 @@ locations.comp <- function(XY,
       if(nrow(coordEAC_pa)>1) pairwise_dist_not_pa <- dist(coordEAC_not_pa[,1:2],  upper = F)
       
       ## resolution definition
-      if(any(method=="fixed_grid"))
+      if (any(method == "fixed_grid"))
         Resolution <- Cell_size_locations
-      if(any(method=="sliding scale")){
-        if(nrow(coordEAC_pa)>1) {Resolution <- max(pairwise_dist_not_pa)*Rel_cell_size
-        }else{
+      if (any(method == "sliding scale")) {
+        if (nrow(coordEAC_pa) > 1) {
+          Resolution <- max(pairwise_dist_not_pa) * Rel_cell_size
+        } else{
           Resolution <- 10
         }
       }
       
-      if(parallel) {
+      if (parallel) {
         registerDoParallel(NbeCores)
         message('doParallel running with ',
                 NbeCores, ' cores')
         `%d%` <- foreach::`%dopar%`
-      }else{
+      } else{
         `%d%` <- foreach::`%do%`
       }
       
       x <- NULL
-      output <- 
-        foreach(x=1:length(list_data_not_pa), .combine='c') %d% {
-          res <- .cell.occupied(size = Resolution, 
-                                crs_proj = crs_proj, 
-                                coord = list_data_not_pa[[x]], 
-                                nbe_rep=nbe_rep)
+      output <-
+        foreach::foreach(x = 1:length(list_data_not_pa), .combine = 'c') %d% {
+          res <- .cell.occupied(
+            size = Resolution,
+            crs_proj = crs_proj,
+            coord = list_data_not_pa[[x]],
+            nbe_rep = nbe_rep
+          )
           
           names(res) <- c("spatial", "nbe_occ")
           res
         }
       
-      loc_not_pa <- unlist(output[names(output)=="nbe_occ"])
-      r2 <- unlist(output[names(output)=="spatial"])[[1]]
-      names(loc_not_pa) <- names(r2) <- gsub(pattern = " ", replacement = "_", names(list_data_not_pa))
+      loc_not_pa <- unlist(output[names(output) == "nbe_occ"])
+      r2 <- unlist(output[names(output) == "spatial"])[[1]]
+      names(loc_not_pa) <-
+        names(r2) <-
+        gsub(pattern = " ",
+             replacement = "_",
+             names(list_data_not_pa))
       LocOutNatParks[names(LocOutNatParks) %in% names(loc_not_pa)] <-
         loc_not_pa
       
@@ -880,57 +1109,74 @@ locations.comp <- function(XY,
 
   }
 
-  if(!is.null(protec.areas)) return(list(r2, r2_PA, LocNatParks, LocOutNatParks))
-  if(is.null(protec.areas)) return(list(r2, Locations))
+  if (!is.null(protec.areas))
+    return(list(r2, r2_PA, LocNatParks, LocOutNatParks))
+  if (is.null(protec.areas))
+    return(list(r2, Locations))
   
 }
 
 
 
-.IUCN.comp <- function(DATA, 
-                       poly_borders=NULL, 
-                       Cell_size_AOO=2, 
-                       Cell_size_locations=10, 
-                       Resol_sub_pop=5, 
-                       method_locations=c("fixed_grid"), 
-                       Rel_cell_size=0.05, 
-                       protec.areas=NULL, 
-                       exclude.area=FALSE, 
-                       method_protected_area="no_more_than_one",
-                       ID_shape_PA="WDPA_PID", 
-                       buff_width=0.1, 
-                       NamesSp="species1", 
-                       write_shp=FALSE, 
-                       file_name=NULL, 
-                       add.legend=TRUE, 
-                       DrawMap=TRUE, 
-                       map_pdf=FALSE, 
-                       draw.poly.EOO=TRUE, 
-                       SubPop=TRUE, 
+.IUCN.comp <- function(DATA,
+                       poly_borders = NULL,
+                       Cell_size_AOO = 2,
+                       Cell_size_locations = 10,
+                       Resol_sub_pop = 5,
+                       method_locations = c("fixed_grid"),
+                       Rel_cell_size = 0.05,
+                       protec.areas = NULL,
+                       exclude.area = FALSE,
+                       method_protected_area = "no_more_than_one",
+                       ID_shape_PA = "WDPA_PID",
+                       buff_width = 0.1,
+                       NamesSp = "species1",
+                       write_shp = FALSE,
+                       file_name = NULL,
+                       add.legend = TRUE,
+                       DrawMap = TRUE,
+                       map_pdf = FALSE,
+                       draw.poly.EOO = TRUE,
+                       SubPop = TRUE,
                        MinMax,
-                       alpha=1, 
-                       buff.alpha=0.1, 
-                       method.range="convex.hull", 
-                       nbe.rep.rast.AOO=0, 
-                       verbose=TRUE, 
-                       showWarnings=TRUE) {
+                       alpha = 1,
+                       buff.alpha = 0.1,
+                       method.range = "convex.hull",
+                       nbe.rep.rast.AOO = 0,
+                       verbose = TRUE,
+                       showWarnings = TRUE)
+{
+  
   
   ### Getting by default land map if poly_borders is not provided
-  if(is.null(poly_borders)) {
-    data('land', package='ConR', envir=environment()) 
-    land <- get("land", envir=environment()) 
+  if (is.null(poly_borders)) {
+    data('land', package = 'ConR', envir = environment())
+    land <- get("land", envir = environment())
     # data(land, envir = environment())
-    poly_borders=land
+    poly_borders = land
   }
   
   ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
-  if(DrawMap) {
-      full_poly_borders <- poly_borders
-      if(!is.null(poly_borders)) poly_borders <- raster::crop(poly_borders, extent(MinMax)+30)
+  if (DrawMap) {
+    full_poly_borders <- poly_borders
+    if (!is.null(poly_borders))
+      poly_borders <- raster::crop(poly_borders, extent(MinMax) + 30)
   }
   
   ## Equal Area cylindrical projection used for AOO estimation
-  projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  # projEAC <- raster::crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
+  
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <- 
+      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+    projEAC <- sp::CRS(SRS_string = wkt_crs)
+  }
+  
+  if (utils::packageVersion("sp") < "1.3.3")
+    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  
+  
   
   ## Initialization of data frame for stocking results
   if(is.null(protec.areas)){
@@ -988,8 +1234,8 @@ locations.comp <- function(XY,
     DATA_SF <- as.data.frame(unique(XY))
     colnames(DATA_SF) <- c("ddlon","ddlat")
     coordinates(DATA_SF) <-  ~ddlon+ddlat
-    crs(DATA_SF) <- crs(protec.areas)
-    Links_NatParks <- over(DATA_SF, protec.areas)    
+    raster::crs(DATA_SF) <- raster::crs(protec.areas)
+    Links_NatParks <- sp::over(DATA_SF, protec.areas)    
   }
 
   
@@ -1345,7 +1591,7 @@ locations.comp <- function(XY,
       p1@polygons[[1]]@ID <- "1"
       ConvexHulls_poly_dataframe <- SpatialPolygonsDataFrame(p1, data=as.data.frame(names(p1)))
       colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
-      writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_EOO_poly", sep=""),driver="ESRI Shapefile")
+      rgdal::writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_EOO_poly", sep=""),driver="ESRI Shapefile")
     }
     
     if(SubPop) {
@@ -1359,7 +1605,7 @@ locations.comp <- function(XY,
       SubPopPoly@polygons[[1]]@ID <- "1"
       ConvexHulls_poly_dataframe <- SpatialPolygonsDataFrame(SubPopPoly, data=as.data.frame(names(SubPopPoly)))
       colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
-      writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_subpop_poly", sep=""),driver="ESRI Shapefile")      
+      rgdal::writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_subpop_poly", sep=""),driver="ESRI Shapefile")      
     }
   }
   
@@ -1411,7 +1657,7 @@ IUCN.eval <- function (DATA,
   }
   colnames(DATA)[1:3] <- c("ddlat","ddlon","tax")
   
-  if(is_tibble(DATA)) DATA <- as.data.frame(DATA)
+  if(tibble::is_tibble(DATA)) DATA <- as.data.frame(DATA)
   
   if(any(is.na(DATA[,1:2]))) {
     length(which(rowMeans(is.na(DATA[,1:2]))>0))
@@ -1442,8 +1688,9 @@ IUCN.eval <- function (DATA,
       country_map <- land
     }
   
-  if(!is.null(protec.areas)) {
-      if(!identicalCRS(protec.areas, country_map)) crs(protec.areas) <- crs(country_map)
+  if (!is.null(protec.areas)) {
+    if (!sp::identicalCRS(protec.areas, country_map))
+      raster::crs(protec.areas) <- raster::crs(country_map)
   }
   
   if(length(grep("[?]", DATA[,3]))>0) DATA[,3] <- gsub("[?]", "_", DATA[,3])
@@ -1537,7 +1784,7 @@ IUCN.eval <- function (DATA,
 
     if(write_file_option=="excel") {
       Results_short <- data.frame(taxa=rownames(Results_short), Results_short)
-      write_xlsx(Results_short, path = paste(getwd(),"/", NAME_FILE, ".xlsx", sep=""))
+      writexl::write_xlsx(Results_short, path = paste(getwd(),"/", NAME_FILE, ".xlsx", sep=""))
     }
   
   }
@@ -1618,16 +1865,27 @@ map.res <- function(Results,
   }
   
   DATA_SF <- merged_data_criteriaB
-  coordinates(DATA_SF) <-  ~ddlon+ddlat
-  crs(DATA_SF) <- crs(country_map)
-  DATA_SF$X <- floor(merged_data_criteriaB[,"ddlon"]/Resol)
-  DATA_SF$Y <- floor(merged_data_criteriaB[,"ddlat"]/Resol)
-  DATA_SF$Cell <- paste("M",DATA_SF$X,"x",DATA_SF$Y, sep="")
-  DATA_SF@data <- cbind(DATA_SF@data, merged_data_criteriaB[,c("ddlat","ddlon")])
+  sp::coordinates(DATA_SF) <-  ~ ddlon + ddlat
+  raster::crs(DATA_SF) <- raster::crs(country_map)
+  DATA_SF$X <- floor(merged_data_criteriaB[, "ddlon"] / Resol)
+  DATA_SF$Y <- floor(merged_data_criteriaB[, "ddlat"] / Resol)
+  DATA_SF$Cell <- paste("M", DATA_SF$X, "x", DATA_SF$Y, sep = "")
+  DATA_SF@data <-
+    cbind(DATA_SF@data, merged_data_criteriaB[, c("ddlat", "ddlon")])
   
-  print(paste("Number of cell with at least one occurrence is", length(unique(as.character(DATA_SF@data[,"Cell"])))))
-  print(paste("Number of cell with number of occurrences higher or equal to",threshold,"is", length(which(table(DATA_SF@data[,"Cell"])>threshold))))
-  if(length(which(table(DATA_SF@data[,"Cell"])>threshold))==0) stop("No cell left after filtering")
+  print(paste("Number of cell with at least one occurrence is", length(unique(
+    as.character(DATA_SF@data[, "Cell"])
+  ))))
+  print(
+    paste(
+      "Number of cell with number of occurrences higher or equal to",
+      threshold,
+      "is",
+      length(which(table(DATA_SF@data[, "Cell"]) > threshold))
+    )
+  )
+  if (length(which(table(DATA_SF@data[, "Cell"]) > threshold)) == 0)
+    stop("No cell left after filtering")
   
   counts <- by(DATA_SF@data, DATA_SF@data$Cell, function(d) c(d$X[1], d$Y[1], mean(d$ddlat), mean(d$ddlon), 
                                                               .prop_threat(d, threshold)))
