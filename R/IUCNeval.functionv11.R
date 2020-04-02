@@ -188,17 +188,19 @@
         ## if there are two unique occurences, EOO is 1/10 of the distance between the two points
         # projEAC=crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
         
-        if (utils::packageVersion("sp") >= "1.3.3") {
-          wkt_crs <-
-            rgdal::showWKT(
-              "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-            )
-          projEAC <- sp::CRS(SRS_string = wkt_crs)
-        }
+        # if (utils::packageVersion("sp") >= "1.3.3") {
+        #   wkt_crs <-
+        #     rgdal::showWKT(
+        #       "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+        #     )
+        #   projEAC <- sp::CRS(SRS_string = wkt_crs)
+        # }
+        # 
+        # if (utils::packageVersion("sp") < "1.3.3")
+        #   projEAC <-
+        #     sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
         
-        if (utils::packageVersion("sp") < "1.3.3")
-          projEAC <-
-            sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+        projEAC <- .proj_crs()
         
         coordEAC <-
           as.data.frame(matrix(unlist(
@@ -541,17 +543,19 @@ EOO.computing <- function(XY,
   #   "+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"
   # )
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
-    wkt_crs <-
-      rgdal::showWKT(
-        "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-      )
-    projEAC <- sp::CRS(SRS_string = wkt_crs)
-  }
+  # if (utils::packageVersion("sp") >= "1.3.3") {
+  #   wkt_crs <-
+  #     rgdal::showWKT(
+  #       "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  #     )
+  #   projEAC <- sp::CRS(SRS_string = wkt_crs)
+  # }
+  # 
+  # if (utils::packageVersion("sp") < "1.3.3")
+  #   projEAC <-
+  #     sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
-  if (utils::packageVersion("sp") < "1.3.3")
-    projEAC <-
-      sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  projEAC <- .proj_crs()
   
   XY <- XY[, c(2, 1)]
   coordEAC <-
@@ -747,6 +751,25 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
 
 
 
+.proj_crs <- function() {
+  
+  if (utils::packageVersion("sp") >= "1.3.3") {
+    wkt_crs <-
+      rgdal::showWKT(
+        "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+      )
+    crs_proj <- sp::CRS(SRS_string = wkt_crs)
+  }
+  
+  if (utils::packageVersion("sp") < "1.3.3")
+    crs_proj <-
+      sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  return(crs_proj)
+}
+
+
+
 AOO.computing <- function(XY, 
                           Cell_size_AOO = 2,
                           nbe.rep.rast.AOO = 0,
@@ -761,14 +784,17 @@ AOO.computing <- function(XY,
   ## Equal Area cylindrical projection used for AOO estimation
   # projEAC <- crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
-    wkt_crs <- 
-      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
-    projEAC <- sp::CRS(SRS_string = wkt_crs)
-  }
+  # if (utils::packageVersion("sp") >= "1.3.3") {
+  #   wkt_crs <- 
+  #     rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  #   projEAC <- sp::CRS(SRS_string = wkt_crs)
+  # }
+  # 
+  # if (utils::packageVersion("sp") < "1.3.3")
+  #   projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
-  if (utils::packageVersion("sp") < "1.3.3")
-    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  projEAC <- .proj_crs()
   
   coordEAC <- 
     data.frame(matrix(unlist(rgdal::project(as.matrix(XY[,c(2,1)]), 
@@ -956,17 +982,20 @@ locations.comp <- function(XY,
   #     "+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84"
   #   )
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
-    wkt_crs <-
-      rgdal::showWKT(
-        "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-      )
-    projEAC <- sp::CRS(SRS_string = wkt_crs)
-  }
+  # if (utils::packageVersion("sp") >= "1.3.3") {
+  #   wkt_crs <-
+  #     rgdal::showWKT(
+  #       "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  #     )
+  #   projEAC <- sp::CRS(SRS_string = wkt_crs)
+  # }
+  # 
+  # if (utils::packageVersion("sp") < "1.3.3")
+  #   projEAC <-
+  #     sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
-  if (utils::packageVersion("sp") < "1.3.3")
-    projEAC <-
-      sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  
+  projEAC <- .proj_crs()
   
   coordEAC <-
     data.frame(matrix(unlist(
@@ -1271,16 +1300,16 @@ locations.comp <- function(XY,
   ## Equal Area cylindrical projection used for AOO estimation
   # projEAC <- raster::crs("+proj=cea +lon_0=Central Meridian+lat_ts=Standard Parallel+x_0=False Easting+y_0=False Northing +ellps=WGS84")
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
-    wkt_crs <- 
-      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
-    projEAC <- sp::CRS(SRS_string = wkt_crs)
-  }
+  # if (utils::packageVersion("sp") >= "1.3.3") {
+  #   wkt_crs <- 
+  #     rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  #   projEAC <- sp::CRS(SRS_string = wkt_crs)
+  # }
+  # 
+  # if (utils::packageVersion("sp") < "1.3.3")
+  #   projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
-  if (utils::packageVersion("sp") < "1.3.3")
-    projEAC <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
-  
-  
+  projEAC <- .proj_crs()
   
   
   ## Initialization of data frame for stocking results
@@ -1630,7 +1659,14 @@ locations.comp <- function(XY,
       border_to_center <- as.data.frame(matrix(NA, 2, 2))
       border_to_center[,1] <- c(xlim/10, 0)
       border_to_center[,2] <- c(0,0)
-      scaleBAR <- round(matrix(unlist(rgdal::project(as.matrix(border_to_center), proj=as.character(projEAC),inv =F)), ncol=2)/1000,0)[1,1]
+      scaleBAR <-
+        round(matrix(unlist(
+          rgdal::project(
+            as.matrix(border_to_center),
+            proj = as.character(projEAC),
+            inv = F
+          )
+        ), ncol = 2) / 1000, 0)[1, 1]
     }else{
       scaleBAR <- Resolution/1000
     }
