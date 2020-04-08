@@ -845,7 +845,7 @@ AOO.computing <- function(XY,
               res <- .AOO.estimation(coordEAC = list_data[[x]], 
                                      cell_size = Cell_size_AOO, 
                                      nbe_rep = nbe.rep.rast.AOO, 
-                                     export_shp =export_shp)
+                                     export_shp = export_shp)
               if(export_shp)
                 names(res) <- c("aoo", "spatial")
               res
@@ -875,6 +875,7 @@ AOO.computing <- function(XY,
            crs_proj,
            coord,
            export_shp = TRUE) {
+    
     Corners <- rbind(c(min(coord[, 1]),
                        max(coord[, 1])),
                      c(min(coord[, 2]),
@@ -895,7 +896,7 @@ AOO.computing <- function(XY,
               size * 1000
           )
         r <-
-          raster::raster(ext, resolution = size * 1000, crs = crs_proj)
+          raster::raster(ext, resolution = size * 1000, crs = crs_proj())
         r2_ <-
           raster::rasterize(coord[, 1:2], r)
         OCC <-
@@ -923,7 +924,7 @@ AOO.computing <- function(XY,
           floor(Corners[2, 1]) - rd.2 - 2 * size * 1000,
           floor(Corners[2, 2]) + rd.2 + 2 * size * 1000
         )
-        r = raster::raster(ext, resolution = size * 1000, crs = crs_proj)
+        r = raster::raster(ext, resolution = size * 1000, crs = crs_proj())
         # r
         r2_ <- raster::rasterize(coord[, 1:2], r)
         OCC <- length(which(!is.na(raster::values(r2_))))
@@ -941,7 +942,8 @@ AOO.computing <- function(XY,
     
     if (export_shp)
       r2_ <-
-      raster::projectRaster(from = r2_, crs = "+proj=longlat +datum=WGS84 +no_defs")
+      raster::projectRaster(from = r2_, 
+                            crs = "+proj=longlat +datum=WGS84 +no_defs")
     
     if (export_shp)
       r2_pol <-
