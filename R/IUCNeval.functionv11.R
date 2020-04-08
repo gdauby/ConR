@@ -635,7 +635,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
   
   OUTPUT <-
     lapply(list_data, function(x)
-      .subpop.comp(x, Resol_sub_pop = Resol_sub_pop))
+      .subpop.comp(XY = x, Resol_sub_pop = Resol_sub_pop))
   if (length(OUTPUT) == 1)
     OUTPUT <- OUTPUT[[1]]
   return(OUTPUT)
@@ -649,14 +649,14 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
                             export_shp=FALSE) {
   
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
-    wkt_crs <- 
-      rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
-    crs_proj <- sp::CRS(SRS_string = wkt_crs)
-  }
-  
-  if (utils::packageVersion("sp") < "1.3.3")
-    crs_proj <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  # if (utils::packageVersion("sp") >= "1.3.3") {
+  #   wkt_crs <- 
+  #     rgdal::showWKT("+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+  #   crs_proj <- sp::CRS(SRS_string = wkt_crs)
+  # }
+  # 
+  # if (utils::packageVersion("sp") < "1.3.3")
+  #   crs_proj <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
   
   # crs_proj <-
@@ -666,6 +666,9 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
   
   # if(is.null(poly_borders)) crs_proj <- "+proj=longlat +datum=WGS84 +no_defs"
   # if(!is.null(poly_borders)) crs_proj <- raster::crs(poly_borders)
+  
+  crs_proj <- 
+    .proj_crs
   
   res <-
     .cell.occupied(
@@ -758,7 +761,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
       rgdal::showWKT(
         "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
       )
-    crs_proj <- sp::CRS(SRS_string = wkt_crs)
+    crs_proj <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", SRS_string = wkt_crs)
   }
   
   if (utils::packageVersion("sp") < "1.3.3")
