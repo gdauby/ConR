@@ -668,7 +668,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
   # if(!is.null(poly_borders)) crs_proj <- raster::crs(poly_borders)
   
   crs_proj <- 
-    .proj_crs
+    .proj_crs()
   
   res <-
     .cell.occupied(
@@ -876,6 +876,9 @@ AOO.computing <- function(XY,
            coord,
            export_shp = TRUE) {
     
+    crs_proj <- 
+      .proj_crs()
+    
     Corners <- rbind(c(min(coord[, 1]),
                        max(coord[, 1])),
                      c(min(coord[, 2]),
@@ -896,7 +899,7 @@ AOO.computing <- function(XY,
               size * 1000
           )
         r <-
-          raster::raster(ext, resolution = size * 1000, crs = crs_proj())
+          raster::raster(ext, resolution = size * 1000, crs = crs_proj)
         r2_ <-
           raster::rasterize(coord[, 1:2], r)
         OCC <-
@@ -924,7 +927,7 @@ AOO.computing <- function(XY,
           floor(Corners[2, 1]) - rd.2 - 2 * size * 1000,
           floor(Corners[2, 2]) + rd.2 + 2 * size * 1000
         )
-        r = raster::raster(ext, resolution = size * 1000, crs = crs_proj())
+        r = raster::raster(ext, resolution = size * 1000, crs = crs_proj)
         # r
         r2_ <- raster::rasterize(coord[, 1:2], r)
         OCC <- length(which(!is.na(raster::values(r2_))))
