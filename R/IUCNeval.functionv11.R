@@ -411,8 +411,7 @@
 #' FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel
 #' execution. By default, it is 2
-#' @param show_progress a logical. Whether a bar showing progress in
-#' computation should be shown. By default, it is FALSE
+#' 
 #' @return If \code{export_shp} is FALSE, a \code{dataframe} with one field
 #' containing EOO in square kilometres.  \code{NA} is given when EOO could not
 #' be computed because there is less than three unique occurrences (or two if
@@ -461,8 +460,7 @@ EOO.computing <- function(XY,
                           write_results = TRUE,
                           file.name = "EOO.results",
                           parallel = FALSE,
-                          NbeCores = 2,
-                          show_progress = FALSE
+                          NbeCores = 2
 ){ # , verbose=TRUE
   
   if (any(is.na(XY[, c(1:2)]))) {
@@ -524,14 +522,15 @@ EOO.computing <- function(XY,
     `%d%` <- foreach::`%do%`
   }
   
-  if(show_progress) {
-    pb <- 
-      utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
-    
-    progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  }
+  pb <-
+    utils::txtProgressBar(min = 0,
+                          max = length(list_data),
+                          style = 3)
+  
+  progress <- function(n)
+    utils::setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+  
   
   if (is.null(names(list_data)))
     names_ <-
