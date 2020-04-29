@@ -1490,6 +1490,7 @@ locations.comp <- function(XY,
 #' Compute IUCN eval
 #'
 #' @importFrom rgdal project writeOGR
+#' @importFrom rnaturalearth ne_countries
 #' 
 .IUCN.comp <- function(DATA,
                        poly_borders = NULL,
@@ -1523,10 +1524,14 @@ locations.comp <- function(XY,
   
   ### Getting by default land map if poly_borders is not provided
   if (is.null(poly_borders)) {
-    data('land', package = 'ConR', envir = environment())
-    land <- get("land", envir = environment())
+    
+    land <- 
+      ne_countries(scale = 50, returnclass = "sp")
+    
+    # data('land', package = 'ConR', envir = environment())
+    # land <- get("land", envir = environment())
     # data(land, envir = environment())
-    poly_borders = land
+    poly_borders <- land
   }
   
   ### cropping poly_borders according to range of occurrences shapefile for producing lighter maps
@@ -2371,6 +2376,7 @@ locations.comp <- function(XY,
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
+#' @importFrom rnaturalearth ne_countries
 #' 
 #' @export
 IUCN.eval <- function (DATA, 
@@ -2452,9 +2458,12 @@ IUCN.eval <- function (DATA,
   }
   
     if(is.null(country_map)) {
-      data('land', package='ConR', envir=environment()) 
-      land <- get("land", envir=environment()) 
-      country_map <- land
+      land <- country_map <- 
+        rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
+      
+      # data('land', package='ConR', envir=environment()) 
+      # land <- get("land", envir=environment()) 
+      # country_map <- land
     }
   
   if (!is.null(protec.areas)) {
@@ -2693,7 +2702,7 @@ IUCN.eval <- function (DATA,
 #' }
 #' 
 #' @importFrom fields quilt.plot
-#' 
+#' @importFrom rnaturalearth ne_countries
 #' 
 #' @export
 #' 
@@ -2753,9 +2762,13 @@ map.res <- function(Results,
   EXTENT <- extent(LongMin, LongMax, LatMin, LatMax)
   
   if(is.null(country_map))  {
-    data('land', package='ConR', envir=environment()) 
-    land <- get("land", envir=environment()) 
-    country_map=land
+    
+    land <- country_map <- 
+      rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
+    
+    # data('land', package='ConR', envir=environment()) 
+    # land <- get("land", envir=environment()) 
+    # country_map=land
   }
   
   if (!is.null(country_map)) {

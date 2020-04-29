@@ -19,8 +19,7 @@ EOO.computing(
   write_results = TRUE,
   file.name = "EOO.results",
   parallel = FALSE,
-  NbeCores = 2,
-  show_progress = FALSE
+  NbeCores = 2
 )
 }
 \arguments{
@@ -73,9 +72,6 @@ FALSE}
 
 \item{NbeCores}{an integer. Register the number of cores for parallel
 execution. By default, it is 2}
-
-\item{show_progress}{a logical. Whether a bar showing progress in
-computation should be shown. By default, it is FALSE}
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field
