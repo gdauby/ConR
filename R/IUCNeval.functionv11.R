@@ -642,6 +642,7 @@ EOO.computing <- function(XY,
   projEAC <- .proj_crs()
   
   XY <- XY[, c(2, 1)]
+  
   coordEAC <-
     as.data.frame(matrix(unlist(
       rgdal::project(as.matrix(XY), proj = as.character(projEAC), inv = FALSE)
@@ -651,6 +652,8 @@ EOO.computing <- function(XY,
   p2 <-
     rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[1, 1]), " ", mean(unique(coordEAC)[1, 2]), ")", sep =
                            ""))
+  
+  
   p2_Buffered1 <-
     rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = 1)
   if (nrow(unique(coordEAC)) > 1) {
@@ -666,6 +669,7 @@ EOO.computing <- function(XY,
   
   splited_pol <-
     lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
+  
   NbeSubPop <- length(splited_pol)
   
   SubPopPoly <-
@@ -744,7 +748,6 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
     .cell.occupied(
       nbe_rep = nbe_rep,
       size = cell_size,
-      crs_proj = crs_proj,
       coord = coordEAC,
       export_shp = export_shp
     )
@@ -754,62 +757,68 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
                    c(min(coordEAC[, 2]),
                      max(coordEAC[, 2])))
   
-  if (nbe_rep == 0) {
-    Occupied_cells <- vector(mode = "numeric", length = 4)
-    decal <- c(0, 1, 2, 3)
-    for (h in decal) {
-      ext <-
-        raster::extent(
-          floor(Corners[1, 1]) - h * (cell_size * 1000 / 4) - 2 * cell_size * 1000,
-          floor(Corners[1, 2]) + h * (cell_size * 1000 /
-                                        4) + 2 * cell_size * 1000,
-          floor(Corners[2, 1]) - h * (cell_size * 1000 /
-                                        4) - 2 * cell_size * 1000,
-          floor(Corners[2, 2]) + h * (cell_size * 1000 /
-                                        4) + 2 * cell_size * 1000
-        )
-      r <-
-        raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
-      r2_AOO <-
-        raster::rasterize(coordEAC[, 1:2], r)
-      OCC <-
-        length(which(!is.na(raster::values(r2_AOO))))
-      Occupied_cells[h + 1] <- OCC
-      
-      ### If only one occupied cell, stop the production of raster
-      if (OCC == 1)
-        break
-    }
-    # h <- decal[which.min(Occupied_cells)]
-    # Occupied_cells <- min(Occupied_cells)
-  }
-  
-  if (nbe_rep > 0) {
-    Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
-    
-    for (h in 1:nbe_rep) {
-      rd.1 <- runif(1) * cell_size * 1000
-      rd.2 <- runif(1) * cell_size * 1000
-      
-      ext = raster::extent(
-        floor(Corners[1, 1]) - rd.1 - 2 * cell_size * 1000,
-        floor(Corners[1, 2]) + rd.1 + 2 * cell_size * 1000,
-        floor(Corners[2, 1]) - rd.2 - 2 * cell_size *
-          1000,
-        floor(Corners[2, 2]) + rd.2 + 2 * cell_size * 1000
-      )
-      r = raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
-      # r
-      r2_AOO <- raster::rasterize(coordEAC[, 1:2], r)
-      OCC <- length(which(!is.na(raster::values(r2_AOO))))
-      Occupied_cells[h] <- OCC
-      # rd.1.vec <- c(rd.1.vec, rd.1)
-      # rd.2.vec <- c(rd.2.vec, rd.2)
-      if (OCC == 1)
-        break
-    }
-    
-  }
+  # if (nbe_rep == 0) {
+  #   
+  #   Occupied_cells <- vector(mode = "numeric", length = 4)
+  #   decal <- c(0, 1, 2, 3)
+  #   
+  #   for (h in decal) {
+  #     ext <-
+  #       raster::extent(
+  #         floor(Corners[1, 1]) - h * (cell_size * 1000 / 4) - 2 * cell_size * 1000,
+  #         floor(Corners[1, 2]) + h * (cell_size * 1000 /
+  #                                       4) + 2 * cell_size * 1000,
+  #         floor(Corners[2, 1]) - h * (cell_size * 1000 /
+  #                                       4) - 2 * cell_size * 1000,
+  #         floor(Corners[2, 2]) + h * (cell_size * 1000 /
+  #                                       4) + 2 * cell_size * 1000
+  #       )
+  #     
+  #     r <-
+  #       raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
+  #     
+  #     r2_AOO <-
+  #       raster::rasterize(coordEAC[, 1:2], r)
+  #     
+  #     OCC <-
+  #       length(which(!is.na(raster::values(r2_AOO))))
+  #     
+  #     Occupied_cells[h + 1] <- OCC
+  #     
+  #     ### If only one occupied cell, stop the production of raster
+  #     if (OCC == 1)
+  #       break
+  #   }
+  #   # h <- decal[which.min(Occupied_cells)]
+  #   # Occupied_cells <- min(Occupied_cells)
+  # }
+  # 
+  # if (nbe_rep > 0) {
+  #   Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
+  #   
+  #   for (h in 1:nbe_rep) {
+  #     rd.1 <- runif(1) * cell_size * 1000
+  #     rd.2 <- runif(1) * cell_size * 1000
+  #     
+  #     ext = raster::extent(
+  #       floor(Corners[1, 1]) - rd.1 - 2 * cell_size * 1000,
+  #       floor(Corners[1, 2]) + rd.1 + 2 * cell_size * 1000,
+  #       floor(Corners[2, 1]) - rd.2 - 2 * cell_size *
+  #         1000,
+  #       floor(Corners[2, 2]) + rd.2 + 2 * cell_size * 1000
+  #     )
+  #     r = raster::raster(ext, resolution = cell_size * 1000, crs = crs_proj)
+  #     # r
+  #     r2_AOO <- raster::rasterize(coordEAC[, 1:2], r)
+  #     OCC <- length(which(!is.na(raster::values(r2_AOO))))
+  #     Occupied_cells[h] <- OCC
+  #     # rd.1.vec <- c(rd.1.vec, rd.1)
+  #     # rd.2.vec <- c(rd.2.vec, rd.2)
+  #     if (OCC == 1)
+  #       break
+  #   }
+  #   
+  # }
   
   # Occupied_cells <- Occupied_cells[Occupied_cells>0]
   # Occupied_cells <- min(Occupied_cells)
@@ -832,12 +841,25 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
 #' 
 .proj_crs <- function() {
   
+  ## https://epsg.io/54032
+  # World Azimuthal Equidistant
+  proj <-
+    "+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+    
+  ## https://epsg.io/102022
+  ## Africa Albers Equal Area Conic
+  # proj <- 
+  #   "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
+  # "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
   if (utils::packageVersion("sp") >= "1.3.3") {
     wkt_crs <-
       rgdal::showWKT(
-        "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+        proj
       )
-    crs_proj <- sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", SRS_string = wkt_crs)
+    crs_proj <- sp::CRS(projargs = proj, 
+                        SRS_string = wkt_crs)
   }
   
   if (utils::packageVersion("sp") < "1.3.3")
@@ -1035,7 +1057,6 @@ AOO.computing <- function(XY,
 .cell.occupied <-
   function(nbe_rep = 0,
            size = 4,
-           crs_proj,
            coord,
            export_shp = TRUE) {
     
@@ -1048,9 +1069,39 @@ AOO.computing <- function(XY,
                        max(coord[, 2])))
     
     if (nbe_rep == 0) {
+      
       Occupied_cells <- vector(mode = "numeric", length = 4)
       decal <- c(0, 1, 2, 3)
+      
+      if (abs(Corners[1, 1] - Corners[1, 2]) > abs(Corners[2, 1] - Corners[2, 2])) {
+        longer <-
+          abs(Corners[1, 1] - Corners[1, 2])
+      } else{
+        longer <-
+          abs(Corners[2, 1] - Corners[2, 2])
+      }
+      
+      
       for (h in decal) {
+        
+        # xmin <- 
+        #   floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000
+        # xmax <- 
+        #   xmin + longer + h * (size * 1000 / 4) + 2
+        # 
+        # ymin <- 
+        #   floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *size * 1000
+        # ymax <- 
+        #   ymin + longer + h * (size * 1000 / 4) + 2
+        # 
+        # ext <-
+        #   raster::extent(
+        #     xmin,
+        #     xmax,
+        #     ymin,
+        #     ymax
+        #   )
+        
         ext <-
           raster::extent(
             floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000,
@@ -1061,12 +1112,18 @@ AOO.computing <- function(XY,
             floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
               size * 1000
           )
+        
         r <-
-          raster::raster(ext, resolution = size * 1000, crs = crs_proj)
+          raster::raster(ext, 
+                         resolution = size * 1000, 
+                         crs = crs_proj)
+        
         r2_ <-
           raster::rasterize(coord[, 1:2], r)
+        
         OCC <-
           length(which(!is.na(raster::values(r2_))))
+        
         Occupied_cells[h + 1] <- OCC
         
         ### If only one occupied cell, stop the production of raster
@@ -1276,7 +1333,6 @@ locations.comp <- function(XY,
       ) %d% {
         res <- .cell.occupied(
           size = Resolution,
-          crs_proj = crs_proj,
           coord = list_data[[x]],
           nbe_rep = nbe_rep
         )
@@ -1376,7 +1432,6 @@ locations.comp <- function(XY,
           ) %d% {
             res <- .cell.occupied(
               size = Resolution,
-              crs_proj = crs_proj,
               coord = list_data_pa[[x]],
               nbe_rep = nbe_rep
             )
@@ -1449,7 +1504,6 @@ locations.comp <- function(XY,
                          .options.snow = opts) %d% {
                            res <- .cell.occupied(
                              size = Resolution,
-                             crs_proj = crs_proj,
                              coord = list_data_not_pa[[x]],
                              nbe_rep = nbe_rep
                            )
