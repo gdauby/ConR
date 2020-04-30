@@ -751,8 +751,18 @@ The arguments `LatMin`, `LatMax`, `LongMin` and `LongMax` are minimum/maximum la
 
 ```{r include=F, echo=F}
 MyResults <- read.csv("IUCN_results.csv", row.names=1)
-map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
- 	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
+map.res(
+  MyResults,
+  Occurrences = Malagasy.amphibian,
+  country_map = land,
+  export_map = TRUE,
+  threshold = 3,
+  LatMin = -25,
+  LatMax = -12,
+  LongMin = 42,
+  LongMax = 52,
+  Resol = 1
+)
 ```
 
 

@@ -4,7 +4,7 @@
 \alias{.cell.occupied}
 \title{Internal function}
 \usage{
-.cell.occupied(nbe_rep = 0, size = 4, crs_proj, coord, export_shp = TRUE)
+.cell.occupied(nbe_rep = 0, size = 4, coord, export_shp = TRUE)
 }
 \description{
 Count number of occupied cells given resolution, projection

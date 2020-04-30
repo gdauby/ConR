@@ -14,7 +14,8 @@ locations.comp(
   ID_shape_PA = "WDPA_PID",
   Rel_cell_size = 0.05,
   parallel = FALSE,
-  NbeCores = 2
+  NbeCores = 2,
+  show_progress = TRUE
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ locations.comp(
 \item{parallel}{logical, wether running in parallel. By default, it is FALSE}
 
 \item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
+
+\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
 }
 \value{
 A list with one list for each species containing [[1]]SpatialPolygonDataframe and [[2]]vector of the number of location.
@@ -58,8 +61,10 @@ data(dataset.ex)
 \dontrun{
 locations <- locations.comp(dataset.ex)
 }
+
+# This would estimate AOO for all taxa by overlaying 
+# randomly a grid 100 times. For each taxa, the minimum value is kept
 \dontrun{
-# This would estimate AOO for all taxa by overlaying randomly a grid 100 times. For each taxa, the minimum value is kept
 AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
 }
 

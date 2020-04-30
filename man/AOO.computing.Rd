@@ -56,8 +56,10 @@ data(dataset.ex)
 \dontrun{
 AOO <- AOO.computing(dataset.ex)
 }
+
+# This would estimate AOO for all taxa by overlaying randomly a 
+# grid 100 times. For each taxa, the minimum value is kept
 \dontrun{
-# This would estimate AOO for all taxa by overlaying randomly a grid 100 times. For each taxa, the minimum value is kept
 AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
 }
 

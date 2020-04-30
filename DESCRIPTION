@@ -12,10 +12,10 @@ Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
 Imports: fields, geosphere, grDevices, methods,
-        rgdal, rgeos, spatstat, tibble, writexl, snow, doSNOW, foreach
+        rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, alphahull, rnaturalearth, sf
 LazyData: true
 Suggests: knitr,
-    rmarkdown, alphahull,
+    rmarkdown,
     testthat
 VignetteBuilder: knitr
 Encoding: UTF-8
