@@ -194,22 +194,22 @@ plot(land, add=T)
 
 
   You may want to **use your own land cover background shapefile**.
-This is easily done by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools).
+This is easily done by using the function [```readOGR```](https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR).
 
 For using this function, you first has to install (if not yet installed) and load the package 
-[maptools](https://CRAN.R-project.org/package=maptools).
+[rgdal](https://CRAN.R-project.org/package=rgdal).
 
-`install.packages("maptools")`
-`library(maptools)`
+`install.packages("rgdal")`
+`library(rgdal)`
 
 For example, for importing a shapefile named *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly("MyShapefile", proj4string=CRS("+proj=longlat +datum=WGS84"))`
+`readOGR("MyShapefile.shp")`
 
 ---------------------------------------
 
 ## Writing shapefiles used to estimate EOO
 
-The above manipulation allows you to extract in R the spatial polygons. It is also possible to create and export these spatial polygons as shapefiles into your working directory, which can later be imported in a SIG software. 
+The above manipulation allows you to extract in R the spatial polygons. It is also possible to create and export these spatial polygons as shapefiles into your working directory, which can later be imported in a GIS software. 
 This is done by using the logical argument  `write_shp` which is FALSE by default. If you define it as TRUE as below, a directory named *shapesIUCN* is created in your working directory and will contain all the shapefiles created for computing EOO.
 
 ```
