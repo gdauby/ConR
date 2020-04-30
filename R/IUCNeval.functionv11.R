@@ -1507,11 +1507,16 @@ locations.comp <- function(XY,
         }
         
         x <- NULL
-        pb <- 
-          utils::txtProgressBar(min = 0, max = length(list_data_pa), style = 3)
-        progress <- function(n)
-          utils::setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
+        if(show_progress) {
+          pb <-
+            utils::txtProgressBar(min = 0,
+                                  max = length(list_data),
+                                  style = 3)
+          
+          progress <- function(n)
+            utils::setTxtProgressBar(pb, n)
+          opts <- list(progress = progress)
+        }else{opts <- NULL}
         output <-
           foreach::foreach(
             x = 1:length(list_data_pa),
@@ -1519,7 +1524,7 @@ locations.comp <- function(XY,
             .options.snow = opts
           ) %d% {
             
-            if (!parallel)
+            if (!parallel & show_progress)
               utils::setTxtProgressBar(pb, x)
             
             res <- .cell.occupied(
@@ -1591,11 +1596,16 @@ locations.comp <- function(XY,
       }
       
       x <- NULL
-      pb <- 
-        utils::txtProgressBar(min = 0, max = length(list_data_not_pa), style = 3)
-      progress <- function(n)
-        utils::setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
+      if(show_progress) {
+        pb <-
+          utils::txtProgressBar(min = 0,
+                                max = length(list_data),
+                                style = 3)
+        
+        progress <- function(n)
+          utils::setTxtProgressBar(pb, n)
+        opts <- list(progress = progress)
+      }else{opts <- NULL}
       output <-
         foreach::foreach(x = 1:length(list_data_not_pa),
                          .combine = 'c',
@@ -1615,7 +1625,7 @@ locations.comp <- function(XY,
                          }
       
       if(parallel) snow::stopCluster(cl)
-      if(show_progress) close(pb)
+      if(show_progress & show_progress) close(pb)
       
       loc_not_pa <- unlist(output[names(output) == "nbe_occ"])
       r2 <- unlist(output[names(output) == "spatial"])[[1]]
