@@ -10,6 +10,7 @@
 #' @importFrom geosphere makePoly
 #' 
 .Convex.Hull.Poly <- function(XY) {
+  
   hpts <- grDevices::chull(x =  XY[, 1], y = XY[, 2])
   hpts <- c(hpts, hpts[1])
   coord <- matrix(NA, length(hpts), 2)
@@ -30,8 +31,23 @@
   # geosphere::makePoly(p1)
   
   p1 <- rgeos::readWKT(POLY)
-  crs <- sp::CRS("+proj=longlat +datum=WGS84")
-  raster::crs(p1) <- crs
+  # crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  # raster::crs(p1) <- crs
+  
+  # raster::crs(p1) <- sp::CRS("+init=epsg:4326")
+  #   
+  #   sp::CRS(projargs = "+proj=longlat +datum=WGS84", 
+  #                     SRS_string = wkt_crs <-
+  #                       rgdal::showWKT(
+  #                         "+proj=longlat +datum=WGS84"
+  #                       ))
+  
+  # crs <- sp::CRS("+proj=longlat +datum=WGS84")
+  # rgdal::crs(p1) <- crs
+  
+  sp::proj4string(p1) <- sp::CRS("+proj=longlat +datum=WGS84")
+  
+  
   suppressWarnings(geosphere::makePoly(p1))
   
   
@@ -157,10 +173,18 @@
 #' @importFrom geosphere areaPolygon
 #' @importFrom sf st_intersection st_union
 #' @importFrom methods as slot
+#' @importFrom rgdal rgdal_extSoftVersion
 #' 
 .crop.poly <- function(poly, crop) {
   
   # @importFrom spatstat as.owin area.owin union.owin setminus.owin 
+  
+  raster::crs(poly) <- NA
+  raster::crs(crop) <- NA
+  
+  # crs_ <- sp::CRS(SRS_string='EPSG:4326')
+  # sf::st_crs(poly_sf) <- 4326
+  
   
   poly_sf <- methods::as(poly, "sf")
   # crop_sf <- sf::st_combine(as(crop, "sf"))
@@ -170,6 +194,11 @@
                                       sf::st_intersection(crop_sf, poly_sf)))
   
   poly_masked <- methods::as(sf::st_union(diff_croped), "Spatial")
+  
+  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
+    poly_masked@proj4string <- sp::CRS(SRS_string='EPSG:4326')
+  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+    poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
   
   # crs_crop <- raster::crs(crop)
   # 
@@ -336,7 +365,8 @@
       
       if (exclude.area) {
         croped.EOO <- 
-          .crop.poly(poly = p1, crop = country_map)
+          .crop.poly(poly = p1, 
+                     crop = country_map)
         p1 <- croped.EOO[[2]]
       }
       
@@ -672,45 +702,82 @@ EOO.computing <- function(XY,
   
   XY <- XY[, c(2, 1)]
   
-  coordEAC <-
-    as.data.frame(matrix(unlist(
-      rgdal::project(as.matrix(XY), proj = as.character(projEAC), inv = FALSE)
-    ), ncol = 2))
-  rownames(coordEAC) <- seq(1, nrow(coordEAC), 1)
+  # coordEAC <-
+  #   as.data.frame(matrix(unlist(
+  #     rgdal::project(as.matrix(XY), proj = as.character(projEAC), inv = FALSE)
+  #   ), ncol = 2))
+  # rownames(coordEAC) <- seq(1, nrow(coordEAC), 1)
   
-  p2 <-
-    rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[1, 1]), " ", mean(unique(coordEAC)[1, 2]), ")", sep =
-                           ""))
+  XY_sp <- XY
+  sp::coordinates(XY_sp) <- c(1, 2)
+  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
+    sp::proj4string(XY_sp) <- sp::CRS(SRS_string='EPSG:4326')
+  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+    sp::proj4string(XY_sp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+  XY_sp_proj <- sp::spTransform(XY_sp, projEAC)
+  coordEAC <- as.data.frame(XY_sp_proj)
   
   
-  p2_Buffered1 <-
-    rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = 1)
-  if (nrow(unique(coordEAC)) > 1) {
-    for (LL in 2:nrow(unique(coordEAC))) {
-      p2 <-
-        rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[LL, 1]), " ", mean(unique(coordEAC)[LL, 2]), ")", sep =
-                               ""))
-      p2_Buffered <-
-        rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = LL)
-      p2_Buffered1 <- rgeos::gUnion(p2_Buffered1, p2_Buffered)
-    }
-  }
+  XY_sp_proj_no_proj <- XY_sp_proj
+  raster::crs(XY_sp_proj_no_proj) <- NA
   
-  splited_pol <-
-    lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
+  XY_sp_proj_buff <-
+    rgeos::gBuffer(XY_sp_proj_no_proj, 
+                   width = Resol_sub_pop * 1000, 
+                   id = 1)
   
-  NbeSubPop <- length(splited_pol)
+  XY_sf <- as(XY_sp_proj_buff, "sf")
   
-  SubPopPoly <-
-    sp::SpatialPolygons(
-      Srl = list(p2_Buffered1@polygons[[1]]),
-      pO = as.integer(1),
-      proj4string = projEAC
-    )
+  SubPopPoly <- sf::st_cast(XY_sf, "POLYGON")
+  NbeSubPop <- nrow(SubPopPoly)
+  SubPopPoly <- as(SubPopPoly, "Spatial")
+  sp::proj4string(SubPopPoly) <- projEAC
+  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
+    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS(SRS_string='EPSG:4326'))
+  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS("+proj=longlat +datum=WGS84 +no_defs"))
   
-  SubPopPoly <-
-    sp::spTransform(SubPopPoly,
-                    sp::CRS("+proj=longlat +datum=WGS84"))
+  # if (utils::packageVersion("sp") >= "1.3.3") poly_masked@proj4string <- sp::CRS(SRS_string='EPSG:4326')
+  # if (utils::packageVersion("sp") < "1.3.3") poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+  
+  # p2 <-
+  #   rgeos::readWKT(paste("POINT(", 
+  #                        mean(unique(coordEAC)[1, 1]), " ", 
+  #                        mean(unique(coordEAC)[1, 2]), ")", sep =
+  #                          ""))
+  
+  
+  
+  # p2_Buffered1 <-
+  #   rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = 1)
+  # if (nrow(unique(coordEAC)) > 1) {
+  #   for (LL in 2:nrow(unique(coordEAC))) {
+  #     p2 <-
+  #       rgeos::readWKT(paste("POINT(", mean(unique(coordEAC)[LL, 1]), " ", 
+  #                            mean(unique(coordEAC)[LL, 2]), ")", sep =
+  #                              ""))
+  #     p2_Buffered <-
+  #       rgeos::gBuffer(p2, width = Resol_sub_pop * 1000, id = LL)
+  #     p2_Buffered1 <- rgeos::gUnion(p2_Buffered1, p2_Buffered)
+  #   }
+  # }
+  # 
+  # splited_pol <-
+  #   lapply(p2_Buffered1@polygons, slot, "Polygons")[[1]]
+  # 
+  # NbeSubPop <- length(splited_pol)
+  # 
+  # SubPopPoly <-
+  #   sp::SpatialPolygons(
+  #     Srl = list(p2_Buffered1@polygons[[1]]),
+  #     pO = as.integer(1),
+  #     proj4string = projEAC
+  #   )
+  
+  # SubPopPoly <-
+  #   sp::spTransform(SubPopPoly,
+  #                   sp::CRS("+proj=longlat +datum=WGS84"))
+  
   
   OUTPUT <- list(NbeSubPop, SubPopPoly)
   names(OUTPUT) <- c("Number of subpopulation", "subpop.poly")
@@ -913,7 +980,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
   
   # "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
-  if (utils::packageVersion("sp") >= "1.3.3") {
+  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0")  {
     wkt_crs <-
       rgdal::showWKT(
         proj
@@ -922,7 +989,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
                         SRS_string = wkt_crs)
   }
   
-  if (utils::packageVersion("sp") < "1.3.3")
+  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     crs_proj <-
       sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   
@@ -1611,7 +1678,7 @@ locations.comp <- function(XY,
                          .combine = 'c',
                          .options.snow = opts) %d% {
                            
-                           if (!parallel)
+                           if (!parallel & show_progress)
                              utils::setTxtProgressBar(pb, x)
                            
                            res <- .cell.occupied(
@@ -1693,7 +1760,7 @@ locations.comp <- function(XY,
   if (is.null(poly_borders)) {
     
     land <- 
-      ne_countries(scale = 50, returnclass = "sp")
+      rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
     
     # data('land', package = 'ConR', envir = environment())
     # land <- get("land", envir = environment())
@@ -2047,12 +2114,12 @@ locations.comp <- function(XY,
     ### Mapping 
     if(!is.null(protec.areas)){
       if(LocOutNatParks==0){
-        sp::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
+        plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
       }else{
         # r2_pol <- r2
         if(LocOutNatParks==1){
           
-          sp::plot(
+          plot(
             r2,
             col = rgb(
               red = 1,
@@ -2065,7 +2132,7 @@ locations.comp <- function(XY,
           )
         }else{
           
-          sp::plot(
+          plot(
             r2,
             col = rgb(
               red = 1,
@@ -2081,25 +2148,25 @@ locations.comp <- function(XY,
       }
     }else{
       # r2_pol <- rasterToPolygons(r2, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-      sp::plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
+      plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
            xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), 
            ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1))
     }
     
-    if(SubPop) sp::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
+    if(SubPop) plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
     
     if(!is.null(protec.areas)){
       if(LocNatParks>0){
         if(method_protected_area!="no_more_than_one"){
           # r2_PA_pol <- rasterToPolygons(r2_PA, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-          sp::plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
+          plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
         }
       }
     }
     
     if (!is.null(p1) &
         draw.poly.EOO)
-      sp::plot(p1,
+      plot(p1,
            add = T,
            col = rgb(
              red = 0.2,
@@ -2108,7 +2175,7 @@ locations.comp <- function(XY,
              alpha = 0.1
            ))
     
-    sp::plot(
+    plot(
       poly_borders,
       axes = FALSE,
       lty = 1,
@@ -2117,7 +2184,7 @@ locations.comp <- function(XY,
     )
     
     if (!is.null(protec.areas))
-      sp::plot(
+      plot(
         protec.areas,
         add = T,
         col = rgb(
@@ -2135,7 +2202,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        sp::plot(
+        plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2146,7 +2213,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(!is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        sp::plot(
+        plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2158,7 +2225,7 @@ locations.comp <- function(XY,
       colnames(XY) <- c("ddlon", "ddlat")
       XY_sp <- XY
       sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-      sp::plot(
+      plot(
         XY_sp,
         pch = 19,
         cex = 2,
@@ -2197,7 +2264,7 @@ locations.comp <- function(XY,
     
     if(add.legend) {
       graphics::par(mar=c(1,1,1,1), xpd=T)
-      graphics::plot(1:10, 1:10, type="n", bty='n', xaxt='n', yaxt='n')
+      plot(1:10, 1:10, type="n", bty='n', xaxt='n', yaxt='n')
       if(is.null(protec.areas)){
         legend(1,10,  c(paste("EOO=", ifelse(!is.na(Results["EOO",1]), round(as.numeric(Results["EOO",1]),1), NA), "km2"),
                         paste("AOO (grid res.",Cell_size_AOO,"km)=", format(Results["AOO",1], scientific = 5),"km2"),
@@ -2217,7 +2284,7 @@ locations.comp <- function(XY,
                         paste("Proportion of occurences within protected areas"), Results["Ratio_occ_within_PA",1]), cex=3.5, bg = grDevices::grey(0.9))
       }
       graphics::par(mar=c(4,1,1,1))
-      sp::plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
+      plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
       graphics::points(XY[,1],XY[,2], pch=8, cex=2, col="red") 
     }
     
@@ -2230,7 +2297,7 @@ locations.comp <- function(XY,
       )
       subdata <- DATA[which(DATA[, "tax"] == NamesSp), "coly"]
       if ((sum(subdata, na.rm = T)) > 0) {
-        graphics::plot(
+        plot(
           table(subdata),
           col = "grey",
           ylab = " ",
@@ -3071,7 +3138,7 @@ map.res <- function(Results,
     )
   
   if (export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3084,7 +3151,7 @@ map.res <- function(Results,
     )
   
   if (!export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3111,7 +3178,7 @@ map.res <- function(Results,
     col = coltab,
     add = T
   )
-  sp::plot(cropped_country_map, add = T)
+  plot(cropped_country_map, add = T)
   if (min(VALUES) == max(VALUES))
     Range <- c(min(VALUES), min(VALUES) + 1)
   if (min(VALUES) != max(VALUES))
@@ -3153,7 +3220,7 @@ map.res <- function(Results,
       omi = c(0.3, 0.4, 0.3, 0.1)
     )
   if (export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3166,7 +3233,7 @@ map.res <- function(Results,
     )
   
   if (!export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3194,7 +3261,7 @@ map.res <- function(Results,
     add = T
   )
   
-  sp::plot(cropped_country_map, add = T)
+  plot(cropped_country_map, add = T)
   if (min(VALUES) == max(VALUES))
     Range <- c(min(VALUES), min(VALUES) + 1)
   if (min(VALUES) != max(VALUES))
@@ -3223,10 +3290,10 @@ map.res <- function(Results,
   if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
 
   if (export_map) 
-    sp::plot(cropped_country_map, axes=T, lty=1,border=Border, col=COlor, xlim=c(LongMin,LongMax), ylim=c(LatMin,LatMax), cex.axis=1,lwd=1)
+    plot(cropped_country_map, axes=T, lty=1,border=Border, col=COlor, xlim=c(LongMin,LongMax), ylim=c(LatMin,LatMax), cex.axis=1,lwd=1)
 
   if (!export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3250,7 +3317,7 @@ map.res <- function(Results,
   
   fields::quilt.plot(COORD[SelectedCells,1]*Resol+Resol/2 , COORD[SelectedCells,2]*Resol+Resol/2, VALUES  ,grid=grid.list , cex.axis=1, 
              cex.lab=1, add.legend=FALSE, col=coltab, add=T)
-  sp::plot(cropped_country_map, add=T)
+  plot(cropped_country_map, add=T)
   if(min(VALUES)==max(VALUES)) Range <- c(min(VALUES), min(VALUES)+1)
   if(min(VALUES)!=max(VALUES)) Range <- range(VALUES)
   fields::image.plot(zlim=Range,legend.only=TRUE, col=coltab, legend.shrink = 1 ,
@@ -3265,7 +3332,7 @@ map.res <- function(Results,
   if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
 
   if (!export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3278,7 +3345,7 @@ map.res <- function(Results,
       yaxt = 'n'
     )
   if (export_map)
-    sp::plot(
+    plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3295,7 +3362,7 @@ map.res <- function(Results,
   
   fields::quilt.plot(COORD[SelectedCells,1]*Resol+Resol/2 , COORD[SelectedCells,2]*Resol+Resol/2, VALUES  ,grid=grid.list , cex.axis=1, 
              cex.lab=1, add.legend=FALSE, col=coltab, add=T)
-  sp::plot(cropped_country_map, add=T)
+  plot(cropped_country_map, add=T)
   if(min(VALUES)==max(VALUES)) Range <- c(min(VALUES), min(VALUES)+1)
   if(min(VALUES)!=max(VALUES)) Range <- range(VALUES)
   fields::image.plot(zlim=Range,legend.only=TRUE, col=coltab, legend.shrink = 1 ,

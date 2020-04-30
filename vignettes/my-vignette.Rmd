@@ -52,7 +52,9 @@ library(ConR)
 ```
 ```{r loadData,include=FALSE}
 library(ConR)
+# source("D:/MonDossierR/ConR_orig/R/IUCNeval.functionv11.R")
 data(dataset.ex)
+# load("D:/MonDossierR/ConR_orig/data/dataset.ex.RData")
 MyData <- dataset.ex
 MyData <- MyData[which(!MyData[,3] %in% c("species_1", "species_2")),]
 MyData$tax <- as.character(MyData$tax)
@@ -174,9 +176,10 @@ Then, for the first species (mapped in grey color):
 plot(EOO.results$spatial.polygon_1, col="grey")
 ```
 
-You can add a **background** showing the land cover. ConR include a shape file of land cover representing a default world land map, which can be loaded by running the following code (to be done only once during your working session, it attachs the object land in the R environment:
+You can add easily get a map of countries using the package [rnaturalearth](https://CRAN.R-project.org/package=rnaturalearth):
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
-data(land)
+land <- 
+  rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
 ```
 
 Now you can add the land cover as a background by running the following code:
@@ -319,7 +322,7 @@ MyData <- dataset.ex
 
 The argument `Resol_sub_pop` must be given and defines in kilometres the radius of the circles around each occurrence.
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=5)}
-SUB <- subpop.comp(MyData, Resol_sub_pop=30)
+SUB <- subpop.comp(MyData, Resol_sub_pop = 30)
 SUB
 plot(SUB[["Platycoryne guingangae"]][["subpop.poly"]], col="red")
 plot(land, add=TRUE)
