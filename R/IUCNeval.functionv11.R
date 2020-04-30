@@ -2542,35 +2542,37 @@ locations.comp <- function(XY,
 #' @importFrom rnaturalearth ne_countries
 #' 
 #' @export
-IUCN.eval <- function (DATA, 
-                       country_map = NULL, 
-                       Cell_size_AOO = 2, 
-                       Cell_size_locations = 10, 
-                       Resol_sub_pop = 5, 
-                       method_locations = "fixed_grid", 
-                       Rel_cell_size = 0.05, 
-                       DrawMap = FALSE, 
-                       add.legend = TRUE, 
-                       file_name = NULL, 
-                       export_shp = FALSE, 
-                       write_shp = FALSE, 
-                       write_results=TRUE, 
-                       protec.areas = NULL, 
-                       map_pdf = FALSE, 
-                       draw.poly.EOO = TRUE, 
-                       exclude.area = FALSE, 
-                       method_protected_area = "no_more_than_one", 
-                       ID_shape_PA = "WDPA_PID", 
-                       buff_width = 0.1, 
-                       SubPop=TRUE, 
-                       alpha=1, 
-                       buff.alpha=0.1, 
-                       method.range="convex.hull", 
-                       nbe.rep.rast.AOO=0,
-                       showWarnings=TRUE, # verbose=TRUE,
-                       write_file_option="excel", 
-                       parallel=FALSE, 
-                       NbeCores=2) {
+IUCN.eval <- function (DATA,
+                       country_map = NULL,
+                       Cell_size_AOO = 2,
+                       Cell_size_locations = 10,
+                       Resol_sub_pop = 5,
+                       method_locations = "fixed_grid",
+                       Rel_cell_size = 0.05,
+                       DrawMap = FALSE,
+                       add.legend = TRUE,
+                       file_name = NULL,
+                       export_shp = FALSE,
+                       write_shp = FALSE,
+                       write_results = TRUE,
+                       protec.areas = NULL,
+                       map_pdf = FALSE,
+                       draw.poly.EOO = TRUE,
+                       exclude.area = FALSE,
+                       method_protected_area = "no_more_than_one",
+                       ID_shape_PA = "WDPA_PID",
+                       buff_width = 0.1,
+                       SubPop = TRUE,
+                       alpha = 1,
+                       buff.alpha = 0.1,
+                       method.range = "convex.hull",
+                       nbe.rep.rast.AOO = 0,
+                       showWarnings = TRUE,
+                       # verbose=TRUE,
+                       write_file_option = "excel",
+                       parallel = FALSE,
+                       NbeCores = 2) {
+  
   
   if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)
@@ -2717,7 +2719,7 @@ IUCN.eval <- function (DATA,
                      }
   
   if(parallel) snow::stopCluster(cl)
-  if(show_progress) close(pb)
+  close(pb)
   
   if(map_pdf) grDevices::dev.off()
   
