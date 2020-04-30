@@ -2613,9 +2613,11 @@ IUCN.eval <- function (DATA,
   if (!is.null(country_map))
     if (!class(country_map) == "SpatialPolygonsDataFrame")
       stop("Country_map should be a spatialpolygondataframe")
+  
   if (!is.null(protec.areas)) {
     if (!class(protec.areas) == "SpatialPolygonsDataFrame")
       stop("protec.areas should be a spatialpolygondataframe")
+    
     if (!any(colnames(protec.areas@data) %in% ID_shape_PA))
       stop(
         "Check argument ID_shape_PA because selected ID field in the protected area shapefile does not exist"
@@ -2623,12 +2625,16 @@ IUCN.eval <- function (DATA,
   }
   
   if (is.null(country_map)) {
-    land <- country_map <-
+    country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
     
     # data('land', package='ConR', envir=environment())
     # land <- get("land", envir=environment())
     # country_map <- land
+  }else{
+    
+    country_map <- rgeos::gBuffer(country_map, byid=TRUE, width=0)
+    
   }
   
   if (!is.null(protec.areas)) {
