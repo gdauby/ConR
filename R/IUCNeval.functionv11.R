@@ -600,6 +600,7 @@ EOO.computing <- function(XY,
     }
   
   if(parallel) snow::stopCluster(cl)
+  if(show_progress) close(pb)
   
   Results_short <-
     data.frame(EOO = unlist(output[grep("EOO", names(output))]))
@@ -1063,6 +1064,7 @@ AOO.computing <- function(XY,
       utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
   }else{opts <- NULL}
+  
   output <-
     foreach::foreach(
       x = 1:length(list_data),
@@ -1085,9 +1087,8 @@ AOO.computing <- function(XY,
       res
     }
   
-  close(pb)
-  
   if(parallel) snow::stopCluster(cl)
+  if(show_progress) close(pb)
   
   if(!export_shp) {
     
@@ -1420,6 +1421,7 @@ locations.comp <- function(XY,
       }
     
     if(parallel) snow::stopCluster(cl)
+    if(show_progress) close(pb)
     
     Locations <- unlist(output[names(output) == "nbe_occ"])
     r2 <- unlist(output[names(output) == "spatial"])[[1]]
@@ -1528,6 +1530,7 @@ locations.comp <- function(XY,
           }
         
         if(parallel) snow::stopCluster(cl)
+        if(show_progress) close(pb)
         
         loc_pa <- unlist(output[names(output) == "nbe_occ"])
         r2_PA <- unlist(output[names(output) == "spatial"])[[1]]
@@ -1609,6 +1612,7 @@ locations.comp <- function(XY,
                          }
       
       if(parallel) snow::stopCluster(cl)
+      if(show_progress) close(pb)
       
       loc_not_pa <- unlist(output[names(output) == "nbe_occ"])
       r2 <- unlist(output[names(output) == "spatial"])[[1]]
@@ -2713,6 +2717,7 @@ IUCN.eval <- function (DATA,
                      }
   
   if(parallel) snow::stopCluster(cl)
+  if(show_progress) close(pb)
   
   if(map_pdf) grDevices::dev.off()
   
