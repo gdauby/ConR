@@ -1322,6 +1322,9 @@ locations.comp <- function(XY,
       any(XY[, 1] > 180))
     stop("coordinates are outside of expected range")
   
+  if(method != "fixed_grid" & method != "sliding scale")
+    stop("method should be fixed_grid sliding scale")
+  
   projEAC <- .proj_crs()
   
   coordEAC <-
@@ -2034,12 +2037,12 @@ locations.comp <- function(XY,
     ### Mapping 
     if(!is.null(protec.areas)){
       if(LocOutNatParks==0){
-        graphics::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
+        sp::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
       }else{
         # r2_pol <- r2
         if(LocOutNatParks==1){
           
-          graphics::plot(
+          sp::plot(
             r2,
             col = rgb(
               red = 1,
@@ -2052,7 +2055,7 @@ locations.comp <- function(XY,
           )
         }else{
           
-          graphics::plot(
+          sp::plot(
             r2,
             col = rgb(
               red = 1,
@@ -2068,25 +2071,25 @@ locations.comp <- function(XY,
       }
     }else{
       # r2_pol <- rasterToPolygons(r2, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-      graphics::plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
+      sp::plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
            xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), 
            ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1))
     }
     
-    if(SubPop) graphics::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
+    if(SubPop) sp::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
     
     if(!is.null(protec.areas)){
       if(LocNatParks>0){
         if(method_protected_area!="no_more_than_one"){
           # r2_PA_pol <- rasterToPolygons(r2_PA, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-          graphics::plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
+          sp::plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
         }
       }
     }
     
     if (!is.null(p1) &
         draw.poly.EOO)
-      graphics::plot(p1,
+      sp::plot(p1,
            add = T,
            col = rgb(
              red = 0.2,
@@ -2095,7 +2098,7 @@ locations.comp <- function(XY,
              alpha = 0.1
            ))
     
-    graphics::plot(
+    sp::plot(
       poly_borders,
       axes = FALSE,
       lty = 1,
@@ -2104,7 +2107,7 @@ locations.comp <- function(XY,
     )
     
     if (!is.null(protec.areas))
-      graphics::plot(
+      sp::plot(
         protec.areas,
         add = T,
         col = rgb(
@@ -2122,7 +2125,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        graphics::plot(
+        sp::plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2133,7 +2136,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(!is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        graphics::plot(
+        sp::plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2145,7 +2148,7 @@ locations.comp <- function(XY,
       colnames(XY) <- c("ddlon", "ddlat")
       XY_sp <- XY
       sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-      graphics::plot(
+      sp::plot(
         XY_sp,
         pch = 19,
         cex = 2,
@@ -2204,7 +2207,7 @@ locations.comp <- function(XY,
                         paste("Proportion of occurences within protected areas"), Results["Ratio_occ_within_PA",1]), cex=3.5, bg = grDevices::grey(0.9))
       }
       graphics::par(mar=c(4,1,1,1))
-      graphics::plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
+      sp::plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
       graphics::points(XY[,1],XY[,2], pch=8, cex=2, col="red") 
     }
     
