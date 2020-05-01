@@ -6,6 +6,11 @@
 \usage{
 .subpop.comp(XY, Resol_sub_pop)
 }
+\arguments{
+\item{XY}{data.frame}
+
+\item{Resol_sub_pop}{integer}
+}
 \description{
 subpopulations estimatiion
 }
