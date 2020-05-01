@@ -569,6 +569,9 @@ EOO.computing <- function(XY,
       any(XY[, 1] > 180))
     stop("coordinates are outside of expected range")
   
+  if(!is.null(country_map))
+    country_map <- rgeos::gBuffer(country_map, byid=TRUE, width=0)
+  
   if (method.range == "convex.hull") {
     convex.hull = TRUE
     alpha.hull = FALSE
