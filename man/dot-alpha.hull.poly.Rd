@@ -6,6 +6,13 @@
 \usage{
 .alpha.hull.poly(XY, alpha = 1, buff = 0.1)
 }
+\arguments{
+\item{XY}{data.frame coordinates}
+
+\item{alpha}{integer}
+
+\item{buff}{numeric}
+}
 \description{
 Alpha hull process
 }

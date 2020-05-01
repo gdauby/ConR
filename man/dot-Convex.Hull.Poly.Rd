@@ -6,6 +6,9 @@
 \usage{
 .Convex.Hull.Poly(XY)
 }
+\arguments{
+\item{XY}{data.frame}
+}
 \description{
 Build convex hull polygon
 }

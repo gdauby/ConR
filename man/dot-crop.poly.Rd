@@ -6,6 +6,11 @@
 \usage{
 .crop.poly(poly, crop)
 }
+\arguments{
+\item{poly}{Spatial}
+
+\item{crop}{Spatial}
+}
 \description{
 Crop polygons
 }

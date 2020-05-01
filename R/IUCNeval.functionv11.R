@@ -4,7 +4,9 @@
 #' Build convex hull polygon
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
-#'
+#' 
+#' @param XY data.frame
+#' 
 #' @importFrom grDevices chull
 #' @importFrom rgeos readWKT
 #' @importFrom geosphere makePoly
@@ -59,6 +61,8 @@
 #'
 #' Alpha hull processing
 #'
+#' @param x ahull class object
+#'
 #' @details 
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
@@ -66,7 +70,7 @@
 #'
 #' @importFrom alphahull anglesArc
 #' 
-.ahull_to_SPLDF <- function(x, proj4string = NA)
+.ahull_to_SPLDF <- function(x)
 {
   if (class(x) != 'ahull')
     stop('This function only works with `ahull` class objects')
@@ -115,6 +119,11 @@
 #' Internal function
 #'
 #' Alpha hull process
+#'
+#' @param XY data.frame coordinates
+#' @param alpha integer
+#' @param buff numeric
+#' 
 #'
 #' @details 
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
@@ -169,6 +178,11 @@
 #'
 #' Crop polygons
 #'
+#'
+#' @param poly Spatial
+#' @param crop Spatial
+#' 
+#' 
 #' @import sp raster
 #' @importFrom geosphere areaPolygon
 #' @importFrom sf st_intersection st_union
@@ -229,6 +243,17 @@
 #' Internal function
 #'
 #' EOO estimatiion
+#'
+#' @param XY data.frame
+#' @param exclude.area logical
+#' @param buff_width numeric
+#' @param country_map SpatialPolygonDataframe
+#' @param Name_Sp string
+#' @param alpha.hull logical
+#' @param convex.hull logical
+#' @param alpha integer
+#' @param buff.alpha numeric
+#' @param method.less.than3 string
 #'
 #' @import sp raster
 #' @importFrom  rgdal project
@@ -691,6 +716,10 @@ EOO.computing <- function(XY,
 #' Internal function
 #'
 #' subpopulations estimatiion
+#' 
+#' @param XY data.frame
+#' @param Resol_sub_pop integer
+#' 
 #'
 #' @importFrom  rgdal project
 #' @importFrom rgeos readWKT gBuffer gUnion
@@ -859,7 +888,12 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
 #' Internal function
 #'
 #' AOO estimatiion
-#'
+#' 
+#' 
+#' @param coordEAC data.frame
+#' @param cell_size integer
+#' @param nbe_rep integer
+#' @param export_shp logical
 #' 
 .AOO.estimation <- function(coordEAC, 
                             cell_size = 2, 
@@ -962,7 +996,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
 #' Internal function
 #'
 #' get proj CRS
-#'
+#' 
 #' @importFrom utils packageVersion
 #' @importFrom rgdal showWKT
 #' 
@@ -1182,7 +1216,11 @@ AOO.computing <- function(XY,
 #' Internal function
 #'
 #' Count number of occupied cells given resolution, projection
-#'
+#' 
+#' @param nbe_rep integer
+#' @param size integer
+#' @param coord data.frame
+#' @param export_shp logical
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' 
@@ -1324,6 +1362,7 @@ AOO.computing <- function(XY,
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
+#' @param XY data.frame, see details
 #' @param method string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
 #' @param nbe_rep numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done
 #' @param protec.areas \code{SpatialPolygonsDataFrame}, shapefile with protected areas. If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). By default, no shapefile is provided
@@ -1722,7 +1761,35 @@ locations.comp <- function(XY,
 #' Internal function
 #'
 #' Compute IUCN eval
-#'
+#' 
+#' @param DATA data.frame
+#' @param poly_borders SpatialPolygonDataFrame
+#' @param Cell_size_AOO integer
+#' @param Cell_size_locations integer
+#' @param Resol_sub_pop integer
+#' @param method_locations integer
+#' @param Rel_cell_size integer
+#' @param protec.areas SpatialPolygonDataFrame
+#' @param exclude.area logical
+#' @param method_protected_area string
+#' @param ID_shape_PA string
+#' @param buff_width numeric
+#' @param NamesSp string
+#' @param write_shp logical
+#' @param file_name string
+#' @param add.legend logical
+#' @param DrawMap logical
+#' @param map_pdf logical
+#' @param draw.poly.EOO logical
+#' @param SubPop logical
+#' @param MinMax numeric vector
+#' @param alpha integer
+#' @param buff.alpha numeric
+#' @param method.range string
+#' @param nbe.rep.rast.AOO integer
+#' @param verbose logical
+#' @param showWarnings logical
+#' 
 #' @importFrom rgdal project writeOGR
 #' @importFrom rnaturalearth ne_countries
 #' 
@@ -2114,12 +2181,12 @@ locations.comp <- function(XY,
     ### Mapping 
     if(!is.null(protec.areas)){
       if(LocOutNatParks==0){
-        plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
+        sp::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
       }else{
         # r2_pol <- r2
         if(LocOutNatParks==1){
           
-          plot(
+          sp::plot(
             r2,
             col = rgb(
               red = 1,
@@ -2132,7 +2199,7 @@ locations.comp <- function(XY,
           )
         }else{
           
-          plot(
+          sp::plot(
             r2,
             col = rgb(
               red = 1,
@@ -2148,25 +2215,25 @@ locations.comp <- function(XY,
       }
     }else{
       # r2_pol <- rasterToPolygons(r2, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-      plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
+      sp::plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
            xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), 
            ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1))
     }
     
-    if(SubPop) plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
+    if(SubPop) sp::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
     
     if(!is.null(protec.areas)){
       if(LocNatParks>0){
         if(method_protected_area!="no_more_than_one"){
           # r2_PA_pol <- rasterToPolygons(r2_PA, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-          plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
+          sp::plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
         }
       }
     }
     
     if (!is.null(p1) &
         draw.poly.EOO)
-      plot(p1,
+      sp::plot(p1,
            add = T,
            col = rgb(
              red = 0.2,
@@ -2175,7 +2242,7 @@ locations.comp <- function(XY,
              alpha = 0.1
            ))
     
-    plot(
+    sp::plot(
       poly_borders,
       axes = FALSE,
       lty = 1,
@@ -2184,7 +2251,7 @@ locations.comp <- function(XY,
     )
     
     if (!is.null(protec.areas))
-      plot(
+      sp::plot(
         protec.areas,
         add = T,
         col = rgb(
@@ -2202,7 +2269,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        plot(
+        sp::plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2213,7 +2280,7 @@ locations.comp <- function(XY,
       XY_sp <- XY[which(!is.na(Links_NatParks[, 1])), ]
       if (nrow(XY_sp) > 0) {
         sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-        plot(
+        sp::plot(
           XY_sp,
           pch = 19,
           cex = 2,
@@ -2225,7 +2292,7 @@ locations.comp <- function(XY,
       colnames(XY) <- c("ddlon", "ddlat")
       XY_sp <- XY
       sp::coordinates(XY_sp) <-  ~ ddlon + ddlat
-      plot(
+      sp::plot(
         XY_sp,
         pch = 19,
         cex = 2,
@@ -2284,7 +2351,7 @@ locations.comp <- function(XY,
                         paste("Proportion of occurences within protected areas"), Results["Ratio_occ_within_PA",1]), cex=3.5, bg = grDevices::grey(0.9))
       }
       graphics::par(mar=c(4,1,1,1))
-      plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
+      sp::plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
       graphics::points(XY[,1],XY[,2], pch=8, cex=2, col="red") 
     }
     
@@ -2861,6 +2928,8 @@ IUCN.eval <- function (DATA,
 #'
 #' Compute prop and nbr taxa per cell
 #'
+#' @param Cell_count data.frame
+#' @param threshold integer
 #' 
 .prop_threat <- function(Cell_count, threshold) {
   NbeRec <- nrow(Cell_count)
@@ -2965,7 +3034,7 @@ IUCN.eval <- function (DATA,
 #' @importFrom rnaturalearth ne_countries
 #' 
 #' @importFrom grDevices dev.cur dev.off grey pdf png rgb
-#' @importFrom graphics axis box layout legend mtext par plot points
+#' @importFrom graphics axis box layout legend mtext par points
 #' @importFrom methods as slot
 #' @importFrom utils installed.packages write.csv
 #' 
@@ -3138,7 +3207,7 @@ map.res <- function(Results,
     )
   
   if (export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3151,7 +3220,7 @@ map.res <- function(Results,
     )
   
   if (!export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3178,7 +3247,7 @@ map.res <- function(Results,
     col = coltab,
     add = T
   )
-  plot(cropped_country_map, add = T)
+  sp::plot(cropped_country_map, add = T)
   if (min(VALUES) == max(VALUES))
     Range <- c(min(VALUES), min(VALUES) + 1)
   if (min(VALUES) != max(VALUES))
@@ -3220,7 +3289,7 @@ map.res <- function(Results,
       omi = c(0.3, 0.4, 0.3, 0.1)
     )
   if (export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3233,7 +3302,7 @@ map.res <- function(Results,
     )
   
   if (!export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3261,7 +3330,7 @@ map.res <- function(Results,
     add = T
   )
   
-  plot(cropped_country_map, add = T)
+  sp::plot(cropped_country_map, add = T)
   if (min(VALUES) == max(VALUES))
     Range <- c(min(VALUES), min(VALUES) + 1)
   if (min(VALUES) != max(VALUES))
@@ -3290,10 +3359,10 @@ map.res <- function(Results,
   if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
 
   if (export_map) 
-    plot(cropped_country_map, axes=T, lty=1,border=Border, col=COlor, xlim=c(LongMin,LongMax), ylim=c(LatMin,LatMax), cex.axis=1,lwd=1)
+    sp::plot(cropped_country_map, axes=T, lty=1,border=Border, col=COlor, xlim=c(LongMin,LongMax), ylim=c(LatMin,LatMax), cex.axis=1,lwd=1)
 
   if (!export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3317,7 +3386,7 @@ map.res <- function(Results,
   
   fields::quilt.plot(COORD[SelectedCells,1]*Resol+Resol/2 , COORD[SelectedCells,2]*Resol+Resol/2, VALUES  ,grid=grid.list , cex.axis=1, 
              cex.lab=1, add.legend=FALSE, col=coltab, add=T)
-  plot(cropped_country_map, add=T)
+  sp::plot(cropped_country_map, add=T)
   if(min(VALUES)==max(VALUES)) Range <- c(min(VALUES), min(VALUES)+1)
   if(min(VALUES)!=max(VALUES)) Range <- range(VALUES)
   fields::image.plot(zlim=Range,legend.only=TRUE, col=coltab, legend.shrink = 1 ,
@@ -3332,7 +3401,7 @@ map.res <- function(Results,
   if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
 
   if (!export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3345,7 +3414,7 @@ map.res <- function(Results,
       yaxt = 'n'
     )
   if (export_map)
-    plot(
+    sp::plot(
       cropped_country_map,
       axes = T,
       lty = 1,
@@ -3362,7 +3431,7 @@ map.res <- function(Results,
   
   fields::quilt.plot(COORD[SelectedCells,1]*Resol+Resol/2 , COORD[SelectedCells,2]*Resol+Resol/2, VALUES  ,grid=grid.list , cex.axis=1, 
              cex.lab=1, add.legend=FALSE, col=coltab, add=T)
-  plot(cropped_country_map, add=T)
+  sp::plot(cropped_country_map, add=T)
   if(min(VALUES)==max(VALUES)) Range <- c(min(VALUES), min(VALUES)+1)
   if(min(VALUES)!=max(VALUES)) Range <- range(VALUES)
   fields::image.plot(zlim=Range,legend.only=TRUE, col=coltab, legend.shrink = 1 ,

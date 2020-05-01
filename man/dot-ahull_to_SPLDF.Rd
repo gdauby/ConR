@@ -4,7 +4,10 @@
 \alias{.ahull_to_SPLDF}
 \title{Internal function}
 \usage{
-.ahull_to_SPLDF(x, proj4string = NA)
+.ahull_to_SPLDF(x)
+}
+\arguments{
+\item{x}{ahull class object}
 }
 \description{
 Alpha hull processing

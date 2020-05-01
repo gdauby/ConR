@@ -17,6 +17,27 @@
   method.less.than3 = "not comp"
 )
 }
+\arguments{
+\item{XY}{data.frame}
+
+\item{exclude.area}{logical}
+
+\item{buff_width}{numeric}
+
+\item{country_map}{SpatialPolygonDataframe}
+
+\item{Name_Sp}{string}
+
+\item{alpha.hull}{logical}
+
+\item{convex.hull}{logical}
+
+\item{alpha}{integer}
+
+\item{buff.alpha}{numeric}
+
+\item{method.less.than3}{string}
+}
 \description{
 EOO estimatiion
 }

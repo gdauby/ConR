@@ -6,6 +6,15 @@
 \usage{
 .cell.occupied(nbe_rep = 0, size = 4, coord, export_shp = TRUE)
 }
+\arguments{
+\item{nbe_rep}{integer}
+
+\item{size}{integer}
+
+\item{coord}{data.frame}
+
+\item{export_shp}{logical}
+}
 \description{
 Count number of occupied cells given resolution, projection
 }
