@@ -1028,7 +1028,7 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
   
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     crs_proj <-
-      sp::CRS(projargs = "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
+      sp::CRS(projargs = proj)
   
   return(crs_proj)
 }
