@@ -19,6 +19,8 @@ locations.comp(
 )
 }
 \arguments{
+\item{XY}{data.frame, see details}
+
 \item{method}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
 
 \item{nbe_rep}{numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done}
