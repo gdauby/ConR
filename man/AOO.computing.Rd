@@ -50,6 +50,10 @@ Compute areas of occupancy (AOO) for multiple taxa in square kilometres
   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
   [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
 }
+
+The argument of \code{nbe.rep.rast.AOO} ideally should be higher than 20 for increasing 
+the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however also increase the computing time. 
+So this is a trade-off that depend on the importance to get the minimal AOO and the sie of the dataset.
 }
 \examples{
 data(dataset.ex)
