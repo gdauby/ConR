@@ -292,13 +292,11 @@
     ## if there is only one occurrence, EOO is NA
     if (nrow(unique(XY)) < 2) {
       EOO <- NA
-      message(
-        paste(
-          "EOO for",
-          as.character(Name_Sp),
-          "is not computed because there is only 1 unique occurrence"
-        )
-      )
+      message(paste(
+        "\nEOO statistic is not computed for",
+        as.character(NamesSp),
+        "because there is only one record"
+      ))
       
     } else{
       if (method.less.than3 == "arbitrary") {
@@ -319,13 +317,11 @@
       
       if (method.less.than3 == "not comp") {
         ## if there are two unique occurences, EOO is not computed neither
-        message(
-          paste(
-            "EOO for",
-            as.character(Name_Sp),
-            "is not computed because there is less than 3 unique occurrences"
-          )
-        )
+        message(paste(
+          "\nEOO statistic is not computed for",
+          NamesSp,
+          "because there is less than 3 records"
+        ))
         EOO <- NA
       }
     }
@@ -341,7 +337,7 @@
       ## If so, a straight line is built and a buffer of buff_width is added
       message(
         paste(
-          "Occurrences of",
+          "\nOccurrences of",
           as.character(Name_Sp),
           "follow a straight line, thus EOO is based on an artificial polygon using buff_width"
         )
@@ -570,7 +566,7 @@ EOO.computing <- function(XY,
     stop("coordinates are outside of expected range")
   
   if(!is.null(country_map))
-    country_map <- rgeos::gBuffer(country_map, byid=TRUE, width=0)
+    country_map <- suppressWarnings(rgeos::gBuffer(country_map, byid=TRUE, width=0))
   
   if (method.range == "convex.hull") {
     convex.hull = TRUE
@@ -595,7 +591,7 @@ EOO.computing <- function(XY,
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
     
-    message('doParallel running with ',
+    message('Running in parallel with ',
             NbeCores, ' cores')
     
     `%d%` <- foreach::`%dopar%`
@@ -718,7 +714,7 @@ EOO.computing <- function(XY,
 
 #' Internal function
 #'
-#' subpopulations estimatiion
+#' subpopulations estimation
 #' 
 #' @param XY data.frame
 #' @param Resol_sub_pop integer
@@ -843,12 +839,12 @@ EOO.computing <- function(XY,
 #' @examples 
 #' data(dataset.ex)
 #' \dontrun{
-#'subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 30)
+#'subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 5)
 #'}
 #'
 #' 
 #' @export
-subpop.comp <- function(XY, Resol_sub_pop = NULL) {
+subpop.comp <- function(XY, Resol_sub_pop = 5) {
   if (is.null(Resol_sub_pop))
     stop("Resol_sub_pop is missing, please provide a value")
   
@@ -1059,6 +1055,12 @@ subpop.comp <- function(XY, Resol_sub_pop = NULL) {
 #'   [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
 #' }
 #' 
+#' The argument of \code{nbe.rep.rast.AOO} ideally should be higher than 20 for increasing 
+#' the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however also increase the computing time. 
+#' So this is a trade-off that depend on the importance to get the minimal AOO and the sie of the dataset.
+#' 
+#' 
+#' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
 #'
 #' @return 
@@ -1148,7 +1150,7 @@ AOO.computing <- function(XY,
     doSNOW::registerDoSNOW(cl)
     
     # registerDoParallel(NbeCores)
-    message('doParallel running with ',
+    message('Running in parallel with ',
             NbeCores, ' cores')
     `%d%` <- foreach::`%dopar%`
   }else{
@@ -1491,7 +1493,7 @@ locations.comp <- function(XY,
       doSNOW::registerDoSNOW(cl)
       
       # registerDoParallel(NbeCores)
-      message('doParallel running with ',
+      message('Running in parallel with ',
               NbeCores, ' cores')
       
       `%d%` <- foreach::`%dopar%`
@@ -1607,7 +1609,7 @@ locations.comp <- function(XY,
           doSNOW::registerDoSNOW(cl)
           
           # registerDoParallel(NbeCores)
-          message('doParallel running with ',
+          message('Running in parallel with ',
                   NbeCores, ' cores')
           
           `%d%` <- foreach::`%dopar%`
@@ -1696,7 +1698,7 @@ locations.comp <- function(XY,
         doSNOW::registerDoSNOW(cl)
         
         # registerDoParallel(NbeCores)
-        message('doParallel running with ',
+        message('Running in parallel with ',
                 NbeCores, ' cores')
         
         `%d%` <- foreach::`%dopar%`
@@ -2141,8 +2143,14 @@ locations.comp <- function(XY,
       }
     }
     
-    Results["Category_code",1] <- paste(Results["Category_CriteriaB",1],"B2a")
-    if(showWarnings) warning(paste("EOO statistic is not computed for", NamesSp,"because there is less than 3 records"))
+    Results["Category_code", 1] <-
+      paste(Results["Category_CriteriaB", 1], "B2a")
+    if (showWarnings)
+      message(paste(
+        "\nEOO statistic is not computed for",
+        NamesSp,
+        "because there is less than 3 records"
+      ))
   } ## End less than 3 records
   
   ############ Map ###########
@@ -2156,7 +2164,9 @@ locations.comp <- function(XY,
         NAME_FILE <- paste("IUCN_", gsub(" ",replacement = "_", as.character(NamesSp)), sep="")
       }
       FILE_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
-      dir.create(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")), showWarnings = FALSE)
+      dir.create(file.path(paste(
+        getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+      )), showWarnings = FALSE)
     }
     
     if (!map_pdf)
@@ -2414,7 +2424,7 @@ locations.comp <- function(XY,
   
   if(write_shp) {
     
-    dir.create(file.path(paste(getwd(),"/shapesIUCN", sep="")), showWarnings = FALSE)
+    dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     
     if (!is.null(p1)) {
       if (length(list.files(paste(getwd(), "/shapesIUCN", sep = ""))) > 0) {
@@ -2783,7 +2793,7 @@ IUCN.eval <- function (DATA,
     # country_map <- land
   }else{
     
-    country_map <- rgeos::gBuffer(country_map, byid=TRUE, width=0)
+    country_map <- suppressWarnings(rgeos::gBuffer(country_map, byid=TRUE, width=0))
     
   }
   
@@ -2806,9 +2816,15 @@ IUCN.eval <- function (DATA,
       NAME_FILE <- "IUCN_"
     }
     FILE_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
-    dir.create(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")), showWarnings = FALSE)
+    dir.create(file.path(paste(
+      getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+    )), showWarnings = FALSE)
     
-    pdf(paste(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep=""),"/","results.pdf", sep=""), width=25, height=25)
+    pdf(paste(paste(
+      getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+    ), "/", "results.pdf", sep = ""),
+    width = 25,
+    height = 25)
   }
   
   if(parallel) {
@@ -2821,7 +2837,7 @@ IUCN.eval <- function (DATA,
     doSNOW::registerDoSNOW(cl)
     
     # registerDoParallel(NbeCores)
-    message('doParallel running with ',
+    message('Running in parallel with ',
             NbeCores, ' cores')
     `%d%` <- foreach::`%dopar%`
   }else{
