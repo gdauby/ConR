@@ -4,7 +4,7 @@
 \alias{subpop.comp}
 \title{Number of subpopulations}
 \usage{
-subpop.comp(XY, Resol_sub_pop = NULL)
+subpop.comp(XY, Resol_sub_pop = 5)
 }
 \arguments{
 \item{XY}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
@@ -31,7 +31,7 @@ Estimate the number of locations following the method **circular buffer method**
 \examples{
 data(dataset.ex)
 \dontrun{
-subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 30)
+subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 5)
 }
 
 

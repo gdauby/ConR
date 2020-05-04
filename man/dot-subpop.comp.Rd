@@ -12,5 +12,5 @@
 \item{Resol_sub_pop}{integer}
 }
 \description{
-subpopulations estimatiion
+subpopulations estimation
 }
