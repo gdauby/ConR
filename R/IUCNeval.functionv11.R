@@ -292,11 +292,13 @@
     ## if there is only one occurrence, EOO is NA
     if (nrow(unique(XY)) < 2) {
       EOO <- NA
-      message(paste(
-        "\nEOO statistic is not computed for",
-        as.character(NamesSp),
-        "because there is only one record"
-      ))
+      message(
+        paste(
+          "\nEOO parameter cannot be estimated for",
+          as.character(Name_Sp),
+          "because there is only 1 unique occurrence"
+        )
+      )
       
     } else{
       if (method.less.than3 == "arbitrary") {
@@ -317,11 +319,13 @@
       
       if (method.less.than3 == "not comp") {
         ## if there are two unique occurences, EOO is not computed neither
-        message(paste(
-          "\nEOO statistic is not computed for",
-          NamesSp,
-          "because there is less than 3 records"
-        ))
+        message(
+          paste(
+            "\nEOO parameter cannot be estimated for",
+            as.character(Name_Sp),
+            "because there is less than 3 unique occurrences"
+          )
+        )
         EOO <- NA
       }
     }
@@ -591,7 +595,7 @@ EOO.computing <- function(XY,
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
     
-    message('Running in parallel with ',
+    message('Parallel running with ',
             NbeCores, ' cores')
     
     `%d%` <- foreach::`%dopar%`
@@ -1150,7 +1154,7 @@ AOO.computing <- function(XY,
     doSNOW::registerDoSNOW(cl)
     
     # registerDoParallel(NbeCores)
-    message('Running in parallel with ',
+    message('Parallel running with ',
             NbeCores, ' cores')
     `%d%` <- foreach::`%dopar%`
   }else{
@@ -1493,7 +1497,7 @@ locations.comp <- function(XY,
       doSNOW::registerDoSNOW(cl)
       
       # registerDoParallel(NbeCores)
-      message('Running in parallel with ',
+      message('Parallel running with ',
               NbeCores, ' cores')
       
       `%d%` <- foreach::`%dopar%`
@@ -1609,7 +1613,7 @@ locations.comp <- function(XY,
           doSNOW::registerDoSNOW(cl)
           
           # registerDoParallel(NbeCores)
-          message('Running in parallel with ',
+          message('Parallel running with ',
                   NbeCores, ' cores')
           
           `%d%` <- foreach::`%dopar%`
@@ -1698,7 +1702,7 @@ locations.comp <- function(XY,
         doSNOW::registerDoSNOW(cl)
         
         # registerDoParallel(NbeCores)
-        message('Running in parallel with ',
+        message('Parallel running with ',
                 NbeCores, ' cores')
         
         `%d%` <- foreach::`%dopar%`
@@ -2147,7 +2151,7 @@ locations.comp <- function(XY,
       paste(Results["Category_CriteriaB", 1], "B2a")
     if (showWarnings)
       message(paste(
-        "\nEOO statistic is not computed for",
+        "\nEOO parameter cannot be estimated for",
         NamesSp,
         "because there is less than 3 records"
       ))
@@ -2837,7 +2841,7 @@ IUCN.eval <- function (DATA,
     doSNOW::registerDoSNOW(cl)
     
     # registerDoParallel(NbeCores)
-    message('Running in parallel with ',
+    message('Parallel running with ',
             NbeCores, ' cores')
     `%d%` <- foreach::`%dopar%`
   }else{
