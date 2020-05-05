@@ -784,6 +784,21 @@ Maps should have been created in your working directory.
 ```{r include=F, echo=F}
 files <- list.files(paste(getwd(), "/MyIUCNresults_results_map/", sep=""), full.names = T)
 file.remove(files[-grep("Berlinia_bruneelii", files)])
+
+files <- list.files(paste(getwd(), sep=""), full.names = T)
+file.remove(files[grep("EOO.results.csv", files)])
+file.remove(files[grep("IUCN_results.csv", files)])
+file.remove(files[grep("IUCN_results.xlsx", files)])
+file.remove(files[grep("MyIUCNresults.xlsx", files)])
+file.remove(files[grep("loc1.xlsx", files)])
+file.remove(files[grep("loc2.xlsx", files)])
+file.remove(files[grep("loc3.xlsx", files)])
+file.remove(files[grep("protec.xlsx", files)])
+file.remove(files[grep("protec2.xlsx", files)])
+file.remove(files[grep("slide.xlsx", files)])
+# unlink(files[grep("IUCN__results_map", files)], recursive = TRUE)
+
+
 #files <- list.files(paste(getwd(), "/", sep=""), full.names = T)
 #unlink(files[grep("Berlinia_bruneelii", files)])
 ```
