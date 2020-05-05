@@ -196,7 +196,7 @@
   raster::crs(poly) <- NA
   raster::crs(crop) <- NA
   
-  # crs_ <- sp::CRS(SRS_string='EPSG:4326')
+  # crs_ <- sp::CRS(SRS_string='epsg:4326')
   # sf::st_crs(poly_sf) <- 4326
   
   
@@ -210,7 +210,7 @@
   poly_masked <- methods::as(sf::st_union(diff_croped), "Spatial")
   
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    poly_masked@proj4string <- sp::CRS(SRS_string='EPSG:4326')
+    poly_masked@proj4string <- sp::CRS(SRS_string='epsg:4326')
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
   
@@ -743,7 +743,7 @@ EOO.computing <- function(XY,
   XY_sp <- XY
   sp::coordinates(XY_sp) <- c(1, 2)
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    sp::proj4string(XY_sp) <- sp::CRS(SRS_string='EPSG:4326')
+    sp::proj4string(XY_sp) <- sp::CRS(SRS_string='epsg:4326')
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     sp::proj4string(XY_sp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
   XY_sp_proj <- sp::spTransform(XY_sp, projEAC)
@@ -765,11 +765,11 @@ EOO.computing <- function(XY,
   SubPopPoly <- as(SubPopPoly, "Spatial")
   sp::proj4string(SubPopPoly) <- projEAC
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS(SRS_string='EPSG:4326'))
+    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS(SRS_string='epsg:4326'))
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS("+proj=longlat +datum=WGS84 +no_defs"))
   
-  # if (utils::packageVersion("sp") >= "1.3.3") poly_masked@proj4string <- sp::CRS(SRS_string='EPSG:4326')
+  # if (utils::packageVersion("sp") >= "1.3.3") poly_masked@proj4string <- sp::CRS(SRS_string='epsg:4326')
   # if (utils::packageVersion("sp") < "1.3.3") poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
   
   # p2 <-
