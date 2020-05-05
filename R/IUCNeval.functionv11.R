@@ -724,11 +724,15 @@ EOO.computing <- function(XY,
 #'
 #' @importFrom  rgdal project
 #' @importFrom rgeos readWKT gBuffer gUnion
+#' @importFrom utils packageVersion
 #' @importFromsf sf st_transform sf_project st_crs st_cast
 #' 
 .subpop.comp <- function(XY,
                          Resol_sub_pop) {
  
+  if(utils::packageVersion("sf") < '0.9.0')
+    stop('A more recent version of the "sf" package is needed, please update this package')
+  
   projEAC <- .proj_crs()
   
   XY <- XY[, c(2, 1)]
@@ -740,7 +744,9 @@ EOO.computing <- function(XY,
   # rownames(coordEAC) <- seq(1, nrow(coordEAC), 1)
 
   XY_sf_proj <- 
-    sf::sf_project(from = sf::st_crs(4326), to = sf::st_crs(54032), 
+    sf::sf_project(from = sf::st_crs(4326), 
+                   to = 
+                     sf::st_crs(projEAC), 
                                pts = XY)
   
   XY_sp <- as.data.frame(XY_sf_proj)
@@ -753,7 +759,7 @@ EOO.computing <- function(XY,
                    id = 1)
   
   XY_sf <- as(XY_sp_proj_buff, "sf")
-  sf::st_crs(XY_sf) <- 54032
+  sf::st_crs(XY_sf) <- projEAC
   
   # if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
   #   sf::st_crs(XY_sf) <- 4326
@@ -1023,7 +1029,7 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
 #' get proj CRS
 #' 
 #' @importFrom utils packageVersion
-#' @importFrom rgdal showWKT
+#' @importFrom rgdal showWKT rgdal_extSoftVersion
 #' 
 .proj_crs <- function() {
   
@@ -1049,7 +1055,7 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
                         SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
   }
   
-  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0")
     crs_proj <-
       sp::CRS(projargs = proj, doCheckCRSArgs = FALSE)
   
@@ -1365,10 +1371,11 @@ AOO.computing <- function(XY,
     Occupied_cells <- Occupied_cells[Occupied_cells > 0]
     Occupied_cells <- min(Occupied_cells)
     
+    ## CRS object has comment, which is lost in output warning
     if (export_shp)
       r2_ <-
-      raster::projectRaster(from = r2_, 
-                            crs = "+proj=longlat +datum=WGS84 +no_defs")
+      suppressWarnings(raster::projectRaster(from = r2_, 
+                                             crs = "+proj=longlat +datum=WGS84 +no_defs"))
     
     if (export_shp)
       r2_pol <-
@@ -1427,10 +1434,10 @@ AOO.computing <- function(XY,
 #'locations <- locations.comp(dataset.ex)
 #'}
 #'
-#'# This would estimate AOO for all taxa by overlaying 
+#'# This would estimate the number of locations for all taxa by overlaying 
 #'# randomly a grid 100 times. For each taxa, the minimum value is kept
 #' \dontrun{
-#'AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
+#'locations <- locations.comp(dataset.ex, nbe_rep = 100)
 #'}
 #'
 #' @importFrom rgdal project
@@ -1565,7 +1572,7 @@ locations.comp <- function(XY,
     if(show_progress) close(pb)
     
     Locations <- unlist(output[names(output) == "nbe_occ"])
-    r2 <- unlist(output[names(output) == "spatial"])[[1]]
+    r2 <- unlist(output[names(output) == "spatial"])
     names(Locations) <-
       names(r2) <-
       gsub(pattern = " ",
@@ -1679,7 +1686,7 @@ locations.comp <- function(XY,
         if(show_progress) close(pb)
         
         loc_pa <- unlist(output[names(output) == "nbe_occ"])
-        r2_PA <- unlist(output[names(output) == "spatial"])[[1]]
+        r2_PA <- unlist(output[names(output) == "spatial"])
         names(loc_pa) <-
           names(r2_PA) <-
           gsub(pattern = " ",
@@ -1766,7 +1773,7 @@ locations.comp <- function(XY,
       if(show_progress & show_progress) close(pb)
       
       loc_not_pa <- unlist(output[names(output) == "nbe_occ"])
-      r2 <- unlist(output[names(output) == "spatial"])[[1]]
+      r2 <- unlist(output[names(output) == "spatial"])
       names(loc_not_pa) <-
         names(r2) <-
         gsub(pattern = " ",
@@ -1912,11 +1919,15 @@ locations.comp <- function(XY,
   # ## range of lat and long
   # Corners <- rbind(c(min(XY[,1]), max(XY[,1])), c(min(XY[,2]), max(XY[,2])))
   
-  locations_res <- 
-    locations.comp(XY = DATA, method = method_locations, 
-                 protec.areas = protec.areas, 
-                 Cell_size_locations = Cell_size_locations, 
-                 ID_shape_PA=ID_shape_PA, show_progress = FALSE)
+  locations_res <-
+    locations.comp(
+      XY = DATA,
+      method = method_locations,
+      protec.areas = protec.areas,
+      Cell_size_locations = Cell_size_locations,
+      ID_shape_PA = ID_shape_PA,
+      show_progress = FALSE
+    )
   
   if(is.null(protec.areas)) {
     r2 <- locations_res[[1]]
@@ -2092,7 +2103,7 @@ locations.comp <- function(XY,
     
     if(!is.null(protec.areas)) Results["Ratio_occ_within_PA",1] <- round(length(which(!is.na(Links_NatParks[,1])))/nrow(Links_NatParks)*100,2)
     
-    if(is.null(protec.areas)) Results["Nbe_loc",1] <- Locations
+    if(is.null(protec.areas)) Results["Nbe_loc",1] <- as.numeric(Locations)
     if(!is.null(protec.areas)) Results["Nbe_loc",1] <- LocNatParks + LocOutNatParks
     if(!is.null(protec.areas)) Results["Nbe_loc_PA",1] <- LocNatParks
     

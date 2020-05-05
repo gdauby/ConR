@@ -6,7 +6,7 @@ data(land)
 
 context("Test that subpop.comp outputs are correct length and objects")
 
-test_that("EOO.computing", {
+test_that("subpop.comp", {
   
   SUB <- subpop.comp(dataset.ex, Resol_sub_pop=25)
   

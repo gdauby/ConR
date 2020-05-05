@@ -364,15 +364,24 @@ knitr::kable(head(MyData))
 MyData2 <- MyData
 MyData2 <- MyData2[order(MyData2[,3]),]
 head(MyData2)
-MyData2 <- cbind(MyData2, c(rep("Fabaceae", table(dataset.ex[,3])[1]), 
+
+MyData3 <-
+  data.frame(
+    ddlat = MyData2$ddlat,
+    ddlon = MyData2$ddlon,
+    tax = MyData2$tax,
+    higher.tax.rank = NA,
+    coly = NA
+  )
+MyData3$higher.tax.rank <- 
+  c(rep("Fabaceae", table(dataset.ex[,3])[1]), 
                             rep("Arecaceae", table(dataset.ex[,3])[2]), 
                             rep("Orchidaceae", table(dataset.ex[,3])[3]), 
                             rep("Rubiaceae", table(dataset.ex[,3])[4]),
                             rep("Familiaceae", table(dataset.ex[,3])[5]), 
-                            rep("Familiaceae", table(dataset.ex[,3])[6])))
-colnames(MyData2)[4] <- "higher.tax.rank"
-MyData2 <- cbind(MyData2, sample(1780:2016, nrow(MyData2), replace = T))
-colnames(MyData2)[5] <- "coly"
+                            rep("Familiaceae", table(dataset.ex[,3])[6]))
+MyData3$coly <- sample(1780:2016, nrow(MyData2), replace = T)
+MyData2 <- MyData3
 head(MyData2)
 rownames(MyData2) <- rownames(MyData)
 ```

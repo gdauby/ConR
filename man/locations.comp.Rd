@@ -64,10 +64,10 @@ data(dataset.ex)
 locations <- locations.comp(dataset.ex)
 }
 
-# This would estimate AOO for all taxa by overlaying 
+# This would estimate the number of locations for all taxa by overlaying 
 # randomly a grid 100 times. For each taxa, the minimum value is kept
 \dontrun{
-AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
+locations <- locations.comp(dataset.ex, nbe_rep = 100)
 }
 
 }
