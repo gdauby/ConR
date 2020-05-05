@@ -3,7 +3,9 @@
 \name{Malagasy.amphibian}
 \alias{Malagasy.amphibian}
 \title{Dataset of Malagasy Amphibian occurrences}
-\format{A dataframe}
+\format{
+A dataframe
+}
 \source{
 GBIF.org (9th February 2016) GBIF Occurrence Download \url{http://doi.org/10.15468/dl.2tkoae}
 }

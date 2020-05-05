@@ -47,11 +47,9 @@
   # crs <- sp::CRS("+proj=longlat +datum=WGS84")
   # rgdal::crs(p1) <- crs
   
-  sp::proj4string(p1) <- sp::CRS("+proj=longlat +datum=WGS84")
-  
+  sp::proj4string(p1) <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs=TRUE)
   
   suppressWarnings(geosphere::makePoly(p1))
-  
   
   return(p1)
 }
@@ -105,7 +103,7 @@
   
   # copy over CRS data from original point data
   l.spl <-
-    sp::SpatialLines(list(l), proj4string = sp::CRS(as.character(NA)))
+    sp::SpatialLines(list(l), proj4string = sp::CRS(as.character(NA), doCheckCRSArgs=TRUE))
   
   # promote to SpatialLinesDataFrame, required for export to GRASS / OGR
   l.spldf <-
@@ -157,10 +155,10 @@
     IDs <- row.names(y.as.spldf_buff)
     NZfill <- sp::SpatialPolygons(lapply(1:length(res), function(i)
       sp::Polygons(res[[i]], ID = IDs[i])),
-      proj4string = sp::CRS(sp::proj4string(y.as.spldf_buff)))
+      proj4string = sp::CRS(sp::proj4string(y.as.spldf_buff), doCheckCRSArgs=TRUE))
     
     
-    crs <- sp::CRS("+proj=longlat +datum=WGS84")
+    crs <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs=TRUE)
     raster::crs(NZfill) <- crs
     
     return(NZfill)
@@ -210,9 +208,9 @@
   poly_masked <- methods::as(sf::st_union(diff_croped), "Spatial")
   
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    poly_masked@proj4string <- sp::CRS(SRS_string='epsg:4326')
+    poly_masked@proj4string <- sp::CRS(SRS_string='epsg:4326', doCheckCRSArgs = FALSE)
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
-    poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+    poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs", doCheckCRSArgs = FALSE)
   
   # crs_crop <- raster::crs(crop)
   # 
@@ -358,7 +356,7 @@
       p1 <- rgeos::readWKT(POLY)
       
       p1 <- rgeos::readWKT(POLY)
-      raster::crs(p1) <- sp::CRS("+proj=longlat +datum=WGS84")
+      raster::crs(p1) <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs=TRUE)
       
       # crs <- CRS("+proj=longlat +datum=WGS84")
       # crs(p1) <- crs
@@ -726,6 +724,7 @@ EOO.computing <- function(XY,
 #'
 #' @importFrom  rgdal project
 #' @importFrom rgeos readWKT gBuffer gUnion
+#' @importFromsf sf st_transform sf_project st_crs st_cast
 #' 
 .subpop.comp <- function(XY,
                          Resol_sub_pop) {
@@ -739,35 +738,58 @@ EOO.computing <- function(XY,
   #     rgdal::project(as.matrix(XY), proj = as.character(projEAC), inv = FALSE)
   #   ), ncol = 2))
   # rownames(coordEAC) <- seq(1, nrow(coordEAC), 1)
+
+  XY_sf_proj <- 
+    sf::sf_project(from = sf::st_crs(4326), to = sf::st_crs(54032), 
+                               pts = XY)
   
-  XY_sp <- XY
+  XY_sp <- as.data.frame(XY_sf_proj)
+  
   sp::coordinates(XY_sp) <- c(1, 2)
-  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    sp::proj4string(XY_sp) <- sp::CRS(SRS_string='epsg:4326')
-  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
-    sp::proj4string(XY_sp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
-  XY_sp_proj <- sp::spTransform(XY_sp, projEAC)
-  coordEAC <- as.data.frame(XY_sp_proj)
-  
-  
-  XY_sp_proj_no_proj <- XY_sp_proj
-  raster::crs(XY_sp_proj_no_proj) <- NA
   
   XY_sp_proj_buff <-
-    rgeos::gBuffer(XY_sp_proj_no_proj, 
+    rgeos::gBuffer(XY_sp, 
                    width = Resol_sub_pop * 1000, 
                    id = 1)
   
   XY_sf <- as(XY_sp_proj_buff, "sf")
+  sf::st_crs(XY_sf) <- 54032
+  
+  # if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
+  #   sf::st_crs(XY_sf) <- 4326
+  #   
+  #   sp::proj4string(XY_sp) <- sp::CRS(SRS_string = "EPSG:4326", doCheckCRSArgs = FALSE)
+  # if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+  #   sp::proj4string(XY_sp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs", doCheckCRSArgs = FALSE)
+  
+  #   XY_sp <- as(XY_sf, "Spatial")
+  #   
+  #   XY_sp_proj <- 
+  #     sp::spTransform(XY_sp, CRSobj = projEAC)
+  #   
+  #   coordEAC <- as.data.frame(XY_sp_proj)
+  # 
+  # XY_sp_proj_no_proj <- XY_sp_proj
+  # raster::crs(XY_sp_proj_no_proj) <- NA
+  # 
+  # 
+  # 
+  # XY_sf <- as(XY_sp_proj_buff, "sf")
   
   SubPopPoly <- sf::st_cast(XY_sf, "POLYGON")
+  SubPopPoly <- sf::st_transform(SubPopPoly, crs = 4326)
+  
   NbeSubPop <- nrow(SubPopPoly)
+  
   SubPopPoly <- as(SubPopPoly, "Spatial")
-  sp::proj4string(SubPopPoly) <- projEAC
-  if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0") 
-    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS(SRS_string='epsg:4326'))
-  if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
-    SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS("+proj=longlat +datum=WGS84 +no_defs"))
+  
+  
+  # sp::proj4string(SubPopPoly) <- projEAC
+  # if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0")
+  #   SubPopPoly <- 
+  #   sp::spTransform(x = SubPopPoly, sp::CRS(SRS_string='epsg:4326', doCheckCRSArgs=TRUE))
+  # if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
+  #   SubPopPoly <- sp::spTransform(x = SubPopPoly, sp::CRS("+proj=longlat +datum=WGS84 +no_defs", doCheckCRSArgs=TRUE))
   
   # if (utils::packageVersion("sp") >= "1.3.3") poly_masked@proj4string <- sp::CRS(SRS_string='epsg:4326')
   # if (utils::packageVersion("sp") < "1.3.3") poly_masked@proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
@@ -1022,13 +1044,14 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
       rgdal::showWKT(
         proj
       )
-    crs_proj <- sp::CRS(projargs = proj, 
-                        SRS_string = wkt_crs)
+    crs_proj <- 
+      sp::CRS(projargs = proj, 
+                        SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
   }
   
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0") 
     crs_proj <-
-      sp::CRS(projargs = proj)
+      sp::CRS(projargs = proj, doCheckCRSArgs = FALSE)
   
   return(crs_proj)
 }
