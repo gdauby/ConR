@@ -10,7 +10,7 @@ Description: Multi-species estimation of geographical range parameters
 	see <http://www.iucnredlist.org>).
 Depends:
     R (>= 3.3), raster, sp
-License: GPL-2
+License: ACM
 Imports: fields, geosphere, grDevices, methods,
         rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, alphahull, rnaturalearth, sf
 LazyData: true

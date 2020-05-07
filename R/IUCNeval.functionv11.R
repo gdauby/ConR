@@ -254,8 +254,8 @@
 #' @param method.less.than3 string
 #'
 #' @import sp raster
-#' @importFrom  rgdal project
-#' @importFrom  stats dist
+#' @importFrom rgdal project
+#' @importFrom stats dist
 #' @importFrom rgeos readWKT gBuffer
 #' @importFrom geosphere makeLine areaPolygon
 #' 
@@ -722,10 +722,10 @@ EOO.computing <- function(XY,
 #' @param Resol_sub_pop integer
 #' 
 #'
-#' @importFrom  rgdal project
+#' @importFrom rgdal project
 #' @importFrom rgeos readWKT gBuffer gUnion
 #' @importFrom utils packageVersion
-#' @importFromsf sf st_transform sf_project st_crs st_cast
+#' @importFrom sf st_transform sf_project st_crs st_cast
 #' 
 .subpop.comp <- function(XY,
                          Resol_sub_pop) {
@@ -783,7 +783,8 @@ EOO.computing <- function(XY,
   # XY_sf <- as(XY_sp_proj_buff, "sf")
   
   SubPopPoly <- sf::st_cast(XY_sf, "POLYGON")
-  SubPopPoly <- sf::st_transform(SubPopPoly, crs = 4326)
+  SubPopPoly <- 
+    sf::st_transform(SubPopPoly, crs = 4326)
   
   NbeSubPop <- nrow(SubPopPoly)
   
@@ -877,6 +878,7 @@ EOO.computing <- function(XY,
 #' 
 #' @export
 subpop.comp <- function(XY, Resol_sub_pop = 5) {
+  
   if (is.null(Resol_sub_pop))
     stop("Resol_sub_pop is missing, please provide a value")
   
@@ -911,6 +913,7 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   OUTPUT <-
     lapply(list_data, function(x)
       .subpop.comp(XY = x, Resol_sub_pop = Resol_sub_pop))
+  
   if (length(OUTPUT) == 1)
     OUTPUT <- OUTPUT[[1]]
   return(OUTPUT)
@@ -1930,10 +1933,10 @@ locations.comp <- function(XY,
     )
   
   if(is.null(protec.areas)) {
-    r2 <- locations_res[[1]]
+    r2 <- locations_res[[1]][[1]]
     Locations <- locations_res[[2]]
   }else{
-    r2 <- locations_res[[1]]
+    r2 <- locations_res[[1]][[1]]
     r2_PA <- locations_res[[2]]
     LocNatParks <- locations_res[[3]]
     LocOutNatParks <- locations_res[[4]]
@@ -2230,7 +2233,7 @@ locations.comp <- function(XY,
       layout(matrix(c(1, 1, 1, 1, 1, 1, 2, 3, 4), 3, 3, byrow = TRUE), c(2, 1.5, 1.5), c(4, 1.5, 1.5))
     
     ### Mapping 
-    if(!is.null(protec.areas)){
+    if(!is.null(protec.areas)) {
       if(LocOutNatParks==0){
         sp::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
       }else{
@@ -2266,9 +2269,17 @@ locations.comp <- function(XY,
       }
     }else{
       # r2_pol <- rasterToPolygons(r2, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-      sp::plot(r2, col=rgb(red=1, green=0, blue=0, alpha=0.2), 
-           xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), 
-           ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1))
+      sp::plot(
+        r2,
+        col = rgb(
+          red = 1,
+          green = 0,
+          blue = 0,
+          alpha = 0.2
+        ),
+        xlim = c(range(XY[, 1])[1] - 1, range(XY[, 1])[2] + 1),
+        ylim = c(range(XY[, 2])[1] - 1, range(XY[, 2])[2] + 1)
+      )
     }
     
     if(SubPop) sp::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
@@ -2738,6 +2749,7 @@ locations.comp <- function(XY,
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
 #' @importFrom rnaturalearth ne_countries
+#' @importFrom sf st_transform sf_project st_crs st_cast
 #' 
 #' @export
 IUCN.eval <- function (DATA,
