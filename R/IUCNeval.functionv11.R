@@ -66,7 +66,6 @@
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
 #'
-#' @importFrom alphahull anglesArc
 #' 
 .ahull_to_SPLDF <- function(x)
 {
@@ -130,7 +129,6 @@
 #' @import sp raster
 #' @importFrom rgeos gBuffer
 #' @importFrom geosphere makePoly
-#' @importFrom alphahull ahull
 #' 
 #' 
 .alpha.hull.poly <- function(XY, alpha = 1, buff = 0.1) {
@@ -2877,11 +2875,73 @@ IUCN.eval <- function (DATA,
     height = 25)
   }
   
+  
+  
+  # library(progressr)
+  # library(doFuture)
+  # 
+  # registerDoFuture()
+  # plan(multisession)
+  # 
+  # handlers("txtprogressbar")
+  # 
+  # xs <- 1:10
+  # 
+  # with_progress({
+  #   p <- progressor(along = xs) ## create a 5-step progressor
+  #   y <- foreach(x = xs) %dopar% {
+  #     p()                       ## signal a progression update
+  #     Sys.sleep(6.0-x)
+  #     sqrt(x)
+  #   }
+  # })
+  # 
+  # 
+  # with_progress({
+  #   p <- progressor(along = length(list_data))
+  #   
+  #   output <- foreach(x = 1:length(list_data)) %dopar% {
+  #     p(sprintf("x=%g", x))
+  #     
+  #     source("R/IUCNeval.functionv11.R")
+  #     res <- 
+  #       .IUCN.comp(DATA = list_data[[x]],
+  #                  NamesSp = names(list_data)[x], 
+  #                  DrawMap = DrawMap, 
+  #                  exclude.area = exclude.area, 
+  #                  write_shp = write_shp, 
+  #                  method_protected_area = method_protected_area, 
+  #                  Cell_size_AOO = Cell_size_AOO, 
+  #                  Cell_size_locations = Cell_size_locations, 
+  #                  Resol_sub_pop = Resol_sub_pop, 
+  #                  method_locations = method_locations, 
+  #                  Rel_cell_size = Rel_cell_size, 
+  #                  poly_borders = country_map, 
+  #                  file_name = file_name, 
+  #                  buff_width = buff_width, 
+  #                  map_pdf = map_pdf, 
+  #                  ID_shape_PA = ID_shape_PA, 
+  #                  SubPop = SubPop, 
+  #                  protec.areas = protec.areas, 
+  #                  add.legend = add.legend,
+  #                  alpha = alpha, 
+  #                  buff.alpha = buff.alpha, 
+  #                  method.range = method.range, 
+  #                  nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
+  #                  showWarnings = showWarnings,
+  #                  MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
+  #     
+  #     
+  #     res
+  #     
+  #   }
+  #   
+  # }
+  # )
+  # 
+  # stopCluster(cl)
+
   if(parallel) {
-    # if("doParallel" %in% 
-    #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    # 
-    # library(doParallel)
     
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
