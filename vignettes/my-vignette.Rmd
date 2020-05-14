@@ -273,9 +273,9 @@ plot(land, add=T)
   
 ---------------------------------------
 
-## Warning messages
+## Messages
 
-  The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO [2] (IUCN 2016). In that specific case, there is a warning and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.  
+  The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO [2] (IUCN 2016). In that specific case, there is a message and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.  
 The buffer is by default equal to 0.1 and is defined by the argument `buff.alpha`.
 
 ```{r include=FALSE}
@@ -291,13 +291,13 @@ points(MyData[,2], MyData[,1], pch=19) ### map the occurrences.
 ```
 
 
-The EOO cannot be computed when there is less than three unique occurrences [^1]. When this is the case, a warning message appears.
+The EOO cannot be computed when there is less than three unique occurrences [^1]. When this is the case, a message appears.
 ```{r include=FALSE}
 MyData <- dataset.ex
 MyData <- MyData[which(MyData[,3] %in% c("species_1")),]
 ```
 
-See this example below with a hypothetical species having less than three occurrences
+See this example below with an artificial species having less than three occurrences
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=5)}
 EOO.results <- EOO.computing(MyData, export_shp = T)
 EOO.results
@@ -692,9 +692,9 @@ IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec2", protec.areas 
 <img src="protec2_results_map/protec2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 
 **Note 1:**
-Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
+Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readOGR```](https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
 For example, for importing a shapefile names *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))`.
+`readOGR("MyShapefile.shp")`.
 
 **Note 2:**
 The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in the argument `protec.areas` as above. The argument `ID_shape_PA` should also be given and should represent the unique ID of each protected area in the provided shapefile. This can be checked by the following code:
@@ -706,7 +706,7 @@ The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in t
 *****
 # Compute in parallel
 
-For large datasets (typically more than 100 species or when producing maps is required), I recommand to run the computation in parallel, which is feasible by using the following code.
+For large datasets (typically more than 100 species or when producing maps is required), I recommend to run the computation in parallel, which is feasible by using the following code.
 
 
 ```
@@ -717,77 +717,6 @@ IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, pa
 The argument `NbeCores` indicate the number of cores on which you want to run the analysis.
 For more information, see the package [doparallel](https://CRAN.R-project.org/package=doParallel).
 
-
-*****
-*****
-# Mapping results of `IUCN.eval` using `map.res` function
-If you assess the preliminary conservation status of large number of species in a given region, you can map the number of records, species, threatened species and the proportion of threatened species by using the `map.res` function.
-Maps are drawn in fixed grid cells whose resolution and extent can be defined.
-
-
-Below, preliminary conservation status of all malagasy amphibian species of the example dataset are assessed by using the `IUCN.eval` function. Results are stored in an object MyResults.
-
-This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient.
-For a high number of species, parallelizing is a good option for fastening the computation.
-```{r include=F, echo=F}
-data(Madagascar.protec)
-data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE, write_file_option="csv")
-```
-
-```
-data(Madagascar.protec)
-data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE)
-```
-
-You can map the result by using the following code:
-```
-data(land)
-map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
- 	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
-```
-The argument `Occurrences` should include the input file.
-
-The argument `country_map` should include the background spatial polygon. In this case, we use the default `land` shapefile that should be loaded once before using `data()`.
-
-The argument `export_map` is logical. If `TRUE`, maps are exported in your working environment.
-
-The argument `Resol` must be numerical. It indicates the resolution of the grid cell.
-
-The argument `threshold` must be numerical. It indicates the minimum number of occurrences within each grid cell: above, it is defined as 3. Hence, only grid cells with at least three occurrences are shown.
-
-The arguments `LatMin`, `LatMax`, `LongMin` and `LongMax` are minimum/maximum latitude/longitude of the maps. If not given, the extent of the map is the extent of all occurrences.
-
-
-
-```{r include=F, echo=F}
-MyResults <- read.csv("IUCN_results.csv", row.names=1)
-map.res(
-  MyResults,
-  Occurrences = Malagasy.amphibian,
-  country_map = land,
-  export_map = TRUE,
-  threshold = 3,
-  LatMin = -25,
-  LatMax = -12,
-  LongMin = 42,
-  LongMax = 52,
-  Resol = 1
-)
-```
-
-
-Maps should have been created in your working directory.
-
-
-<img src="IUCN__results_map/number_threatened_sp.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/proportion_threatened_sp.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/number_of_records.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/species_richness.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 
 
 ```{r include=F, echo=F}
