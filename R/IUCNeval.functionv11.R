@@ -1293,25 +1293,7 @@ AOO.computing <- function(XY,
       
       for (h in decal) {
         
-        # xmin <- 
-        #   floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000
-        # xmax <- 
-        #   xmin + longer + h * (size * 1000 / 4) + 2
-        # 
-        # ymin <- 
-        #   floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *size * 1000
-        # ymax <- 
-        #   ymin + longer + h * (size * 1000 / 4) + 2
-        # 
-        # ext <-
-        #   raster::extent(
-        #     xmin,
-        #     xmax,
-        #     ymin,
-        #     ymax
-        #   )
-        
-        ext <-
+         ext <-
           raster::extent(
             floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000,
             floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
@@ -1321,7 +1303,28 @@ AOO.computing <- function(XY,
             floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
               size * 1000
           )
-        
+         
+         
+         # ext <-
+         #   terra::ext(
+         #     c(
+         #       floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * 
+         #         size * 1000,
+         #       floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
+         #         size * 1000,
+         #       floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
+         #         size * 1000,
+         #       floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
+         #         size * 1000
+         #     )
+         #   )
+         # 
+         # r <-
+         #   terra::rast(extent = ext, 
+         #                  resolution = size * 1000, 
+         #                  crs = crs_proj)
+         
+         
         r <-
           raster::raster(ext, 
                          resolution = size * 1000, 
@@ -1590,9 +1593,13 @@ locations.comp <- function(XY,
     raster::crs(DATA_SF) <- raster::crs(protec.areas)
     Links_NatParks <- sp::over(DATA_SF, protec.areas)
     
-    coordEAC_pa <- coordEAC[!is.na(Links_NatParks[, 1]),]
+    coordEAC_pa <- 
+      coordEAC[!is.na(Links_NatParks[, 1]),]
     coordEAC_pa <-
-      cbind(coordEAC_pa, id_pa = Links_NatParks[which(!is.na(Links_NatParks[, 1])), ID_shape_PA])
+      cbind(coordEAC_pa,
+            id_pa =
+              Links_NatParks[which(!is.na(Links_NatParks[, 1])), 
+                             ID_shape_PA])
     
     LocNatParks <-
       vector(mode = "numeric", length = length(list_data))
@@ -1879,7 +1886,7 @@ locations.comp <- function(XY,
   if (DrawMap) {
     full_poly_borders <- poly_borders
     if (!is.null(poly_borders))
-      poly_borders <- raster::crop(poly_borders, raster::extent(MinMax) + 30)
+      poly_borders <- suppressWarnings(raster::crop(poly_borders, raster::extent(MinMax) + 30))
   }
   
   projEAC <- .proj_crs()
@@ -1925,19 +1932,25 @@ locations.comp <- function(XY,
       XY = DATA,
       method = method_locations,
       protec.areas = protec.areas,
+      method_protected_area = method_protected_area,
       Cell_size_locations = Cell_size_locations,
       ID_shape_PA = ID_shape_PA,
-      show_progress = FALSE
+      show_progress = FALSE,
+      Rel_cell_size = Rel_cell_size
     )
   
-  if(is.null(protec.areas)) {
+  if (is.null(protec.areas)) {
+    
     r2 <- locations_res[[1]][[1]]
     Locations <- locations_res[[2]]
-  }else{
+    
+  } else{
+    
     r2 <- locations_res[[1]][[1]]
     r2_PA <- locations_res[[2]]
     LocNatParks <- locations_res[[3]]
     LocOutNatParks <- locations_res[[4]]
+    
   }
   
   if(!is.null(protec.areas)) {
@@ -2196,22 +2209,34 @@ locations.comp <- function(XY,
   if(DrawMap) {
     
     ## pdf or png format initialization
-    if(!map_pdf) {
-      if(!is.null(file_name)) {
-        NAME_FILE <- paste(file_name, gsub(" ",replacement = "_", as.character(NamesSp)) , sep="")
-      }else{
-        NAME_FILE <- paste("IUCN_", gsub(" ",replacement = "_", as.character(NamesSp)), sep="")
+    if (!map_pdf) {
+      if (!is.null(file_name)) {
+        NAME_FILE <-
+          paste(file_name, gsub(" ", replacement = "_", as.character(NamesSp)) , sep =
+                  "")
+      } else{
+        NAME_FILE <-
+          paste("IUCN_", gsub(" ", replacement = "_", as.character(NamesSp)), sep =
+                  "")
       }
-      FILE_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
+      
+      NAME_FILE <- gsub("[[:punct:]]", " ", NAME_FILE)
+      
+      DIRECTORY_NAME <- 
+        ifelse(!is.null(file_name), file_name, "IUCN_")
+      
       dir.create(file.path(paste(
-        getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+        getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
       )), showWarnings = FALSE)
+      
     }
     
     if (!map_pdf)
       grDevices::png(
         paste(file.path(paste(
-          getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+          getwd(), paste("/", 
+                         DIRECTORY_NAME, 
+                         "results_map", sep = ""), sep = ""
         )), "/", NAME_FILE, ".png", sep = ""),
         width = 2000,
         height = 2000
@@ -2232,11 +2257,21 @@ locations.comp <- function(XY,
     
     ### Mapping 
     if(!is.null(protec.areas)) {
-      if(LocOutNatParks==0){
-        sp::plot(poly_borders, xlim=c(range(XY[,1])[1]-1, range(XY[,1])[2]+1), ylim=c(range(XY[,2])[1]-1, range(XY[,2])[2]+1), axes=FALSE, xlab="", ylab="")
-      }else{
+      
+      if (LocOutNatParks == 0) {
+        sp::plot(
+          poly_borders,
+          xlim = c(range(XY[, 1])[1] - 1, range(XY[, 1])[2] + 1),
+          ylim = c(range(XY[, 2])[1] - 1, range(XY[, 2])[2] + 1),
+          axes = FALSE,
+          xlab = "",
+          ylab = ""
+        )
+        
+      } else{
+        
         # r2_pol <- r2
-        if(LocOutNatParks==1){
+        if(LocOutNatParks == 1){
           
           sp::plot(
             r2,
@@ -2282,11 +2317,18 @@ locations.comp <- function(XY,
     
     if(SubPop) sp::plot(SubPopPoly, add=T, border="black", lwd=2, lty=1)
     
-    if(!is.null(protec.areas)){
-      if(LocNatParks>0){
-        if(method_protected_area!="no_more_than_one"){
+    if (!is.null(protec.areas)) {
+      if (LocNatParks > 0) {
+        if (method_protected_area != "no_more_than_one") {
           # r2_PA_pol <- rasterToPolygons(r2_PA, fun=NULL, n=4, na.rm=TRUE, digits=6, dissolve=FALSE)
-          sp::plot(r2_PA, add=T, col=rgb(red=0, green=0, blue=1, alpha=0.2))
+          sp::plot(r2_PA[[1]],
+                   add = T,
+                   col = rgb(
+                     red = 0,
+                     green = 0,
+                     blue = 1,
+                     alpha = 0.2
+                   ))
         }
       }
     }
@@ -2863,13 +2905,13 @@ IUCN.eval <- function (DATA,
     }else{
       NAME_FILE <- "IUCN_"
     }
-    FILE_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
+    DIRECTORY_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
     dir.create(file.path(paste(
-      getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
     )), showWarnings = FALSE)
     
     pdf(paste(paste(
-      getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
     ), "/", "results.pdf", sep = ""),
     width = 25,
     height = 25)
@@ -2896,50 +2938,6 @@ IUCN.eval <- function (DATA,
   #   }
   # })
   # 
-  # 
-  # with_progress({
-  #   p <- progressor(along = length(list_data))
-  #   
-  #   output <- foreach(x = 1:length(list_data)) %dopar% {
-  #     p(sprintf("x=%g", x))
-  #     
-  #     source("R/IUCNeval.functionv11.R")
-  #     res <- 
-  #       .IUCN.comp(DATA = list_data[[x]],
-  #                  NamesSp = names(list_data)[x], 
-  #                  DrawMap = DrawMap, 
-  #                  exclude.area = exclude.area, 
-  #                  write_shp = write_shp, 
-  #                  method_protected_area = method_protected_area, 
-  #                  Cell_size_AOO = Cell_size_AOO, 
-  #                  Cell_size_locations = Cell_size_locations, 
-  #                  Resol_sub_pop = Resol_sub_pop, 
-  #                  method_locations = method_locations, 
-  #                  Rel_cell_size = Rel_cell_size, 
-  #                  poly_borders = country_map, 
-  #                  file_name = file_name, 
-  #                  buff_width = buff_width, 
-  #                  map_pdf = map_pdf, 
-  #                  ID_shape_PA = ID_shape_PA, 
-  #                  SubPop = SubPop, 
-  #                  protec.areas = protec.areas, 
-  #                  add.legend = add.legend,
-  #                  alpha = alpha, 
-  #                  buff.alpha = buff.alpha, 
-  #                  method.range = method.range, 
-  #                  nbe.rep.rast.AOO = nbe.rep.rast.AOO, 
-  #                  showWarnings = showWarnings,
-  #                  MinMax = c(min(list_data[[x]][,2]), max(list_data[[x]][,2]), min(list_data[[x]][,1]), max(list_data[[x]][,1])))
-  #     
-  #     
-  #     res
-  #     
-  #   }
-  #   
-  # }
-  # )
-  # 
-  # stopCluster(cl)
 
   if(parallel) {
     
@@ -3296,9 +3294,9 @@ map.res <- function(Results,
   SelectedCells <- which(threatened_rec_cut["NbeRec", ] >= threshold)
   
   if (export_map) {
-    FILE_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
+    DIRECTORY_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
     dir.create(file.path(paste(
-      getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
     )), showWarnings = FALSE)
   }
   
@@ -3313,9 +3311,20 @@ map.res <- function(Results,
     grDevices::dev.off()
   }
   
-  if (!export_map) graphics::par(mfrow=c(2,2))
-  if (export_map) graphics::par(mfrow=c(1,1))
-  if (export_map) grDevices::png(paste(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")),"/","number_of_records",".png", sep=""),width=20, height=20, units="cm",res=150)
+  if (!export_map)
+    graphics::par(mfrow = c(2, 2))
+  if (export_map)
+    graphics::par(mfrow = c(1, 1))
+  if (export_map)
+    grDevices::png(
+      paste(file.path(paste(
+        getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+      )), "/", "number_of_records", ".png", sep = ""),
+      width = 20,
+      height = 20,
+      units = "cm",
+      res = 150
+    )
   
   ################################### Number of records
   coltab <-
@@ -3404,7 +3413,7 @@ map.res <- function(Results,
   if (export_map)
     grDevices::png(
       paste(file.path(paste(
-        getwd(), paste("/", FILE_NAME, "_results_map", sep = ""), sep = ""
+        getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
       )), "/", "species_richness", ".png", sep = ""),
       width = 20,
       height = 20,
@@ -3484,9 +3493,25 @@ map.res <- function(Results,
   ################################### Number of threatened species
   coltab<- fields::two.colors(256, start="slategray2", end="deeppink4", middle="burlywood2")
   
-  if (export_map) grDevices::png(paste(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")),"/","number_threatened_sp",".png", sep=""),width=20, height=20, units="cm",res=150)
-  if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
-
+  if (export_map)
+    grDevices::png(
+      paste(file.path(paste(
+        getwd(),
+        paste("/", DIRECTORY_NAME, "_results_map", sep = ""),
+        sep = ""
+      )), "/", "number_threatened_sp", ".png", sep = ""),
+      width = 20,
+      height = 20,
+      units = "cm",
+      res = 150
+    )
+  if (export_map)
+    graphics::par(
+      mar = c(2, 2, 1, 5),
+      las = 1,
+      omi = c(0.3, 0.4, 0.3, 0.1)
+    )
+  
   if (export_map) 
     sp::plot(cropped_country_map, axes=T, lty=1,border=Border, col=COlor, xlim=c(LongMin,LongMax), ylim=c(LatMin,LatMax), cex.axis=1,lwd=1)
 
@@ -3526,9 +3551,31 @@ map.res <- function(Results,
   ################################### Proportion of threatened species
   coltab <- fields::two.colors(256, start="darkslategray1", end="hotpink2", middle="khaki")
   
-  if (export_map) grDevices::png(paste(file.path(paste(getwd(),paste("/",FILE_NAME,"_results_map", sep=""), sep="")),"/","proportion_threatened_sp",".png", sep=""),width=20, height=20, units="cm",res=150)
-  if (export_map) graphics::par(mar=c(2,2,1,5), las=1, omi=c(0.3,0.4,0.3,0.1))
-
+  if (export_map)
+    grDevices::png(
+      paste(
+        file.path(paste(
+          getwd(),
+          paste("/", DIRECTORY_NAME, "_results_map", sep = ""),
+          sep = ""
+        )),
+        "/",
+        "proportion_threatened_sp",
+        ".png",
+        sep = ""
+      ),
+      width = 20,
+      height = 20,
+      units = "cm",
+      res = 150
+    )
+  if (export_map)
+    graphics::par(
+      mar = c(2, 2, 1, 5),
+      las = 1,
+      omi = c(0.3, 0.4, 0.3, 0.1)
+    )
+  
   if (!export_map)
     sp::plot(
       cropped_country_map,

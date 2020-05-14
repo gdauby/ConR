@@ -12,12 +12,13 @@ Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
 Imports: fields, geosphere, grDevices, methods,
-        rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, alphahull, rnaturalearth, sf
+        rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, rnaturalearth, sf
 LazyData: true
 Suggests: knitr,
     rmarkdown,
     testthat,
-    rnaturalearthdata
+    rnaturalearthdata,
+    alphahull
 VignetteBuilder: knitr
 Encoding: UTF-8
 URL: https://github.com/gdauby/ConR

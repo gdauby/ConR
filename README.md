@@ -111,15 +111,14 @@ the following code:
 
 ``` r
 head(MyData)
+#>      ddlat    ddlon               tax
+#> 1 0.750000 29.75000 Psychotria minuta
+#> 2 3.566670 16.11670 Psychotria minuta
+#> 3 1.183330  9.86666 Psychotria minuta
+#> 4 3.238050 10.58060 Psychotria minuta
+#> 5 4.085580  9.04972 Psychotria minuta
+#> 6 0.766667 24.45000 Psychotria minuta
 ```
-
-    ##      ddlat    ddlon               tax
-    ## 1 0.750000 29.75000 Psychotria minuta
-    ## 2 3.566670 16.11670 Psychotria minuta
-    ## 3 1.183330  9.86666 Psychotria minuta
-    ## 4 3.238050 10.58060 Psychotria minuta
-    ## 5 4.085580  9.04972 Psychotria minuta
-    ## 6 0.766667 24.45000 Psychotria minuta
 
 Now you can run `EOO.computing` function on your input data by the
 following code:
@@ -128,13 +127,12 @@ following code:
 
 The following information will appear in the console
 
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-    ##                            EOO
-    ## Berlinia bruneelii     2635042
-    ## Oncocalamus mannii      657704
-    ## Platycoryne guingangae 3422563
-    ## Psychotria minuta       760348
+    #>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
+    #>                            EOO
+    #> Berlinia bruneelii     2635042
+    #> Oncocalamus mannii      657704
+    #> Platycoryne guingangae 3422563
+    #> Psychotria minuta       760348
 
 You can see that in this example, the input file contained occurrences
 for four species.
@@ -161,57 +159,47 @@ specify it using the following code:
 
 ``` r
 EOO.computing(MyData, export_shp = T)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
+#> $EOO_1
+#> [1] 2635042
+#> 
+#> $spatial.polygon_1
+#> class       : SpatialPolygons 
+#> features    : 1 
+#> extent      : 9.56667, 29.35, -11.2667, 4.48333  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> 
+#> $EOO_2
+#> [1] 657704
+#> 
+#> $spatial.polygon_2
+#> class       : SpatialPolygons 
+#> features    : 1 
+#> extent      : 5.7, 21.95, -2.39667, 5.91667  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> 
+#> $EOO_3
+#> [1] 3422563
+#> 
+#> $spatial.polygon_3
+#> class       : SpatialPolygons 
+#> features    : 1 
+#> extent      : 9.325, 33.7333, -15.1667, 4.43333  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> 
+#> $EOO_4
+#> [1] 760348
+#> 
+#> $spatial.polygon_4
+#> class       : SpatialPolygons 
+#> features    : 1 
+#> extent      : 9.04972, 29.75, -1.88333, 4.08558  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-    ## $EOO_1
-    ## [1] 2635042
-    ## 
-    ## $spatial.polygon_1
-    ## class       : SpatialPolygons 
-    ## features    : 1 
-    ## extent      : 9.56667, 29.35, -11.2667, 4.48333  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## 
-    ## $EOO_2
-    ## [1] 657704
-    ## 
-    ## $spatial.polygon_2
-    ## class       : SpatialPolygons 
-    ## features    : 1 
-    ## extent      : 5.7, 21.95, -2.39667, 5.91667  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## 
-    ## $EOO_3
-    ## [1] 3422563
-    ## 
-    ## $spatial.polygon_3
-    ## class       : SpatialPolygons 
-    ## features    : 1 
-    ## extent      : 9.325, 33.7333, -15.1667, 4.43333  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## 
-    ## $EOO_4
-    ## [1] 760348
-    ## 
-    ## $spatial.polygon_4
-    ## class       : SpatialPolygons 
-    ## features    : 1 
-    ## extent      : 9.04972, 29.75, -1.88333, 4.08558  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs
 
 You can see that the output of the function now includes, in addition to
 the EOO values, objects of class `SpatialPolygons`.
@@ -228,7 +216,7 @@ Then, for the first species (mapped in grey color):
 plot(EOO.results$spatial.polygon_1, col="grey")
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
 You can add easily get a map of countries using the package
 [rnaturalearth](https://CRAN.R-project.org/package=rnaturalearth):
@@ -246,7 +234,7 @@ plot(EOO.results$spatial.polygon_1, col="grey")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
 
 For mapping the convex hull of the second species (mapped in red)
 
@@ -255,7 +243,7 @@ plot(EOO.results$spatial.polygon_2, col="red")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-9-1.png)<!-- -->
 
 You may want to **use your own land cover background shapefile**. This
 is easily done by using the function
@@ -299,45 +287,37 @@ computing EOO.
 
 ``` r
 EOO.computing(MyData, exclude.area = T, country_map = land)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
+#>                              EOO
+#> Berlinia bruneelii     2628788.7
+#> Oncocalamus mannii      565151.8
+#> Platycoryne guingangae 3413217.0
+#> Psychotria minuta       747744.0
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-    ##                              EOO
-    ## Berlinia bruneelii     2628788.7
-    ## Oncocalamus mannii      565151.8
-    ## Platycoryne guingangae 3413217.0
-    ## Psychotria minuta       747744.0
 
 Results of the EOO are higher for species that have an overlapping hull
 convex with the ocean cover:
 
 ``` r
 EOO.computing(MyData, exclude.area = F, country_map = land)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
+#>                            EOO
+#> Berlinia bruneelii     2635042
+#> Oncocalamus mannii      657704
+#> Platycoryne guingangae 3422563
+#> Psychotria minuta       760348
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-    ##                            EOO
-    ## Berlinia bruneelii     2635042
-    ## Oncocalamus mannii      657704
-    ## Platycoryne guingangae 3422563
-    ## Psychotria minuta       760348
 
 The result can be visually verified by mapping the spatial polygon:
 
 ``` r
 EOO.results <- EOO.computing(MyData, exclude.area = T, country_map = land, export_shp = T)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 plot(EOO.results$spatial.polygon_2, col="red")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 -----
 
@@ -351,61 +331,47 @@ argument `method.range` as follows:
 
 ``` r
 EOO.computing(MyData, method.range = "alpha.hull")
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
+#>                           EOO
+#> Berlinia bruneelii     154343
+#> Oncocalamus mannii      28666
+#> Platycoryne guingangae  32700
+#> Psychotria minuta        4058
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-    ##                           EOO
-    ## Berlinia bruneelii     154168
-    ## Oncocalamus mannii      28660
-    ## Platycoryne guingangae  32658
-    ## Psychotria minuta        4081
 
 To visually map the result:
 
 ``` r
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
 The alpha parameter of the alpha-hull can be modified by the `alpha`
 argument. Below an example with the second species:
 
 ``` r
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
 
 Alpha hull can be equally cropped for unsuitable area:
 
 ``` r
 EOO.results <- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5, exclude.area = T, country_map = land)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 plot(EOO.results$spatial.polygon_1, col="red")
 plot(land, add=T)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 -----
 
@@ -425,19 +391,14 @@ of three occurrences
 
 ``` r
 EOO.results <- EOO.computing(MyData, export_shp = T)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-    ## 
-    ## Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#> 
+#> Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
 plot(EOO.results$spatial.polygon_1, col="red")
 points(MyData[,2], MyData[,1], pch=19) ### map the occurrences.
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 The EOO cannot be computed when there is less than three unique
 occurrences \[1\]. When this is the case, a message appears.
@@ -447,19 +408,13 @@ occurrences
 
 ``` r
 EOO.results <- EOO.computing(MyData, export_shp = T)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-    ## 
-    ## EOO parameter cannot be estimated for species_1 because there is less than 3 unique occurrences
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#> 
+#> EOO parameter cannot be estimated for species_1 because there is less than 3 unique occurrences
 EOO.results
+#> species1 
+#>       NA
 ```
-
-    ## species1 
-    ##       NA
 
 -----
 
@@ -482,103 +437,87 @@ radius of the circles around each occurrence.
 ``` r
 SUB <- subpop.comp(MyData, Resol_sub_pop = 30)
 SUB
-```
-
-    ## $`Berlinia bruneelii`
-    ## $`Berlinia bruneelii`$`Number of subpopulation`
-    ## [1] 48
-    ## 
-    ## $`Berlinia bruneelii`$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 48 
-    ## extent      : 9.297116, 29.62031, -11.52784, 4.748924  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-    ## 
-    ## 
-    ## $`Oncocalamus mannii`
-    ## $`Oncocalamus mannii`$`Number of subpopulation`
-    ## [1] 13
-    ## 
-    ## $`Oncocalamus mannii`$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 13 
-    ## extent      : 5.429552, 22.21953, -2.666302, 6.187497  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-    ## 
-    ## 
-    ## $`Platycoryne guingangae`
-    ## $`Platycoryne guingangae`$`Number of subpopulation`
-    ## [1] 21
-    ## 
-    ## $`Platycoryne guingangae`$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 21 
-    ## extent      : 9.055495, 34.00633, -15.43019, 4.695418  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-    ## 
-    ## 
-    ## $`Psychotria minuta`
-    ## $`Psychotria minuta`$`Number of subpopulation`
-    ## [1] 10
-    ## 
-    ## $`Psychotria minuta`$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 10 
-    ## extent      : 8.779774, 30.01951, -2.143543, 4.355738  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-    ## 
-    ## 
-    ## $species_1
-    ## $species_1$`Number of subpopulation`
-    ## [1] 2
-    ## 
-    ## $species_1$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 2 
-    ## extent      : 11.1971, 13.21954, -2.219486, 1.618988  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-    ## 
-    ## 
-    ## $species_2
-    ## $species_2$`Number of subpopulation`
-    ## [1] 2
-    ## 
-    ## $species_2$subpop.poly
-    ## class       : SpatialPolygonsDataFrame 
-    ## features    : 2 
-    ## extent      : 11.1971, 13.4529, -2.219486, -1.680512  (xmin, xmax, ymin, ymax)
-
-    ## Warning in proj4string(x): CRS object has comment, which is lost in output
-
-    ## crs         : +proj=longlat +datum=WGS84 +no_defs 
-    ## variables   : 0
-
-``` r
+#> $`Berlinia bruneelii`
+#> $`Berlinia bruneelii`$`Number of subpopulation`
+#> [1] 48
+#> 
+#> $`Berlinia bruneelii`$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 48 
+#> extent      : 9.297116, 29.62031, -11.52784, 4.748924  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
+#> 
+#> 
+#> $`Oncocalamus mannii`
+#> $`Oncocalamus mannii`$`Number of subpopulation`
+#> [1] 13
+#> 
+#> $`Oncocalamus mannii`$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 13 
+#> extent      : 5.429552, 22.21953, -2.666302, 6.187497  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
+#> 
+#> 
+#> $`Platycoryne guingangae`
+#> $`Platycoryne guingangae`$`Number of subpopulation`
+#> [1] 21
+#> 
+#> $`Platycoryne guingangae`$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 21 
+#> extent      : 9.055495, 34.00633, -15.43019, 4.695418  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
+#> 
+#> 
+#> $`Psychotria minuta`
+#> $`Psychotria minuta`$`Number of subpopulation`
+#> [1] 10
+#> 
+#> $`Psychotria minuta`$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 10 
+#> extent      : 8.779774, 30.01951, -2.143543, 4.355738  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
+#> 
+#> 
+#> $species_1
+#> $species_1$`Number of subpopulation`
+#> [1] 2
+#> 
+#> $species_1$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 2 
+#> extent      : 11.1971, 13.21954, -2.219486, 1.618988  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
+#> 
+#> 
+#> $species_2
+#> $species_2$`Number of subpopulation`
+#> [1] 2
+#> 
+#> $species_2$subpop.poly
+#> class       : SpatialPolygonsDataFrame 
+#> features    : 2 
+#> extent      : 11.1971, 13.4529, -2.219486, -1.680512  (xmin, xmax, ymin, ymax)
+#> Warning in proj4string(x): CRS object has comment, which is lost in output
+#> crs         : +proj=longlat +datum=WGS84 +no_defs 
+#> variables   : 0
 plot(SUB[["Platycoryne guingangae"]][["subpop.poly"]], col="red")
 plot(land, add=TRUE)
 ```
 
-![](readme_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 -----
 
@@ -643,27 +582,25 @@ the following code:
 
 ``` r
 head(MyData)
+#>      ddlat    ddlon               tax
+#> 1 0.750000 29.75000 Psychotria minuta
+#> 2 3.566670 16.11670 Psychotria minuta
+#> 3 1.183330  9.86666 Psychotria minuta
+#> 4 3.238050 10.58060 Psychotria minuta
+#> 5 4.085580  9.04972 Psychotria minuta
+#> 6 0.766667 24.45000 Psychotria minuta
 ```
-
-    ##      ddlat    ddlon               tax
-    ## 1 0.750000 29.75000 Psychotria minuta
-    ## 2 3.566670 16.11670 Psychotria minuta
-    ## 3 1.183330  9.86666 Psychotria minuta
-    ## 4 3.238050 10.58060 Psychotria minuta
-    ## 5 4.085580  9.04972 Psychotria minuta
-    ## 6 0.766667 24.45000 Psychotria minuta
 
 ``` r
 head(MyData2)
+#>      ddlat   ddlon                tax higher.tax.rank coly
+#> 1 -4.46667 11.4167 Berlinia bruneelii        Fabaceae 1855
+#> 2 -5.66667 29.3500 Berlinia bruneelii        Fabaceae 1872
+#> 3  3.88333 18.6833 Berlinia bruneelii        Fabaceae 1878
+#> 4  4.48333 20.3000 Berlinia bruneelii        Fabaceae 1849
+#> 5 -2.76667 18.4833 Berlinia bruneelii        Fabaceae 1969
+#> 6 -1.26667 24.5500 Berlinia bruneelii        Fabaceae 1873
 ```
-
-    ##      ddlat   ddlon                tax higher.tax.rank coly
-    ## 1 -4.46667 11.4167 Berlinia bruneelii        Fabaceae 1949
-    ## 2 -5.66667 29.3500 Berlinia bruneelii        Fabaceae 1992
-    ## 3  3.88333 18.6833 Berlinia bruneelii        Fabaceae 1842
-    ## 4  4.48333 20.3000 Berlinia bruneelii        Fabaceae 1961
-    ## 5 -2.76667 18.4833 Berlinia bruneelii        Fabaceae 1875
-    ## 6 -1.26667 24.5500 Berlinia bruneelii        Fabaceae 1918
 
 ## Running `IUCN.eval` function by default
 
@@ -673,49 +610,43 @@ You can simply run the following code:
 
 ``` r
 IUCN.eval(MyData)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%
+#> 
+#> EOO parameter cannot be estimated for species_1 because there is less than 3 records
+#>   |                                                                              |======================================================================| 100%
+#> 
+#> Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
+#> 
+#> [1] "Number of species per category"
+#> 
+#>       EN LC or NT       VU 
+#>        2        3        1 
+#> [1] "Ratio of species per category"
+#> 
+#>       EN LC or NT       VU 
+#>     33.3     50.0     16.7
+#>                                          taxa       EOO AOO Nbe_unique_occ.
+#> Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
+#> Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47
+#> Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37
+#> Psychotria minuta           Psychotria minuta  760348.0  40              11
+#> species_1                           species_1        NA   8               2
+#> species_2                           species_2    4603.7  12               3
+#>                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code
+#> Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a
+#> Oncocalamus mannii             29      36           LC or NT LC or NT B1a+B2a
+#> Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a
+#> Psychotria minuta              10      10                 VU           VU B2a
+#> species_1                       2       2                 EN           EN B2a
+#> species_2                       3       3                 EN       EN B1a+B2a
+#>                        Category_AOO Category_EOO
+#> Berlinia bruneelii         LC or NT     LC or NT
+#> Oncocalamus mannii         LC or NT     LC or NT
+#> Platycoryne guingangae     LC or NT     LC or NT
+#> Psychotria minuta                VU     LC or NT
+#> species_1                        EN         <NA>
+#> species_2                        EN           EN
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%
-
-    ## 
-    ## EOO parameter cannot be estimated for species_1 because there is less than 3 records
-
-    ##   |                                                                              |======================================================================| 100%
-
-    ## 
-    ## Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
-
-    ## 
-    ## [1] "Number of species per category"
-    ## 
-    ##       EN LC or NT       VU 
-    ##        2        3        1 
-    ## [1] "Ratio of species per category"
-    ## 
-    ##       EN LC or NT       VU 
-    ##     33.3     50.0     16.7
-
-    ##                                          taxa       EOO AOO Nbe_unique_occ.
-    ## Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
-    ## Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47
-    ## Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37
-    ## Psychotria minuta           Psychotria minuta  760348.0  40              11
-    ## species_1                           species_1        NA   8               2
-    ## species_2                           species_2    4603.7  12               3
-    ##                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code
-    ## Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a
-    ## Oncocalamus mannii             29      36           LC or NT LC or NT B1a+B2a
-    ## Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a
-    ## Psychotria minuta              10      10                 VU           VU B2a
-    ## species_1                       2       2                 EN           EN B2a
-    ## species_2                       3       3                 EN       EN B1a+B2a
-    ##                        Category_AOO Category_EOO
-    ## Berlinia bruneelii         LC or NT     LC or NT
-    ## Oncocalamus mannii         LC or NT     LC or NT
-    ## Platycoryne guingangae     LC or NT     LC or NT
-    ## Psychotria minuta                VU     LC or NT
-    ## species_1                        EN         <NA>
-    ## species_2                        EN           EN
 
 Because the EOO computation (using `EOO.computing`, see 1.3) is included
 within `IUCN.eval` function, we have the **same arguments** available
@@ -726,27 +657,27 @@ within `IUCN.eval` function, we have the **same arguments** available
 The output of the function is a data frame that provides several
 paramaters as well as the preliminary IUCN category.
 
-    ##                                          taxa       EOO AOO Nbe_unique_occ.
-    ## Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
-    ## Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47
-    ## Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37
-    ## Psychotria minuta           Psychotria minuta  760348.0  40              11
-    ## species_1                           species_1        NA   8               2
-    ## species_2                           species_2    4603.7  12               3
-    ##                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code
-    ## Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a
-    ## Oncocalamus mannii             29      36           LC or NT LC or NT B1a+B2a
-    ## Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a
-    ## Psychotria minuta              10      10                 VU           VU B2a
-    ## species_1                       2       2                 EN           EN B2a
-    ## species_2                       3       3                 EN       EN B1a+B2a
-    ##                        Category_AOO Category_EOO
-    ## Berlinia bruneelii         LC or NT     LC or NT
-    ## Oncocalamus mannii         LC or NT     LC or NT
-    ## Platycoryne guingangae     LC or NT     LC or NT
-    ## Psychotria minuta                VU     LC or NT
-    ## species_1                        EN         <NA>
-    ## species_2                        EN           EN
+    #>                                          taxa       EOO AOO Nbe_unique_occ.
+    #> Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
+    #> Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47
+    #> Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37
+    #> Psychotria minuta           Psychotria minuta  760348.0  40              11
+    #> species_1                           species_1        NA   8               2
+    #> species_2                           species_2    4603.7  12               3
+    #>                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code
+    #> Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a
+    #> Oncocalamus mannii             29      36           LC or NT LC or NT B1a+B2a
+    #> Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a
+    #> Psychotria minuta              10      10                 VU           VU B2a
+    #> species_1                       2       2                 EN           EN B2a
+    #> species_2                       3       3                 EN       EN B1a+B2a
+    #>                        Category_AOO Category_EOO
+    #> Berlinia bruneelii         LC or NT     LC or NT
+    #> Oncocalamus mannii         LC or NT     LC or NT
+    #> Platycoryne guingangae     LC or NT     LC or NT
+    #> Psychotria minuta                VU     LC or NT
+    #> species_1                        EN         <NA>
+    #> species_2                        EN           EN
 
 Note that by default, an excel file has been created in your working
 directory *Your\_R\_directory*. If you prefer to have your output
@@ -920,20 +851,15 @@ Cell size of 20 km:
 
 ``` r
 MyResults <- IUCN.eval(MyData, Cell_size_AOO = 20)
-```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-``` r
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 MyResults
+#>                                taxa    EOO  AOO Nbe_unique_occ. Nbe_subPop
+#> Psychotria minuta Psychotria minuta 760348 4000              11         10
+#>                   Nbe_loc Category_CriteriaB    Category_code Category_AOO
+#> Psychotria minuta      10           LC or NT LC or NT B1a+B2a     LC or NT
+#>                   Category_EOO
+#> Psychotria minuta     LC or NT
 ```
-
-    ##                                taxa    EOO  AOO Nbe_unique_occ. Nbe_subPop
-    ## Psychotria minuta Psychotria minuta 760348 4000              11         10
-    ##                   Nbe_loc Category_CriteriaB    Category_code Category_AOO
-    ## Psychotria minuta      10           LC or NT LC or NT B1a+B2a     LC or NT
-    ##                   Category_EOO
-    ## Psychotria minuta     LC or NT
 
 AOO is now equal to 4000 km².
 
@@ -996,16 +922,14 @@ Locations computed for a grid of 10 km cell size:
 
 ``` r
 IUCN.eval(MyData, Cell_size_locations = 10)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#>                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
+#> Anodonthyla moramora Anodonthyla moramora 799  36              13          3
+#>                      Nbe_loc Category_CriteriaB Category_code Category_AOO
+#> Anodonthyla moramora       4                 EN    EN B1a+B2a           EN
+#>                      Category_EOO
+#> Anodonthyla moramora           EN
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-    ##                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-    ## Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-    ##                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-    ## Anodonthyla moramora       4                 EN    EN B1a+B2a           EN
-    ##                      Category_EOO
-    ## Anodonthyla moramora           EN
 
 <div class="figure">
 
@@ -1023,16 +947,14 @@ Locations computed for a grid of 30 km cell size:
 
 ``` r
 IUCN.eval(MyData, Cell_size_locations = 30)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#>                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
+#> Anodonthyla moramora Anodonthyla moramora 799  36              13          3
+#>                      Nbe_loc Category_CriteriaB Category_code Category_AOO
+#> Anodonthyla moramora       3                 EN    EN B1a+B2a           EN
+#>                      Category_EOO
+#> Anodonthyla moramora           EN
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-    ##                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-    ## Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-    ##                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-    ## Anodonthyla moramora       3                 EN    EN B1a+B2a           EN
-    ##                      Category_EOO
-    ## Anodonthyla moramora           EN
 
 <div class="figure">
 
@@ -1050,16 +972,14 @@ Locations computed for a grid of 50 km cell size:
 
 ``` r
 IUCN.eval(MyData, Cell_size_locations = 50)
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+#>                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
+#> Anodonthyla moramora Anodonthyla moramora 799  36              13          3
+#>                      Nbe_loc Category_CriteriaB Category_code Category_AOO
+#> Anodonthyla moramora       2                 EN    EN B1a+B2a           EN
+#>                      Category_EOO
+#> Anodonthyla moramora           EN
 ```
-
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-
-    ##                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-    ## Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-    ##                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-    ## Anodonthyla moramora       2                 EN    EN B1a+B2a           EN
-    ##                      Category_EOO
-    ## Anodonthyla moramora           EN
 
 <div class="figure">
 
