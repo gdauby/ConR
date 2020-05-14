@@ -26,11 +26,17 @@ Now you can set your working directory by the following code:
 setwd("C:/Your_R_directory/"")
 ```
 
-**Third step**, copy the file *ConR_1.0.tar.gz* in this directory.
-Do not unzip this file.
-Now you can install the ConR package using the following line code:
+**Third step**. Install ConR package (one of the two following) :
+
+To install the version on CRAN
 ```
-install.packages(pkgs="C:/Your_R_directory/ConR_1.0.tar.gz", repos=NULL, type="source")
+install.packages("ConR")
+```
+
+To install the version under development.
+```
+install.packages("devtools")
+devtools::install_github("gdauby/ConR")
 ```
 
 Note that the above procedures should be done only once, except the code for setting the working directory (second step).
@@ -46,7 +52,9 @@ library(ConR)
 ```
 ```{r loadData,include=FALSE}
 library(ConR)
+# source("D:/MonDossierR/ConR_orig/R/IUCNeval.functionv11.R")
 data(dataset.ex)
+# load("D:/MonDossierR/ConR_orig/data/dataset.ex.RData")
 MyData <- dataset.ex
 MyData <- MyData[which(!MyData[,3] %in% c("species_1", "species_2")),]
 MyData$tax <- as.character(MyData$tax)
@@ -156,7 +164,7 @@ It is possible to extract and map these objects by using the code below.
 
 First, store your results into the object here named `EOO.results`:
 ```
-EOO.results <- EOO.computing(MyData)
+EOO.results <- EOO.computing(MyData, export_shp = T)
 ```
 ```{r include=FALSE, echo = FALSE}
 EOO.results <- EOO.computing(MyData, export_shp = T)
@@ -168,9 +176,10 @@ Then, for the first species (mapped in grey color):
 plot(EOO.results$spatial.polygon_1, col="grey")
 ```
 
-You can add a **background** showing the land cover. ConR include a shape file of land cover representing a default world land map, which can be loaded by running the following code (to be done only once during your working session, it attachs the object land in the R environment:
+You can add easily get a map of countries using the package [rnaturalearth](https://CRAN.R-project.org/package=rnaturalearth):
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=2)}
-data(land)
+land <- 
+  rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
 ```
 
 Now you can add the land cover as a background by running the following code:
@@ -188,22 +197,22 @@ plot(land, add=T)
 
 
   You may want to **use your own land cover background shapefile**.
-This is easily done by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools).
+This is easily done by using the function [```readOGR```](https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR).
 
 For using this function, you first has to install (if not yet installed) and load the package 
-[maptools](https://CRAN.R-project.org/package=maptools).
+[rgdal](https://CRAN.R-project.org/package=rgdal).
 
-`install.packages("maptools")`
-`library(maptools)`
+`install.packages("rgdal")`
+`library(rgdal)`
 
 For example, for importing a shapefile named *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly("MyShapefile", proj4string=CRS("+proj=longlat +datum=WGS84"))`
+`readOGR("MyShapefile.shp")`
 
 ---------------------------------------
 
 ## Writing shapefiles used to estimate EOO
 
-The above manipulation allows you to extract in R the spatial polygons. It is also possible to create and export these spatial polygons as shapefiles into your working directory, which can later be imported in a SIG software. 
+The above manipulation allows you to extract in R the spatial polygons. It is also possible to create and export these spatial polygons as shapefiles into your working directory, which can later be imported in a GIS software. 
 This is done by using the logical argument  `write_shp` which is FALSE by default. If you define it as TRUE as below, a directory named *shapesIUCN* is created in your working directory and will contain all the shapefiles created for computing EOO.
 
 ```
@@ -264,9 +273,9 @@ plot(land, add=T)
   
 ---------------------------------------
 
-## Warning messages
+## Messages
 
-  The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO [2] (IUCN 2016). In that specific case, there is a warning and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.  
+  The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO [2] (IUCN 2016). In that specific case, there is a message and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.  
 The buffer is by default equal to 0.1 and is defined by the argument `buff.alpha`.
 
 ```{r include=FALSE}
@@ -282,13 +291,13 @@ points(MyData[,2], MyData[,1], pch=19) ### map the occurrences.
 ```
 
 
-The EOO cannot be computed when there is less than three unique occurrences [^1]. When this is the case, a warning message appears.
+The EOO cannot be computed when there is less than three unique occurrences [^1]. When this is the case, a message appears.
 ```{r include=FALSE}
 MyData <- dataset.ex
 MyData <- MyData[which(MyData[,3] %in% c("species_1")),]
 ```
 
-See this example below with a hypothetical species having less than three occurrences
+See this example below with an artificial species having less than three occurrences
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=5)}
 EOO.results <- EOO.computing(MyData, export_shp = T)
 EOO.results
@@ -313,7 +322,7 @@ MyData <- dataset.ex
 
 The argument `Resol_sub_pop` must be given and defines in kilometres the radius of the circles around each occurrence.
 ```{r include=TRUE, echo = TRUE, dev.args=list(pointsize=5)}
-SUB <- subpop.comp(MyData, Resol_sub_pop=30)
+SUB <- subpop.comp(MyData, Resol_sub_pop = 30)
 SUB
 plot(SUB[["Platycoryne guingangae"]][["subpop.poly"]], col="red")
 plot(land, add=TRUE)
@@ -355,15 +364,24 @@ knitr::kable(head(MyData))
 MyData2 <- MyData
 MyData2 <- MyData2[order(MyData2[,3]),]
 head(MyData2)
-MyData2 <- cbind(MyData2, c(rep("Fabaceae", table(dataset.ex[,3])[1]), 
+
+MyData3 <-
+  data.frame(
+    ddlat = MyData2$ddlat,
+    ddlon = MyData2$ddlon,
+    tax = MyData2$tax,
+    higher.tax.rank = NA,
+    coly = NA
+  )
+MyData3$higher.tax.rank <- 
+  c(rep("Fabaceae", table(dataset.ex[,3])[1]), 
                             rep("Arecaceae", table(dataset.ex[,3])[2]), 
                             rep("Orchidaceae", table(dataset.ex[,3])[3]), 
                             rep("Rubiaceae", table(dataset.ex[,3])[4]),
                             rep("Familiaceae", table(dataset.ex[,3])[5]), 
-                            rep("Familiaceae", table(dataset.ex[,3])[6])))
-colnames(MyData2)[4] <- "higher.tax.rank"
-MyData2 <- cbind(MyData2, sample(1780:2016, nrow(MyData2), replace = T))
-colnames(MyData2)[5] <- "coly"
+                            rep("Familiaceae", table(dataset.ex[,3])[6]))
+MyData3$coly <- sample(1780:2016, nrow(MyData2), replace = T)
+MyData2 <- MyData3
 head(MyData2)
 rownames(MyData2) <- rownames(MyData)
 ```
@@ -674,9 +692,9 @@ IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec2", protec.areas 
 <img src="protec2_results_map/protec2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
 
 **Note 1:**
-Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
+Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readOGR```](https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
 For example, for importing a shapefile names *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
-`readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))`.
+`readOGR("MyShapefile.shp")`.
 
 **Note 2:**
 The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in the argument `protec.areas` as above. The argument `ID_shape_PA` should also be given and should represent the unique ID of each protected area in the provided shapefile. This can be checked by the following code:
@@ -688,7 +706,7 @@ The protected areas shapefile should be given as `SpatialPolygonsDataFrame` in t
 *****
 # Compute in parallel
 
-For large datasets (typically more than 100 species or when producing maps is required), I recommand to run the computation in parallel, which is feasible by using the following code.
+For large datasets (typically more than 100 species or when producing maps is required), I recommend to run the computation in parallel, which is feasible by using the following code.
 
 
 ```
@@ -700,71 +718,25 @@ The argument `NbeCores` indicate the number of cores on which you want to run th
 For more information, see the package [doparallel](https://CRAN.R-project.org/package=doParallel).
 
 
-*****
-*****
-# Mapping results of `IUCN.eval` using `map.res` function
-If you assess the preliminary conservation status of large number of species in a given region, you can map the number of records, species, threatened species and the proportion of threatened species by using the `map.res` function.
-Maps are drawn in fixed grid cells whose resolution and extent can be defined.
-
-
-Below, preliminary conservation status of all malagasy amphibian species of the example dataset are assessed by using the `IUCN.eval` function. Results are stored in an object MyResults.
-
-This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient.
-For a high number of species, parallelizing is a good option for fastening the computation.
-```{r include=F, echo=F}
-data(Madagascar.protec)
-data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE, DrawMap=FALSE, SubPop = FALSE, write_file_option="csv")
-```
-
-```
-data(Madagascar.protec)
-data(Malagasy.amphibian)
-MyResults <- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE)
-```
-
-You can map the result by using the following code:
-```
-data(land)
-map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
- 	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
-```
-The argument `Occurrences` should include the input file.
-
-The argument `country_map` should include the background spatial polygon. In this case, we use the default `land` shapefile that should be loaded once before using `data()`.
-
-The argument `export_map` is logical. If `TRUE`, maps are exported in your working environment.
-
-The argument `Resol` must be numerical. It indicates the resolution of the grid cell.
-
-The argument `threshold` must be numerical. It indicates the minimum number of occurrences within each grid cell: above, it is defined as 3. Hence, only grid cells with at least three occurrences are shown.
-
-The arguments `LatMin`, `LatMax`, `LongMin` and `LongMax` are minimum/maximum latitude/longitude of the maps. If not given, the extent of the map is the extent of all occurrences.
-
-
-
-```{r include=F, echo=F}
-MyResults <- read.csv("IUCN_results.csv", row.names=1)
-map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
- 	LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)
-```
-
-
-Maps should have been created in your working directory.
-
-
-<img src="IUCN__results_map/number_threatened_sp.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/proportion_threatened_sp.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/number_of_records.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
-<img src="IUCN__results_map/species_richness.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
-
 
 ```{r include=F, echo=F}
 files <- list.files(paste(getwd(), "/MyIUCNresults_results_map/", sep=""), full.names = T)
 file.remove(files[-grep("Berlinia_bruneelii", files)])
+
+files <- list.files(paste(getwd(), sep=""), full.names = T)
+file.remove(files[grep("EOO.results.csv", files)])
+file.remove(files[grep("IUCN_results.csv", files)])
+file.remove(files[grep("IUCN_results.xlsx", files)])
+file.remove(files[grep("MyIUCNresults.xlsx", files)])
+file.remove(files[grep("loc1.xlsx", files)])
+file.remove(files[grep("loc2.xlsx", files)])
+file.remove(files[grep("loc3.xlsx", files)])
+file.remove(files[grep("protec.xlsx", files)])
+file.remove(files[grep("protec2.xlsx", files)])
+file.remove(files[grep("slide.xlsx", files)])
+# unlink(files[grep("IUCN__results_map", files)], recursive = TRUE)
+
+
 #files <- list.files(paste(getwd(), "/", sep=""), full.names = T)
 #unlink(files[grep("Berlinia_bruneelii", files)])
 ```

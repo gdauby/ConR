@@ -2,22 +2,20 @@
 % Please edit documentation in R/Madagascar.protec.R
 \name{Madagascar.protec}
 \alias{Madagascar.protec}
-\title{Shapefiles of Madagascar protected areas}
-\format{A SpatialPolygonDataFrame}
+\title{Dataset of Malagasy protected areas}
+\format{
+A SpatialPolygonDataFrame
+}
 \source{
-World Database on Protected Areas
-http://protectedplanet.net/country/MG
+World Database on Protected Areas http://protectedplanet.net/country/MG
 }
 \usage{
 data(Madagascar.protec)
 }
 \description{
-A SpatialPolygonDataFrame showing Madagascar protected areas
+A SpatialPolygonDataFrame showing Malagasy protected areas
 }
 \references{
-  IUCN and UNEP-WCMC (2016), The World Database on Protected Areas (WDPA) [On-line], [08-2016], Cambridge, UK: UNEP-WCMC. Available at: www.protectedplanet.net.
-
-http://protectedplanet.net/country/MG  
+http://protectedplanet.net/country/MG
 }
 \keyword{datasets}
-

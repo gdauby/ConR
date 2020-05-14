@@ -4,8 +4,8 @@
 #'
 #'
 #' @keywords datasets
-#' @name Malagasy_amphibian
-#' @usage data(Malagasy_amphibian)
+#' @name Malagasy.amphibian
+#' @usage data(Malagasy.amphibian)
 #' @format A dataframe
 #' @source GBIF.org (9th February 2016) GBIF Occurrence Download \url{http://doi.org/10.15468/dl.2tkoae}
 #' @references Download Information:
