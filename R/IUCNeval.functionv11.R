@@ -1071,7 +1071,7 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
     
     crs_proj <- 
       sp::CRS(
-        SRS_string = skt_crs, doCheckCRSArgs = TRUE)
+        SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
     
     # crs_proj <- 
     #   sp::CRS(projargs = proj, 
