@@ -1036,9 +1036,20 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   
   ## https://epsg.io/54032
   # World Azimuthal Equidistant
+  # proj <-
+  #   "+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
+  ## https://epsg.io/54002
+  # World Azimuthal Equidistant
+  # proj <-
+  #   "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
+  
+  # https://proj.org/operations/projections/cea.html#id1
+  # Equal Area Cylindrical
   proj <-
-    "+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-    
+    "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
+  
   ## https://epsg.io/102022
   ## Africa Albers Equal Area Conic
   # proj <- 
