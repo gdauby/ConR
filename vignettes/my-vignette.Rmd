@@ -504,9 +504,9 @@ The different fields of the output data frame are:
 
 ## Output maps
 
-By default, `IUCN.eval` creates for each taxa a map in png format. These maps are stored in a directory, named *IUCN__results_map* that has been created in your working directory *Your_R_directory*.
+By default, `IUCN.eval` creates for each taxa a map in png format. These maps are stored in a directory, named *IUCN_results_map* that has been created in your working directory *Your_R_directory*.
 
-<img src="IUCN__results_map/IUCN_Berlinia_bruneelii.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="IUCN_results_map/IUCN_Berlinia_bruneelii.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 
 ```{r include=F, echo=FALSE}
@@ -516,7 +516,7 @@ MyResults <- IUCN.eval(MyData2, file_name="MyIUCNresults")
 If the optional fields *higher.tax.rank* and *coly* are provided, output maps display a bar graph showing the number of collection per year on the bottom right of the map and the name of the higher taxonomic rank below the taxon name.
 
 
-<img src="MyIUCNresults_results_map/MyIUCNresultsBerlinia_bruneelii.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="MyIUCNresults_results_map/MyIUCNresultsBerlinia_bruneelii.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 ```{r include=FALSE, echo=FALSE}
 data(Malagasy.amphibian)
@@ -536,7 +536,7 @@ Pink squares represent occupied cells of the grid used for estimating the number
 
 Finally, the polygon in grey is the hull convex used to estimate the EOO, see **3.**
 
-<img src="loc1_results_map/loc1Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="loc1_results_map/loc1Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 
 
@@ -601,7 +601,7 @@ IUCN.eval(MyData, Cell_size_locations = 10)
 IUCN.eval(MyData, Cell_size_locations = 10, file_name = "loc1")
 ```
 
-<img src="loc1_results_map/loc1Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="loc1_results_map/loc1Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 Locations computed for a grid of 30 km cell size:
 ```{r include=T, echo=T}
@@ -611,7 +611,7 @@ IUCN.eval(MyData, Cell_size_locations = 30)
 IUCN.eval(MyData, Cell_size_locations = 30, file_name = "loc2")
 ```
 
-<img src="loc2_results_map/loc2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="loc2_results_map/loc2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 Locations computed for a grid of 50 km cell size:
 ```{r include=T, echo=T}
@@ -620,7 +620,7 @@ IUCN.eval(MyData, Cell_size_locations = 50)
 ```{r include=F, echo=F}
 IUCN.eval(MyData, Cell_size_locations = 50, file_name = "loc3")
 ```
-<img src="loc3_results_map/loc3Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="loc3_results_map/loc3Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 
 
@@ -638,7 +638,7 @@ Below, an example, where the resolution is 5% of the maximum distance between tw
 IUCN.eval(MyData, method_locations = "sliding scale", Rel_cell_size = 0.05, file_name = "slide")
 ```
 
-<img src="slide_results_map/slideAnodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="slide_results_map/slideAnodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 
 
@@ -670,7 +670,7 @@ data(Madagascar.protec) # This code line load the Malagasy protected area shapef
 IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec", protec.areas = Madagascar.protec)
 ```
 
-<img src="protec_results_map/protecAnodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="protec_results_map/protecAnodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 
 The legend shows the results. 75% of occurrences are within protected areas. Two different protected areas are occupied, which represent two different locations. In addition, 25% of occurrences are outside protected areas. For these occurrences, the overlaid grid of 10 km leads to two occupied cells, which reprensents two different locations. Hence, the total number of location is estimated to be 4 for this species.
@@ -689,7 +689,7 @@ data(Madagascar.protec)
 IUCN.eval(MyData, Cell_size_locations = 10, file_name = "protec2", protec.areas = Madagascar.protec, method_protected_area = "other")
 ```
 
-<img src="protec2_results_map/protec2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN__results_map directory " style="width: 600px;"/>
+<img src="protec2_results_map/protec2Anodonthyla_moramora.png" alt="Drawing" title="Example of a map output exported in IUCN_results_map directory " style="width: 600px;"/>
 
 **Note 1:**
 Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readOGR```](https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
@@ -734,7 +734,7 @@ file.remove(files[grep("loc3.xlsx", files)])
 file.remove(files[grep("protec.xlsx", files)])
 file.remove(files[grep("protec2.xlsx", files)])
 file.remove(files[grep("slide.xlsx", files)])
-# unlink(files[grep("IUCN__results_map", files)], recursive = TRUE)
+# unlink(files[grep("IUCN_results_map", files)], recursive = TRUE)
 
 
 #files <- list.files(paste(getwd(), "/", sep=""), full.names = T)
