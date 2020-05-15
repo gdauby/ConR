@@ -1045,10 +1045,12 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   #   "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
   
-  # https://proj.org/operations/projections/cea.html#id1
+  # https://spatialreference.org/ref/sr-org/world-cylindrical-equal-area/
   # Equal Area Cylindrical
+  # proj <-
+  #   "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
   proj <-
-    "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
+    "+proj=cea +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
   ## https://epsg.io/102022
   ## Africa Albers Equal Area Conic
@@ -1058,13 +1060,22 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   # "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0")  {
-    wkt_crs <-
-      rgdal::showWKT(
-        proj
-      )
+    
+    wkt_crs <- 
+      'PROJCS["World_Cylindrical_Equal_Area",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Cylindrical_Equal_Area"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["central_meridian",0.0],PARAMETER["standard_parallel_1",0.0],UNIT["Meter",1.0]]'
+    
+    # wkt_crs <-
+    #   rgdal::showWKT(
+    #     proj
+    #   )
+    
     crs_proj <- 
-      sp::CRS(projargs = proj, 
-                        SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
+      sp::CRS(
+        SRS_string = skt_crs, doCheckCRSArgs = TRUE)
+    
+    # crs_proj <- 
+    #   sp::CRS(projargs = proj, 
+    #                     SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
   }
   
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0")
