@@ -5,12 +5,11 @@
 
 **First step**. Install [R](https://cran.r-project.org/).
 
-**Second step**. A proper way to work with R is to define a working
-directory. I advise to create a directory near the root (easier to
-handle), for example, here, named *Your\_R\_directory* Now you can set
-your working directory by the following code:
-
-    setwd("C:/Your_R_directory/"")
+**Second step**. A proper way to work with R is to define a [working
+directory](https://bookdown.org/ndphillips/YaRrr/the-working-directory.html).
+If you are working with Rstudio, you can create the first time a
+[project](https://bookdown.org/ndphillips/YaRrr/projects-in-rstudio.html),
+which much simplify handling of scripts and data.
 
 **Third step**. Install ConR package (one of the two following) :
 
@@ -22,10 +21,6 @@ To install the version under development.
 
     install.packages("devtools")
     devtools::install_github("gdauby/ConR")
-
-The package also comes with
-[vignette](https://cran.r-project.org/web/packages/ConR/vignettes/my-vignette.html)
-providing more examples.
 
 # Loading ConR
 
