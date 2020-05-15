@@ -21,6 +21,6 @@ Suggests: knitr,
     alphahull
 VignetteBuilder: knitr
 Encoding: UTF-8
-URL: https://github.com/gdauby/ConR
+URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
 RoxygenNote: 7.1.0
