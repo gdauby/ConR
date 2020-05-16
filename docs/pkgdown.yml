@@ -2,6 +2,6 @@ pandoc: 2.7.3
 pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
-  my-vignette: my-vignette.html
-last_built: 2020-05-15T15:10Z
+  ConR_beg: articles/ConR_beg.html
+last_built: 2020-05-15T22:33Z
 
