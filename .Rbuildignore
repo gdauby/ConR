@@ -1,5 +1,3 @@
-^Meta$
-^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README.Rmd
@@ -8,3 +6,4 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^vignettes/
