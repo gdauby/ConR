@@ -1,6 +1,4 @@
 
-# How to use ConR (for beginners in R)
-
 ## Install R, ConR and dependent packages
 
 **First step**. Install [R](https://cran.r-project.org/).
