@@ -1,18 +1,16 @@
 library(ConR)
-library(testthat)
 
-data(dataset.ex)
-data(land)
+dummy_ex <- 
+  data.frame(ddlat = rnorm(10)*10, 
+             ddlon = rnorm(10)*10, taxa = rep("taxa", 10))
 
 context("Test that subpop.comp outputs are correct length and objects")
 
 test_that("subpop.comp", {
   
-  SUB <- subpop.comp(dataset.ex, Resol_sub_pop=25)
+  SUB <- subpop.comp(dummy_ex, Resol_sub_pop=25)
   
-  expect_output(str(SUB), "List of 6")
-  expect_output(str(SUB[[1]]), "List of 2")
-  expect_is(SUB[[1]][[2]], "SpatialPolygons")
-  expect_equal(1, length(SUB[[1]][[1]]))
-  
+  expect_equal(length(SUB), 2)
+  expect_equal(length(SUB[[1]]), 1)
+
 })
