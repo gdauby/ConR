@@ -3,3 +3,14 @@ r:
   - oldrel
   - release
   - devel
+
+addons:
+  apt:
+    packages:
+      - gdal-bin
+      - libgdal1-dev
+      - libproj-dev
+
+
+r_binary_packages:
+  - rgdal
