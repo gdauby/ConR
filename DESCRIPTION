@@ -14,12 +14,7 @@ License: GPL-2
 Imports: fields, geosphere, grDevices, methods,
         rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, rnaturalearth, sf
 LazyData: true
-Suggests: knitr,
-    rmarkdown,
-    testthat,
-    rnaturalearthdata,
-    alphahull
-VignetteBuilder: knitr
+Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
