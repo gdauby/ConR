@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Extent of Occurrences — EOO.computing" />
-<meta property="og:description" content="Compute extent of occurrences (EOO) for multiple taxa in square kilometres
+<meta property="og:description" content="Compute extent of occurrences (EOO) for multiple taxa in square kilometers
 using geosphere package and provide
 SpatialPolygons used for EOO computation" />
 
@@ -74,7 +74,7 @@ SpatialPolygons used for EOO computation" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ConR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -100,6 +100,9 @@ SpatialPolygons used for EOO computation" />
       <a href="../articles/articles/ConR_beg.html">ConR for beginner</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -128,7 +131,7 @@ SpatialPolygons used for EOO computation" />
     </div>
 
     <div class="ref-description">
-    <p>Compute extent of occurrences (EOO) for multiple taxa in square kilometres
+    <p>Compute extent of occurrences (EOO) for multiple taxa in square kilometers
 using <code><a href='https://rdrr.io/pkg/geosphere/man/geosphere-package.html'>geosphere</a></code> package and provide
 <code>SpatialPolygons</code> used for EOO computation</p>
     </div>
@@ -227,7 +230,7 @@ file. By default is "EOO.results"</p></td>
     </tr>
     <tr>
       <th>parallel</th>
-      <td><p>a logical. Wether running in parallel. By default, it is
+      <td><p>a logical. Whether running in parallel. By default, it is
 FALSE</p></td>
     </tr>
     <tr>
@@ -244,12 +247,12 @@ execution. By default, it is 2</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>export_shp</code> is FALSE, a <code>dataframe</code> with one field
-containing EOO in square kilometres.  <code>NA</code> is given when EOO could not
+containing EOO in square kilometers.  <code>NA</code> is given when EOO could not
 be computed because there is less than three unique occurrences (or two if
 <code>method.less.than3</code> is put to "arbitrary").</p>
 <p>If <code>export_shp</code> is TRUE, a <code>list</code> with:</p><ol>
 <li><p>EOO in
-square kilometres</p></li>
+square kilometers</p></li>
 <li><p><code>SpatialPolygons</code> used for EOO computation</p></li>
 </ol>
 
@@ -262,7 +265,7 @@ matter</strong></p>
 <tr><td>[,1]</td><td>ddlat</td><td>numeric, latitude (in decimal
 degrees)</td></tr>
 <tr><td>[,2]</td><td>ddlon</td><td>numeric, longitude (in decimal degrees)</td></tr>
-<tr><td>[,3]</td><td>tax</td><td>character or factor, optinal field with taxa names</td></tr>
+<tr><td>[,3]</td><td>tax</td><td>character or factor, taxa names</td></tr>
 </table>
 
 
@@ -270,7 +273,7 @@ degrees)</td></tr>
 <p>EOO will only be computed if there is at least three unique occurrences
 unless <code>method.less.than3</code> is put to "arbitrary". In that specific
 case, EOO for species with two unique occurrences will be equal to
-Dist*Dist*0.1 where Dist is the distance in kilometres separating the two
+Dist*Dist*0.1 where Dist is the distance in kilometers separating the two
 points.</p>
 <p>For the very specific (and infrequent) case where all occurrences are
 localized on a straight line (in which case EOO would be null), EOO is

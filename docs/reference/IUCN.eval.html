@@ -76,7 +76,7 @@ is also available." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ConR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -102,6 +102,9 @@ is also available." />
       <a href="../articles/articles/ConR_beg.html">ConR for beginner</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -187,19 +190,19 @@ EOO computation if <code>exclude.area</code> is TRUE. By default, it is
     </tr>
     <tr>
       <th>Cell_size_AOO</th>
-      <td><p>a numeric, value indicating the grid size in kilometres
+      <td><p>a numeric, value indicating the grid size in kilometers
 used for estimating Area of Occupancy.  By default, equal to 2</p></td>
     </tr>
     <tr>
       <th>Cell_size_locations</th>
       <td><p>a numeric, value indicating the grid size in
-kilometres used for estimating the number of location. By default, equal to
+kilometers used for estimating the number of location. By default, equal to
 10</p></td>
     </tr>
     <tr>
       <th>Resol_sub_pop</th>
       <td><p>a numeric, value indicating the radius size in
-kilometres used for estimating the number of sub-population. By default,
+kilometers used for estimating the number of sub-population. By default,
 equal to 5</p></td>
     </tr>
     <tr>
@@ -321,7 +324,7 @@ minimal translation of the raster are still done</p></td>
     </tr>
     <tr>
       <th>showWarnings</th>
-      <td><p>a logical. Wether R should report warnings</p></td>
+      <td><p>a logical. Whether R should report warnings</p></td>
     </tr>
     <tr>
       <th>write_file_option</th>
@@ -330,7 +333,7 @@ excel file, if "csv", results are exported in csv. By default, it is "excel"</p>
     </tr>
     <tr>
       <th>parallel</th>
-      <td><p>a logical. Wether running in parallel. By default, it is
+      <td><p>a logical. Whether running in parallel. By default, it is
 FALSE</p></td>
     </tr>
     <tr>
@@ -353,7 +356,7 @@ execution. By default, it is 2</p></td>
 
 <p>The <code>dataframe</code> has as many rows as taxa and the following fields:</p>
 <table class='table'>
-<tr><td>[,1]</td><td>EOO</td><td>numeric, EOO (square kilometres)</td><td>[,2]</td><td>AOO</td><td>numeric, AOO (square kilometres)</td></tr>
+<tr><td>[,1]</td><td>EOO</td><td>numeric, EOO (square kilometers)</td><td>[,2]</td><td>AOO</td><td>numeric, AOO (square kilometers)</td></tr>
 <tr><td>[,3]</td><td>Nbe_unique_occ.</td><td>numeric, Number of unique occurrences</td><td>[,4]</td><td>Nbe_subPop</td><td>numeric, Number of subpopulations</td></tr>
 <tr><td>[,5]</td><td>Nbe_loc</td><td>numeric, Number of locations</td><td>[,6]</td><td>Category_CriteriaB</td><td>character,
 IUCN threat category according to Criterion B</td></tr>
@@ -375,7 +378,7 @@ degrees)</td><td>[,2]</td><td>ddlon</td></tr>
 </table>
 
 
-<p><code>coly</code> and <code>family</code> are optinal fields</p>
+<p><code>coly</code> and <code>family</code> are optional fields</p>
 <p>If the optional field named 'family' is provided, indicating higher
 taxonomic rank, this will be displayed in the title of the map if
 <code>DrawMap</code> is 'TRUE'.</p>
