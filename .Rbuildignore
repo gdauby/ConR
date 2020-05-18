@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^README.Rmd
 ^README.md
+^cran-comments.md
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
@@ -9,3 +10,4 @@
 ^vignettes/
 ^\.travis\.yml$
 ^tic\.R$
+^EOO.results.csv
