@@ -5,6 +5,10 @@
 status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
 <!-- badges: end -->
 
+The ideas behind this package, and its testing involved many people and
+institutes. See the original paper published in [Ecology and
+Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704).
+
 ## Install R, ConR and dependent packages
 
 **First step**. Install [R](https://cran.r-project.org/).
