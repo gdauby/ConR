@@ -1,5 +1,5 @@
 
-# ConR 1.3
+# ConR 1.3.0
 
 * Adapt to changes in sp and rgdal
 * Progress bar now visible when running in parallel
