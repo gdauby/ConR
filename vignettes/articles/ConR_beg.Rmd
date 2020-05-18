@@ -71,7 +71,7 @@ This will register your input file as an object you may name *MyData*, as below:
 MyData <- read.csv("MyInput.csv")
 ```
 Depending on the parameters defined in your computer, the separator in csv file may be comma or semi-colon.
-If you note the importing process does not order correctly the fields of your input file, try to modifiy the separator used by the argument ```sep```, see below an example defining a comma as a separator:
+If you note the importing process does not order correctly the fields of your input file, try to modify the separator used by the argument ```sep```, see below an example defining a comma as a separator:
 ```
 MyData <- read.csv("MyInput.csv", sep=",")
 ```
@@ -379,7 +379,7 @@ Because the EOO computation (using `EOO.computing`, see 1.3) is included within 
 
 ## Output: IUCN categories and parameters estimation
 
-The output of the function is a data frame that provides several paramaters as well as the preliminary IUCN category.  
+The output of the function is a data frame that provides several parameters as well as the preliminary IUCN category.  
 
 ```{r include=FALSE, echo=TRUE}
 MyResults <- IUCN.eval(MyData)
@@ -506,7 +506,7 @@ knitr::include_graphics("loc1Anodonthyla_moramora.png")
 
 ## Options concerning the computation of area of occupancy (AOO)
 
-The area of occupancy (AOO) is computed by calculating the area covered by the number of occupied cells of a grid for a given resolution. By default, the size of grid cells is 2 km, as recommanded by IUCN guidelines [2] (IUCN 2016).  
+The area of occupancy (AOO) is computed by calculating the area covered by the number of occupied cells of a grid for a given resolution. By default, the size of grid cells is 2 km, as recommended by IUCN guidelines [2] (IUCN 2016).  
 It is nevertheless possible to modify the resolution using the argument `Cell_size_AOO`, as follows:
 
 ```{r include=FALSE}
@@ -653,7 +653,7 @@ knitr::include_graphics("protecAnodonthyla_moramora.png")
 ```
 
 
-The legend shows the results. 75% of occurrences are within protected areas. Two different protected areas are occupied, which represent two different locations. In addition, 25% of occurrences are outside protected areas. For these occurrences, the overlaid grid of 10 km leads to two occupied cells, which reprensents two different locations. Hence, the total number of location is estimated to be 4 for this species.
+The legend shows the results. 75% of occurrences are within protected areas. Two different protected areas are occupied, which represent two different locations. In addition, 25% of occurrences are outside protected areas. For these occurrences, the overlaid grid of 10 km leads to two occupied cells, which represents two different locations. Hence, the total number of location is estimated to be 4 for this species.
 
 
 * `method_protected_area = "other"`
@@ -676,7 +676,7 @@ knitr::include_graphics("protec2Anodonthyla_moramora.png")
 
 
 **Note 1:**
-Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools). Protected area shapefile can be freely dowloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
+Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function [```readShapePoly```](https://CRAN.R-project.org/package=maptools). Protected area shapefile can be freely downloaded from the World Database on Protected Areas (WDPA, http://www.protectedplanet.net/).
 For example, for importing a shapefile names *MyShapefile*, just run the code (after transferring your file into *Your_R_directory*) :
 `readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))`.
 
@@ -712,7 +712,7 @@ Maps are drawn in fixed grid cells whose resolution and extent can be defined.
 Below, preliminary conservation status of all malagasy amphibian species of the example dataset are assessed by using the `IUCN.eval` function. Results are stored in an object MyResults.
 
 This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient.
-For a high number of species, parallelizing is a good option for fastening the computation.
+For a high number of species, paralleling is a good option for fastening the computation.
 ```{r include=F, echo=F}
 data(Madagascar.protec)
 data(Malagasy.amphibian)
@@ -810,7 +810,7 @@ unlink(files[grep("IUCN_results_map", files)], recursive = TRUE)
 [2]: http://www.iucnredlist.org/documents/RedListGuidelines.pdf  "IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee."
   
 
-[^1]: See argument `method.less.than3` for an alternative by giving an arbitratry value to these species.
+[^1]: See argument `method.less.than3` for an alternative by giving an arbitrary value to these species.
 
 # References
 
