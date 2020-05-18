@@ -1,5 +1,10 @@
 
 
+## Resubmission
+
+Mainly adapt package to changes in sp and rgdal, see NEWS.md
+
+
 ## Test environments
 
 * local windows 10, R 4.0.0
@@ -8,7 +13,6 @@
 * Ubuntu 16.04.6 (on travis-ci), R devel
 * winbuilder, R-release
 * winbuilder, R-devel
-
 
 
 
