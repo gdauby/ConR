@@ -24,7 +24,7 @@ DESCRIPTION file updated regarding the vignette
 
 > Please also reduce the overall check time to less than 10 min
 
-checks took less than 10 min on all tested environments and R versions
+checks time lower than 10 min on all tested environments and R versions
 
 
 
