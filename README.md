@@ -1,4 +1,10 @@
 
+<!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
+<!-- badges: end -->
+
 ## Install R, ConR and dependent packages
 
 **First step**. Install [R](https://cran.r-project.org/).
