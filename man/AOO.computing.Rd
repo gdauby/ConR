@@ -17,11 +17,11 @@ AOO.computing(
 \arguments{
 \item{XY}{\code{"dataframe"} see Details}
 
-\item{Cell_size_AOO}{numeric, value indicating the grid size in kilometres used for estimating Area of Occupancy.  By default, equal to 2}
+\item{Cell_size_AOO}{numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2}
 
 \item{nbe.rep.rast.AOO}{numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done}
 
-\item{parallel}{logical, wether running in parallel. By default, it is FALSE}
+\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
 \item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
 
@@ -38,7 +38,7 @@ If \code{export_shp} if TRUE a list with two elements
 }
 }
 \description{
-Compute areas of occupancy (AOO) for multiple taxa in square kilometres
+Compute areas of occupancy (AOO) for multiple taxa in square kilometers
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
@@ -48,7 +48,7 @@ Compute areas of occupancy (AOO) for multiple taxa in square kilometres
 \tabular{ccc}{
   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+  [,3] \tab tax \tab character or factor, taxa names\cr
 }
 
 The argument of \code{nbe.rep.rast.AOO} ideally should be higher than 20 for increasing 

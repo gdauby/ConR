@@ -27,7 +27,7 @@ locations.comp(
 
 \item{protec.areas}{\code{SpatialPolygonsDataFrame}, shapefile with protected areas. If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). By default, no shapefile is provided}
 
-\item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
+\item{Cell_size_locations}{numeric, value indicating the grid size in kilometers used for estimating the number of location. By default, equal to 10}
 
 \item{method_protected_area}{string, by default is "no_more_than_one"", which means occurrences within protected areas (if provided) will not be taken into account for estimating the number of locations following the grid system, see Details. By default, it is "no_more_than_one"}
 
@@ -35,7 +35,7 @@ locations.comp(
 
 \item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
 
-\item{parallel}{logical, wether running in parallel. By default, it is FALSE}
+\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
 \item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
 
@@ -55,7 +55,7 @@ Estimate the number of locations for multiple taxa
 \tabular{ccc}{
   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+  [,3] \tab tax \tab character or factor, taxa names\cr
 }
 }
 \examples{

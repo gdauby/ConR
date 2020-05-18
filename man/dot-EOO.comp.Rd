@@ -39,5 +39,5 @@
 \item{method.less.than3}{string}
 }
 \description{
-EOO estimatiion
+EOO estimation
 }

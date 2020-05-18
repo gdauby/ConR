@@ -68,7 +68,7 @@ working environment as a csv file. By default is TRUE}
 \item{file.name}{a character string. Name file for exported results in csv
 file. By default is "EOO.results"}
 
-\item{parallel}{a logical. Wether running in parallel. By default, it is
+\item{parallel}{a logical. Whether running in parallel. By default, it is
 FALSE}
 
 \item{NbeCores}{an integer. Register the number of cores for parallel
@@ -78,15 +78,15 @@ execution. By default, it is 2}
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field
-containing EOO in square kilometres.  \code{NA} is given when EOO could not
+containing EOO in square kilometers.  \code{NA} is given when EOO could not
 be computed because there is less than three unique occurrences (or two if
 \code{method.less.than3} is put to "arbitrary").
 
 If \code{export_shp} is TRUE, a \code{list} with: \enumerate{ \item EOO in
-square kilometres \item \code{SpatialPolygons} used for EOO computation }
+square kilometers \item \code{SpatialPolygons} used for EOO computation }
 }
 \description{
-Compute extent of occurrences (EOO) for multiple taxa in square kilometres
+Compute extent of occurrences (EOO) for multiple taxa in square kilometers
 using \code{\link[geosphere]{geosphere}} package and provide
 \code{SpatialPolygons} used for EOO computation
 }
@@ -98,14 +98,14 @@ matter}
 
 \tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
 degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-[,3] \tab tax \tab character or factor, optinal field with taxa names\cr }
+[,3] \tab tax \tab character or factor, taxa names\cr }
 
 \strong{Important notes:}
 
 EOO will only be computed if there is at least three unique occurrences
 unless \code{method.less.than3} is put to "arbitrary". In that specific
 case, EOO for species with two unique occurrences will be equal to
-Dist*Dist*0.1 where Dist is the distance in kilometres separating the two
+Dist*Dist*0.1 where Dist is the distance in kilometers separating the two
 points.
 
 For the very specific (and infrequent) case where all occurrences are
