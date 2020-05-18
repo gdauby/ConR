@@ -19,3 +19,6 @@ Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
 RoxygenNote: 7.1.0
+Authors@R: c(
+	person("Gilles", "Dauby", role = c("cre", "aut"),  
+			email = "gildauby@gmail.com", comment = c(ORCID = "0000-0002-9498-413X")))
