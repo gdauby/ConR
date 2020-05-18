@@ -8,3 +8,4 @@
 ^\.github$
 ^vignettes/
 ^\.travis\.yml$
+^tic\.R$
