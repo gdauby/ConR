@@ -14,6 +14,11 @@ Mainly adapt package to changes in sp and rgdal, see NEWS.md
 * winbuilder, R-release
 * winbuilder, R-devel
 
+## Previous submission
+
+> Error: testthat unit tests failed
+
+Fixed.
 
 
 ## Previous submission
