@@ -4,7 +4,7 @@
 #'  IUCN Criterion A, which is based on population size reductions (Criteria A1, 
 #'  A2, A3 and A4)
 #'
-#' @param pop.sizes a vector containing the (estimated) number of mature individuals of the species 
+#' @param x a vector or a data frame containing the (estimated) number of mature individuals of the species
 #' @param years a vector containing the years for which the number of mature individuals was estimated 
 #' @param assess.year  
 #' @param project.years a vector containing the years for which the number of mature individuals should be predicted
@@ -24,13 +24,10 @@
 #' @export criterion_A
 #'
 #' @examples
-#' data(example)
-#' #example = read.csv("C://Users//renato//Documents//raflima//Pos Doc//Manuscritos//Artigo Extincao na MA//data analysis//teste_data_A1_A4.csv")
-#' criterion_A(example, years = NULL, assess.year = 2000, project.years = seq(2002, 2030, by = 2), generation.time = 10)
-#' #require(nlme)
-#' #require(nls.multstart)
-#' #require(bbmle)
-criterion_A = function(pop.sizes, 
+#' data(example_criterionA)
+#' criterion_A(example_criterionA, years = NULL, assess.year = 2000, project.years = seq(2002, 2030, by = 2), generation.time = 10)
+#' 
+criterion_A = function(x, 
                        years = NULL, 
                        assess.year = NULL, 
                        project.years = NULL,
