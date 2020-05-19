@@ -46,15 +46,15 @@ This shapefile will be used for cropping the \code{SpatialPolygons} used for
 EOO computation if \code{exclude.area} is TRUE. By default, it is
 \code{land}}
 
-\item{Cell_size_AOO}{a numeric, value indicating the grid size in kilometres
+\item{Cell_size_AOO}{a numeric, value indicating the grid size in kilometers
 used for estimating Area of Occupancy.  By default, equal to 2}
 
 \item{Cell_size_locations}{a numeric, value indicating the grid size in
-kilometres used for estimating the number of location. By default, equal to
+kilometers used for estimating the number of location. By default, equal to
 10}
 
 \item{Resol_sub_pop}{a numeric, value indicating the radius size in
-kilometres used for estimating the number of sub-population. By default,
+kilometers used for estimating the number of sub-population. By default,
 equal to 5}
 
 \item{method_locations}{a character string, indicating the method used for
@@ -134,12 +134,12 @@ value. By default, it is "convex.hull"}
 starting position for estimating the AOO. By default, it is NULL but some
 minimal translation of the raster are still done}
 
-\item{showWarnings}{a logical. Wether R should report warnings}
+\item{showWarnings}{a logical. Whether R should report warnings}
 
 \item{write_file_option}{a character, if "excel", results are exported in
 excel file, if "csv", results are exported in csv. By default, it is "excel"}
 
-\item{parallel}{a logical. Wether running in parallel. By default, it is
+\item{parallel}{a logical. Whether running in parallel. By default, it is
 FALSE}
 
 \item{NbeCores}{an integer. Register the number of cores for parallel
@@ -159,8 +159,8 @@ If a \code{list}, three elements are provided:
 
 The \code{dataframe} has as many rows as taxa and the following fields:
 
-\tabular{cccccc}{ [,1] \tab EOO \tab numeric, EOO (square kilometres)\cr
-[,2] \tab AOO \tab numeric, AOO (square kilometres)\cr [,3] \tab
+\tabular{cccccc}{ [,1] \tab EOO \tab numeric, EOO (square kilometers)\cr
+[,2] \tab AOO \tab numeric, AOO (square kilometers)\cr [,3] \tab
 Nbe_unique_occ. \tab numeric, Number of unique occurrences\cr [,4] \tab
 Nbe_subPop \tab numeric, Number of subpopulations\cr [,5] \tab Nbe_loc \tab
 numeric, Number of locations\cr [,6] \tab Category_CriteriaB \tab character,
@@ -189,7 +189,7 @@ degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
 character, optional field indicating higher taxonomic rank\cr [,5] \tab coly
 \tab numeric, optional field indicating collection year\cr }
 
-\code{coly} and \code{family} are optinal fields
+\code{coly} and \code{family} are optional fields
 
 If the optional field named 'family' is provided, indicating higher
 taxonomic rank, this will be displayed in the title of the map if

@@ -9,7 +9,7 @@ subpop.comp(XY, Resol_sub_pop = 5)
 \arguments{
 \item{XY}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
 
-\item{Resol_sub_pop}{numeric. Defines in kilometres the radius of the circles around each occurrence}
+\item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
 }
 \value{
 A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
@@ -25,7 +25,7 @@ Estimate the number of locations following the method **circular buffer method**
 \tabular{ccc}{
   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+  [,3] \tab tax \tab character or factor, taxa names\cr
 }
 }
 \examples{

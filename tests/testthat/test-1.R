@@ -1,28 +1,22 @@
 
 library(ConR)
-library(testthat)
 
-data(dataset.ex)
-data(land)
+
+
+# data(land)
+
+dummy_ex <- 
+  data.frame(ddlat = rnorm(10)*10, 
+             ddlon = rnorm(10)*10, taxa = rep("taxa", 10))
 
 context("Test that EOO.computing outputs are correct length and objects")
 
 test_that("EOO.computing", {
 
-  EOO <- EOO.computing(dataset.ex)
+  EOO <- EOO.computing(dummy_ex, show_progress = FALSE, write_shp = FALSE, write_results = FALSE)
   
   expect_output(str(EOO), "data.frame")
-  expect_equal(2635042, EOO[1,1])
-  expect_equal(dim(EOO), c(6,1))
+  expect_equal(dim(EOO), c(1,1))
   
-  EOO <- EOO.computing(dataset.ex, export_shp = T)
-  
-  expect_output(str(EOO), "List of 11")
-  expect_is(EOO$spatial.polygon_1, "SpatialPolygons")
-  
-  EOO <- EOO.computing(dataset.ex)
-  
-  expect_equal(2635042, EOO$EOO[1])
-
   
 })

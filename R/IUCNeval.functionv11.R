@@ -238,7 +238,7 @@
 
 #' Internal function
 #'
-#' EOO estimatiion
+#' EOO estimation
 #'
 #' @param XY data.frame
 #' @param exclude.area logical
@@ -414,7 +414,7 @@
 
 #' Extent of Occurrences
 #' 
-#' Compute extent of occurrences (EOO) for multiple taxa in square kilometres
+#' Compute extent of occurrences (EOO) for multiple taxa in square kilometers
 #' using \code{\link[geosphere]{geosphere}} package and provide
 #' \code{SpatialPolygons} used for EOO computation
 #' 
@@ -425,14 +425,14 @@
 #' 
 #' \tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
 #' degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#' [,3] \tab tax \tab character or factor, optinal field with taxa names\cr }
+#' [,3] \tab tax \tab character or factor, taxa names\cr }
 #' 
 #' \strong{Important notes:}
 #' 
 #' EOO will only be computed if there is at least three unique occurrences
 #' unless \code{method.less.than3} is put to "arbitrary". In that specific
 #' case, EOO for species with two unique occurrences will be equal to
-#' Dist*Dist*0.1 where Dist is the distance in kilometres separating the two
+#' Dist*Dist*0.1 where Dist is the distance in kilometers separating the two
 #' points.
 #' 
 #' For the very specific (and infrequent) case where all occurrences are
@@ -478,19 +478,19 @@
 #' working environment as a csv file. By default is TRUE
 #' @param file.name a character string. Name file for exported results in csv
 #' file. By default is "EOO.results"
-#' @param parallel a logical. Wether running in parallel. By default, it is
+#' @param parallel a logical. Whether running in parallel. By default, it is
 #' FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel
 #' execution. By default, it is 2
 #' @param show_progress logical. Whether a progress bar should displayed. TRUE by default.
 #' 
 #' @return If \code{export_shp} is FALSE, a \code{dataframe} with one field
-#' containing EOO in square kilometres.  \code{NA} is given when EOO could not
+#' containing EOO in square kilometers.  \code{NA} is given when EOO could not
 #' be computed because there is less than three unique occurrences (or two if
 #' \code{method.less.than3} is put to "arbitrary").
 #' 
 #' If \code{export_shp} is TRUE, a \code{list} with: \enumerate{ \item EOO in
-#' square kilometres \item \code{SpatialPolygons} used for EOO computation }
+#' square kilometers \item \code{SpatialPolygons} used for EOO computation }
 #' @author Gilles Dauby
 #' 
 #' \email{gildauby@@gmail.com}
@@ -850,7 +850,7 @@ EOO.computing <- function(XY,
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' @param XY string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
-#' @param Resol_sub_pop numeric. Defines in kilometres the radius of the circles around each occurrence
+#' @param Resol_sub_pop numeric. Defines in kilometers the radius of the circles around each occurrence
 #' 
 #' @details 
 #' \strong{Input} as a \code{dataframe} should have the following structure:
@@ -860,7 +860,7 @@ EOO.computing <- function(XY,
 #' \tabular{ccc}{
 #'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
 #'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+#'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
 #' @references Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA (2010) Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data. Biodiversity and Conservation 19: 2071-2085. doi: 10.1007/s10531-010-9826-9
@@ -1036,9 +1036,22 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   
   ## https://epsg.io/54032
   # World Azimuthal Equidistant
+  # proj <-
+  #   "+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
+  ## https://epsg.io/54002
+  # World Azimuthal Equidistant
+  # proj <-
+  #   "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
+  
+  # https://spatialreference.org/ref/sr-org/world-cylindrical-equal-area/
+  # Equal Area Cylindrical
+  # proj <-
+  #   "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
   proj <-
-    "+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-    
+    "+proj=cea +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  
   ## https://epsg.io/102022
   ## Africa Albers Equal Area Conic
   # proj <- 
@@ -1047,13 +1060,22 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
   # "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0")  {
-    wkt_crs <-
-      rgdal::showWKT(
-        proj
-      )
+    
+    wkt_crs <- 
+      'PROJCS["World_Cylindrical_Equal_Area",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Cylindrical_Equal_Area"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["central_meridian",0.0],PARAMETER["standard_parallel_1",0.0],UNIT["Meter",1.0]]'
+    
+    # wkt_crs <-
+    #   rgdal::showWKT(
+    #     proj
+    #   )
+    
     crs_proj <- 
       sp::CRS(projargs = proj, 
-                        SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
+        SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
+    
+    # crs_proj <- 
+    #   sp::CRS(projargs = proj, 
+    #                     SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
   }
   
   if (rgdal::rgdal_extSoftVersion()[1] < "3.0.0")
@@ -1066,14 +1088,14 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
 
 #' Area of occupancy
 #'
-#' Compute areas of occupancy (AOO) for multiple taxa in square kilometres
+#' Compute areas of occupancy (AOO) for multiple taxa in square kilometers
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' @param XY \code{"dataframe"} see Details
-#' @param Cell_size_AOO numeric, value indicating the grid size in kilometres used for estimating Area of Occupancy.  By default, equal to 2
+#' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2
 #' @param nbe.rep.rast.AOO numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done
-#' @param parallel logical, wether running in parallel. By default, it is FALSE
+#' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
 #' @param export_shp logical, whether a shapefile of occupied cells should be exported. By default, it is FALSE
@@ -1086,7 +1108,7 @@ subpop.comp <- function(XY, Resol_sub_pop = 5) {
 #' \tabular{ccc}{
 #'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
 #'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+#'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
 #' The argument of \code{nbe.rep.rast.AOO} ideally should be higher than 20 for increasing 
@@ -1409,11 +1431,11 @@ AOO.computing <- function(XY,
 #' @param method string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
 #' @param nbe_rep numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done
 #' @param protec.areas \code{SpatialPolygonsDataFrame}, shapefile with protected areas. If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). By default, no shapefile is provided
-#' @param Cell_size_locations numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10
+#' @param Cell_size_locations numeric, value indicating the grid size in kilometers used for estimating the number of location. By default, equal to 10
 #' @param method_protected_area string, by default is "no_more_than_one"", which means occurrences within protected areas (if provided) will not be taken into account for estimating the number of locations following the grid system, see Details. By default, it is "no_more_than_one"
 #' @param ID_shape_PA string, indicating the field name of \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of protected areas
 #' @param Rel_cell_size numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05
-#' @param parallel logical, wether running in parallel. By default, it is FALSE
+#' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
 #' 
@@ -1425,7 +1447,7 @@ AOO.computing <- function(XY,
 #' \tabular{ccc}{
 #'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
 #'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, optinal field with taxa names\cr
+#'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
@@ -2091,6 +2113,9 @@ locations.comp <- function(XY,
     if(Rank_B1a==3) Results["Category_EOO",1] <- "VU"
     if(Rank_B1a>3) Results["Category_EOO",1] <- "LC or NT"
     
+    
+    p1 <- as(p1, "SpatialPolygonsDataFrame")
+    
   }else{ ### if less than 3 uniques occurrences
     
     p1 <- NULL ## EOO shapefile is NULL
@@ -2426,7 +2451,7 @@ locations.comp <- function(XY,
     }else{
       scaleBAR <- Resolution/1000
     }
-    raster::scalebar(scaleBAR, type="bar", below="kilometres", cex=2.5)
+    raster::scalebar(scaleBAR, type="bar", below="kilometers", cex=2.5)
     
     mtext(NamesSp, side=3, cex=3, line=3)
     if(any(colnames(DATA)=="higher.tax.rank")) mtext(DATA[which(DATA[,3]==NamesSp),"higher.tax.rank"][1], side=3, cex=3, line=0.4)
@@ -2511,48 +2536,106 @@ locations.comp <- function(XY,
     if(!map_pdf) grDevices::dev.off()
   } # end draw map
   
+  
+  
+  
   if(write_shp) {
     
     dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     
     if (!is.null(p1)) {
+      
       if (length(list.files(paste(getwd(), "/shapesIUCN", sep = ""))) > 0) {
-        if (length(grep(paste(NamesSp, "_EOO_poly", sep = ""), unique(sub(
+        
+        if (length(grep(gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_EOO_poly")), unique(sub(
+          "....$", '', list.files(paste(getwd(), "/shapesIUCN", sep = ""))
+        )))) > 0) {
+          
+          FILES <-
+            list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
+          file.remove(FILES[grep(gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_EOO_poly")), FILES)])
+          
+        }
+        
+      }
+      
+      
+      # NAME <- names(p1)
+      # p1@polygons[[1]]@ID <- "1"
+      # 
+      # ConvexHulls_poly_dataframe <-
+      #   sp::SpatialPolygonsDataFrame(p1, data = as.data.frame(names(p1)))
+      # 
+      # colnames(ConvexHulls_poly_dataframe@data) <-
+      #   paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
+      # 
+      # rgdal::writeOGR(
+      #   ConvexHulls_poly_dataframe,
+      #   "shapesIUCN",
+      #   gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_EOO_poly")),
+      #   driver = "ESRI Shapefile"
+      # )
+      
+      
+      
+      
+      rgdal::writeOGR(
+        p1,
+        "shapesIUCN",
+        gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_EOO_poly")),
+        driver = "ESRI Shapefile"
+      )
+      
+    }
+    
+    if(SubPop) {
+      
+      if (length(list.files(paste(getwd(), "/shapesIUCN", sep = ""))) > 0) {
+        if (length(grep(gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_subpop_poly")), unique(sub(
           "....$", '', list.files(paste(getwd(), "/shapesIUCN", sep = ""))
         )))) > 0) {
           FILES <-
             list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
-          file.remove(FILES[grep(paste(NamesSp, "_EOO_poly", sep = ""), FILES)])
+          file.remove(FILES[grep(gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_subpop_poly")), FILES)])
+          
         }
       }
-      NAME <- names(p1)
-      p1@polygons[[1]]@ID <- "1"
-      ConvexHulls_poly_dataframe <- sp::SpatialPolygonsDataFrame(p1, data=as.data.frame(names(p1)))
-      colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
-      rgdal::writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_EOO_poly", sep=""),driver="ESRI Shapefile")
+      
+      
+      df <-
+        data.frame(FID = row.names(SubPopPoly),
+                   row.names = row.names(SubPopPoly))
+      SubPopPoly <- SpatialPolygonsDataFrame(SubPopPoly, data=df)
+      
+      rgdal::writeOGR(
+        obj = SubPopPoly,
+        dsn = "shapesIUCN",
+        layer = gsub(pattern = " ", replacement = "_" , x = paste0(NamesSp, "_subpop_poly")),
+        driver = "ESRI Shapefile"
+      )
+      
+      # NAME <- names(SubPopPoly)
+      # SubPopPoly@polygons[[1]]@ID <- "1"
+      # ConvexHulls_poly_dataframe <- sp::SpatialPolygonsDataFrame(SubPopPoly, data=as.data.frame(names(SubPopPoly)))
+      # colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
+      # rgdal::writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_subpop_poly", sep=""),driver="ESRI Shapefile")
+      
     }
     
-    if(SubPop) {
-      if(length(list.files(paste(getwd(),"/shapesIUCN", sep="")))>0){
-        if(length(grep(paste(NamesSp,"_subpop_poly", sep=""), unique(sub("....$", '', list.files(paste(getwd(),"/shapesIUCN", sep=""))))))>0) {
-          FILES <- list.files(paste(getwd(),"/shapesIUCN", sep=""), full.names = TRUE)
-          file.remove(FILES[grep(paste(NamesSp,"_subpop_poly", sep=""), FILES)])
-        }
-      }
-      NAME <- names(SubPopPoly)
-      SubPopPoly@polygons[[1]]@ID <- "1"
-      ConvexHulls_poly_dataframe <- sp::SpatialPolygonsDataFrame(SubPopPoly, data=as.data.frame(names(SubPopPoly)))
-      colnames(ConvexHulls_poly_dataframe@data) <- paste(substr(unlist(strsplit(NamesSp, "[ ]")), 0, 3), collapse = '')
-      rgdal::writeOGR(ConvexHulls_poly_dataframe,"shapesIUCN",paste(NamesSp,"_subpop_poly", sep=""),driver="ESRI Shapefile")      
-    }
   }
   
-  if(SubPop) {
+  if (SubPop) {
+    
     OUTPUT <- list(Results, p1, SubPopPoly)
-    names(OUTPUT) <- c("Results","spatialPoly_EOO","spatialPoly_subpop")
+    names(OUTPUT) <-
+      c("Results", "spatialPoly_EOO", "spatialPoly_subpop")
+    
   } else{
+    
     OUTPUT <- list(Results, p1)
-    names(OUTPUT) <- c("Results","spatialPoly_EOO")    
+    
+    names(OUTPUT) <- c("Results", "spatialPoly_EOO")
+    
   }
 
   return(OUTPUT)
@@ -2577,7 +2660,7 @@ locations.comp <- function(XY,
 #' character, optional field indicating higher taxonomic rank\cr [,5] \tab coly
 #' \tab numeric, optional field indicating collection year\cr }
 #' 
-#' \code{coly} and \code{family} are optinal fields
+#' \code{coly} and \code{family} are optional fields
 #' 
 #' If the optional field named 'family' is provided, indicating higher
 #' taxonomic rank, this will be displayed in the title of the map if
@@ -2644,13 +2727,13 @@ locations.comp <- function(XY,
 #' This shapefile will be used for cropping the \code{SpatialPolygons} used for
 #' EOO computation if \code{exclude.area} is TRUE. By default, it is
 #' \code{land}
-#' @param Cell_size_AOO a numeric, value indicating the grid size in kilometres
+#' @param Cell_size_AOO a numeric, value indicating the grid size in kilometers
 #' used for estimating Area of Occupancy.  By default, equal to 2
 #' @param Cell_size_locations a numeric, value indicating the grid size in
-#' kilometres used for estimating the number of location. By default, equal to
+#' kilometers used for estimating the number of location. By default, equal to
 #' 10
 #' @param Resol_sub_pop a numeric, value indicating the radius size in
-#' kilometres used for estimating the number of sub-population. By default,
+#' kilometers used for estimating the number of sub-population. By default,
 #' equal to 5
 #' @param DrawMap a logical, if TRUE a map is produced for each species in png
 #' format, unless map_pdf is TRUE. By default, it is FALSE
@@ -2711,8 +2794,8 @@ locations.comp <- function(XY,
 #' @param nbe.rep.rast.AOO a numeric, indicate the number of raster with random
 #' starting position for estimating the AOO. By default, it is NULL but some
 #' minimal translation of the raster are still done
-#' @param showWarnings a logical. Wether R should report warnings
-#' @param parallel a logical. Wether running in parallel. By default, it is
+#' @param showWarnings a logical. Whether R should report warnings
+#' @param parallel a logical. Whether running in parallel. By default, it is
 #' FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel
 #' execution. By default, it is 2
@@ -2729,8 +2812,8 @@ locations.comp <- function(XY,
 #' 
 #' The \code{dataframe} has as many rows as taxa and the following fields:
 #' 
-#' \tabular{cccccc}{ [,1] \tab EOO \tab numeric, EOO (square kilometres)\cr
-#' [,2] \tab AOO \tab numeric, AOO (square kilometres)\cr [,3] \tab
+#' \tabular{cccccc}{ [,1] \tab EOO \tab numeric, EOO (square kilometers)\cr
+#' [,2] \tab AOO \tab numeric, AOO (square kilometers)\cr [,3] \tab
 #' Nbe_unique_occ. \tab numeric, Number of unique occurrences\cr [,4] \tab
 #' Nbe_subPop \tab numeric, Number of subpopulations\cr [,5] \tab Nbe_loc \tab
 #' numeric, Number of locations\cr [,6] \tab Category_CriteriaB \tab character,
@@ -2907,11 +2990,11 @@ IUCN.eval <- function (DATA,
     }
     DIRECTORY_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
     dir.create(file.path(paste(
-      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
     )), showWarnings = FALSE)
     
     pdf(paste(paste(
-      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
     ), "/", "results.pdf", sep = ""),
     width = 25,
     height = 25)
@@ -2952,8 +3035,6 @@ IUCN.eval <- function (DATA,
     `%d%` <- foreach::`%do%`
   }
   
-
-
   x <- NULL
   pb <- 
     utils::txtProgressBar(min = 0, max = length(list_data), style = 3)
@@ -3296,7 +3377,7 @@ map.res <- function(Results,
   if (export_map) {
     DIRECTORY_NAME <- ifelse(!is.null(file_name), file_name, "IUCN_")
     dir.create(file.path(paste(
-      getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+      getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
     )), showWarnings = FALSE)
   }
   
@@ -3318,7 +3399,7 @@ map.res <- function(Results,
   if (export_map)
     grDevices::png(
       paste(file.path(paste(
-        getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+        getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
       )), "/", "number_of_records", ".png", sep = ""),
       width = 20,
       height = 20,
@@ -3413,7 +3494,7 @@ map.res <- function(Results,
   if (export_map)
     grDevices::png(
       paste(file.path(paste(
-        getwd(), paste("/", DIRECTORY_NAME, "_results_map", sep = ""), sep = ""
+        getwd(), paste("/", DIRECTORY_NAME, "results_map", sep = ""), sep = ""
       )), "/", "species_richness", ".png", sep = ""),
       width = 20,
       height = 20,
@@ -3497,7 +3578,7 @@ map.res <- function(Results,
     grDevices::png(
       paste(file.path(paste(
         getwd(),
-        paste("/", DIRECTORY_NAME, "_results_map", sep = ""),
+        paste("/", DIRECTORY_NAME, "results_map", sep = ""),
         sep = ""
       )), "/", "number_threatened_sp", ".png", sep = ""),
       width = 20,
@@ -3556,7 +3637,7 @@ map.res <- function(Results,
       paste(
         file.path(paste(
           getwd(),
-          paste("/", DIRECTORY_NAME, "_results_map", sep = ""),
+          paste("/", DIRECTORY_NAME, "results_map", sep = ""),
           sep = ""
         )),
         "/",
