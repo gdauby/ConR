@@ -1,8 +1,8 @@
 #' @title Assess IUCN Criterion B
 #'
 #' @description Preliminary assessment of species conservation status following
-#'  IUCN Criterion B, which is based on species geographic distribution (extent
-#'  of occurrence)
+#'  IUCN Criterion B, which is based on species geographic distribution (i.e. extent
+#'  of occurrence - EOO, and area of occupancy, AOO)
 #'
 #' @param x the character string.
 #'
@@ -19,7 +19,7 @@
 #' @examples
 #'
 #'
-criterion_B = function(DATA, protec.areas = NULL, 
+criterion_B = function(x, protec.areas = NULL, 
                        NamesSp = "species1", 
                        file_name = NULL, 
                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
