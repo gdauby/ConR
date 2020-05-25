@@ -1,7 +1,7 @@
 # Script to read dictionaries and generate the R/sysdata.rda
 
 # loading packages
-#library(stringr)
+library(stringr)
 library(readr)
 path = "C://Users//renato//Documents//raflima//Pos Doc//Manuscritos//Artigo Extincao na MA//data analysis"
 dic_files <- list.files(path = path,
