@@ -1,2 +1,4 @@
 inst/doc
 .Rproj.user
+.Rhistory
+.R/test_data.R
