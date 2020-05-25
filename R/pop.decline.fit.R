@@ -3,7 +3,7 @@
 #' @description Fitting statistical models to the decline on the number of mature
 #'  individuals across time "can be used to extrapolate population trends, so that 
 #'  a reduction of three generations can be calculated" (IUCN 2019). This function
-#'  provided a comparison of five different models and returns the model with best
+#'  provide a comparison of five different models and returns the model with best
 #'  fit to data.
 #'
 #' @param pop.size a vector containing the (estimated) number of mature individuals of the species 
@@ -15,10 +15,10 @@
 #' 
 #' @details TO BE CHECKED By default, the function compare the fit of five statistical models to the population trends, 
 #'  namely: linear, accelerating, exponential, logistic and piece-wise. Here, we use a quadratic model as
-#'  a proxy AIC for time intervals > 30 and AICc for intervals smaller than 30.
+#'  a proxy AIC for time intervals > 30 and AICc for time intervals < 30.
 #'  Note that model fits are performed in the proportional population estimates and on the period of interval,
 #'  and not on raw population sizes and years of assessments. So, models should only be used to project 
-#'  proportions 
+#'  proportions.
 #'  Fitting piece-wise models is very unstable (model fitting is sensitive to the start parameters) and may take a while to converge (use preferably for many years of assessment).
 #'  We assumed that populations are stable or declining, so proportions are obtained in respect to the oldest population
 #'  estimate.
@@ -32,7 +32,11 @@
 #' @author Lima, R.A.F. & Dauby, G.
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
-#'
+#' 
+#' @importFrom bbmle AICctab AICtab
+#' @importFrom stats nls
+#' @importFrom nls.multstart nls_multstart
+#' 
 #' @export pop.decline.fit
 #'
 #' @examples
@@ -43,84 +47,127 @@
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1960, 2005))
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1960, 2005), plot = FALSE)
 #' 
+#' 
+#' ### ERROR !
+#' # AIC NA when using AICctab function
+#' pop.decline.fit(pop.size = pop, years = yrs, models = c("general_logistic"))
+#' # same problem 
+#' pop.decline.fit(pop.size = pop, years = yrs, models = c("accelerating"))
+#' 
+#' 
 pop.decline.fit <- function(pop.size, 
                             years,
                             models = "all", 
                             project.years = NULL,
                             plot = TRUE) {
   
-  if(is.null(years)) { 
-    anos = as.numeric(gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))]))
-    if(is.null(anos)) { 
-      stop("please provide at least two years with estimates of population sizes") 
+  if(is.null(years)) {
+    
+    anos <- as.numeric(gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))]))
+    
+    if(is.null(anos)) {
+      
+      stop("please provide at least two years with estimates of population sizes")
+      
     }
   } else {
-    anos = years
+    
+    anos <- years
+    
   }
   
   if(length(as.numeric(pop.size)) > length(as.numeric(anos)))
-    pop.size = pop.size[grepl(paste0(years, collapse = "|"), names(pop.size))]
+    pop.size <- 
+      pop.size[grepl(paste0(years, collapse = "|"), names(pop.size))]
 
-  years = anos
+  years <- anos
   
   if(length(as.numeric(pop.size)) < 3 | length(years) < 3) {
+    
     stop("too few time intervals to fit trends of population reduction")
-  }  
+    
+  }
 
   if(!is.null(project.years)) {
-    proj = project.years[!project.years %in% years]
-    years1 = c(years, proj)
-    pop.size1 = c(as.numeric(pop.size), rep(NA, length(proj)))
-    DATA = cbind.data.frame(pop.size = pop.size1[order(years1)], 
+    
+    proj <- project.years[!project.years %in% years]
+    years1 <- c(years, proj)
+    pop.size1 <- c(as.numeric(pop.size), rep(NA, length(proj)))
+    DATA <- cbind.data.frame(pop.size = pop.size1[order(years1)], 
                             years = years1[order(years1)])
+    
   } else {
-    DATA = cbind.data.frame(pop.size = as.numeric(pop.size), 
+    
+    DATA <- 
+      cbind.data.frame(pop.size = as.numeric(pop.size), 
                             years = as.numeric(years))
+    
   }
-  DATA$ps = DATA$pop.size/max(pop.size, na.rm = TRUE)
-  DATA$ys = DATA$years - min(DATA$years, na.rm = TRUE)
   
-  if(all(models == "all")) { 
-    model.ls = vector("list", 5) 
-    names(model.ls) = c("linear", "accelerating", "exponential", "logistic", "general_logistic", "piecewise") 
-  } else { 
-    model.ls = vector("list", length(models)) 
-    names(model.ls) = models 
+  DATA$ps <- DATA$pop.size/max(pop.size, na.rm = TRUE)
+  DATA$ys <- DATA$years - min(DATA$years, na.rm = TRUE)
+  
+  if(all(models == "all")) {
+    
+    model.ls <- vector("list", 6)
+    names(model.ls) <- c(
+      "linear",
+      "accelerating",
+      "exponential",
+      "logistic",
+      "general_logistic",
+      "piecewise"
+    )
+    
+  } else {
+    
+    model.ls <- vector("list", length(models))
+    names(model.ls) <- models
+    
   }
   
   if(any("linear" %in% models) | all(models == "all")) { # linear model (Figure 4.2 panel c)
+    
     f <- ps ~ a + b*ys
-    sts = as.numeric(coef(lm(ps ~ ys, data = na.omit(DATA))))
-    lin <- try(nls(f, data = na.omit(DATA),
+    sts <- as.numeric(stats::coef(stats::lm(ps ~ ys, data = na.omit(DATA))))
+    lin <- try(stats::nls(f, data = na.omit(DATA),
                start = list(a = sts[1], b = sts[2])), TRUE)
+    
     if (class(lin) == "try-error") 
       lin = lm(ps ~ ys, data = na.omit(DATA))
+    
     model.ls[["linear"]] = lin
+    
   }
   
   if(any("accelerating" %in% models) | all(models == "all")) { # quadratic (accelerating) model (Figure 4.2 panel d)
+    
     f <- ps ~ a + b*ys + c*(ys^2)
-    sts = as.numeric(coef(lm(ps ~ ys + I(ys^2), data = na.omit(DATA))))
-    quad <- try(nls(f, data = na.omit(DATA),
+    sts <- as.numeric(stats::coef(stats::lm(ps ~ ys + I(ys^2), data = stats::na.omit(DATA))))
+    quad <- try(stats::nls(f, data = na.omit(DATA),
                 start = list(a = sts[1], b = sts[2], c = sts[3]),
-                nls.control(maxiter = 500)), TRUE)
-    if (class(quad) == "try-error") 
-      quad <- nls_multstart(f, data = na.omit(DATA),
+                stats::nls.control(maxiter = 500)), TRUE)
+    
+    if (class(quad) == "try-error")
+      quad <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
                            start_lower = c(a=0.1, b=-0.5, c= -0.1),
                            start_upper = c(a=1, b=0.5, c= 0.1),
                            iter = 500, supp_errors = 'Y', convergence_count = 100,
                            na.action = na.omit)
+    
     if (class(quad) == "try-error") 
-      quad = lm(ps ~ ys + I(ys^2), data = na.omit(DATA))
+      quad = stats::lm(ps ~ ys + I(ys^2), data = na.omit(DATA))
+    
     model.ls[["accelerating"]] = quad
+    
   }
   
   if(any("exponential" %in% models) | all(models == "all")) { # (negative) exponential model (Figure 4.2 panel b)
     f <- ps ~ a * exp(b * ys)
-    exp <- try(nls(f, data = na.omit(DATA), 
+    exp <- try(stats::nls(f, data = na.omit(DATA), 
                    start = list(a= 1, b= -0.1)), TRUE) 
     if (class(exp) == "try-error") { 
-      exp <- nls_multstart(f, data = na.omit(DATA),
+      exp <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
                            start_lower = c(a=0.1, b=-0.1),
                            start_upper = c(a=1, b=0.01),
                            iter = 500, supp_errors = 'Y', convergence_count = 100,
@@ -131,10 +178,10 @@ pop.decline.fit <- function(pop.size,
   
   if(any("logistic" %in% models) | all(models == "all")) { # logistic model (not in IUCN guidelines)
     f <- ps ~ exp(a + b*ys)/(1 + exp(a + b*ys))
-    logis <- try(nls(f, data = na.omit(DATA), 
-                     start=list(a=1,b=-0.1)), TRUE) # logistic
+    logis <- try(stats::nls(f, data = na.omit(DATA), 
+                     start = list(a=1,b=-0.1)), TRUE) # logistic
     if (class(logis) == "try-error") { 
-      logis <- nls_multstart(f, data = na.omit(DATA),
+      logis <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
                              start_lower = c(a=1, b=-0.5),
                              start_upper = c(a=5, b=0.1),
                              iter = 500, supp_errors = 'Y', convergence_count = 100,
@@ -149,7 +196,7 @@ pop.decline.fit <- function(pop.size,
 
     gen.logis <- try(nls(f, data = na.omit(DATA), 
                      start=list(a=min(na.omit(DATA)$ps), b=0.2, m = median(na.omit(DATA)$ys))), TRUE) # logistic
-    if (class(logis) == "try-error") { 
+    if (class(gen.logis) == "try-error") { 
       gen.logis <- nls_multstart(f, data = na.omit(DATA),
                              start_lower = c(a=0, b=0.5, m=max(na.omit(DATA)$ys)),
                              start_upper = c(a=1, b=0.01,m=0),
@@ -203,9 +250,9 @@ pop.decline.fit <- function(pop.size,
     piece.mds = piece.mds[!sapply(piece.mds, function(x) class(x[1])) %in% "try-error"]
     
     if(length(na.omit(DATA)$ys) >= 30) {
-      AICs = AICtab(piece.mds, sort = FALSE)
+      AICs = bbmle::AICtab(piece.mds, sort = FALSE)
     } else {
-      AICs = AICctab(piece.mds, sort = FALSE)
+      AICs = bbmle::AICctab(piece.mds, sort = FALSE)
     }
     
     if(all(AICs$dAIC <= log(8))) {
@@ -217,24 +264,35 @@ pop.decline.fit <- function(pop.size,
   }
   
   if(length(years) >= 30) {
-    AICs = AICtab(model.ls, sort = FALSE, mnames = names(model.ls))
+    
+    AICs <- bbmle::AICtab(model.ls, sort = FALSE, mnames = names(model.ls))
+    
   } else {
-    AICs = AICctab(model.ls, sort = FALSE, mnames = names(model.ls))
+    
+    AICs <- bbmle::AICctab(model.ls, sort = FALSE, mnames = names(model.ls))
+    
   }
 
   if(any(AICs$dAIC <= log(8))) {
+    
     if(all(AICs$dAIC <= log(8))) {
+      
       best = model.ls[which(AICs$df == min(AICs$df))][[1]]
       best.name = names(model.ls[which(AICs$df == min(AICs$df))])
+      
     } else {
+      
       id = which(AICs$dAIC <= log(8))
       id = id[which(AICs$df[id] == min(AICs$df[id]))]
       best = model.ls[id][[1]]
       best.name = names(model.ls[id])
+      
     }  
   } else {
+    
     best = model.ls[which(AICs$dAIC == min(AICs$dAIC))][[1]]
     best.name = names(model.ls[which(AICs$dAIC == min(AICs$dAIC))])
+    
   }
   
   attributes(best)$best.model.name = best.name
@@ -243,6 +301,7 @@ pop.decline.fit <- function(pop.size,
   DATA$predicted = round(DATA$est.prop * max(DATA$pop.size, na.rm = TRUE), 1)
   
   if(plot == TRUE) {
+    
     ylim = range(DATA[grepl("ps|est.prop", names(DATA))], na.rm=TRUE)
     xlim = range(DATA$ys, na.rm=TRUE)
     par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
@@ -264,7 +323,8 @@ pop.decline.fit <- function(pop.size,
       curve(coef(mod)[1] + coef(mod)[2]*x, from = range1, to = range2,
             add= TRUE, lwd= 2, col = "#D55E00")
       legend("bottomleft", c("Linear model"), lwd= 2, col= "#D55E00", bty = "n")
-    }  
+    }
+    
     if(best.name == "accelerating") { 
       mod = model.ls[["accelerating"]]
       if(!is.null(project.years)) curve(coef(mod)[1] + coef(mod)[2]*x + coef(mod)[3]*(x^2),
@@ -273,6 +333,7 @@ pop.decline.fit <- function(pop.size,
             add= TRUE, lwd=2, col = "#56B4E9")
       legend("bottomleft", c("Accelerating (quadratic) model"), lwd= 2, col= "#56B4E9", bty = "n")
     }
+    
     if(best.name == "exponential") { 
       mod = model.ls[["exponential"]]
       if(!is.null(project.years)) curve(coef(mod)[1]*exp(coef(mod)[2]*x), 
@@ -280,7 +341,8 @@ pop.decline.fit <- function(pop.size,
       curve(coef(mod)[1]*exp(coef(mod)[2]*x), from = range1, to = range2,
             add= TRUE, lwd=2, col = "#009E73")
       legend("bottomleft", c("Exponential model"), lwd= 2, col= "#009E73", bty = "n")
-    }    
+    }
+    
     if(best.name == "logistic") { 
       mod = model.ls[["logistic"]]
       if(!is.null(project.years)) curve(exp(coef(mod)[1] + coef(mod)[2]*x)/(1 + exp(coef(mod)[1] + coef(mod)[2]*x)),
@@ -289,6 +351,7 @@ pop.decline.fit <- function(pop.size,
             lwd=2, col = "#F0E442", add= TRUE)
       legend("bottomleft", c("Exponential model"), lwd= 2, col= "#F0E442", bty = "n")
     }
+    
     if(best.name == "general_logistic") { 
       mod = model.ls[["general_logistic"]]
       if(!is.null(project.years)) curve(coef(mod)[1] + (1 - coef(mod)[1])/(1 + exp(coef(mod)[2] * (x - coef(mod)[3]))),
@@ -297,6 +360,7 @@ pop.decline.fit <- function(pop.size,
             lwd=2, col = "#0072B2", add= TRUE)
       legend("bottomleft", c("Generalized logistic model"), lwd= 2, col= "#0072B2", bty = "n")
     }
+    
     if(best.name == "piecewise") { 
       mod = model.ls[["piecewise"]]
       plot(mod, lwd=2, col= "#CC79A7", add=TRUE, dens.rug=FALSE, rug=FALSE)
@@ -322,4 +386,6 @@ pop.decline.fit <- function(pop.size,
   }
   
   return(res)
-}  
+} 
+
+
