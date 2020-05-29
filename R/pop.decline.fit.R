@@ -7,21 +7,21 @@
 #'  the model with best fit to data.
 #'
 #' @param pop.size a vector containing the (estimated) number of mature individuals of the species 
-#' @param years a vector containing the years for which the number of mature individuals was estimated 
+#' @param years a vector containing the years for which the population sizes is available 
 #' @param models a vector containing the names of the models to be fitted to species population data 
 #' @param project.years a vector containing the years for which the number of mature individuals should be predicted
-#' @param plot logical. Should the fit of the best model be plotted against the population data?
+#' @param plot.fit logical. Should the fit of the best model be plotted against the population data?
 #' @param max.count numerical. Maximum number of attempts to fit piece-wise models. Default to 50.
 #' 
 #' @details By default, the function compares the fit of six statistical models to the population trends, 
-#'  namely: linear, accelerating, exponential, logistic, generalized logistic and piece-wise. But, as stated in 
+#'  namely: linear, quadratic, exponential, logistic, generalized logistic and piece-wise. But, as stated in 
 #'  IUCN (2019), the model used to do the predictions makes an important difference. So, model fit to data should not be
 #'  the only or most important criteria. Users should preferably choose one or two of the models based on the best available 
 #'  information of types of threat (i.e. patterns of exploitation or habitat loss), life history and ecology of the 
 #'  taxon being evaluated or any other processes that may contribute to population decline. See IUCN (2019) for more 
 #'  details on the assumptions of each model.   
 #' 
-#'  The linear, accelerating and exponential patterns of decline are fully described in IUCN (2019) and are easy to be
+#'  The linear and exponential patterns of decline are fully described in IUCN (2019) and are easy to be
 #'  described statistically through a model (see Figure 4.2, pg. 33 of IUCN 2019). But IUCN (2019) also recognizes the 
 #'  existence of more "complex patterns of decline". To describe more complex patterns, `pop.decline.fit` provides fits 
 #'  to logistic and piece-wise patterns of decline. Despite the options of models provided by `pop.decline.fit`, 
@@ -61,18 +61,22 @@
 #' ## Fitting data with different models and setting
 #' pop.decline.fit(pop.size = pop, years = yrs)
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear"))
-#' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential","accelerating"))
+#' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential","quadratic"))
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1960, 2005))
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1973, 2005))
-#' pop.decline.fit(pop.size = pop, years = yrs, models = c("accelerating", "general_logistic"))
+#' pop.decline.fit(pop.size = pop, years = yrs, models = c("quadratic", "general_logistic"))
 #' pop.decline.fit(pop.size = pop, years = yrs, models = c("general_logistic"))
-#' pop.decline.fit(pop.size = pop, years = yrs, models = c("accelerating"), project.years = c(1960, 2050))
+#' pop.decline.fit(pop.size = pop, years = yrs, models = c("quadratic"), project.years = c(1960, 2050))
+#' 
+#' ## Another examples, with less observations (no model fit below 3 observations)
+#' pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), models = "all", project.years = 2030)
+#' pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
 #' 
 pop.decline.fit <- function(pop.size, 
                             years,
                             models = "all", 
                             project.years = NULL,
-                            plot = TRUE,
+                            plot.fit = TRUE,
                             max.count = 50) {
   
   if(is.null(years)) {
@@ -81,7 +85,7 @@ pop.decline.fit <- function(pop.size,
     
     if(is.null(anos)) {
       
-      stop("please provide at least three years with estimates of population sizes")
+      stop("Please provide at least two years with estimates of population sizes")
       
     }
   } else {
@@ -96,11 +100,8 @@ pop.decline.fit <- function(pop.size,
   
   years <- anos
   
-  if(length(as.numeric(pop.size)) <= 3 | length(years) <= 3) {
-    
-    stop("too few time intervals to fit trends of population reduction")
-    
-  }
+  if(length(as.numeric(pop.size)) < 3 | length(years) < 3)
+    stop("Too few time intervals to fit trends of population reduction")
   
   if(!is.null(project.years)) {
     
@@ -125,7 +126,7 @@ pop.decline.fit <- function(pop.size,
     model.ls <- vector("list", 6)
     names(model.ls) <- c(
       "linear",
-      "accelerating",
+      "quadratic",
       "exponential",
       "logistic",
       "general_logistic",
@@ -152,7 +153,7 @@ pop.decline.fit <- function(pop.size,
     
   }
   
-  if(any("accelerating" %in% models) | all(models == "all")) { # quadratic (accelerating) model (Figure 4.2 panel d)
+  if(any("quadratic" %in% models) | all(models == "all")) { # quadratic (accelerating) model (Figure 4.2 panel d)
     
     f <- ps ~ a + b*ys + c*(ys^2)
     sts <- as.numeric(stats::coef(stats::lm(ps ~ ys + I(ys^2), data = stats::na.omit(DATA))))
@@ -170,7 +171,7 @@ pop.decline.fit <- function(pop.size,
     if (class(quad) == "try-error") 
       quad = stats::lm(ps ~ ys + I(ys^2), data = na.omit(DATA))
     
-    model.ls[["accelerating"]] = quad
+    model.ls[["quadratic"]] = quad
     
   }
   
@@ -258,8 +259,9 @@ pop.decline.fit <- function(pop.size,
     # 2 breakpoints
     piece2 <- try(segmented::segmented(md, seg.Z = ~ys, psi = c(quebras[1]/2, quebras[1]), 
                                        control = segmented::seg.control(display = FALSE), it.max = 100, n.boot = 50), TRUE)
+    warn = warnings(piece2)
     
-    if(class(piece2)[1] == "try-error") {
+    if(class(piece2)[1] == "try-error" & !any(grepl("no residual degrees of freedom", attributes(warn)$names))) {
       
       counter <- 0
       
@@ -298,105 +300,40 @@ pop.decline.fit <- function(pop.size,
       
       if(length(piece.mds) == 1) {
         
-        piece = piece.mds
+        piece = piece.mds[[1]]
         
       } else {
         
-        piece.mds1 <- piece.mds[!is.na(piece.mds)]
-        nobs <- sapply(piece.mds1, stats::nobs)
-        dfs <- sapply(piece.mds1, function(x) attr(logLik(x), "df"))
-        logLiks <- sapply(piece.mds1, function(x) c(stats::logLik(x)))
-        aics <- (-2*logLiks) + 2*dfs
-        dIC <- aics - min(aics, na.rm = TRUE)
-        tab <- data.frame(df = dfs)
-        tab <- cbind(dAIC = dIC, tab)
-        AICs <- tab
+        md.sel = ICtab.mod.select(piece.mds)
+        piece <- md.sel$best.model
         
-        if(all(AICs[, 1] <= log(8))) {
-          
-          piece <- piece.mds[which(AICs$df == min(AICs$df))]
-          
-        } else {
-          
-          piece <- piece.mds[which(AICs[, 1] == min(AICs[, 1]))]
-          
-        }
       }
       
-      model.ls[["piecewise"]] <- piece[[1]]
+      model.ls[["piecewise"]] <- piece
       
     } else {
       
       model.ls[["piecewise"]] <- NA
-      warning("No piece-wise model was fit to population data due to lack of convergence")
+      warning("No piece-wise model was fit to population data due to lack of convergence, probably caused by too few observations")
       
     }    
   }
   
-  model.ls1 <- model.ls[!is.na(model.ls)]
-  nobs <- sapply(model.ls1, stats::nobs)
-  dfs <- sapply(model.ls1, function(x) attr(logLik(x), "df"))
-  logLiks <- sapply(model.ls1, function(x) c(stats::logLik(x)))
-  nks <- nobs/dfs 
-  aics <- (-2*logLiks) + 2*dfs
-  corr <- 2*dfs*(dfs + 1)/(nobs - dfs - 1)
-  if(any(is.infinite(corr))) corr[is.infinite(corr)] <- 2*dfs[is.infinite(corr)]*(dfs[is.infinite(corr)])/
-    (nobs[is.infinite(corr)] - dfs[is.infinite(corr)])
-  aiccs <- aics + abs(corr)
-  
-  if(any(nks >= 40)) {
-    
-    dIC <- round(aics - min(aics, na.rm = TRUE), 2)
-    tab <- data.frame(df = dfs)
-    tab <- cbind(dAIC = dIC, tab)
-    AICs <- tab
-    #AICs <- bbmle::AICtab(model.ls1, sort = FALSE, mnames = names(model.ls1))
-    
-  } else {
-    
-    dIC <- aiccs - min(aiccs, na.rm = TRUE)
-    tab <- data.frame(df = dfs)
-    tab <- cbind(dAICc = dIC, tab)
-    AICs <- tab
-    #AICs <- bbmle::AICctab(model.ls1, sort = FALSE, mnames = names(model.ls1))
-    
-  }
-  
-  if(any(AICs[, 1] <= log(8))) {
-    
-    if(all(AICs[, 1] <= log(8))) {
-      
-      best <- model.ls1[which(AICs$df == min(AICs$df))][[1]]
-      best.name <- names(model.ls1[which(AICs$df == min(AICs$df))])
-      
-    } else {
-      
-      id <- which(AICs[, 1] <= log(8))
-      id <- id[which(AICs$df[id] == min(AICs$df[id]))]
-      best.name <- names(model.ls1[id])
-      if(length(best.name) > 1)
-        best.name = best.name[!grepl("linear|accelerating", best.name)]
-      best <- model.ls1[best.name][[1]]
-      
-    }  
-  } else {
-    
-    best <- model.ls1[which(AICs[, 1] == min(AICs[, 1]))][[1]]
-    best.name <- names(model.ls1[which(AICs[, 1] == min(AICs[, 1]))])
-    
-  }
-  
+  md.sel <- ICtab.mod.select(model.ls)
+  AICs <- md.sel$ICtab
+  best <- md.sel$best.model
+  best.name <- md.sel$best.model.name
   attributes(best)$best.model.name <- best.name
   
   DATA$est.prop <- predict(best, data.frame(ys = DATA$ys))
   DATA$est.prop[DATA$est.prop<0] <- 0
   DATA$predicted <- round(DATA$est.prop * max(DATA$pop.size, na.rm = TRUE), 1)
   
-  if(plot == TRUE) {
+  if(plot.fit) {
     
     ylim <- range(DATA[grepl("ps|est.prop", names(DATA))], na.rm=TRUE)
     xlim <- range(DATA$ys, na.rm=TRUE)
-    preds = predict(model.ls1[[best.name]], data.frame(ys = seq(range(DATA$ys)[1], range(DATA$ys)[2], by = 1)))
+    preds = predict(best, data.frame(ys = seq(range(DATA$ys)[1], range(DATA$ys)[2], by = 1)))
     
     if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) ylim = range(c(ylim, preds), na.rm=TRUE)     
     
@@ -418,7 +355,8 @@ pop.decline.fit <- function(pop.size,
     
     if(best.name == "linear") { 
       
-      mod <- model.ls1[["linear"]]
+      #mod <- model.ls[["linear"]]
+      mod <- best
       if(!is.null(project.years)) curve(coef(mod)[1] + coef(mod)[2]*x, 
                                         add= TRUE, lwd= 2, lty= 2, col = "#D55E00")
       curve(coef(mod)[1] + coef(mod)[2]*x, from = range1, to = range2,
@@ -427,9 +365,10 @@ pop.decline.fit <- function(pop.size,
       
     }
     
-    if(best.name == "accelerating") { 
+    if(best.name == "quadratic") { 
       
-      mod <- model.ls1[["accelerating"]]
+      #mod <- model.ls[["quadratic"]]
+      mod <- best
       if(!is.null(project.years)) curve(coef(mod)[1] + coef(mod)[2]*x + coef(mod)[3]*(x^2),
                                         add= TRUE, lwd=2, lty= 2, col = "#56B4E9")
       curve(coef(mod)[1] + coef(mod)[2]*x + coef(mod)[3]*(x^2), from = range1, to = range2,
@@ -440,7 +379,8 @@ pop.decline.fit <- function(pop.size,
     
     if(best.name == "exponential") { 
       
-      mod <- model.ls1[["exponential"]]
+      #mod <- model.ls[["exponential"]]
+      mod <- best
       if(!is.null(project.years)) curve(coef(mod)[1]*exp(coef(mod)[2]*x), 
                                         add= TRUE, lwd=2, lty= 2, col = "#009E73")
       curve(coef(mod)[1]*exp(coef(mod)[2]*x), from = range1, to = range2,
@@ -451,7 +391,8 @@ pop.decline.fit <- function(pop.size,
     
     if(best.name == "logistic") { 
       
-      mod <- model.ls1[["logistic"]]
+      #mod <- model.ls1[["logistic"]]
+      mod <- best
       if(!is.null(project.years)) curve(exp(coef(mod)[1] + coef(mod)[2]*x)/(1 + exp(coef(mod)[1] + coef(mod)[2]*x)),
                                         lwd=2, lty= 2, col = "#F0E442", add= TRUE)
       curve(exp(coef(mod)[1] + coef(mod)[2]*x)/(1 + exp(coef(mod)[1] + coef(mod)[2]*x)), from = range1, to = range2,
@@ -462,7 +403,8 @@ pop.decline.fit <- function(pop.size,
     
     if(best.name == "general_logistic") { 
       
-      mod <- model.ls1[["general_logistic"]]
+      #mod <- model.ls1[["general_logistic"]]
+      mod <- best
       if(!is.null(project.years)) curve(coef(mod)[1] + (1 - coef(mod)[1])/(1 + exp(coef(mod)[2] * (x - coef(mod)[3]))),
                                         lwd=2, lty= 2, col = "#0072B2", add= TRUE)
       curve(coef(mod)[1] + (1 - coef(mod)[1])/(1 + exp(coef(mod)[2] * (x - coef(mod)[3]))), from = range1, to = range2,
@@ -473,7 +415,8 @@ pop.decline.fit <- function(pop.size,
     
     if(best.name == "piecewise") { 
       
-      mod <- model.ls1[["piecewise"]]
+      #mod <- model.ls1[["piecewise"]]
+      mod <- best
       plot(mod, lwd=2, col= "#CC79A7", add=TRUE, dens.rug=FALSE, rug=FALSE)
       abline(v=mod$psi[,2], lty=3, col= "#CC79A7")
       legend(leg.pos, c("Piece-wise model", "Estim. break(s)"), lwd= 2, lty = c(1,3), col= "#CC79A7", bty = "n")

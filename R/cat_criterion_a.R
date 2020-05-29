@@ -45,7 +45,7 @@
 #'   A4_val = A4_val
 #' )
 #' 
-#' ## All four criteria, now categories for all criteria
+#' ## All four criteria, no categories for all criteria, just the consesus
 #' cat_criterion_a(
 #'   A1_val = A1_val,
 #'   A2_val = A2_val,
@@ -65,6 +65,14 @@
 #' cat_criterion_a(
 #'   A1_val = A1_val,
 #'   A2_val = NULL,
+#'   A3_val = NULL,
+#'   A4_val = NULL
+#' )
+#'
+#' ## One or more criteria not evaluated, one species
+#' cat_criterion_a(
+#'   A1_val = NULL,
+#'   A2_val = 0.4,
 #'   A3_val = NULL,
 #'   A4_val = NULL
 #' )
@@ -160,7 +168,7 @@ cat_criterion_a <- function(A1_val = NULL,
     
   } else {
     
-    return(list(ranks_A = ranks_A1234, cat_codes = cat_codes))
+    return(list(ranks_A = ranks_A1234, cats_code = cats_code))
     #return(list(ranks_A1234 = ranks_A1234, cat_codes = cat_codes))
     
   }
