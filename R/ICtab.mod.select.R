@@ -5,9 +5,10 @@
 #'  
 #' @return a list with the model selection table and the best model.
 #'
-#' @param x a names list with the models to be compared
-#' @param correct value of number of observations divided by the number of model parameters to apply the correction to the AIC
-#' @param cutoff threshold value of delta-AIC to select equally plausible models
+#' @param x a named list with the models to be compared
+#' @param correct numerical. The value of number of observations divided by the number of model parameters to apply the correction to the AIC
+#' @param cutoff numerical. The threshold value of delta-AIC to select equally plausible models
+#' @param parsimony logical. Should the most parsimonious model be select in case of two or more equally plausible models? Default to TRUE.
 #'  
 #' @details This function was adapted from the functions `AICtab` and `AICctab` from package `bbmle` 
 #'  (Bolker 2017), and should provide the same outputs. The main difference of `ICtab.mod.select` is 
@@ -17,11 +18,12 @@
 #'  for selection within the needs of package `conR`. These alternatives are provided because the assessment
 #'  of species conservation status often relies on very few observations (e.g. population size estimates).
 #'  
-#'  For the process of selecting the best model, we followed some basic steps. If two or more models had 
-#'  delta-AIC smaller than the cutoff provided, the model with less parameters is selected . If more than
-#'  one model is selected (i.e. both have the same number of parameters), the selection process give preference
-#'  to models that are not linear or quadratic, which tend provide projections that reach zero much faster and
-#'  that can generate non-realistic projections depending on the population data or on the years chosen for 
+#'  For the process of selecting the best model, we followed some basic steps. By default, if two or more models had 
+#'  delta-AIC smaller than the cutoff provided, the more parsimonious model (i.e. the model with less parameters)
+#'  is selected. However, this decision can be changed (i.e. slect the model with best fit) by setting the argument 
+#'  'parsimony' to FALSE. Next, if more than one model is selected (i.e. both have the same number of parameters), 
+#'  the selection process give preference to models that are not linear or quadratic, which tend provide projections 
+#'  that reach zero much faster and that can generate non-realistic projections depending on the population data or on the years chosen for 
 #'  the projection period.
 #'  
 #' @author Lima, R.A.F.
@@ -33,7 +35,7 @@
 #' 
 #' @export 
 #'
-ICtab.mod.select <- function(x, correct = 40, cutoff = log(8), ...) {
+ICtab.mod.select <- function(x, correct = 40, cutoff = log(8), parsimony = TRUE) {
   
   x1 <- x[!is.na(x)]
   if(is.null(names(x1))) 
@@ -76,13 +78,32 @@ ICtab.mod.select <- function(x, correct = 40, cutoff = log(8), ...) {
     
     if(all(ICs[, 1] <= cutoff)) {
       
-      best <- x1[which(ICs$df == min(ICs$df))][[1]]
-      best.name <- names(x1[which(ICs$df == min(ICs$df))])
+      if(parsimony) {
+        
+        best <- x1[which(ICs$df == min(ICs$df))][[1]]
+        best.name <- names(x1[which(ICs$df == min(ICs$df))])
+        
+      } else {
+        
+        best <- x1[which(ICs[, 1] == min(ICs[, 1]))][[1]]
+        best.name <- names(x1[which(ICs[, 1] == min(ICs[, 1]))])
+
+      }
       
     } else {
       
       id <- which(ICs[, 1] <= cutoff)
-      id <- id[which(ICs$df[id] == min(ICs$df[id]))]
+      
+      if(parsimony) {
+        
+        id <- id[which(ICs$df[id] == min(ICs$df[id]))]
+        
+      } else {
+        
+        id <- id[which(ICs[, 1][id] == min(ICs[, 1][id]))]
+        
+      }
+      
       best.name <- names(x1[id])
       
       if(length(best.name) > 1) {

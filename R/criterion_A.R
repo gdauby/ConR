@@ -2,14 +2,14 @@
 #'
 #' @description Preliminary assessment of species conservation status following
 #'  IUCN Criterion A, which is based on population size reductions (Criteria A1, 
-#'  A2, A3 and A4)
+#'  A2, A3, and A4)
 #'
 #' @param x a named vector or a data frame containing the population sizes (e.g.
-#'   number of mature individuals of the species) from the oldest to the most 
-#'   recent estimate.
+#'   number of mature individuals of the species) per year, from the oldest to 
+#'   the most recent estimate.
 #' @param years a vector containing the years for which the population sizes
-#'   is available (i.e. time series). Can be NULL if x contains the years as names.
-#' @param assess.year the year for which the assessment should be performed.
+#'   is available (i.e. time series). It can be NULL if x contains the years as names.
+#' @param assess.year numeric. The year for which the assessment should be performed.
 #' @param project.years a vector containing the years for which population sizes
 #'   were or should be projected.
 #' @param generation.time a value or vector of generation lengths, i.e. the
@@ -21,33 +21,49 @@
 #' @param data.type a character corresponding to the type of data (IUCN 2019):
 #'   "observation", "index" or "AOO_EOO" (only these types are currently
 #'   implemented)
-#' @param nature.evidence a character corresponding to nature of evidence (IUCN
+#' @param nature.evidence a character corresponding to the nature of evidence (IUCN
 #'   2019): "observed", "estimated", "projected", "inferred" or "suspected"
 #' @param A1.threshold numeric vector with the A1 thresholds to convert decline
-#'   estimates into categories. Default is the thresholds recommended by IUCN.
-#' @param A234.threshold numeric vector with the A2, A3 and A4 thresholds to
-#'   convert decline estimate into categories. Default is the thresholds
-#'   recommended by IUCN.
+#'   estimates into categories. Default values are the thresholds recommended by the IUCN.
+#' @param A234.threshold numeric vector with the A2, A3, and A4 thresholds to
+#'   convert decline estimate into categories. Default values are the thresholds
+#'   recommended by the IUCN.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
 #'
-#' @return a data frame containing, for each of the species provided, the year of 
+#' @return A data frame containing, for each of the species provided, the year of 
 #'   assessment, the time interval of the assessment (include past and future estimates,
-#'   if any), the population sizes in the intervalof assessment, the reduction of the 
-#'   population size using the chosen sub-criteria (A1, A2, A3 and A4), the model used
+#'   if any), the population sizes in the interval of assessment, the reduction of the 
+#'   population size using the chosen sub-criteria (A1, A2, A3, and A4), the model used
 #'   to obtain the projections of population size (if used), the IUCN categories 
 #'   associated with these sub-criteria and the consensus category for criterion A.
 #'
-#' @details TO BE COMPLETED
+#' @details As described in IUCN (2019), the choice between criteria A1 or A2 depends on 
+#'   three conditions: the reduction must be reversible, the causes of the reduction 
+#'   must be understood, and the threats must have ceased. "If any of the three conditions 
+#'   (reversible and understood and ceased) are not met (...), then A2 should be used 
+#'   instead of A1" (IUCN, 2019).
 #'
 #'   Some important notes. The function can return the predictions of population
-#'   estimates for years not in the observed data.
+#'   estimates for years not in the observed data, based on the fit of a set of different 
+#'   statistical models. As stated in IUCN (2019), the model used to make the 
+#'   predictions can result in very different estimates. So, it is preferable that
+#'   the user choose one or two of the models based on the best available information 
+#'   on types of threat (i.e. patterns of exploitation or habitat loss), life history 
+#'   and ecology of the taxon being evaluated or any other processes that may contribute 
+#'   to population decline. See IUCN (2019) for more details on the assumptions of each model.
+#'   The selection of models based solely on their fit to population data should only be used 
+#'   for larger time series (Number of observations > 10). 
 #'   
-#'   If `years` is a subset of all the years contained in `x`, them `x` is filtered
-#'   based on `years`. So, make sure you have selected the right years.
+#'   Some more technical notes. If `years` is a subset of all the years contained in `x`, 
+#'   then `x` is filtered based on `years`. So, make sure you have selected the right years.
+#'   If the year of assessment is not given, the most recent year is taken instead. The function 
+#'   accepts a single generation length for all species or species-specific generation lengths. 
+#'   In the latter case, it is necessary to provide exactly one value for each species analyzed. 
+#'   Currently, only one assessment year can be assigned for all taxa. Similarly, only 
+#'   one vector of years with population size available. Thus, it is advised not to mix
+#'   taxa with great differences in generation length.
 #'   
-#'   If the year of assessment is not given, the most recent year is taken instead.
-#'
 #' @author Lima, R.A.F. & Dauby, G.
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
@@ -58,7 +74,7 @@
 #'
 #' @examples
 #' 
-#' ## Simplest example: one species, two observations in time, one subcriteria
+#' ## Simplest example: one species, two observations in time, one subcriterion
 #'  pop = c("1970" = 10000, "2000" = 6000)
 #'  criterion_A(x = pop,
 #'   years = c(1970, 2000), 
@@ -72,7 +88,7 @@
 #' criterion_A(x = pop,
 #'   years = c(1970, 1980, 1990, 2000, 2030), 
 #'   assess.year = 2000,
-#'   project.years = 2030,
+#'   project.years = c(2010, 2020, 2030),
 #'   subcriteria = c("A1", "A2", "A3", "A4"),
 #'   generation.time = 10)
 #'   
@@ -94,6 +110,14 @@
 #'   subcriteria = c("A1", "A2", "A3", "A4"),
 #'   generation.time = 10)
 #'
+#' ## Same data and options but assuming different generation length for each taxon
+#' criterion_A(example_criterionA,
+#'   years = seq(1970, 2000, by = 2), 
+#'   assess.year = 2000,
+#'   project.years = seq(2002, 2030, by = 2),
+#'   subcriteria = c("A1", "A2", "A3", "A4"),
+#'   generation.time = c(2,5,10,15,30,50))
+#'   
 #' ## Same data but with different options (need to use predictions from statistical models)
 #' criterion_A(example_criterionA,
 #'   years = NULL, 
@@ -113,7 +137,8 @@ criterion_A = function(x,
                        nature.evidence = NULL,   
                        A1.threshold = c(50, 70, 90),
                        A234.threshold = c(30, 50, 80),
-                       all.cats = TRUE) {
+                       all.cats = TRUE,
+                       ...) {
   
   if(is.null(x))
     stop("Please provide at least two estimates of population sizes")
@@ -125,7 +150,7 @@ criterion_A = function(x,
     
     x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
                       stringsAsFactors = FALSE)
-
+    
   }
   
   if(is.null(years)) {
@@ -174,7 +199,7 @@ criterion_A = function(x,
     
     assess.year <- years[which.min(abs(years - assess.year))]
     warning(paste0("Year of assessment not in the provided time series: assuming the closest year: ",
-            assess.year))
+                   assess.year))
     
   }
   
@@ -185,58 +210,121 @@ criterion_A = function(x,
     warning("Generation length not given: assuming 10 years. Please, check if this is accurate for your species")
     
   } else {
-    
-    if((3 * generation.time) >= 10) {
+
+    if(dim(x)[1] != length(generation.time)) {
       
-      prev.year <- assess.year - 3 * generation.time
-      proj.year <- assess.year + 3 * generation.time
+      if(length(unique(generation.time)) > 1)
+        stop("Number of generation lengths is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
       
-      if((proj.year - assess.year)>100) {
+      if(length(unique(generation.time)) == 1) {
         
-        proj.year <- assess.year + 100
-        warning("Maximum year to project population sizes is more than 100 years into the future: assuming 100 years after the year of assessment")
-        
+        generation.time = rep(generation.time, dim(x)[1])
+        warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa")
+      
       }
-      
-    } else {
-      
-      prev.year = assess.year - 10
-      proj.year = assess.year + 10
-      warning("Three times the generation length is smaller than 10 years: assuming 10 years")
-      
     }
+
+    prev.year <- assess.year - 3 * generation.time
+    proj.year <- assess.year + 3 * generation.time
+    
+    if(any((3 * generation.time) < 10)) {
+      
+      prev.year[(3 * generation.time) < 10] <- assess.year - 10
+      proj.year[(3 * generation.time) < 10] <- assess.year + 10
+      warning("Three times the generation length was smaller than 10 years for one or more species: assuming 10 years")
+      
+    }   
+    
+    if(any(proj.year - assess.year > 100)) {
+          
+      proj.year[proj.year - assess.year > 100] <- assess.year + 100
+      warning("Maximum projection of population sizes is more than 100 years into the future: assuming 100 years after the year of assessment")
+          
+    }
+
   }
   
-  if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) proj.year = assess.year
+  if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) proj.year = rep(assess.year, length(proj.year))
   
-  if(!any(subcriteria %in% c("A1", "A2")) & any(subcriteria %in% c("A3", "A4"))) prev.year = assess.year
+  if(!any(subcriteria %in% c("A1", "A2")) & any(subcriteria %in% c("A3", "A4"))) prev.year = rep(assess.year, length(prev.year))
   
   if(is.null(project.years)) {
     
-    all.yrs <- prev.year:proj.year
-    yrs <- all.yrs[all.yrs %in% years]
-    int = median(diff(years), na.rm=TRUE)
-    if (!prev.year %in% yrs)
-      yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
-    if (!proj.year %in% yrs)
-      yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
+    all.yrs <- lapply(1:length(prev.year), 
+                      function(i) prev.year[i]:proj.year[i])
+    yrs <- lapply(1:length(all.yrs), 
+                  function(i) all.yrs[[i]][all.yrs[[i]] %in% years])
+    int <- median(diff(years), na.rm=TRUE)
+    miss.prev <- sapply(1:length(prev.year), 
+                       function(i) !prev.year[i] %in% yrs[[i]])
+    if(any(miss.prev))
+      yrs[miss.prev] <- 
+        lapply(1:length(yrs[miss.prev]), 
+               function(i) unique(c(seq(prev.year[miss.prev][i], min(yrs[miss.prev][[i]]), by= int), yrs[miss.prev][[i]])))
 
+    miss.proj <- sapply(1:length(proj.year), 
+                        function(i) !proj.year[i] %in% yrs[[i]])
+    if(any(miss.proj))
+      yrs[miss.proj] <- 
+        lapply(1:length(yrs[miss.proj]), 
+             function(i) unique(c(yrs[miss.proj][[i]], seq(max(yrs[miss.proj][[i]]), proj.year[miss.proj][i], by= int))))
+    
+    #all.yrs <- prev.year:proj.year
+    #yrs <- all.yrs[all.yrs %in% years]
+    # if (!prev.year %in% yrs)
+    #   yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
+    # if (!proj.year %in% yrs)
+    #   yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
+    
   } else {
     
-    yrs <- unique(c(years, project.years))
+    yrs <- rep(list(unique(c(years, project.years))), length(prev.year))
     int = median(diff(years), na.rm=TRUE)
-    if (prev.year < min(yrs))
-      yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
-    if (proj.year > max(yrs))
-      yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
-    
-    if(length(project.years) == 1 & (max(project.years) - max(years[!years %in% project.years]) >= int))
-      yrs = c(yrs[1:which.max(years[!years %in% project.years])],
-              seq(max(years[!years %in% project.years]) + int, project.years - int, by = int),
-              project.years)
+    miss.prev <- sapply(1:length(prev.year), 
+                        function(i) !prev.year[i] %in% yrs[[i]])
+    min.prev <- sapply(1:length(prev.year), 
+           function(i) prev.year[i] < min(yrs[[i]], na.rm = TRUE))
+    if(any(miss.prev)) {
+      
+      ids1 = which(miss.prev + min.prev == 1)
+      yrs[ids1] <- lapply(1:length(yrs[ids1]), 
+                          function(i) sort(unique(c(prev.year[ids1[i]], yrs[[ids1[i]]]))))
+      ids2 = which(miss.prev + min.prev == 2)
+      yrs[ids2] <- lapply(1:length(yrs[ids2]), 
+                               function(i) unique(c(prev.year[ids2[i]], 
+                                                    seq(prev.year[ids2[i]], min(yrs[[ids2[i]]]), by= int), 
+                                                    yrs[[ids2[i]]]))) 
+      
+    }
+
+    miss.proj <- sapply(1:length(proj.year), 
+                        function(i) !proj.year[i] %in% yrs[[i]])
+    max.proj <- sapply(1:length(proj.year), 
+                       function(i) max(yrs[[i]], na.rm = TRUE) < proj.year[i])
+    if(any(miss.proj)) {
+      
+      ids1 = which(miss.proj + max.proj == 1)
+      yrs[ids1] <- lapply(1:length(yrs[ids1]), 
+                          function(i) sort(unique(c(yrs[[ids1[i]]], proj.year[ids1[i]]))))
+      ids2 = which(miss.proj + max.proj == 2)
+      yrs[ids2] <- lapply(1:length(yrs[ids2]), 
+                          function(i) unique(c(yrs[[ids2[i]]], 
+                                               seq(max(yrs[[ids2[i]]]), proj.year[ids2[i]], by= int), 
+                                               proj.year[ids2[i]]))) 
+      #yrs <- unique(c(years, project.years))
+      # if (prev.year < min(yrs))
+      #   yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
+      # if (proj.year > max(yrs))
+      #   yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
+      # 
+      # if(length(project.years) == 1 & (max(project.years) - max(years[!years %in% project.years]) >= int))
+      #   yrs = c(yrs[1:which.max(years[!years %in% project.years])],
+      #           seq(max(years[!years %in% project.years]) + int, project.years - int, by = int),
+      #           project.years)
+      
+    }  
   }  
   
-  ## if the first column indicate the taxon name
   if(class(x[,1]) %in% c("factor", "character")) {
     
     names(x)[-1] <- gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))])
@@ -251,46 +339,51 @@ criterion_A = function(x,
   }
   
   best.models = NULL
+  miss.years = lapply(1:length(yrs), 
+         function(i) !yrs[[i]] %in% names(pop_data[[i]]))
   
-  if(any(!yrs %in% names(pop_data[[1]]))) {   # Predictions based on population trends
+  if(any(sapply(miss.years, any))) {   # Predictions based on population trends
     
     if(length(x) < 3) 
       stop("Too few year intervals to fit a model to population trends")
     
-    best.models = pop_data
+    best.models = as.list(rep(NA, length(pop_data)))
     
-    ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou paralell
-    for(i in 1:length(pop_data)) {
+    which.pred = which(sapply(miss.years, any))
+    
+    ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
+    for(i in 1:length(which.pred)) {
       
-      pred.sp <- pop.decline.fit(pop.size = pop_data[[i]], 
+      pred.sp <- pop.decline.fit(pop.size = pop_data[[which.pred[i]]], 
                                  years = years, 
                                  models = models,
-                                 project.years = yrs,
+                                 project.years = yrs[[which.pred[i]]],
                                  plot.fit = FALSE,
-                                 max.count = 50)
+                                 ...)
       pred.pop.size <- pred.sp$data$Observed
       pred.pop.size[is.na(pred.sp$data$Observed)] <- 
         pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
       names(pred.pop.size) <- pred.sp$data$Year
-      pop_data[[i]] <- pred.pop.size
-      best.models[[i]] <-  attributes(pred.sp$best.model)$best.model.name
+      pop_data[[which.pred[i]]] <- pred.pop.size
+      best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
       
     }
   }
-
-  assess.period = paste(unique(sort(c(range(yrs), assess.year))), collapse="-")
-  pop_data1 = lapply(pop_data, function(y) y[names(y) %in% yrs])
-  ps.interval = sapply(pop_data1, function(y) paste(
-                      unique(c(as.character(y[which(yrs %in% min(yrs))]),
-                        as.character(y[which(yrs %in% assess.year)]),
-                        as.character(y[which(yrs %in% max(yrs))]))), collapse = "-"))
- 
+  
+  assess.period <- lapply(1:length(pop_data), 
+                      function(i) paste(unique(sort(c(prev.year[i], assess.year, proj.year[i]))), collapse="-"))
+  pop_data1 <- lapply(1:length(pop_data), function(i) pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+  ps.interval <- sapply(1:length(pop_data1), function(i) paste(
+    unique(c(as.character(pop_data1[[i]][which(yrs[[i]] %in% prev.year[i])]),
+             as.character(pop_data1[[i]][which(yrs[[i]] %in% assess.year)]),
+             as.character(pop_data1[[i]][which(yrs[[i]] %in% proj.year[i])]))), collapse = "-"))
+  
   ## Population reduction using IUCN criteria
   Results = data.frame(
     species = names(pop_data),
     assessment.year = assess.year,
-    assessment.period = assess.period,
-    assessment.pop.sizes = ps.interval,
+    assessment.period = as.character(unlist(assess.period)),
+    assessment.pop.sizes = as.character(unlist(ps.interval)),
     #reduction_A12 = 100 * as.numeric(unlist(reduction_A12)),
     #reduction_A3 = 100 * as.numeric(unlist(reduction_A3)),
     #reduction_A4 = 100 * as.numeric(unlist(reduction_A4)),
@@ -306,29 +399,34 @@ criterion_A = function(x,
   # criteria A1/A2
   if("A1" %in% subcriteria | "A2" %in% subcriteria) {
     
-    if(length(pop_data) == 1 ) {
+    # if(length(pop_data) == 1 ) {
+    #   
+    #   Results$reduction_A12 <-
+    #     100 *(1 - (tail(as.numeric(pop_data[[1]]), 1) /        
+    #            head(as.numeric(pop_data[[1]]), 1)))
+    # 
+    # } else {
+    
+      Results$reduction_A12 <-
+        100 * sapply(1:length(pop_data), function(y) 
+          1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)]) /
+                 as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% prev.year[y])])))
       
-      Results$reduction_A12 <-
-        100 *(1 - (tail(as.numeric(pop_data[[1]]), 1) /        
-               head(as.numeric(pop_data[[1]]), 1)))
-
-    } else {
-    
-      Results$reduction_A12 <-
-        100 * sapply(pop_data, function(y) 
-          1 - (as.numeric(y[which(names(y) %in% assess.year)]) /
-                 as.numeric(y[which(names(y) %in% min(years))])))
-    
-    }
+          
+    # }
   }
   
   # criteria A3
   if("A3" %in% subcriteria) {
     
+    # Results$reduction_A3 <-
+    #   100 * sapply(pop_data, function(y)
+    #     1 - (as.numeric(y[which(names(y) %in% max(yrs))]) /
+    #            as.numeric(y[which(names(y) == assess.year)])))
     Results$reduction_A3 <-
-      100 * sapply(pop_data, function(y)
-        1 - (as.numeric(y[which(names(y) %in% max(yrs))]) /
-               as.numeric(y[which(names(y) == assess.year)])))
+      100 * sapply(1:length(pop_data), function(y)
+        1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year[y])]) /
+               as.numeric(pop_data[[y]][which(names(pop_data[[y]]) == assess.year)])))
     
   }
   
@@ -336,29 +434,68 @@ criterion_A = function(x,
   if("A4" %in% subcriteria) {
     
     ### Gilles: cannot be computed if no generation.time provided : any assumed value?
-    ### Renato: I think now it should be right
+    ### Renato: I think now it should be alright now
     #anos1 <- years[(1 + which(years == min(yrs))):(which(years == assess.year) - 1)]
-    anos1 <- yrs[(1 + which(yrs == min(yrs))):(which(yrs == assess.year) - 1)]
+    #anos1 <- yrs[(1 + which(yrs == min(yrs))):(which(yrs == assess.year) - 1)]
+    #anos1 <- lapply(yrs, function(x) x[(1 + which(x == min(x))):(which(x == assess.year) - 1)])
+    anos1 <- lapply(1:length(yrs),
+                    function(y) yrs[[y]][(1 + which(yrs[[y]] == min(prev.year[y]))):(which(yrs[[y]] == assess.year) - 1)])
     
     if(is.null(generation.time)) {
       
-      ids <- which(yrs %in% (anos1 + 10))
+      ids <- lapply(1:length(yrs), function(y) which(yrs[[y]] %in% (anos1[[y]] + 10)))
+      #ids <- which(yrs %in% (anos1 + 10))
       #anos2 <- yrs[which(yrs %in% (anos1 + 10))]
       
     } else {
       
-      ids <- which(yrs %in% (anos1 + 3 * generation.time))
+      ids <- lapply(1:length(yrs), 
+                          function(y) {
+                            try.yrs = anos1[[y]] + 3 * generation.time[y]
+                            sapply(1:length(try.yrs), 
+                                   function(j) which.min(abs(yrs[[y]] - try.yrs[j])))
+                          })
+      #ids <- lapply(1:length(yrs), 
+      #              function(y) which(yrs[[y]] %in% (anos1[[y]] + 3 * generation.time[y])))
+      #ids <- which(yrs %in% (anos1 + 3 * generation.time))
       #anos2 <- yrs[which(yrs %in% (anos1 + 3 * generation.time))]
       
+      if(any((3 * generation.time) < 10)) {
+        
+        ids1 = which((3 * generation.time) < 10) 
+        ids[ids1] <- lapply(1:length(yrs[ids1]), 
+                    function(y) which(yrs[ids1][[y]] %in% (anos1[ids1][[y]] + 10)))
+      
+      }    
+        
+    #   if(any(sapply(ids, length) == 0))  {
+    #     
+    #     ids1 = which(sapply(ids, length) == 0) 
+    #     ids[ids1] <- lapply(1:length(yrs[ids1]), 
+    #                         function(y) {
+    #                             try.yrs = 0.5 + anos1[ids1][[y]] + 3 * generation.time[ids1][y]
+    #                             sapply(1:length(try.yrs), 
+    #                                             function(j) which.min(abs(yrs[ids1][[y]] - try.yrs[j])))
+    #                             })
+    #     
+    #   }
     }
     
-    if(length(ids) > 0) {
+    if(any(sapply(ids, length)) > 0) {
       
-      anos2 <- yrs[ids]
+      anos2 <- lapply(1:length(yrs), function(y) yrs[[y]][ids[[y]]])
+      dup.yrs <- sapply(anos2, duplicated)
+      
       Results$reduction_A4 <-
-        100 * sapply(pop_data, function(y)
-          max(1 - (as.numeric(y[names(y) %in% as.character(anos2)]) /
-                     as.numeric(y[names(y) %in% as.character(anos1)])), na.rm = TRUE))
+        100 * sapply(1:length(pop_data), function(y)
+          max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])][!dup.yrs[[y]]]) /
+                     as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos1[[y]])][!dup.yrs[[y]]])), na.rm = TRUE))
+
+      #anos2 <- yrs[ids]
+      # Results$reduction_A4 <-
+      #   100 * sapply(pop_data, function(y)
+      #     max(1 - (as.numeric(y[names(y) %in% as.character(anos2)]) /
+      #                as.numeric(y[names(y) %in% as.character(anos1)])), na.rm = TRUE))
       
     }
   }  

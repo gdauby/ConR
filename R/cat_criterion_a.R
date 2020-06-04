@@ -94,7 +94,11 @@ cat_criterion_a <- function(A1_val = NULL,
     stop("Numbers of values provided for each criterion should be identical")
   
   if(any(unlist(lapply(L, is.null))))
-    warning(paste("The following criteria were not provided and are not used in the assessment: ", paste(names(L)[unlist(lapply(L, is.null))], collapse = ", ")),
+    warning(paste("The following subcriteria were not used in the assessment: ", paste(names(L)[unlist(lapply(L, is.null))], collapse = ", ")),
+            call. = FALSE)
+  
+  if(any(unlist(lapply(L, function(x) any(x<0)))))
+    warning(paste("The following subcriteria had population increase for one or more species: ", paste(names(L)[unlist(lapply(L, function(x) any(x<0)))], collapse = ", ")),
             call. = FALSE)
   
   # all.identical <- function(l) all(mapply(identical, head(l, 1), tail(l, -1)))

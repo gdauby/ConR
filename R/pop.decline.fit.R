@@ -8,7 +8,7 @@
 #'
 #' @param pop.size a vector containing the (estimated) number of mature individuals of the species 
 #' @param years a vector containing the years for which the population sizes is available 
-#' @param models a vector containing the names of the models to be fitted to species population data 
+#' @param models a vector containing the names of the statistical models to be fitted to species population data 
 #' @param project.years a vector containing the years for which the number of mature individuals should be predicted
 #' @param plot.fit logical. Should the fit of the best model be plotted against the population data?
 #' @param max.count numerical. Maximum number of attempts to fit piece-wise models. Default to 50.
@@ -16,10 +16,10 @@
 #' @details By default, the function compares the fit of six statistical models to the population trends, 
 #'  namely: linear, quadratic, exponential, logistic, generalized logistic and piece-wise. But, as stated in 
 #'  IUCN (2019), the model used to do the predictions makes an important difference. So, model fit to data should not be
-#'  the only or most important criteria. Users should preferably choose one or two of the models based on the best available 
-#'  information of types of threat (i.e. patterns of exploitation or habitat loss), life history and ecology of the 
-#'  taxon being evaluated or any other processes that may contribute to population decline. See IUCN (2019) for more 
-#'  details on the assumptions of each model.   
+#'  the only or most important criteria to choose among models. Users should preferably choose one or two of the models 
+#'  based on the best available information of types of threat (i.e. patterns of exploitation or habitat loss), life history 
+#'  and ecology of the taxon being evaluated or any other processes that may contribute to population decline. See IUCN (2019) 
+#'  for more details on the assumptions of each model.   
 #' 
 #'  The linear and exponential patterns of decline are fully described in IUCN (2019) and are easy to be
 #'  described statistically through a model (see Figure 4.2, pg. 33 of IUCN 2019). But IUCN (2019) also recognizes the 
@@ -77,7 +77,8 @@ pop.decline.fit <- function(pop.size,
                             models = "all", 
                             project.years = NULL,
                             plot.fit = TRUE,
-                            max.count = 50) {
+                            max.count = 50,
+                            ...) {
   
   if(is.null(years)) {
     
@@ -162,11 +163,12 @@ pop.decline.fit <- function(pop.size,
                            stats::nls.control(maxiter = 500)), TRUE)
     
     if (class(quad) == "try-error")
-      quad <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
+      quad <- suppressWarnings( nls.multstart::nls_multstart(f, data = na.omit(DATA),
                                            start_lower = c(a=0.1, b=-0.5, c= -0.1),
                                            start_upper = c(a=1, b=0.5, c= 0.1),
                                            iter = 500, supp_errors = 'Y', convergence_count = 100,
                                            na.action = na.omit)
+      )
     
     if (class(quad) == "try-error") 
       quad = stats::lm(ps ~ ys + I(ys^2), data = na.omit(DATA))
@@ -183,11 +185,12 @@ pop.decline.fit <- function(pop.size,
     
     if (class(exp) == "try-error") { 
       
-      exp <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
+      exp <- suppressWarnings( nls.multstart::nls_multstart(f, data = na.omit(DATA),
                                           start_lower = c(a=0.1, b=-0.1),
                                           start_upper = c(a=1, b=0.01),
                                           iter = 500, supp_errors = 'Y', convergence_count = 100,
                                           na.action = na.omit)
+      )
       
     }
     
@@ -203,11 +206,12 @@ pop.decline.fit <- function(pop.size,
     
     if (class(logis) == "try-error") { 
       
-      logis <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
+      logis <- suppressWarnings( nls.multstart::nls_multstart(f, data = na.omit(DATA),
                                             start_lower = c(a=1, b=-0.5),
                                             start_upper = c(a=5, b=0.1),
                                             iter = 500, supp_errors = 'Y', convergence_count = 100,
                                             na.action = na.omit)
+      )
       
     }
     
@@ -224,11 +228,12 @@ pop.decline.fit <- function(pop.size,
     
     if (class(gen.logis) == "try-error") { 
       
-      gen.logis <- nls.multstart::nls_multstart(f, data = na.omit(DATA),
+      gen.logis <- suppressWarnings( nls.multstart::nls_multstart(f, data = na.omit(DATA),
                                                 start_lower = c(a=0, b=0.5, m=max(na.omit(DATA)$ys)),
                                                 start_upper = c(a=1, b=0.01,m=0),
                                                 iter = 500, supp_errors = 'Y', convergence_count = 100,
                                                 na.action = na.omit)
+      )
       
     }
     
@@ -304,7 +309,7 @@ pop.decline.fit <- function(pop.size,
         
       } else {
         
-        md.sel = ICtab.mod.select(piece.mds)
+        md.sel = ICtab.mod.select(piece.mds, parsimony = TRUE, ...)
         piece <- md.sel$best.model
         
       }
@@ -319,7 +324,7 @@ pop.decline.fit <- function(pop.size,
     }    
   }
   
-  md.sel <- ICtab.mod.select(model.ls)
+  md.sel <- ICtab.mod.select(model.ls, ...)
   AICs <- md.sel$ICtab
   best <- md.sel$best.model
   best.name <- md.sel$best.model.name
