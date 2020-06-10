@@ -1,40 +1,47 @@
 #' @title Compute AIC/AICc Table and Select Best Model
-#' 
-#' @description Compute the values of AIC and AICc, compare them and return the model comparison,
-#'  the model with best support from the data and its name. 
-#'  
+#'
+#' @description Compute the values of AIC and AICc, compare them and return the
+#'   model comparison, the model with best support from the data and its name.
+#'
 #' @return a list with the model selection table and the best model.
 #'
 #' @param x a named list with the models to be compared
-#' @param correct numerical. The value of number of observations divided by the number of model parameters to apply the correction to the AIC
-#' @param cutoff numerical. The threshold value of delta-AIC to select equally plausible models
-#' @param parsimony logical. Should the most parsimonious model be select in case of two or more equally plausible models? Default to TRUE.
-#'  
-#' @details This function was adapted from the functions `AICtab` and `AICctab` from package `bbmle` 
-#'  (Bolker 2017), and should provide the same outputs. The main difference of `ICtab.mod.select` is 
-#'  that it some alternatives for allowing the comparison of models with few or more degrees of freedom 
-#'  then the number of observations, which return infinite values of logLik of the correction term 
-#'  in the AICc comparison. These alternatives are statistically incorrect, but they allow model ranking 
-#'  for selection within the needs of package `conR`. These alternatives are provided because the assessment
-#'  of species conservation status often relies on very few observations (e.g. population size estimates).
-#'  
-#'  For the process of selecting the best model, we followed some basic steps. By default, if two or more models had 
-#'  delta-AIC smaller than the cutoff provided, the more parsimonious model (i.e. the model with less parameters)
-#'  is selected. However, this decision can be changed (i.e. slect the model with best fit) by setting the argument 
-#'  'parsimony' to FALSE. Next, if more than one model is selected (i.e. both have the same number of parameters), 
-#'  the selection process give preference to models that are not linear or quadratic, which tend provide projections 
-#'  that reach zero much faster and that can generate non-realistic projections depending on the population data or on the years chosen for 
-#'  the projection period.
+#' @param correct numerical. The value of number of observations divided by the
+#'   number of model parameters to apply the correction to the AIC
+#' @param cutoff numerical. The threshold value of delta-AIC to select equally
+#'   plausible models
+#' @param parsimony logical. Should the most parsimonious model be select in
+#'   case of two or more equally plausible models? Default to TRUE.
+#'
+#' @details This function was adapted from the functions `AICtab` and `AICctab`
+#'   from package `bbmle` (Bolker 2017), and should provide the same outputs.
+#'   The main difference of `ICtab.mod.select` is that it some alternatives for
+#'   allowing the comparison of models with few or more degrees of freedom then
+#'   the number of observations, which return infinite values of logLik of the
+#'   correction term in the AICc comparison. These alternatives are
+#'   statistically incorrect, but they allow model ranking for selection within
+#'   the needs of package `conR`. These alternatives are provided because the
+#'   assessment of species conservation status often relies on very few
+#'   observations (e.g. population size estimates).
+#'
+#'   For the process of selecting the best model, we followed some basic steps.
+#'   By default, if two or more models had delta-AIC smaller than the cutoff
+#'   provided, the more parsimonious model (i.e. the model with less parameters)
+#'   is selected. However, this decision can be changed (i.e. slect the model
+#'   with best fit) by setting the argument 'parsimony' to FALSE. Next, if more
+#'   than one model is selected (i.e. both have the same number of parameters),
+#'   the selection process give preference to models that are not linear or
+#'   quadratic, which tend provide projections that reach zero much faster and
+#'   that can generate non-realistic projections depending on the population
+#'   data or on the years chosen for the projection period.
 #'  
 #' @author Lima, R.A.F.
-#
+#'
 #' @references 
 #'  Burnham and Anderson (2004)
 #'  Ben Bolker and R Development Core Team (2017). bbmle: Tools for General Maximum Likelihood
 #'   Estimation. R package version 1.0.20. https://CRAN.R-project.org/package=bbmle
 #' 
-#' @export 
-#'
 ICtab.mod.select <- function(x, correct = 40, cutoff = log(8), parsimony = TRUE) {
   
   x1 <- x[!is.na(x)]
@@ -42,7 +49,7 @@ ICtab.mod.select <- function(x, correct = 40, cutoff = log(8), parsimony = TRUE)
      names(x1) = paste("model ", 1:length(x1), sep= "")
     
   nobs <- sapply(x1, stats::nobs)
-  dfs <- sapply(x1, function(x) attr(logLik(x), "df"))
+  dfs <- sapply(x1, function(x) attr(stats::logLik(x), "df"))
   nks <- nobs/dfs 
   logLiks <- sapply(x1, function(x) c(stats::logLik(x)))
   

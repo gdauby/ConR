@@ -4,27 +4,165 @@
 \alias{criterion_C}
 \title{Assess IUCN Criterion C}
 \usage{
-criterion_C(x)
+criterion_C(x, years = NULL, assess.year = NULL,
+  project.years = NULL, generation.time = NULL, subpop.size = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic",
+  "general_logistic", "piecewise"), subcriteria = c("C1", "C2"),
+  C.threshold = c(10000, 2500, 250), C1.threshold = c(10, 20, 25),
+  C2ai.threshold = c(1000, 250, 50), C2aii.threshold = c(90, 95, 100),
+  mag.fluct = 10, high.alter = 80, all.cats = TRUE, ...)
 }
 \arguments{
-\item{x}{the character string.}
+\item{x}{a vector (one species) or a data frame (multiple species/
+subpopulations) containing the population sizes (e.g. number of mature
+individuals) per year, from the oldest to the most recent estimate.}
+
+\item{years}{a vector containing the years for which the population sizes is
+available (i.e. time series). Can be NULL if x contain years as names.}
+
+\item{assess.year}{the year for which the assessment should be performed.}
+
+\item{project.years}{a vector containing the years for which population sizes
+were or should be projected.}
+
+\item{generation.time}{a value or vector of generation lengths, i.e. the
+average age of parents of the current cohort (IUCN 2019).}
+
+\item{subpop.size}{a named list containing the vector of number of mature
+individuals per subpopulation. The length of the list must match the length
+and order of the taxa being assessed.}
+
+\item{models}{a vector containing the names of the models to be fitted to
+species population data to perform projections.}
+
+\item{subcriteria}{a vector containing the sub-criteria that should be
+included in the assessment (i.e. C1 and/or C2).}
+
+\item{C.threshold}{numeric vector with the criterion C thresholds to define
+small population sizes (e.g. number of mature individuals). Default values
+are the thresholds recommended by the IUCN.}
+
+\item{C1.threshold}{numeric vector with the C1 thresholds of continuing
+decline. Default values are the thresholds recommended by the IUCN.}
+
+\item{C2ai.threshold}{numeric vector with the C2a i thresholds for the
+population size of the lrgest subpopulation. Default are the values
+recommended by the IUCN.}
+
+\item{C2aii.threshold}{numeric vector with the C2a ii thresholds for the
+percentage of the population size in the same subpopulation. Default are
+the values recommended by the IUCN.}
+
+\item{mag.fluct}{numerical. Threshold of mean order of magnitude of the
+differences between population minima and maxima to classify populations
+with extreme fluctuations. Default to 10 as recommended by IUCN (2019).}
+
+\item{high.alter}{numerical. Threshold of proportion of changes that are
+followed by a change in the opposite direction. Default to 80%, but
+currently not implemented}
+
+\item{all.cats}{logical. Should the categories from all criteria be returned
+and not just the consensus categories?}
+
+\item{...}{other parameters to be passed as arguments for function `pop.decline.fit`}
 }
 \value{
-
+A data frame containing, for each of taxon, the year of assessment,
+  the time interval of the assessment (include past and future estimates, if
+  any), the population sizes in the interval of assessment, the model used to
+  obtain the projections of population size, the population decline and
+  subpopulation descritors related to sub-criteria C1 and C2, the IUCN
+  categories associated with these sub-criteria and the consensus category
+  for criterion C.
 }
 \description{
 Preliminary assessment of species conservation status following
- IUCN Criterion C, which is based on small population size and decline.
+  IUCN Criterion C, which is based on small population size (e.g. <10,000
+  mature individuals) that are declining or may decline in the near future.
 }
 \details{
-The function ...
+The function `criterion_C` is similar to another `ConR` function:
+  `criterion_A`. The main difference between these functions relies on the
+  differences between criteria A and C as described by IUCN (2019, p.70):
+  "criterion C applies only to small populations, the time frame over which
+  the decline is measured is shorter (...) and the decline rate thresholds
+  are lower, because the populations are already small".
+
+  Two basic tests are perfomed for each taxon for the assessment of criterion
+  C. First, we test if the population is small. By default, we use the
+  maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
+  individuals. If the taxon is not below this threshold, the assessment is
+  not performed. IUCN (2019) does not specify at what time the population
+  size should be below the threshold. Here, we consider the year of the
+  assessment.
+
+  Next, we test if population size is actually declining. IUCN (2019, p.43)
+  defines: "A continuing decline is a recent, current or projected future
+  decline (...) which is liable to continue unless remedial measures are
+  taken. (...). Continuing declines at any rate can be used to qualify taxa
+  under criteria B or C2. Estimated continuing decline (under criterion C1)
+  has quantitative thresholds, and requires a quantitative estimate, which
+  can be calculated using the same methods as for population reduction" (i.e.
+  criterion A). Therefore, function `criterion_C` consider two types of
+  decline: (i) continuing decline at any rate (sub-criteria C2) and (ii)
+  estimated continuing decline (sub-criteria C1).
+
+  The first type of decline is defined based on the mean change of population
+  size between observations (no fit of an statiscal); if the mean change from
+  the first population size suggests a decline in the population size, then
+  the population is classified as declining. Although IUCN (2019) considers
+  declines at any rate, here we consider populations in decline those with an
+  average decline of 0.1% or more, in order to incorporate small fluctuations
+  in stable populations. Moreover, although (IUCN 2019, p.43) states that
+  under criteria C2, "continuing declines can be observed, estimated,
+  inferred or projected", here we consider only observed, estimated, inferred
+  before the years of assessment.
+
+  The second type of decline is defined based on the statistical models
+  fitted to the observed or projected population data. Once the best model is
+  selected, the confidence interval of the parameters are computed. If the
+  parameter estimates indicate a declining tendence, then the population is
+  classified as declining (e.g. the slope parameter of the linear model is
+  negative, as well as the confidence interval around the slope estimate).
+  For this type of decline, we consider observed, estimated or projected
+  (IUCN 2019).
+
+  In the case of taxa with population size per subpopulation, there are two
+  ways to entering subpopulation information. The first is to provide a named
+  list with a vector of population sizes of each species at the year of
+  assessment. The other is to provide population sizes for each subpopulation
+  in `x`, and repeat the name of the taxon in the first column of `x`. In the
+  case of subpopulations, the overall reduction in population size is
+  obtained as recommended by IUCN (2019, p.38): the average of the reduction
+  of each subpopulation, weighted by their initial size.
+
+  As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
+  population size or area typically greater than one order of magnitude. In
+  addition, "Fluctuations must be inferred only where there is reasonable
+  certainty that a population change will be followed by a change in the
+  reverse direction within a generation or two" IUCN (2019).
 }
 \examples{
+
+## No subpopulations
+data(example_criterionC)
+
+criterion_C(x = example_criterionC,
+  years = NULL, 
+  assess.year = 2000,
+  project.years = NULL,
+  generation.time = 10,
+  subpop.size = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic")
+  subcriteria = c("C1", "C2")
+  )
 
 
 }
 \references{
-
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F. & Dauby, G.

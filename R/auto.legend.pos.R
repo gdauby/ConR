@@ -1,16 +1,18 @@
 #' @title Set Legend Position Automatically
 #'
-#' @param x a vector containing the (estimated) number of mature individuals of the species 
-#' @param y a vector containing the years for which the number of mature individuals was estimated 
-#' @param xlim a vector containing the names of the models to be fitted to species population data 
-#' @param ylim a vector containing the years for which the number of mature individuals should be predicted
-#' 
+#' @param x a vector containing the (estimated) number of mature individuals of
+#'   the species
+#' @param y a vector containing the years for which the number of mature
+#'   individuals was estimated
+#' @param xlim a vector containing the names of the models to be fitted to
+#'   species population data
+#' @param ylim a vector containing the years for which the number of mature
+#'   individuals should be predicted
+#'
 #' @author user 'chan1142' in stackoverflow
 #'
 #' @references https://stackoverflow.com/questions/7198178/automatically-determine-position-of-plot-legend
 #' 
-#' @export 
-#'
 auto.legend.pos <- function(x, y, xlim=range(x), ylim=range(y)) {
   countIt <- function(a, zero.only = TRUE) {
     tl <- sum(x <= xlim[1]*(1-a)+xlim[2]*a & y >= ylim[1]*a+ylim[2]*(1-a), na.rm = TRUE)

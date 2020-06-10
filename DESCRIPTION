@@ -1,12 +1,12 @@
 Package: ConR
 Type: Package
 Title: Computation of Parameters Used in Preliminary Assessment of Conservation Status
-Version: 1.3.0
+Version: 2.0
 Maintainer: Gilles Dauby <gildauby@gmail.com>
-Description: Multi-species estimation of geographical range parameters
-	for preliminary assessment of conservation status following Criterion B of the 
-	International Union for Conservation of Nature (IUCN, 
-	see <http://www.iucnredlist.org>).
+Description: Multi-species estimation of biological indicators of populations used
+    for the preliminary assessment of conservation status following Criterion A, B, 
+    C and D of the International Union for Conservation of Nature (IUCN, 
+    see <http://www.iucnredlist.org>).
 Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
@@ -22,5 +22,6 @@ Authors@R: c(
 	person("Gilles", "Dauby", role = c("cre", "aut"),
 	email = "gildauby@gmail.com", 
 	comment = c(ORCID = "0000-0002-9498-413X")),
-	person("Renato", "Augusto Ferreira de Lima", role = c("ctb"), 
+	person("Renato", "Augusto Ferreira de Lima", role = c("aut"),
+	email = "renato.lima@naturalis.nl", 
 	comment = c(ORCID = "0000-0002-1048-0138")))

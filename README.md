@@ -44,3 +44,28 @@ be obtained by the following code:
     ?IUCN.eval
     ?map.res
     ?subpop.comp
+    
+## Authors
+
+  Gilles Dauby <gildauby@gmail.com>
+  Renato A. F. de Lima <renato.lima@naturalis.nl>
+
+## References
+
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+    Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+    http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+
+## See Also
+
+  ##Cite other IUCN assessment-related R packages? 
+  #rredlist (https://cran.r-project.org/web/packages/rredlist/rredlist.pdf)
+  #red (https://cran.r-project.org/web/packages/red/red.pdf)
+  #redlistr (https://cran.r-project.org/web/packages/redlistr/redlistr.pdf)
+
+## Funding
+
+The development of this package was supported by the European Union’s Horizon 2020 research and innovation program under the Marie Skłodowska-Curie grant agreement No 795114.
+
+## Acknowledgements
+

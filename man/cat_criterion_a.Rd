@@ -4,42 +4,50 @@
 \alias{cat_criterion_a}
 \title{Categorize taxa according to IUCN criterion A}
 \usage{
-cat_criterion_a(
-  A1_val = NULL,
-  A2_val = NULL,
-  A3_val = NULL,
-  A4_val = NULL,
-  A1.threshold = c(50, 70, 90),
-  A234.threshold = c(30, 50, 80)
-)
+cat_criterion_a(A1_val = NULL, A2_val = NULL, A3_val = NULL,
+  A4_val = NULL, A1.threshold = c(50, 70, 90), A234.threshold = c(30,
+  50, 80), all.cats = TRUE)
 }
 \arguments{
-\item{A1_val}{numeric vector}
+\item{A1_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A1.}
 
-\item{A2_val}{numeric vector}
+\item{A2_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A2.}
 
-\item{A3_val}{numeric vector}
+\item{A3_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A3.}
 
-\item{A4_val}{numeric vector}
+\item{A4_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A4.}
 
-\item{A1.threshold}{numeric vector}
+\item{A1.threshold}{numeric vector with the A1 thresholds to convert decline estimates into categories. Default is the thresholds recommended by IUCN.}
 
-\item{A234.threshold}{numeric vector}
+\item{A234.threshold}{numeric vector with the A2, A3 and A4 thresholds to convert decline estimate into categories. Default is the thresholds recommended by IUCN.}
+
+\item{all.cats}{logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.}
 }
 \value{
-list
+A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (`ranks_A`) and
+the sub-criteria used to obtain the consensus category (`cat_codes`). If `all.cats  == TRUE` the function also returns a
+data frame containing the categories classified by each sub-criterion individually (`all.cats`).
 }
 \description{
-Provide IUCN category based on the four sub-criteria and provided thresholds
+Provide the consensus IUCN category based on the sub-criteria of 
+IUCN criterion A (A1, A2, A3 and A4) and the thresholds recommended by IUCN.
 }
 \details{
-The function ...
+By default, the function provides the consensus category, following the recommendations of IUCN (2019)
+that states "Only the criteria for the highest category of threat that the taxon qualifies for should be listed".
+Therefore, the consensus category is the highest category of threat among the sub-criteria evaluated.
+
+The function assumes that the order of the values in A1_val, A2_val, A3_val and A4_val are 
+from the same taxa (i.e. first element from A1_val until A4_val is always the same species i). 
+Therefore, the order of the estimates of population decline for each sub-criterion *must* be the same.
 }
 \examples{
 A1_val <- c(40, 90, 75, 10)
 A2_val <- c(90, 95, 30, 10)
 A3_val <- c(10, 30, 45, 15)
 A4_val <- c(32, 18, 80, 20)
+
+## All four criteria
 cat_criterion_a(
   A1_val = A1_val,
   A2_val = A2_val,
@@ -47,9 +55,41 @@ cat_criterion_a(
   A4_val = A4_val
 )
 
+## All four criteria, no categories for all criteria, just the consesus
+cat_criterion_a(
+  A1_val = A1_val,
+  A2_val = A2_val,
+  A3_val = A3_val,
+  A4_val = A4_val,
+  all.cats = FALSE
+)
+
+## One or more criteria not evaluated
+cat_criterion_a(
+  A1_val = NULL,
+  A2_val = A2_val,
+  A3_val = A3_val,
+  A4_val = A4_val
+)
+
+cat_criterion_a(
+  A1_val = A1_val,
+  A2_val = NULL,
+  A3_val = NULL,
+  A4_val = NULL
+)
+
+## One or more criteria not evaluated, one species
+cat_criterion_a(
+  A1_val = NULL,
+  A2_val = 0.4,
+  A3_val = NULL,
+  A4_val = NULL
+)
+
 }
 \references{
-
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Dauby, G. & Lima, R.A.F.

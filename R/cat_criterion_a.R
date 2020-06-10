@@ -3,17 +3,17 @@
 #' @description Provide the consensus IUCN category based on the sub-criteria of 
 #' IUCN criterion A (A1, A2, A3 and A4) and the thresholds recommended by IUCN.
 #'
-#' @param A1_val numeric vector of the estimates of population decline based on IUCN sub-criteria A1.
-#' @param A2_val numeric vector of the estimates of population decline based on IUCN sub-criteria A2.
-#' @param A3_val numeric vector of the estimates of population decline based on IUCN sub-criteria A3.
-#' @param A4_val numeric vector of the estimates of population decline based on IUCN sub-criteria A4.
+#' @param A1_val numeric vector of the estimates of population decline based on IUCN sub-criterion A1.
+#' @param A2_val numeric vector of the estimates of population decline based on IUCN sub-criterion A2.
+#' @param A3_val numeric vector of the estimates of population decline based on IUCN sub-criterion A3.
+#' @param A4_val numeric vector of the estimates of population decline based on IUCN sub-criterion A4.
 #' @param A1.threshold numeric vector with the A1 thresholds to convert decline estimates into categories. Default is the thresholds recommended by IUCN.
 #' @param A234.threshold numeric vector with the A2, A3 and A4 thresholds to convert decline estimate into categories. Default is the thresholds recommended by IUCN.
 #' @param all.cats logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.
 #' 
 #' @return A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (`ranks_A`) and
 #' the sub-criteria used to obtain the consensus category (`cat_codes`). If `all.cats  == TRUE` the function also returns a
-#' data frame containing the categories classified by each sub-criteria individually (`all.cats`).
+#' data frame containing the categories classified by each sub-criterion individually (`all.cats`).
 #' 
 #' @details By default, the function provides the consensus category, following the recommendations of IUCN (2019)
 #' that states "Only the criteria for the highest category of threat that the taxon qualifies for should be listed".
@@ -21,13 +21,13 @@
 #' 
 #' The function assumes that the order of the values in A1_val, A2_val, A3_val and A4_val are 
 #' from the same taxa (i.e. first element from A1_val until A4_val is always the same species i). 
-#' Therefore, the order of the estimates of population decline for each sub-criteria *must* be the same.
+#' Therefore, the order of the estimates of population decline for each sub-criterion *must* be the same.
 #' 
 #' @author Dauby, G. & Lima, R.A.F.
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @importFrom stringr str_replace_all
+# @importFrom stringr str_replace_all
 #' 
 #' @export cat_criterion_a
 #'

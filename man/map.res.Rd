@@ -4,20 +4,10 @@
 \alias{map.res}
 \title{Mapping in grid cell results of IUCN.eval}
 \usage{
-map.res(
-  Results,
-  Occurrences,
-  country_map = NULL,
-  Resol = 1,
-  threshold = 0,
-  LatMin = NULL,
-  LatMax = NULL,
-  LongMin = NULL,
-  LongMax = NULL,
-  export_map = FALSE,
-  file_name = NULL,
-  export_data = FALSE
-)
+map.res(Results, Occurrences, country_map = NULL, Resol = 1,
+  threshold = 0, LatMin = NULL, LatMax = NULL, LongMin = NULL,
+  LongMax = NULL, export_map = FALSE, file_name = NULL,
+  export_data = FALSE)
 }
 \arguments{
 \item{Results}{The default output of \code{\link{IUCN.eval}} applied to

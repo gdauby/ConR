@@ -3,9 +3,7 @@
 \name{dataset.ex}
 \alias{dataset.ex}
 \title{Dataset of plant species distribution}
-\format{
-A dataframe
-}
+\format{A dataframe}
 \usage{
 data(dataset.ex)
 }

@@ -4,19 +4,11 @@
 \alias{locations.comp}
 \title{Number of locations}
 \usage{
-locations.comp(
-  XY,
-  method = "fixed_grid",
-  nbe_rep = 0,
-  protec.areas = NULL,
-  Cell_size_locations = 10,
-  method_protected_area = "no_more_than_one",
-  ID_shape_PA = "WDPA_PID",
-  Rel_cell_size = 0.05,
-  parallel = FALSE,
-  NbeCores = 2,
-  show_progress = TRUE
-)
+locations.comp(XY, method = "fixed_grid", nbe_rep = 0,
+  protec.areas = NULL, Cell_size_locations = 10,
+  method_protected_area = "no_more_than_one", ID_shape_PA = "WDPA_PID",
+  Rel_cell_size = 0.05, parallel = FALSE, NbeCores = 2,
+  show_progress = TRUE)
 }
 \arguments{
 \item{XY}{data.frame, see details}

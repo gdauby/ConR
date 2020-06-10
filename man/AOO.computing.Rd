@@ -4,15 +4,9 @@
 \alias{AOO.computing}
 \title{Area of occupancy}
 \usage{
-AOO.computing(
-  XY,
-  Cell_size_AOO = 2,
-  nbe.rep.rast.AOO = 0,
-  parallel = FALSE,
-  NbeCores = 2,
-  show_progress = TRUE,
-  export_shp = FALSE
-)
+AOO.computing(XY, Cell_size_AOO = 2, nbe.rep.rast.AOO = 0,
+  parallel = FALSE, NbeCores = 2, show_progress = TRUE,
+  export_shp = FALSE)
 }
 \arguments{
 \item{XY}{\code{"dataframe"} see Details}

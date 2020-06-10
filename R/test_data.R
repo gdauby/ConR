@@ -3,6 +3,8 @@
 # loading packages
 library(stringr)
 library(readr)
+
+#### Reading and pre-editing files ####
 path = "C://Users//renato//Documents//raflima//Pos Doc//Manuscritos//Artigo Extincao na MA//data analysis"
 dic_files <- list.files(path = path,
                         pattern = "csv",
@@ -15,7 +17,7 @@ lapply(dic, head)
 # transforma em data.frame
 dic <- lapply(dic, as.data.frame)
 
-# criterion Ataxonomists:
+#### criterion A ####
 example_criterionA <- dic[[1]]
 
 # só checando como estao os arquivos
@@ -69,11 +71,40 @@ example_criterionA = rbind.data.frame(example_criterionA,
                                       new.pops,
                                       deparse.level = 0, 
                                       stringsAsFactors = FALSE)
-#Saving the sysdata
+
+## Saving the sysdata ##
 save(example_criterionA,
      file = "data/example_criterionA.rda",
      compress = "xz")
 
+
+#### criterion C ####
+example_criterionC <- dic[[2]][,1:8]
+
+# Overall pop sizes
+example_criterionC1 <- rowsum(example_criterionC[,c(2:8)],
+       example_criterionC$species)
+
+# checking
+example_criterionC
+example_criterionC1
+
+save(example_criterionC,
+     file = "data/example_criterionC_subpops.rda",
+     compress = "xz")
+
+save(example_criterionC1,
+     file = "data/example_criterionC.rda",
+     compress = "xz")
+
+#### FLUCTUATIONS ####
+example_fluctuation <- dic[[3]]
+
+example_fluctuation <- example_fluctuation[!apply(example_fluctuation[,-1], 1, function(x) all(is.na(x))), ]
+
+save(example_fluctuation,
+     file = "data/example_fluctuation.rda",
+     compress = "xz")
 
 
 

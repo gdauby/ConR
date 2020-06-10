@@ -4,9 +4,9 @@
 #'  IUCN Criterion A, which is based on population size reductions (Criteria A1, 
 #'  A2, A3, and A4)
 #'
-#' @param x a named vector or a data frame containing the population sizes (e.g.
-#'   number of mature individuals of the species) per year, from the oldest to 
-#'   the most recent estimate.
+#' @param x a vector (one species) or a data frame (multiple species/
+#'   subpopulations) containing the population sizes (e.g. number of mature
+#'   individuals) per year, from the oldest to the most recent estimate.
 #' @param years a vector containing the years for which the population sizes
 #'   is available (i.e. time series). It can be NULL if x contains the years as names.
 #' @param assess.year numeric. The year for which the assessment should be performed.
@@ -30,13 +30,15 @@
 #'   recommended by the IUCN.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
+#' @param ... other parameters to be passed as arguments for function `pop.decline.fit`    
 #'
-#' @return A data frame containing, for each of the species provided, the year of 
-#'   assessment, the time interval of the assessment (include past and future estimates,
-#'   if any), the population sizes in the interval of assessment, the reduction of the 
-#'   population size using the chosen sub-criteria (A1, A2, A3, and A4), the model used
-#'   to obtain the projections of population size (if used), the IUCN categories 
-#'   associated with these sub-criteria and the consensus category for criterion A.
+#' @return A data frame containing, for each taxon, the year of assessment, the
+#'   time interval of the assessment (include past and future estimates, if
+#'   any), the population sizes in the interval of assessment, the reduction of
+#'   the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
+#'   model used to obtain the projections of population size (if used), the IUCN
+#'   categories associated with these sub-criteria and the consensus category
+#'   for criterion A.
 #'
 #' @details As described in IUCN (2019), the choice between criteria A1 or A2 depends on 
 #'   three conditions: the reduction must be reversible, the causes of the reduction 
@@ -73,7 +75,6 @@
 #' @export criterion_A
 #'
 #' @examples
-#' 
 #' ## Simplest example: one species, two observations in time, one subcriterion
 #'  pop = c("1970" = 10000, "2000" = 6000)
 #'  criterion_A(x = pop,
@@ -144,14 +145,14 @@ criterion_A = function(x,
     stop("Please provide at least two estimates of population sizes")
   
   if(!any(subcriteria %in% c("A1", "A2", "A3", "A4")))
-    stop("Please provide at least one sub-criteria for the assessment: A1, A2, A3 and/or A4")
+    stop("Please provide at least one sub-criterion for the assessment: A1, A2, A3 and/or A4")
   
-  if(is.vector(x)) {
-    
-    x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
-                      stringsAsFactors = FALSE)
-    
-  }
+  # if(is.vector(x)) {
+  #   
+  #   x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
+  #                     stringsAsFactors = FALSE)
+  #   
+  # }
   
   if(is.null(years)) {
     
@@ -162,6 +163,24 @@ criterion_A = function(x,
     
     years <- anos
     warning("The years of the population sizes were not given and were taken from the input population data", call. = FALSE)
+  }
+  
+  if(is.vector(x)) {
+    
+    if(is.null(names(x))) {
+      
+      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
+                        stringsAsFactors = FALSE)
+      
+    } else {
+      
+      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
+                        stringsAsFactors = FALSE)
+      
+    }
+    
+    x = cbind.data.frame(data.frame(species = "species 1"), x)
+    
   }
   
   if(length(years) < 2)
@@ -220,10 +239,10 @@ criterion_A = function(x,
         
         generation.time = rep(generation.time, dim(x)[1])
         warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa")
-      
+        
       }
     }
-
+    
     prev.year <- assess.year - 3 * generation.time
     proj.year <- assess.year + 3 * generation.time
     
@@ -236,12 +255,12 @@ criterion_A = function(x,
     }   
     
     if(any(proj.year - assess.year > 100)) {
-          
+      
       proj.year[proj.year - assess.year > 100] <- assess.year + 100
       warning("Maximum projection of population sizes is more than 100 years into the future: assuming 100 years after the year of assessment")
-          
+      
     }
-
+    
   }
   
   if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) proj.year = rep(assess.year, length(proj.year))
@@ -254,19 +273,19 @@ criterion_A = function(x,
                       function(i) prev.year[i]:proj.year[i])
     yrs <- lapply(1:length(all.yrs), 
                   function(i) all.yrs[[i]][all.yrs[[i]] %in% years])
-    int <- median(diff(years), na.rm=TRUE)
+    int <- stats::median(diff(years), na.rm=TRUE)
     miss.prev <- sapply(1:length(prev.year), 
-                       function(i) !prev.year[i] %in% yrs[[i]])
+                        function(i) !prev.year[i] %in% yrs[[i]])
     if(any(miss.prev))
       yrs[miss.prev] <- 
-        lapply(1:length(yrs[miss.prev]), 
-               function(i) unique(c(seq(prev.year[miss.prev][i], min(yrs[miss.prev][[i]]), by= int), yrs[miss.prev][[i]])))
-
+      lapply(1:length(yrs[miss.prev]), 
+             function(i) unique(c(seq(prev.year[miss.prev][i], min(yrs[miss.prev][[i]]), by= int), yrs[miss.prev][[i]])))
+    
     miss.proj <- sapply(1:length(proj.year), 
                         function(i) !proj.year[i] %in% yrs[[i]])
     if(any(miss.proj))
       yrs[miss.proj] <- 
-        lapply(1:length(yrs[miss.proj]), 
+      lapply(1:length(yrs[miss.proj]), 
              function(i) unique(c(yrs[miss.proj][[i]], seq(max(yrs[miss.proj][[i]]), proj.year[miss.proj][i], by= int))))
     
     #all.yrs <- prev.year:proj.year
@@ -279,11 +298,11 @@ criterion_A = function(x,
   } else {
     
     yrs <- rep(list(unique(c(years, project.years))), length(prev.year))
-    int = median(diff(years), na.rm=TRUE)
+    int = stats::median(diff(years), na.rm=TRUE)
     miss.prev <- sapply(1:length(prev.year), 
                         function(i) !prev.year[i] %in% yrs[[i]])
     min.prev <- sapply(1:length(prev.year), 
-           function(i) prev.year[i] < min(yrs[[i]], na.rm = TRUE))
+                       function(i) prev.year[i] < min(yrs[[i]], na.rm = TRUE))
     if(any(miss.prev)) {
       
       ids1 = which(miss.prev + min.prev == 1)
@@ -291,12 +310,12 @@ criterion_A = function(x,
                           function(i) sort(unique(c(prev.year[ids1[i]], yrs[[ids1[i]]]))))
       ids2 = which(miss.prev + min.prev == 2)
       yrs[ids2] <- lapply(1:length(yrs[ids2]), 
-                               function(i) unique(c(prev.year[ids2[i]], 
-                                                    seq(prev.year[ids2[i]], min(yrs[[ids2[i]]]), by= int), 
-                                                    yrs[[ids2[i]]]))) 
+                          function(i) unique(c(prev.year[ids2[i]], 
+                                               seq(prev.year[ids2[i]], min(yrs[[ids2[i]]]), by= int), 
+                                               yrs[[ids2[i]]]))) 
       
     }
-
+    
     miss.proj <- sapply(1:length(proj.year), 
                         function(i) !proj.year[i] %in% yrs[[i]])
     max.proj <- sapply(1:length(proj.year), 
@@ -500,7 +519,7 @@ criterion_A = function(x,
     }
   }  
   
-  ## specific function to categorize taxa based on reductions values.
+  ## specific function to categorize taxa based on reductions values
   all_ranks <- cat_criterion_a(
     A1_val = if("A1" %in% subcriteria) Results$reduction_A12 else NULL,
     A2_val = if("A2" %in% subcriteria) Results$reduction_A12 else NULL,
