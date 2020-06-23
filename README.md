@@ -53,6 +53,11 @@ The development of this package was supported by:
   - the European Union’s Horizon 2020 research and innovation program
     under the Marie Skłodowska-Curie grant agreement No 795114.
 
+  - CESAB (Centre for the Synthesis and Analysis of Biodiversity).
+    Research program of the FRB (Foundation for Research on
+    Biodiversity) under the [RAINBIO
+    project](https://gdauby.github.io/rainbio/index.html).
+
 ## Acknowledgements
 
 ## See Also
