@@ -3,7 +3,8 @@
 
 [![Travis build
 status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
-<!-- badges: end -->
+<!-- badges: end --> [![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
 
 The ideas behind this package, and its testing involved many people and
 institutes. See the original paper published in [Ecology and
@@ -44,36 +45,24 @@ be obtained by the following code:
     ?IUCN.eval
     ?map.res
     ?subpop.comp
-    
-## Authors
-
-  Gilles Dauby <gildauby@gmail.com>
-  
-  Renato A. F. de Lima <renato.lima@naturalis.nl>
-
-## References
-
-Dauby, G, Stévart, T, Droissart, V, et al. ConR : An R package to assist large‐scale     multispecies preliminary conservation assessments using distribution data. Ecol     Evol. 2017; 7: 11292– 11303. https://doi.org/10.1002/ece3.3704
-
-IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-    Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-    http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 
 ## Funding
 
-The development of this package was supported by: 
+The development of this package was supported by:
 
-  - the European Union’s Horizon 2020 research and innovation program under the Marie Skłodowska-Curie grant agreement No 795114.
+  - the European Union’s Horizon 2020 research and innovation program
+    under the Marie Skłodowska-Curie grant agreement No 795114.
 
 ## Acknowledgements
-
 
 ## See Also
 
 Other R packages related to IUCN assessments:
 
-  - `rredlist` (https://cran.r-project.org/web/packages/rredlist/rredlist.pdf)
-  
-  - `red` (https://cran.r-project.org/web/packages/red/red.pdf)
-  
-  - `redlistr` (https://cran.r-project.org/web/packages/redlistr/redlistr.pdf)
+  - `rredlist`
+    (<https://cran.r-project.org/web/packages/rredlist/rredlist.pdf>)
+
+  - `red` (<https://cran.r-project.org/web/packages/red/red.pdf>)
+
+  - `redlistr`
+    (<https://cran.r-project.org/web/packages/redlistr/redlistr.pdf>)
