@@ -64,10 +64,8 @@ The development of this package was supported by:
 
 Other R packages related to IUCN assessments:
 
-  - `rredlist`
-    (<https://cran.r-project.org/web/packages/rredlist/rredlist.pdf>)
+  - [`rredlist`](https://cran.r-project.org/web/packages/rredlist/rredlist.pdf)
 
-  - `red` (<https://cran.r-project.org/web/packages/red/red.pdf>)
+  - [`red`](https://cran.r-project.org/web/packages/red/red.pdf)
 
-  - `redlistr`
-    (<https://cran.r-project.org/web/packages/redlistr/redlistr.pdf>)
+  - [`redlistr`](https://cran.r-project.org/web/packages/redlistr/redlistr.pdf)

@@ -77,6 +77,7 @@ save(example_criterionA,
      file = "data/example_criterionA.rda",
      compress = "xz")
 
+load("data/example_criterionA.rda")
 
 #### criterion C ####
 example_criterionC <- dic[[2]][,1:8]
