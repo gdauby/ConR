@@ -3,7 +3,8 @@
 
 [![Travis build
 status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
-<!-- badges: end -->
+<!-- badges: end --> [![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
 
 The ideas behind this package, and its testing involved many people and
 institutes. See the original paper published in [Ecology and
@@ -44,3 +45,27 @@ be obtained by the following code:
     ?IUCN.eval
     ?map.res
     ?subpop.comp
+
+## Funding
+
+The development of this package was supported by:
+
+  - the European Union’s Horizon 2020 research and innovation program
+    under the Marie Skłodowska-Curie grant agreement No 795114.
+
+  - CESAB (Centre for the Synthesis and Analysis of Biodiversity).
+    Research program of the FRB (Foundation for Research on
+    Biodiversity) under the [RAINBIO
+    project](https://gdauby.github.io/rainbio/index.html).
+
+## Acknowledgements
+
+## See Also
+
+Other R packages related to IUCN assessments:
+
+  - [`rredlist`](https://cran.r-project.org/web/packages/rredlist/rredlist.pdf)
+
+  - [`red`](https://cran.r-project.org/web/packages/red/red.pdf)
+
+  - [`redlistr`](https://cran.r-project.org/web/packages/redlistr/redlistr.pdf)

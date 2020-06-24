@@ -4,52 +4,153 @@
 \alias{criterion_A}
 \title{Assess IUCN Criterion A}
 \usage{
-criterion_A(
-  x,
-  years = NULL,
-  assess.year = NULL,
-  project.years = NULL,
-  generation.time = NULL,
-  models = c("linear", "accelerating", "exponential", "logistic", "general_logistic"),
-  A1.threshold = c(50, 70, 90),
-  A234.threshold = c(30, 50, 80)
-)
+criterion_A(x, years = NULL, assess.year = NULL,
+  project.years = NULL, generation.time = NULL, models = c("linear",
+  "quadratic", "exponential", "logistic", "general_logistic", "piecewise"),
+  subcriteria = c("A1", "A2", "A3", "A4"), data.type = NULL,
+  nature.evidence = NULL, A1.threshold = c(50, 70, 90),
+  A234.threshold = c(30, 50, 80), all.cats = TRUE, ...)
 }
 \arguments{
-\item{x}{a vector or a data frame containing the (estimated) number of mature individuals of the species}
+\item{x}{a vector (one species) or a data frame (multiple species/
+subpopulations) containing the population sizes (e.g. number of mature
+individuals) per year, from the oldest to the most recent estimate.}
 
-\item{years}{a vector containing the years for which the number of mature individuals was estimated}
+\item{years}{a vector containing the years for which the population sizes
+is available (i.e. time series). It can be NULL if x contains the years as names.}
 
-\item{assess.year}{}
+\item{assess.year}{numeric. The year for which the assessment should be performed.}
 
-\item{project.years}{a vector containing the years for which the number of mature individuals should be predicted}
+\item{project.years}{a vector containing the years for which population sizes
+were or should be projected.}
 
-\item{generation.time}{}
+\item{generation.time}{a value or vector of generation lengths, i.e. the
+average age of parents of the current cohort (IUCN 2019).}
 
-\item{models}{a vector containing the names of the models to be fitted to species population data}
+\item{models}{a vector containing the names of the models to be fitted to
+species population data to perform projections.}
 
-\item{A1.threshold}{}
+\item{subcriteria}{a vector containing the sub-criteria that should be
+included in the assessment (i.e. A1, A2, A3 and/or A4).}
 
-\item{A234.threshold}{}
+\item{data.type}{a character corresponding to the type of data (IUCN 2019):
+"observation", "index" or "AOO_EOO" (only these types are currently
+implemented)}
+
+\item{nature.evidence}{a character corresponding to the nature of evidence (IUCN
+2019): "observed", "estimated", "projected", "inferred" or "suspected"}
+
+\item{A1.threshold}{numeric vector with the A1 thresholds to convert decline
+estimates into categories. Default values are the thresholds recommended by the IUCN.}
+
+\item{A234.threshold}{numeric vector with the A2, A3, and A4 thresholds to
+convert decline estimate into categories. Default values are the thresholds
+recommended by the IUCN.}
+
+\item{all.cats}{logical. Should the categories from all criteria be returned
+and not just the consensus categories?}
+
+\item{...}{other parameters to be passed as arguments for function `pop.decline.fit`}
 }
 \value{
-TO BE COMPLETED
+A data frame containing, for each taxon, the year of assessment, the
+  time interval of the assessment (include past and future estimates, if
+  any), the population sizes in the interval of assessment, the reduction of
+  the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
+  model used to obtain the projections of population size (if used), the IUCN
+  categories associated with these sub-criteria and the consensus category
+  for criterion A.
 }
 \description{
 Preliminary assessment of species conservation status following
  IUCN Criterion A, which is based on population size reductions (Criteria A1, 
- A2, A3 and A4)
+ A2, A3, and A4)
 }
 \details{
-TO BE COMPLETED
+As described in IUCN (2019), the choice between criteria A1 or A2 depends on 
+  three conditions: the reduction must be reversible, the causes of the reduction 
+  must be understood, and the threats must have ceased. "If any of the three conditions 
+  (reversible and understood and ceased) are not met (...), then A2 should be used 
+  instead of A1" (IUCN, 2019).
+
+  Some important notes. The function can return the predictions of population
+  estimates for years not in the observed data, based on the fit of a set of different 
+  statistical models. As stated in IUCN (2019), the model used to make the 
+  predictions can result in very different estimates. So, it is preferable that
+  the user choose one or two of the models based on the best available information 
+  on types of threat (i.e. patterns of exploitation or habitat loss), life history 
+  and ecology of the taxon being evaluated or any other processes that may contribute 
+  to population decline. See IUCN (2019) for more details on the assumptions of each model.
+  The selection of models based solely on their fit to population data should only be used 
+  for larger time series (Number of observations > 10). 
+  
+  Some more technical notes. If `years` is a subset of all the years contained in `x`, 
+  then `x` is filtered based on `years`. So, make sure you have selected the right years.
+  If the year of assessment is not given, the most recent year is taken instead. The function 
+  accepts a single generation length for all species or species-specific generation lengths. 
+  In the latter case, it is necessary to provide exactly one value for each species analyzed. 
+  Currently, only one assessment year can be assigned for all taxa. Similarly, only 
+  one vector of years with population size available. Thus, it is advised not to mix
+  taxa with great differences in generation length.
 }
 \examples{
-data(example_criterionA)
-criterion_A(example_criterionA, years = NULL, assess.year = 2000, project.years = seq(2002, 2030, by = 2), generation.time = 10)
+## Simplest example: one species, two observations in time, one subcriterion
+ pop = c("1970" = 10000, "2000" = 6000)
+ criterion_A(x = pop,
+  years = c(1970, 2000), 
+  assess.year = 2000,
+  project.years = NULL,
+  subcriteria = c("A2"),
+  generation.time = 10)
+  
+## Another example: one species, more observations and subcriteria
+pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000, "2030" = 4000)
+criterion_A(x = pop,
+  years = c(1970, 1980, 1990, 2000, 2030), 
+  assess.year = 2000,
+  project.years = c(2010, 2020, 2030),
+  subcriteria = c("A1", "A2", "A3", "A4"),
+  generation.time = 10)
+  
+## Another example...
+ pop = c("1980" = 9000, "1985" = 7500, "1990" = 6000)
+ criterion_A(x = pop,
+  years = c(1980, 1985, 1990), 
+  assess.year = 2000,
+  project.years = NULL,
+  subcriteria = c("A2"),
+  generation.time = 10)
 
+## The data and criterion A assessment as described in IUCN (2019) - https://www.iucnredlist.org/resources/criterion-a
+data(example_criterionA)
+criterion_A(example_criterionA,
+  years = seq(1970, 2000, by = 2), 
+  assess.year = 2000,
+  project.years = seq(2002, 2030, by = 2),
+  subcriteria = c("A1", "A2", "A3", "A4"),
+  generation.time = 10)
+
+## Same data and options but assuming different generation length for each taxon
+criterion_A(example_criterionA,
+  years = seq(1970, 2000, by = 2), 
+  assess.year = 2000,
+  project.years = seq(2002, 2030, by = 2),
+  subcriteria = c("A1", "A2", "A3", "A4"),
+  generation.time = c(2,5,10,15,30,50))
+  
+## Same data but with different options (need to use predictions from statistical models)
+criterion_A(example_criterionA,
+  years = NULL, 
+  assess.year = 2010,
+  project.years = NULL,
+  subcriteria = c("A1", "A2", "A3", "A4"),
+  generation.time = 10)
+  
 }
 \references{
-IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F. & Dauby, G.

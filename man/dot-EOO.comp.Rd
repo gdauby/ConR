@@ -4,18 +4,10 @@
 \alias{.EOO.comp}
 \title{Internal function}
 \usage{
-.EOO.comp(
-  XY,
-  exclude.area = FALSE,
-  buff_width = 0.1,
-  country_map = NULL,
-  Name_Sp = "tax",
-  alpha.hull = FALSE,
-  convex.hull = TRUE,
-  alpha = 1,
-  buff.alpha = 0.1,
-  method.less.than3 = "not comp"
-)
+.EOO.comp(XY, exclude.area = FALSE, buff_width = 0.1,
+  country_map = NULL, Name_Sp = "tax", alpha.hull = FALSE,
+  convex.hull = TRUE, alpha = 1, buff.alpha = 0.1,
+  method.less.than3 = "not comp")
 }
 \arguments{
 \item{XY}{data.frame}

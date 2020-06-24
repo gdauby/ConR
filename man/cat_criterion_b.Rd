@@ -4,15 +4,9 @@
 \alias{cat_criterion_b}
 \title{Categorize taxa according to IUCN criterion B}
 \usage{
-cat_criterion_b(
-  EOO = NULL,
-  AOO = NULL,
-  locations = NULL,
-  protected = NULL,
-  EOO.threshold = c(20000, 5000, 100),
-  AOO.threshold = c(2000, 500, 10),
-  Loc.threshold = c(10, 5, 1)
-)
+cat_criterion_b(EOO = NULL, AOO = NULL, locations = NULL,
+  protected = NULL, EOO.threshold = c(20000, 5000, 100),
+  AOO.threshold = c(2000, 500, 10), Loc.threshold = c(10, 5, 1))
 }
 \arguments{
 \item{EOO}{numeric vector}

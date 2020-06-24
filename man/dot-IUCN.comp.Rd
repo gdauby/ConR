@@ -4,35 +4,16 @@
 \alias{.IUCN.comp}
 \title{Internal function}
 \usage{
-.IUCN.comp(
-  DATA,
-  poly_borders = NULL,
-  Cell_size_AOO = 2,
-  Cell_size_locations = 10,
-  Resol_sub_pop = 5,
-  method_locations = c("fixed_grid"),
-  Rel_cell_size = 0.05,
-  protec.areas = NULL,
-  exclude.area = FALSE,
-  method_protected_area = "no_more_than_one",
-  ID_shape_PA = "WDPA_PID",
-  buff_width = 0.1,
-  NamesSp = "species1",
-  write_shp = FALSE,
-  file_name = NULL,
-  add.legend = TRUE,
-  DrawMap = TRUE,
-  map_pdf = FALSE,
-  draw.poly.EOO = TRUE,
-  SubPop = TRUE,
-  MinMax,
-  alpha = 1,
-  buff.alpha = 0.1,
-  method.range = "convex.hull",
-  nbe.rep.rast.AOO = 0,
-  verbose = TRUE,
-  showWarnings = TRUE
-)
+.IUCN.comp(DATA, poly_borders = NULL, Cell_size_AOO = 2,
+  Cell_size_locations = 10, Resol_sub_pop = 5,
+  method_locations = c("fixed_grid"), Rel_cell_size = 0.05,
+  protec.areas = NULL, exclude.area = FALSE,
+  method_protected_area = "no_more_than_one", ID_shape_PA = "WDPA_PID",
+  buff_width = 0.1, NamesSp = "species1", write_shp = FALSE,
+  file_name = NULL, add.legend = TRUE, DrawMap = TRUE,
+  map_pdf = FALSE, draw.poly.EOO = TRUE, SubPop = TRUE, MinMax,
+  alpha = 1, buff.alpha = 0.1, method.range = "convex.hull",
+  nbe.rep.rast.AOO = 0, verbose = TRUE, showWarnings = TRUE)
 }
 \arguments{
 \item{DATA}{data.frame}
