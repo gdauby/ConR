@@ -68,11 +68,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-# @importFrom nls.multstart nls_multstart
-# @importFrom segmented segmented seg.control
-#'
-#' @export pop.decline.fit
-#'
 #' @examples
 #' ## Creating vectors with the population data and time intervals (adapted from the IUCN 2019 workbook for Criterion A, available at https://www.iucnredlist.org/resources/criterion-a)
 #' pop = c(10000, 9100, 8200, 7500, 7000)
@@ -92,6 +87,10 @@
 #' pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), models = "all", project.years = 2030)
 #' pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
 #' 
+#' @importFrom nls.multstart nls_multstart
+#' @importFrom segmented segmented seg.control
+#'
+#' @export
 pop.decline.fit <- function(pop.size, 
                             years,
                             models = "all", 
