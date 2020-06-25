@@ -269,13 +269,20 @@ criterion_A = function(x,
   
   if(is.null(project.years)) {
     
-    all.yrs <- lapply(1:length(prev.year), 
-                      function(i) prev.year[i]:proj.year[i])
-    yrs <- lapply(1:length(all.yrs), 
-                  function(i) all.yrs[[i]][all.yrs[[i]] %in% years])
-    int <- stats::median(diff(years), na.rm=TRUE)
-    miss.prev <- sapply(1:length(prev.year), 
-                        function(i) !prev.year[i] %in% yrs[[i]])
+    all.yrs <- lapply(1:length(prev.year),
+                      function(i)
+                        prev.year[i]:proj.year[i])
+    
+    yrs <- lapply(1:length(all.yrs),
+                  function(i)
+                    all.yrs[[i]][all.yrs[[i]] %in% years])
+    
+    int <- stats::median(diff(years), na.rm = TRUE)
+    
+    miss.prev <- sapply(1:length(prev.year),
+                        function(i)
+                          ! prev.year[i] %in% yrs[[i]])
+    
     if(any(miss.prev))
       yrs[miss.prev] <- 
       lapply(1:length(yrs[miss.prev]), 
@@ -297,12 +304,21 @@ criterion_A = function(x,
     
   } else {
     
-    yrs <- rep(list(unique(c(years, project.years))), length(prev.year))
-    int = stats::median(diff(years), na.rm=TRUE)
-    miss.prev <- sapply(1:length(prev.year), 
-                        function(i) !prev.year[i] %in% yrs[[i]])
-    min.prev <- sapply(1:length(prev.year), 
-                       function(i) prev.year[i] < min(yrs[[i]], na.rm = TRUE))
+    yrs <-
+      rep(list(unique(c(
+        years, project.years
+      ))), length(prev.year))
+    
+    int <- stats::median(diff(years), na.rm = TRUE)
+    
+    miss.prev <- sapply(1:length(prev.year),
+                        function(i)
+                          ! prev.year[i] %in% yrs[[i]])
+    
+    min.prev <- sapply(1:length(prev.year),
+                       function(i)
+                         prev.year[i] < min(yrs[[i]], na.rm = TRUE))
+    
     if(any(miss.prev)) {
       
       ids1 = which(miss.prev + min.prev == 1)
@@ -316,10 +332,14 @@ criterion_A = function(x,
       
     }
     
-    miss.proj <- sapply(1:length(proj.year), 
-                        function(i) !proj.year[i] %in% yrs[[i]])
-    max.proj <- sapply(1:length(proj.year), 
-                       function(i) max(yrs[[i]], na.rm = TRUE) < proj.year[i])
+    miss.proj <- sapply(1:length(proj.year),
+                        function(i)
+                          ! proj.year[i] %in% yrs[[i]])
+    
+    max.proj <- sapply(1:length(proj.year),
+                       function(i)
+                         max(yrs[[i]], na.rm = TRUE) < proj.year[i])
+    
     if(any(miss.proj)) {
       
       ids1 = which(miss.proj + max.proj == 1)
@@ -342,7 +362,7 @@ criterion_A = function(x,
       #           project.years)
       
     }  
-  }  
+  }
   
   if(class(x[,1]) %in% c("factor", "character")) {
     
@@ -357,21 +377,22 @@ criterion_A = function(x,
     
   }
   
-  best.models = NULL
-  miss.years = lapply(1:length(yrs), 
-         function(i) !yrs[[i]] %in% names(pop_data[[i]]))
+  best.models <- NULL
+  miss.years <- lapply(1:length(yrs),
+                      function(i)
+                        ! yrs[[i]] %in% names(pop_data[[i]]))
   
   if(any(sapply(miss.years, any))) {   # Predictions based on population trends
     
     if(length(x) < 3) 
       stop("Too few year intervals to fit a model to population trends")
     
-    best.models = as.list(rep(NA, length(pop_data)))
+    best.models <- as.list(rep(NA, length(pop_data)))
     
-    which.pred = which(sapply(miss.years, any))
+    which.pred <- which(sapply(miss.years, any))
     
     ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
-    for(i in 1:length(which.pred)) {
+    for (i in 1:length(which.pred)) {
       
       pred.sp <- pop.decline.fit(pop.size = pop_data[[which.pred[i]]], 
                                  years = years, 
@@ -398,16 +419,18 @@ criterion_A = function(x,
              as.character(pop_data1[[i]][which(yrs[[i]] %in% proj.year[i])]))), collapse = "-"))
   
   ## Population reduction using IUCN criteria
+  ## Gilles: I always read it is better to pre allocate space in data frame instead of appending it, for memory and speed
   Results = data.frame(
     species = names(pop_data),
     assessment.year = assess.year,
     assessment.period = as.character(unlist(assess.period)),
     assessment.pop.sizes = as.character(unlist(ps.interval)),
-    #reduction_A12 = 100 * as.numeric(unlist(reduction_A12)),
-    #reduction_A3 = 100 * as.numeric(unlist(reduction_A3)),
-    #reduction_A4 = 100 * as.numeric(unlist(reduction_A4)),
-    # category_cA = NA,
-    # category_cA_code = NA,
+    predictive.model = NA,
+    reduction_A12 = NA,
+    reduction_A3 = NA,
+    reduction_A4 = NA,
+    category_cA = NA,
+    category_cA_code = NA,
     stringsAsFactors = FALSE
   )
   row.names(Results) = NULL
@@ -458,7 +481,8 @@ criterion_A = function(x,
     #anos1 <- yrs[(1 + which(yrs == min(yrs))):(which(yrs == assess.year) - 1)]
     #anos1 <- lapply(yrs, function(x) x[(1 + which(x == min(x))):(which(x == assess.year) - 1)])
     anos1 <- lapply(1:length(yrs),
-                    function(y) yrs[[y]][(1 + which(yrs[[y]] == min(prev.year[y]))):(which(yrs[[y]] == assess.year) - 1)])
+                    function(y)
+                      yrs[[y]][(1 + which(yrs[[y]] == min(prev.year[y]))):(which(yrs[[y]] == assess.year) - 1)])
     
     if(is.null(generation.time)) {
       
@@ -485,7 +509,7 @@ criterion_A = function(x,
         ids[ids1] <- lapply(1:length(yrs[ids1]), 
                     function(y) which(yrs[ids1][[y]] %in% (anos1[ids1][[y]] + 10)))
       
-      }    
+      }
         
     #   if(any(sapply(ids, length) == 0))  {
     #     
@@ -534,8 +558,14 @@ criterion_A = function(x,
     Results = cbind.data.frame(Results, all_ranks$all_cats,
                                deparse.level = 0,
                                stringsAsFactors = FALSE)
+  
   Results$category_cA <- all_ranks$ranks_A
   Results$category_cA_code <- all_ranks$cats_code
+  
+  Results <-
+    Results[, apply(Results, MARGIN = 2, function(x)
+      ! all(is.na(x)))]
+  
   
   return(Results)
 }    
