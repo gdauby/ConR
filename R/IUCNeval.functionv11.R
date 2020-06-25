@@ -28,25 +28,9 @@
     coord[i, 2] <- XY[hpts[i], 1]
     
   }
-  # p1 <- rgeos::readWKT(POLY)
-  # raster::crs(p1) <- "+proj=longlat +datum=WGS84"
-  # geosphere::makePoly(p1)
-  
+
   p1 <- rgeos::readWKT(POLY)
-  # crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  # raster::crs(p1) <- crs
-  
-  # raster::crs(p1) <- sp::CRS("+init=epsg:4326")
-  #   
-  #   sp::CRS(projargs = "+proj=longlat +datum=WGS84", 
-  #                     SRS_string = wkt_crs <-
-  #                       rgdal::showWKT(
-  #                         "+proj=longlat +datum=WGS84"
-  #                       ))
-  
-  # crs <- sp::CRS("+proj=longlat +datum=WGS84")
-  # rgdal::crs(p1) <- crs
-  
+
   sp::proj4string(p1) <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs=TRUE)
   
   suppressWarnings(geosphere::makePoly(p1))
@@ -326,10 +310,11 @@
       }
     }
     
-    OUTPUT <- round(EOO, 0)
+    OUTPUT <- EOO
     names(OUTPUT) <- c("EOO")
     
   } else{
+    
     ### Checking if all occurrences are on a straight line
     if (length(unique(XY[, 1])) == 1 ||
         length(unique(XY[, 2])) == 1 ||
@@ -367,23 +352,60 @@
       
       ## If exclude.area is TRUE
       if (exclude.area) {
+        
         croped.EOO <- .crop.poly(poly = p1, crop = country_map)
         p1 <- croped.EOO[[2]]
         EOO <- croped.EOO[[1]]
+        
       } else{
-        EOO <- round(suppressWarnings(geosphere::areaPolygon(p1)) / 1000000,
-                     1)
+        
+        EOO <- suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
+        
       }
       
     } else{
       
       if (alpha.hull)
         p1 <-
-          .alpha.hull.poly(cbind(XY[, 2], XY[, 1]), alpha = alpha, buff = buff.alpha)
+          .alpha.hull.poly(XY[,c(2, 1)], alpha = alpha, buff = buff.alpha)
       
       if (convex.hull)
-        p1 <- .Convex.Hull.Poly(cbind(XY[, 2], XY[, 1]))
-      
+        p1 <- 
+          .Convex.Hull.Poly(XY[,c(2, 1)])
+
+      # old <- function(XY) {
+      #   p1 <- 
+      #     .Convex.Hull.Poly(XY[,c(2, 1)])
+      #   eoo <- round(suppressWarnings(geosphere::areaPolygon(p1)),
+      #         0)
+      #   return(eoo)
+      # }
+      # 
+      # new <- function(XY) {
+      #   XY_sf <- st_as_sf(XY[,c(2, 1)], coords = c(1, 2))
+      #   st_crs(XY_sf) <- 4326
+      #   p1 <- st_convex_hull(x = st_union(XY_sf))
+      #   eoo <- st_area(p1)
+      #   
+      #   return(eoo)
+      # }
+      # 
+      # library(sf)
+      # 
+      # microbenchmark("old" = { eoo <- old(XY = XY) },
+      #                "new" = {
+      #                  eoo <- new(XY = XY)
+      #                }, times = 400L)
+      # 
+      # 
+      # XY_sf_proj <- 
+      #   sf::sf_project(from = sf::st_crs(4326), 
+      #                  to = 
+      #                    sf::st_crs(projEAC), 
+      #                  pts = XY)
+      # 
+      # XY_sp <- as.data.frame(XY_sf_proj)
+
       if (exclude.area) {
         croped.EOO <- 
           .crop.poly(poly = p1, 
@@ -397,14 +419,19 @@
           croped.EOO[[1]]
       } else{
         EOO <-
-          round(suppressWarnings(geosphere::areaPolygon(p1)) / 1000000,
-                0)
+          suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
       }
     }
     
-    OUTPUT <- list(EOO, p1)
-    names(OUTPUT) <- c("EOO", "spatial.polygon")
+    OUTPUT <- list(EOO = EOO, spatial.polygon = p1)
+    
   }
+  
+  digits <-
+    c(6, 5, 4, 3, 2, 1, 0)[findInterval(OUTPUT$EOO, 
+                                        c(0, 0.0001, 0.01, 0.1, 1, 10, 30000, Inf))]
+  
+  OUTPUT$EOO <- round(OUTPUT$EOO, digits)
   
   # if(verbose) cat(" ",paste(Name_Sp,"EOO comp."))
   
