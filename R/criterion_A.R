@@ -309,7 +309,7 @@ criterion_A = function(x,
         years, project.years
       ))), length(prev.year))
     
-    int <- stats::median(diff(years), na.rm = TRUE)
+    int <- median(diff(years), na.rm = TRUE)
     
     miss.prev <- sapply(1:length(prev.year),
                         function(i)
@@ -565,7 +565,6 @@ criterion_A = function(x,
   Results <-
     Results[, apply(Results, MARGIN = 2, function(x)
       ! all(is.na(x)))]
-  
   
   return(Results)
 }    

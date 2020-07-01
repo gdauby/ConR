@@ -27,7 +27,7 @@
 #' @param C1.threshold numeric vector with the C1 thresholds of continuing
 #'   decline. Default values are the thresholds recommended by the IUCN.
 #' @param C2ai.threshold numeric vector with the C2a i thresholds for the
-#'   population size of the lrgest subpopulation. Default are the values
+#'   population size of the largest subpopulation. Default are the values
 #'   recommended by the IUCN.
 #' @param C2aii.threshold numeric vector with the C2a ii thresholds for the
 #'   percentage of the population size in the same subpopulation. Default are
@@ -36,11 +36,10 @@
 #'   differences between population minima and maxima to classify populations
 #'   with extreme fluctuations. Default to 10 as recommended by IUCN (2019).
 #' @param high.alter numerical. Threshold of proportion of changes that are
-#'   followed by a change in the opposite direction. Default to 80%, but
-#'   currently not implemented
+#'   followed by a change in the opposite direction. Default to 80%. Currently NOT implemented.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
-#' @param ... other parameters to be passed as arguments for function `pop.decline.fit`    
+#' @param ... other parameters to be passed as arguments for function `pop.decline.fit`
 #'
 #' @return A data frame containing, for each of taxon, the year of assessment,
 #'   the time interval of the assessment (include past and future estimates, if
@@ -57,7 +56,7 @@
 #'   the decline is measured is shorter (...) and the decline rate thresholds
 #'   are lower, because the populations are already small".
 #'
-#'   Two basic tests are perfomed for each taxon for the assessment of criterion
+#'   Two basic tests are performed for each taxon for the assessment of criterion
 #'   C. First, we test if the population is small. By default, we use the
 #'   maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
 #'   individuals. If the taxon is not below this threshold, the assessment is
@@ -77,7 +76,7 @@
 #'   estimated continuing decline (sub-criteria C1).
 #'
 #'   The first type of decline is defined based on the mean change of population
-#'   size between observations (no fit of an statiscal); if the mean change from
+#'   size between observations (no statistical fit); if the mean change from
 #'   the first population size suggests a decline in the population size, then
 #'   the population is classified as declining. Although IUCN (2019) considers
 #'   declines at any rate, here we consider populations in decline those with an
@@ -87,10 +86,10 @@
 #'   inferred or projected", here we consider only observed, estimated, inferred
 #'   before the years of assessment.
 #'
-#'   The second type of decline is defined based on the statistical models
-#'   fitted to the observed or projected population data. Once the best model is
-#'   selected, the confidence interval of the parameters are computed. If the
-#'   parameter estimates indicate a declining tendence, then the population is
+#'   The second type of decline is defined on the statistical models
+#'   fitted to the observed and/or projected population data. Once the best model is
+#'   selected, the confidence interval of the parameters is computed. If the
+#'   parameter estimates indicate a declining trend, then the population is
 #'   classified as declining (e.g. the slope parameter of the linear model is
 #'   negative, as well as the confidence interval around the slope estimate).
 #'   For this type of decline, we consider observed, estimated or projected
@@ -102,8 +101,8 @@
 #'   assessment. The other is to provide population sizes for each subpopulation
 #'   in `x`, and repeat the name of the taxon in the first column of `x`. In the
 #'   case of subpopulations, the overall reduction in population size is
-#'   obtained as recommended by IUCN (2019, p.38): the average of the reduction
-#'   of each subpopulation, weighted by their initial size.
+#'   obtained as recommended by IUCN (2019, p.38) which is average reduction across
+#'   all subpopulation, weighted by their initial size.
 #'
 #'   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
 #'   population size or area typically greater than one order of magnitude. In
@@ -175,13 +174,15 @@ criterion_C = function(x,
     
     if(is.null(names(x))) {
       
-      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
-                        stringsAsFactors = FALSE)
+      x <-
+        as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
+                      stringsAsFactors = FALSE)
       
     } else {
       
-      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
-                        stringsAsFactors = FALSE)
+      x <-
+        as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
+                      stringsAsFactors = FALSE)
       
     }
     
@@ -216,6 +217,7 @@ criterion_C = function(x,
   if(is.null(assess.year)) {
     
     assess.year <- years[which.min(abs(years - as.numeric(format(Sys.Date(), "%Y"))))]
+    
     warning("Year of assessment not given: assuming to be the most recent year of the assessment period")
     
   }
@@ -223,6 +225,7 @@ criterion_C = function(x,
   if(!assess.year %in% years) {
     
     assess.year <- years[which.min(abs(years - assess.year))]
+    
     warning(paste0("Year of assessment not in the provided time series: assuming the closest year: ",
                    assess.year))
     
@@ -235,9 +238,13 @@ criterion_C = function(x,
       if(any(duplicated(x[,1]))) {
       
         numb.subpop <- stats::setNames(as.vector(table(x$species)), nm = unique(x$species))
+        
         subpop.size <- split(x[ , which(names(x) == assess.year)], f = x[,1])
-        x <- cbind.data.frame(data.frame (species = unique(x$species)),
-                              rowsum(x[, which(names(x) %in% years)], x$species, reorder = FALSE, row.names = FALSE))
+        
+        x <-
+          cbind.data.frame(data.frame (species = unique(x$species)),
+                           rowsum(x[, which(names(x) %in% years)], x$species, reorder = FALSE, row.names = FALSE))
+        
         row.names(x) <- NULL 
     
       } else {
@@ -255,17 +262,25 @@ criterion_C = function(x,
         stop("The length of subpop.size does not match the number of taxa in the input data frame 'x'")
       
       numb.subpop <- stats::setNames(sapply(subpop.size, length), nm = unique(x$species))
-      if(all(numb.subpop == 1))
-        stop("Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1")
-      if(any(x[ , which(names(x) == assess.year)] != sapply(subpop.size, sum)))
-        stop("The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data")
-      if(is.null(names(subpop.size)) & class(x[,1]) %in% c("factor", "character")) 
+      if (all(numb.subpop == 1))
+        stop(
+          "Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1"
+        )
+      if (any(x[, which(names(x) == assess.year)] != sapply(subpop.size, sum)))
+        stop(
+          "The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data"
+        )
+      if (is.null(names(subpop.size)) &
+          class(x[, 1]) %in% c("factor", "character"))
         names(subpop.size) = unique(x$species)
-        warning("Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data")
-      if(is.null(names(subpop.size)) & !class(x[,1]) %in% c("factor", "character")) 
+      warning(
+        "Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data"
+      )
+      if (is.null(names(subpop.size)) &
+          !class(x[, 1]) %in% c("factor", "character"))
         names(subpop.size) = paste("species", 1:dim(x)[1])
-        warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
-   
+      warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
+      
     }  
   }
   
@@ -277,19 +292,24 @@ criterion_C = function(x,
     proj.year1 <- assess.year + 3
     proj.year2 <- assess.year + 5
     proj.year3 <- assess.year + 10
-    warning("Generation length not given: assuming the IUCN defaults (3, 5 and 10 years). Please, check if this is accurate for your species")
+    warning(
+      "Generation length not given: assuming the IUCN defaults (3, 5 and 10 years). Please, check if this is accurate for your species"
+    )
     
   } else {
     
     if(dim(x)[1] != length(generation.time)) {
       
-      if(length(unique(generation.time)) > 1)
-        stop("Number of generation lengths is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      if (length(unique(generation.time)) > 1)
+        stop(
+          "Number of generation lengths is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa"
+        )
       
-      if(length(unique(generation.time)) == 1) {
-        
+      if (length(unique(generation.time)) == 1) {
         generation.time = rep(generation.time, dim(x)[1])
-        warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa")
+        warning(
+          "Only one generation length provided for two or more taxa: assuming the same generation length for all taxa"
+        )
         
       }
     }
@@ -301,42 +321,50 @@ criterion_C = function(x,
     proj.year2 <- assess.year + 2 * generation.time
     proj.year3 <- assess.year + 3 * generation.time
     
-    if(any((3 * generation.time) < 10)) {
-      
+    if (any((3 * generation.time) < 10)) {
       prev.year3[(3 * generation.time) < 10] <- assess.year - 10
       proj.year3[(3 * generation.time) < 10] <- assess.year + 10
-      warning("Three times the generation length was smaller than 10 years for one or more species: assuming 10 years")
+      warning(
+        "Three times the generation length was smaller than 10 years for one or more species: assuming 10 years"
+      )
       
     }
     
-    if(any((2 * generation.time) < 5)) {
-      
+    if (any((2 * generation.time) < 5)) {
       prev.year2[(2 * generation.time) < 5] <- assess.year - 5
       proj.year2[(2 * generation.time) < 5] <- assess.year + 5
-      warning("Two times the generation length was smaller than 5 years for one or more species: assuming 5 years")
+      warning(
+        "Two times the generation length was smaller than 5 years for one or more species: assuming 5 years"
+      )
       
     }
     
-    if(any(generation.time < 3)) {
-      
+    if (any(generation.time < 3)) {
       prev.year1[generation.time < 3] <- assess.year - 3
       proj.year1[generation.time < 3] <- assess.year + 3
       warning("Generation length was smaller than 3 years for one or more species: assuming 3 years")
       
     }
     
-    if(any((proj.year1 - assess.year)>100) | any((proj.year2 - assess.year)>100) | any((proj.year3 - assess.year)>100))
-      warning("Maximum year to project population sizes is more than 100 years into the future: assuming 100 years after the year of assessment")
-      
-    if(any((proj.year1 - assess.year)>100))
-        proj.year1[(proj.year1 - assess.year)>100] <- assess.year + 100
-      
-    if(any((proj.year2 - assess.year)>100))
-        proj.year2[(proj.year2 - assess.year)>100] <- assess.year + 100
-      
-    if(any((proj.year3 - assess.year)>100))
-        proj.year3[(proj.year3 - assess.year)>100] <- assess.year + 100
-      
+    if (any((proj.year1 - assess.year) > 100) |
+        any((proj.year2 - assess.year) > 100) |
+        any((proj.year3 - assess.year) > 100))
+      warning(
+        "Maximum year to project population sizes is more than 100 years into the future: assuming 100 years after the year of assessment"
+      )
+    
+    if (any((proj.year1 - assess.year) > 100))
+      proj.year1[(proj.year1 - assess.year) > 100] <-
+      assess.year + 100
+    
+    if (any((proj.year2 - assess.year) > 100))
+      proj.year2[(proj.year2 - assess.year) > 100] <-
+      assess.year + 100
+    
+    if (any((proj.year3 - assess.year) > 100))
+      proj.year3[(proj.year3 - assess.year) > 100] <-
+      assess.year + 100
+    
   }
   
   if ("C1" %in% subcriteria) {
@@ -382,6 +410,7 @@ criterion_C = function(x,
     models.fit <- as.list(rep(NA, length(pop_data)))
   
     ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
+    ## Je propose d'utiliser foreach et parallel comme dans criterion_b.
     for(i in 1:length(pop_data)) {
     
     models.fit[[i]] <- pop.decline.fit(pop.size = pop_data[[i]], 
@@ -419,15 +448,24 @@ criterion_C = function(x,
     }
   }
   
-  assess.period <- lapply(1:length(pop_data), 
-                          function(i) paste(unique(sort(c(prev.year3[i], 
-                                                          assess.year,
-                                                          proj.year3[i]))), collapse="-"))
-  pop_data1 <- lapply(1:length(pop_data), function(i) pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
-  ps.interval <- sapply(1:length(pop_data1), function(i) paste(
-    unique(c(as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])]),
-             as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)]),
-             as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])]))), collapse = "-"))
+  assess.period <- lapply(1:length(pop_data),
+                          function(i)
+                            paste(unique(sort(
+                              c(prev.year3[i],
+                                assess.year,
+                                proj.year3[i])
+                            )), collapse = "-"))
+  pop_data1 <-
+    lapply(1:length(pop_data), function(i)
+      pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+  ps.interval <- sapply(1:length(pop_data1), function(i)
+    paste(unique(
+      c(
+        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])]),
+        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)]),
+        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])])
+      )
+    ), collapse = "-"))
   
   ## Small population size and continuing decline using IUCN criteria
   Results <- data.frame(

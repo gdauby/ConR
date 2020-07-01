@@ -31,6 +31,9 @@
 #' 
 #' @export cat_criterion_a
 #'
+#' @importFrom stringr str_replace_all
+#'
+#'
 #' @examples
 #' A1_val <- c(40, 90, 75, 10)
 #' A2_val <- c(90, 95, 30, 10)

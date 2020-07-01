@@ -55,6 +55,8 @@
 #'
 # @importFrom stringr str_replace_all
 #'
+#' @importFrom stringr str_replace_all
+#'
 #' @export cat_criterion_c
 #'
 #' @examples

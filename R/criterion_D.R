@@ -48,6 +48,8 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
+#' @importFrom stringr str_replace_all
+#'
 #' @export criterion_D
 #'
 #' @examples
