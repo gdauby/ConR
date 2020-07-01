@@ -4,8 +4,13 @@
 \alias{.over.valid.poly}
 \title{Internal function}
 \usage{
-.over.valid.poly(poly, points, proj_user = NULL, min.dist = 0.1,
-  value = "dist")
+.over.valid.poly(
+  poly,
+  points,
+  proj_user = NULL,
+  min.dist = 0.1,
+  value = "dist"
+)
 }
 \arguments{
 \item{poly}{Spatial polygon}
