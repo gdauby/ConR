@@ -3,7 +3,9 @@
 \name{example_criterionC}
 \alias{example_criterionC}
 \title{Dataset to illustrate the assessment of IUCN criterion C}
-\format{A data frame with 27 rows and 8 variables}
+\format{
+A data frame with 27 rows and 8 variables
+}
 \usage{
 data(example_criterionC)
 }

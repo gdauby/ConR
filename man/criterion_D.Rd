@@ -4,10 +4,17 @@
 \alias{criterion_D}
 \title{Assess IUCN Criterion D}
 \usage{
-criterion_D(pop.size = NULL, Name_Sp = NULL, AOO = NULL,
-  n.Locs = NULL, subcriteria = c("D", "D2"), D.threshold = c(1000,
-  250, 50), AOO.threshold = NULL, Loc.threshold = NULL,
-  all.cats = TRUE)
+criterion_D(
+  pop.size = NULL,
+  Name_Sp = NULL,
+  AOO = NULL,
+  n.Locs = NULL,
+  subcriteria = c("D", "D2"),
+  D.threshold = c(1000, 250, 50),
+  AOO.threshold = NULL,
+  Loc.threshold = NULL,
+  all.cats = TRUE
+)
 }
 \arguments{
 \item{pop.size}{a value (one species) or a vector (multiple species/

@@ -4,12 +4,22 @@
 \alias{criterion_A}
 \title{Assess IUCN Criterion A}
 \usage{
-criterion_A(x, years = NULL, assess.year = NULL,
-  project.years = NULL, generation.time = NULL, models = c("linear",
-  "quadratic", "exponential", "logistic", "general_logistic", "piecewise"),
-  subcriteria = c("A1", "A2", "A3", "A4"), data.type = NULL,
-  nature.evidence = NULL, A1.threshold = c(50, 70, 90),
-  A234.threshold = c(30, 50, 80), all.cats = TRUE, ...)
+criterion_A(
+  x,
+  years = NULL,
+  assess.year = NULL,
+  project.years = NULL,
+  generation.time = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic",
+    "piecewise"),
+  subcriteria = c("A1", "A2", "A3", "A4"),
+  data.type = NULL,
+  nature.evidence = NULL,
+  A1.threshold = c(50, 70, 90),
+  A234.threshold = c(30, 50, 80),
+  all.cats = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a vector (one species) or a data frame (multiple species/

@@ -4,10 +4,17 @@
 \alias{cat_criterion_c}
 \title{Categorize taxa according to IUCN criterion C}
 \usage{
-cat_criterion_c(C1_df = NULL, C2_df = NULL, C.threshold = c(10000,
-  2500, 250), C1.threshold = c(10, 20, 25), C2ai.threshold = c(1000,
-  250, 50), C2aii.threshold = c(90, 95, 100), mag.fluct = 10,
-  high.alter = 80, all.cats = TRUE)
+cat_criterion_c(
+  C1_df = NULL,
+  C2_df = NULL,
+  C.threshold = c(10000, 2500, 250),
+  C1.threshold = c(10, 20, 25),
+  C2ai.threshold = c(1000, 250, 50),
+  C2aii.threshold = c(90, 95, 100),
+  mag.fluct = 10,
+  high.alter = 80,
+  all.cats = TRUE
+)
 }
 \arguments{
 \item{C1_df}{data frame with the parameters necessary to assess IUCN

@@ -4,8 +4,15 @@
 \alias{pop.decline.fit}
 \title{Fit Statistical Models to Population Reduction}
 \usage{
-pop.decline.fit(pop.size, years, models = "all", project.years = NULL,
-  plot.fit = TRUE, max.count = 50, ...)
+pop.decline.fit(
+  pop.size,
+  years,
+  models = "all",
+  project.years = NULL,
+  plot.fit = TRUE,
+  max.count = 50,
+  ...
+)
 }
 \arguments{
 \item{pop.size}{a vector containing the (estimated) number of mature

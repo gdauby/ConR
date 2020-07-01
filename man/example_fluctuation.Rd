@@ -3,7 +3,9 @@
 \name{example_fluctuation}
 \alias{example_fluctuation}
 \title{Dataset to illustrate the assessment of populations with extreme fluctuation}
-\format{A data frame with seven rows and 28 variables}
+\format{
+A data frame with seven rows and 28 variables
+}
 \source{
 \url{http://www.iucnredlist.org/documents/RedListGuidelines.pdf}
 }

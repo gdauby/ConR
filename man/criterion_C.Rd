@@ -4,13 +4,25 @@
 \alias{criterion_C}
 \title{Assess IUCN Criterion C}
 \usage{
-criterion_C(x, years = NULL, assess.year = NULL,
-  project.years = NULL, generation.time = NULL, subpop.size = NULL,
-  models = c("linear", "quadratic", "exponential", "logistic",
-  "general_logistic", "piecewise"), subcriteria = c("C1", "C2"),
-  C.threshold = c(10000, 2500, 250), C1.threshold = c(10, 20, 25),
-  C2ai.threshold = c(1000, 250, 50), C2aii.threshold = c(90, 95, 100),
-  mag.fluct = 10, high.alter = 80, all.cats = TRUE, ...)
+criterion_C(
+  x,
+  years = NULL,
+  assess.year = NULL,
+  project.years = NULL,
+  generation.time = NULL,
+  subpop.size = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic",
+    "piecewise"),
+  subcriteria = c("C1", "C2"),
+  C.threshold = c(10000, 2500, 250),
+  C1.threshold = c(10, 20, 25),
+  C2ai.threshold = c(1000, 250, 50),
+  C2aii.threshold = c(90, 95, 100),
+  mag.fluct = 10,
+  high.alter = 80,
+  all.cats = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a vector (one species) or a data frame (multiple species/
@@ -46,7 +58,7 @@ are the thresholds recommended by the IUCN.}
 decline. Default values are the thresholds recommended by the IUCN.}
 
 \item{C2ai.threshold}{numeric vector with the C2a i thresholds for the
-population size of the lrgest subpopulation. Default are the values
+population size of the largest subpopulation. Default are the values
 recommended by the IUCN.}
 
 \item{C2aii.threshold}{numeric vector with the C2a ii thresholds for the
@@ -58,8 +70,7 @@ differences between population minima and maxima to classify populations
 with extreme fluctuations. Default to 10 as recommended by IUCN (2019).}
 
 \item{high.alter}{numerical. Threshold of proportion of changes that are
-followed by a change in the opposite direction. Default to 80%, but
-currently not implemented}
+followed by a change in the opposite direction. Default to 80%. Currently NOT implemented.}
 
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
@@ -88,7 +99,7 @@ The function `criterion_C` is similar to another `ConR` function:
   the decline is measured is shorter (...) and the decline rate thresholds
   are lower, because the populations are already small".
 
-  Two basic tests are perfomed for each taxon for the assessment of criterion
+  Two basic tests are performed for each taxon for the assessment of criterion
   C. First, we test if the population is small. By default, we use the
   maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
   individuals. If the taxon is not below this threshold, the assessment is
@@ -108,7 +119,7 @@ The function `criterion_C` is similar to another `ConR` function:
   estimated continuing decline (sub-criteria C1).
 
   The first type of decline is defined based on the mean change of population
-  size between observations (no fit of an statiscal); if the mean change from
+  size between observations (no statistical fit); if the mean change from
   the first population size suggests a decline in the population size, then
   the population is classified as declining. Although IUCN (2019) considers
   declines at any rate, here we consider populations in decline those with an
@@ -118,10 +129,10 @@ The function `criterion_C` is similar to another `ConR` function:
   inferred or projected", here we consider only observed, estimated, inferred
   before the years of assessment.
 
-  The second type of decline is defined based on the statistical models
-  fitted to the observed or projected population data. Once the best model is
-  selected, the confidence interval of the parameters are computed. If the
-  parameter estimates indicate a declining tendence, then the population is
+  The second type of decline is defined on the statistical models
+  fitted to the observed and/or projected population data. Once the best model is
+  selected, the confidence interval of the parameters is computed. If the
+  parameter estimates indicate a declining trend, then the population is
   classified as declining (e.g. the slope parameter of the linear model is
   negative, as well as the confidence interval around the slope estimate).
   For this type of decline, we consider observed, estimated or projected
@@ -133,8 +144,8 @@ The function `criterion_C` is similar to another `ConR` function:
   assessment. The other is to provide population sizes for each subpopulation
   in `x`, and repeat the name of the taxon in the first column of `x`. In the
   case of subpopulations, the overall reduction in population size is
-  obtained as recommended by IUCN (2019, p.38): the average of the reduction
-  of each subpopulation, weighted by their initial size.
+  obtained as recommended by IUCN (2019, p.38) which is average reduction across
+  all subpopulation, weighted by their initial size.
 
   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
   population size or area typically greater than one order of magnitude. In

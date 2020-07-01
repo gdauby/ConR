@@ -3,7 +3,9 @@
 \name{land}
 \alias{land}
 \title{land}
-\format{A dataframe}
+\format{
+A dataframe
+}
 \source{
 \url{http://www.naturalearthdata.com/downloads/10m-physical-vectors/}
 }

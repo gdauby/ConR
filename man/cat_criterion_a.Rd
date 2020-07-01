@@ -4,9 +4,15 @@
 \alias{cat_criterion_a}
 \title{Categorize taxa according to IUCN criterion A}
 \usage{
-cat_criterion_a(A1_val = NULL, A2_val = NULL, A3_val = NULL,
-  A4_val = NULL, A1.threshold = c(50, 70, 90), A234.threshold = c(30,
-  50, 80), all.cats = TRUE)
+cat_criterion_a(
+  A1_val = NULL,
+  A2_val = NULL,
+  A3_val = NULL,
+  A4_val = NULL,
+  A1.threshold = c(50, 70, 90),
+  A234.threshold = c(30, 50, 80),
+  all.cats = TRUE
+)
 }
 \arguments{
 \item{A1_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A1.}

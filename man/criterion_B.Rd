@@ -4,9 +4,15 @@
 \alias{criterion_B}
 \title{Assess IUCN Criterion B}
 \usage{
-criterion_B(x, protec.areas = NULL, NamesSp = "species1",
-  file_name = NULL, EOO.threshold = c(20000, 5000, 100),
-  AOO.threshold = c(2000, 500, 10), Loc.threshold = c(10, 5, 1))
+criterion_B(
+  x,
+  protec.areas = NULL,
+  NamesSp = "species1",
+  file_name = NULL,
+  EOO.threshold = c(20000, 5000, 100),
+  AOO.threshold = c(2000, 500, 10),
+  Loc.threshold = c(10, 5, 1)
+)
 }
 \arguments{
 \item{x}{the character string.}

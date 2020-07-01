@@ -3,7 +3,9 @@
 \name{example_criterionA}
 \alias{example_criterionA}
 \title{Dataset to illustrate the assessment of IUCN criterion A}
-\format{A data frame with six rows and 33 variables}
+\format{
+A data frame with six rows and 33 variables
+}
 \source{
 \url{https://www.iucnredlist.org/resources/criterion-a}
 }
