@@ -4,13 +4,25 @@
 \alias{EOO.sensitivity}
 \title{Sensitiity of Extent of Occurrences}
 \usage{
-EOO.sensitivity(XY, levels.order = NULL, occ.based = TRUE,
-  value = "dist", proj_user = NULL, exclude.area = FALSE,
-  country_map = NULL, alpha = 1, buff.alpha = 0.1,
-  method.range = "convex.hull", buff_width = 0.1,
-  method.less.than3 = "not comp", write_results = FALSE,
-  file.name = "EOO.sensitivity.results", parallel = FALSE,
-  NbeCores = 2, show_progress = TRUE)
+EOO.sensitivity(
+  XY,
+  levels.order = NULL,
+  occ.based = TRUE,
+  value = "dist",
+  proj_user = NULL,
+  exclude.area = FALSE,
+  country_map = NULL,
+  alpha = 1,
+  buff.alpha = 0.1,
+  method.range = "convex.hull",
+  buff_width = 0.1,
+  method.less.than3 = "not comp",
+  write_results = FALSE,
+  file.name = "EOO.sensitivity.results",
+  parallel = FALSE,
+  NbeCores = 2,
+  show_progress = TRUE
+)
 }
 \arguments{
 \item{XY}{\code{dataframe} see Details}
@@ -60,7 +72,7 @@ FALSE}
 \item{NbeCores}{an integer. Register the number of cores for parallel
 execution. By default, it is 2}
 
-\item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default.}
+\item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
 }
 \value{
 A data frame containing, for each taxon, the EOO in square kilometers

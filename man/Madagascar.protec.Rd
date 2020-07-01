@@ -3,7 +3,9 @@
 \name{Madagascar.protec}
 \alias{Madagascar.protec}
 \title{Dataset of Malagasy protected areas}
-\format{A SpatialPolygonDataFrame}
+\format{
+A SpatialPolygonDataFrame
+}
 \source{
 World Database on Protected Areas http://protectedplanet.net/country/MG
 }
