@@ -11,7 +11,8 @@ AOO.computing(
   parallel = FALSE,
   NbeCores = 2,
   show_progress = TRUE,
-  export_shp = FALSE
+  export_shp = FALSE,
+  proj_type = "cea"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ AOO.computing(
 \item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
 
 \item{export_shp}{logical, whether a shapefile of occupied cells should be exported. By default, it is FALSE}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 }
 \value{
 If \code{export_shp} if FALSE a vector of AOO estimates for each taxa

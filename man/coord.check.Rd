@@ -4,12 +4,14 @@
 \alias{coord.check}
 \title{Coordinates check}
 \usage{
-coord.check(XY, listing = TRUE)
+coord.check(XY, listing = TRUE, proj_type = NULL)
 }
 \arguments{
 \item{XY}{}
 
 \item{listing}{}
+
+\item{proj_type}{}
 }
 \value{
 

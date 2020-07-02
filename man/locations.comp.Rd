@@ -15,7 +15,8 @@ locations.comp(
   Rel_cell_size = 0.05,
   parallel = FALSE,
   NbeCores = 2,
-  show_progress = TRUE
+  show_progress = TRUE,
+  proj_type = "cea"
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ locations.comp(
 \item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
 
 \item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 }
 \value{
 A list with one list for each species containing [[1]]SpatialPolygonDataframe and [[2]]vector of the number of location.

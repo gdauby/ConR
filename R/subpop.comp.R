@@ -7,6 +7,10 @@
 #'
 #' @param XY string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
 #' @param Resol_sub_pop numeric. Defines in kilometers the radius of the circles around each occurrence
+#' @param parallel logical, whether running in parallel. By default, it is FALSE
+#' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
+#' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
+#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' 
 #' @details 
 #' \strong{Input} as a \code{dataframe} should have the following structure:
@@ -31,47 +35,77 @@
 #'
 #' 
 #' @export
-subpop.comp <- function(XY, Resol_sub_pop = 5) {
+subpop.comp <- function(XY, 
+                        Resol_sub_pop = 5, 
+                        proj_type = "cea",
+                        parallel = FALSE,
+                        show_progress = TRUE,
+                        NbeCores = 2) {
   
-  # if (is.null(Resol_sub_pop))
-  #   stop("Resol_sub_pop is missing, please provide a value")
-  # 
-  # if (any(is.na(XY[, c(1, 2)]))) {
-  #   length(which(rowMeans(is.na(XY[, 1:2])) > 0))
-  #   unique(XY[which(rowMeans(is.na(XY[, 1:2])) > 0), 3])
-  #   print(
-  #     paste(
-  #       "Skipping",
-  #       length(which(rowMeans(is.na(
-  #         XY[, 1:2]
-  #       )) > 0)) ,
-  #       "occurrences because of missing coordinates for",
-  #       paste(as.character(unique(XY[which(rowMeans(is.na(XY[, 1:2])) >
-  #                                            0), 3])), collapse = " AND ")
-  #     )
-  #   )
-  #   XY <- XY[which(!is.na(XY[, 1])), ]
-  #   XY <- XY[which(!is.na(XY[, 2])), ]
-  # }
-  # 
-  # if (any(XY[, 1] > 180) ||
-  #     any(XY[, 1] < -180) ||
-  #     any(XY[, 2] < -180) ||
-  #     any(XY[, 2] > 180))
-  #   stop("coordinates are outside of expected range")
-  # 
-  # colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
-  # XY$tax <- as.character(XY$tax)
-  # list_data <- split(XY, f = XY$tax)
+  proj_type <- proj_crs(proj_type = proj_type)
   
-  list_data <- coord.check(XY = XY)
+  list_data <- coord.check(XY = XY, listing = T, proj_type)
   
-  OUTPUT <-
-    lapply(list_data, function(x)
-      subpop.comp(XY = x, Resol_sub_pop = Resol_sub_pop))
+  if (parallel) {
+    cl <- snow::makeSOCKcluster(NbeCores)
+    doSNOW::registerDoSNOW(cl)
+    
+    message('Parallel running with ',
+            NbeCores, ' cores')
+    
+    `%d%` <- foreach::`%dopar%`
+  } else{
+    `%d%` <- foreach::`%do%`
+  }
   
-  if (length(OUTPUT) == 1)
-    OUTPUT <- OUTPUT[[1]]
+  x <- NULL
   
-  return(OUTPUT)
+  if(show_progress) {
+    pb <-
+      utils::txtProgressBar(min = 0,
+                            max = length(list_data),
+                            style = 3)
+    
+    progress <- function(n)
+      utils::setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
+  }else{opts <- NULL}
+  
+  output <-
+    foreach::foreach(
+      x = 1:length(list_data),
+      .combine = 'c',
+      .options.snow = opts
+    ) %d% {
+      
+      if (!parallel & show_progress)
+        utils::setTxtProgressBar(pb, x)
+      
+      res <- 
+        subpop.estimation(
+          XY = list_data[[x]], 
+          Resol_sub_pop = Resol_sub_pop, 
+          proj_type = proj_type
+        )
+      
+      res
+    }
+  
+  if(parallel) snow::stopCluster(cl)
+  if(show_progress) close(pb)
+  
+  number_subpop <- 
+    unlist(output[names(output) == "number_subpop"])
+  poly <- 
+    unlist(output[names(output) == "poly_subpop"])
+  names(number_subpop) <-
+    names(poly) <-
+    gsub(pattern = " ",
+         replacement = "_",
+         names(list_data))
+  
+  # if (length(OUTPUT) == 1)
+  #   OUTPUT <- OUTPUT[[1]]
+  
+  return(list(number_subpop = number_subpop, poly_subpop = poly))
 }

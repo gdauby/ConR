@@ -12,7 +12,8 @@
 #' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
 #' @param export_shp logical, whether a shapefile of occupied cells should be exported. By default, it is FALSE
-#'
+#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' 
 #' @details 
 #' \strong{Input} as a \code{dataframe} should have the following structure:
 #' 
@@ -65,67 +66,25 @@ AOO.computing <- function(XY,
                           parallel = FALSE,
                           NbeCores = 2,
                           show_progress = TRUE,
-                          export_shp = FALSE
+                          export_shp = FALSE,
+                          proj_type = "cea"
 ) {
   
-  if (!any(class(XY) == "data.frame"))
-    XY <- as.data.frame(XY)
-  if (any(XY[, 2] > 180) ||
-      any(XY[, 2] < -180) ||
-      any(XY[, 1] < -180) ||
-      any(XY[, 1] > 180))
-    stop("coordinates are outside of expected range")
+  proj_type <- proj_crs(proj_type = proj_type)
   
-  projEAC <- proj_crs()
-  
-  coordEAC <-
-    data.frame(matrix(unlist(
-      rgdal::project(as.matrix(XY[, c(2, 1)]),
-                     proj = as.character(projEAC), inv =
-                       FALSE)
-    ),
-    ncol = 2),
-    tax = XY[, 3])
-  
-  ## if any missing coordinates
-  if (any(is.na(coordEAC[, c(1:2)]))) {
-    print(paste(
-      "Skipping",
-      length(which(rowMeans(is.na(
-        coordEAC[, 1:2]
-      )) > 0)),
-      "occurrences because of missing coordinates for",
-      paste(as.character(unique(coordEAC[which(rowMeans(is.na(coordEAC[, 1:2])) >
-                                                 0), 3])), collapse = " AND ")
-    ))
-    coordEAC <- coordEAC[which(!is.na(coordEAC[, 1])), ]
-    coordEAC <- coordEAC[which(!is.na(coordEAC[, 2])), ]
-  }
-  
-  coordEAC$tax <- as.character(coordEAC$tax)
-  list_data <- split(coordEAC, f = coordEAC$tax)
-  
-  # if(show_progress) prog. <- "text"
-  # if(!show_progress) prog. <- "none"
-  
+  list_data <- 
+    coord.check(XY = XY, proj_type = proj_type)
   
   if(parallel) {
-    # if("doParallel" %in% 
-    #    rownames(installed.packages()) == FALSE) {stop("Please install doParallel package")}
-    # 
-    # library(doParallel)
-    
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
     
-    # registerDoParallel(NbeCores)
     message('Parallel running with ',
             NbeCores, ' cores')
     `%d%` <- foreach::`%dopar%`
   }else{
     `%d%` <- foreach::`%do%`
   }
-  
   
   
   x <- NULL
@@ -140,6 +99,9 @@ AOO.computing <- function(XY,
     opts <- list(progress = progress)
   }else{opts <- NULL}
   
+  
+  # print(proj_type)
+  
   output <-
     foreach::foreach(
       x = 1:length(list_data),
@@ -153,7 +115,8 @@ AOO.computing <- function(XY,
         coordEAC = list_data[[x]],
         cell_size = Cell_size_AOO,
         nbe_rep = nbe.rep.rast.AOO,
-        export_shp = export_shp
+        export_shp = export_shp,
+        proj_type = proj_type
       )
       
       if (export_shp)
@@ -181,7 +144,9 @@ AOO.computing <- function(XY,
     
   }
   
-  if(!export_shp) return(res)
-  if(export_shp) return(list(res, shapes))
+  if(!export_shp) 
+    return(res)
+  if(export_shp) 
+    return(list(AOO = res, AOO_poly = shapes))
   
 }

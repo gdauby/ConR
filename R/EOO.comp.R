@@ -141,7 +141,7 @@ EOO.comp <-  function(XY,
     } else {
       if (method.less.than3 == "arbitrary") {
         
-        projEAC <- proj_crs()
+        projEAC <- proj_crs(proj_type = proj_type)
         
         # coordEAC <-
         #   as.data.frame(matrix(unlist(

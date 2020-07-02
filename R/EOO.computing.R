@@ -105,7 +105,7 @@
 #' }
 #' 
 #' @import sp raster
-#' @importFrom rgdal writeOGR
+#' @importFrom sf write_sf
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
@@ -133,7 +133,7 @@ EOO.computing <- function(XY,
 ) {
   
   
-  list_data <- .coord.check(XY = XY)
+  list_data <- coord.check(XY = XY)
   
   # if (any(is.na(XY[, c(1:2)]))) {
   #   print(paste(
@@ -265,41 +265,59 @@ EOO.computing <- function(XY,
   
   if(write_shp) {
     
+    message("Writing EOO shapefiles in shapesIUCN directory")
+    
     dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     output_spatial <- unlist(output[grep("spatial", names(output))])
+    output_spatial <- 
+      output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
     id_spatial <-
       as.numeric(unlist(lapply(strsplit(
         names(output_spatial), "_"
       ), function(x)
         x[[2]])))
     
+    # exi_files <- 
+    #   list.files(paste(getwd(), "/shapesIUCN", sep = ""))
+    
     for (i in 1:length(output_spatial)) {
       
-      if (length(list.files(paste(getwd(), "/shapesIUCN", sep = ""))) >
-          0) {
-        if (length(grep(paste(names(output)[i], "_EOO_poly", sep = ""), unique(sub(
-          "....$", '', list.files(paste(getwd(), "/shapesIUCN", sep = ""))
-        )))) > 0)
-        {
-          FILES <-
-            list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
-          file.remove(FILES[grep(paste(names(output)[i], "_EOO_poly", sep =
-                                         ""), FILES)])
-        }
-      }
+      ## removing existing files
+      # if (length(exi_files) > 0) {
+      #   if(length(grep(paste(names(output)[i], "_EOO_poly", sep = ""),
+      #                  unique(sub(
+      #                    "....$", '', 
+      #                    exi_files
+      #                  )))) > 0) {
+      #     
+      #     FILES <-
+      #       list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
+      #     file.remove(FILES[grep(paste(names(output)[i], "_EOO_poly", sep =
+      #                                    ""), FILES)])
+      #   }
+      # }
+      
       NAME <- names_[id_spatial[i]]
-      output_spatial[[i]]@polygons[[1]]@ID <- "1"
-      ConvexHulls_poly_dataframe <-
-        sp::SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
-      colnames(ConvexHulls_poly_dataframe@data) <-
-        paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
-      rgdal::writeOGR(
-        ConvexHulls_poly_dataframe,
-        "shapesIUCN",
-        paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
-        driver = "ESRI Shapefile",
-        overwrite_layer = TRUE
-      )
+      NAME <- gsub(" ", "_", NAME)
+      
+      sf::write_sf(as(output_spatial[[i]], "sf"),
+                   dsn = "shapesIUCN",
+                   layer = paste(NAME, "_EOO_poly", sep = ""),
+                   driver = "ESRI Shapefile",
+                   overwrite = TRUE)
+      
+      # output_spatial[[i]]@polygons[[1]]@ID <- "1"
+      # ConvexHulls_poly_dataframe <-
+      #   sp::SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
+      # colnames(ConvexHulls_poly_dataframe@data) <-
+      #   paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
+      # rgdal::writeOGR(
+      #   ConvexHulls_poly_dataframe,
+      #   "shapesIUCN",
+      #   paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
+      #   driver = "ESRI Shapefile",
+      #   overwrite_layer = TRUE
+      # )
     }
   }
   

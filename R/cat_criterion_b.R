@@ -48,10 +48,12 @@ cat_criterion_b <- function(EOO = NULL,
   if (!all.identical(c(
     length(EOO),
     length(AOO),
-    length(locations),
-    length(protected)
+    length(locations)
   )))
     stop("Numbers of values provided for each parameters should be identical")
+  
+  # ,
+  # length(protected)
   
   rank_eoo <- findInterval(EOO, sort(EOO.threshold))
   

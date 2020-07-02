@@ -4,7 +4,13 @@
 \alias{cell.occupied}
 \title{Internal function}
 \usage{
-cell.occupied(nbe_rep = 0, size = 4, coord, export_shp = TRUE)
+cell.occupied(
+  nbe_rep = 0,
+  size = 4,
+  coord,
+  export_shp = TRUE,
+  proj_type = NULL
+)
 }
 \arguments{
 \item{nbe_rep}{integer}

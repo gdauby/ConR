@@ -233,6 +233,9 @@
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom sf st_transform sf_project st_crs st_cast
 #' 
+#' 
+#' \lifecycle{soft-deprecated}
+#' 
 #' @export
 IUCN.eval <- function (DATA,
                        country_map = NULL,
@@ -265,6 +268,7 @@ IUCN.eval <- function (DATA,
                        parallel = FALSE,
                        NbeCores = 2) {
   
+  .Deprecated(msg = "'IUCN.eval' is deprecated, please 'criterion_B' instead")
   
   if(class(DATA)[1]=="spgeoIN") {
     DATA_2 <- cbind(DATA$species_coordinates, DATA$identifier)

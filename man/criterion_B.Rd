@@ -11,7 +11,27 @@ criterion_B(
   file_name = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
-  Loc.threshold = c(10, 5, 1)
+  Loc.threshold = c(10, 5, 1),
+  SubPop = TRUE,
+  Resol_sub_pop = 5,
+  Cell_size_locations = 10,
+  method_locations = "fixed_grid",
+  method_protected_area = "no_more_than_one",
+  ID_shape_PA = "WDPA_PID",
+  country_map = NULL,
+  method.range = "convex.hull",
+  alpha = 1,
+  buff.alpha = 0.1,
+  exclude.area = FALSE,
+  buff_width = 0.1,
+  Cell_size_AOO = 2,
+  nbe.rep.rast.AOO = 0,
+  parallel = FALSE,
+  show_progress = TRUE,
+  NbeCores = 2,
+  proj_type = "cea",
+  mode = "spheroid",
+  DrawMap = FALSE
 )
 }
 \arguments{

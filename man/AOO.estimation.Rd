@@ -4,7 +4,13 @@
 \alias{AOO.estimation}
 \title{Internal function}
 \usage{
-AOO.estimation(coordEAC, cell_size = 2, nbe_rep = 0, export_shp = FALSE)
+AOO.estimation(
+  coordEAC,
+  cell_size = 2,
+  nbe_rep = 0,
+  export_shp = FALSE,
+  proj_type = proj_type
+)
 }
 \arguments{
 \item{coordEAC}{data.frame}

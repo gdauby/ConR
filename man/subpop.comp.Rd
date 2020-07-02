@@ -4,12 +4,27 @@
 \alias{subpop.comp}
 \title{Number of subpopulations}
 \usage{
-subpop.comp(XY, Resol_sub_pop = 5)
+subpop.comp(
+  XY,
+  Resol_sub_pop = 5,
+  proj_type = "cea",
+  parallel = FALSE,
+  show_progress = TRUE,
+  NbeCores = 2
+)
 }
 \arguments{
 \item{XY}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
 
 \item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+
+\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
+
+\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+
+\item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
 }
 \value{
 A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.

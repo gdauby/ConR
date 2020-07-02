@@ -21,18 +21,10 @@ proj_crs <- function(proj_type = "cea") {
   # proj <-
   #   "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
-  
-  # https://spatialreference.org/ref/sr-org/world-cylindrical-equal-area/
-  # Equal Area Cylindrical
-  # proj <-
-  #   "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
-  # if(proj_type == "cea")
-  #   proj <-
-  #     "+proj=cea +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-  # https://epsg.io/6933
-  
+
   if(!is.numeric(proj_type)) {
     
+    # https://epsg.io/6933
     if(proj_type == "cea")
       proj <-
         "+proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
@@ -40,7 +32,12 @@ proj_crs <- function(proj_type = "cea") {
     if(proj_type == "Antarctic")
       proj <-
         "+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+
+    if(proj_type == "Africa_eac")
+      proj <-
+        "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
     
+        
   } else {
       
     all_epsg <-
@@ -52,24 +49,7 @@ proj_crs <- function(proj_type = "cea") {
     if(length(proj) == 0)
       stop("No projection found given proj_type")
   }
-   
-  # if(proj_type == "cea")
 
-  
-  
-  # https://spatialreference.org/ref/epsg/3031/
-  # Equal Area Cylindrical
-  # proj <-
-  #   "+proj=cea +lat_ts=0.0  +lon_0=0.0 +ellps=GRS80 +k_0=1.0 +x_0=0.0 +y_0=0.0"
-  
-  
-  
-  ## https://epsg.io/102022
-  ## Africa Albers Equal Area Conic
-  # proj <- 
-  #   "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-  
-  # "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
   if (rgdal::rgdal_extSoftVersion()[1] >= "3.0.0")  {
     
@@ -85,6 +65,11 @@ proj_crs <- function(proj_type = "cea") {
       if(proj_type == "Antarctic")
         wkt_crs <- 
           'EPSG:3031'
+      
+      if(proj_type == "Africa_eac")
+        wkt_crs <- 
+          'PROJCS["Africa_Albers_Equal_Area_Conic",GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["longitude_of_center",25],PARAMETER["Standard_Parallel_1",20],PARAMETER["Standard_Parallel_2",-23],PARAMETER["latitude_of_center",0],UNIT["Meter",1],AUTHORITY["EPSG","102022"]]'
+      
     } else {
       
       wkt_crs <- paste0("EPSG:", proj_type)

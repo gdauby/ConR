@@ -14,6 +14,7 @@
 #' @importFrom grDevices chull
 #' @importFrom rgeos readWKT
 #' @importFrom geosphere makePoly
+#' @importFrom sf st_convex_hull st_transform st_crs st_union st_intersection sf_project st_sfc st_multipoint
 #' 
 Convex.Hull.Poly <-
   function(XY,
@@ -56,11 +57,11 @@ Convex.Hull.Poly <-
         
         p1 <-
           suppressWarnings(suppressMessages(st_union(
-            st_intersection(p1_sf, poly_exclude)
+            sf::st_intersection(p1_sf, poly_exclude)
           )))
         
         
-        st_crs(p1) <-
+        sf::st_crs(p1) <-
           "+proj=longlat +datum=WGS84"
         
         p1 <- as(p1, "Spatial")
@@ -85,20 +86,20 @@ Convex.Hull.Poly <-
           pts = XY[, c(1, 2)]
         )
       
-      p1 <- st_convex_hull(x = st_multipoint(XY_sf_proj))
+      p1 <- sf::st_convex_hull(x = sf::st_multipoint(XY_sf_proj))
       # eoo <- st_area(p1)
       
       p1 <-
-        st_sfc(p1)
+        sf::st_sfc(p1)
       
-      st_crs(p1) <- projEAC
+      sf::st_crs(p1) <- projEAC
       
       if (exclude.area) {
         poly_exclude_proj <-
-          st_transform(poly_exclude, crs = projEAC)
+          sf::st_transform(poly_exclude, crs = projEAC)
         
         p1 <-
-          st_union(st_intersection(p1, poly_exclude_proj))
+          sf::st_union(st_intersection(p1, poly_exclude_proj))
         
       }
       
