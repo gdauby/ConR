@@ -10,8 +10,21 @@ Description: Multi-species estimation of biological indicators of populations us
 Depends:
     R (>= 3.3), raster, sp
 License: GPL-2
-Imports: fields, geosphere, grDevices, methods,
-        rgdal, rgeos, tibble, writexl, snow, doSNOW, foreach, rnaturalearth, sf
+Imports: 
+    fields,
+    geosphere,
+    grDevices,
+    methods,
+    rgdal,
+    rgeos,
+    tibble,
+    writexl,
+    snow,
+    doSNOW,
+    foreach,
+    rnaturalearth,
+    sf,
+    lifecycle
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
@@ -25,3 +38,4 @@ Authors@R: c(
 	person("Renato", "Augusto Ferreira de Lima", role = c("aut"),
 	email = "renato.lima@naturalis.nl", 
 	comment = c(ORCID = "0000-0002-1048-0138")))
+RdMacros: lifecycle
