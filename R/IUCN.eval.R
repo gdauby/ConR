@@ -234,7 +234,6 @@
 #' @importFrom sf st_transform sf_project st_crs st_cast
 #' 
 #' 
-#' \lifecycle{soft-deprecated}
 #' 
 #' @export
 IUCN.eval <- function (DATA,
