@@ -80,7 +80,7 @@
 #' @importFrom stats dist
 #' @importFrom rgeos readWKT gBuffer
 #' @importFrom geosphere makeLine areaPolygon
-#' @importFrom sf st_area sf_project
+#' @importFrom sf st_area sf_project st_crs
 #' 
 #' @export
 EOO.comp <-  function(XY,
@@ -125,9 +125,9 @@ EOO.comp <-  function(XY,
   # }
   
   ## Check if there are less than 3 unique occurrences
-  if (nrow(unique(XY)) < 3) {
+  if (nrow(XY) < 3) {
     ## if there is only one occurrence, EOO is NA
-    if (nrow(unique(XY)) < 2) {
+    if (nrow(XY) < 2) {
       
       EOO <- NA
       message(
@@ -224,21 +224,18 @@ EOO.comp <-  function(XY,
         p1_sf <- as(p1, "sf")
         
         p1 <-
-          suppressWarnings(suppressMessages(st_union(
-            st_intersection(p1_sf, country_map)
+          suppressWarnings(suppressMessages(sf::st_union(
+            sf::st_intersection(p1_sf, country_map)
           )))
         
-        st_crs(p1) <-
+        sf::st_crs(p1) <-
           "+proj=longlat +datum=WGS84"
         
         p1 <- as(p1, "Spatial")
 
         EOO <- 
           suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-        # croped.EOO <- .crop.poly(poly = p1, crop = country_map)
-        # p1 <- croped.EOO[[2]]
-        # EOO <- croped.EOO[[1]]
-        
+
       } else {
         
         EOO <- suppressWarnings(geosphere::areaPolygon(p1)) / 1000000

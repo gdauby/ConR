@@ -135,31 +135,7 @@ EOO.computing <- function(XY,
   
   list_data <- coord.check(XY = XY)
   
-  # if (any(is.na(XY[, c(1:2)]))) {
-  #   print(paste(
-  #     "Skipping",
-  #     length(which(rowMeans(is.na(
-  #       XY[, 1:2]
-  #     )) > 0)) ,
-  #     "occurrences because of missing coordinates for",
-  #     # if(verbose)
-  #     paste(as.character(unique(XY[which(rowMeans(is.na(XY[, 1:2])) >
-  #                                          0), 3])), collapse = " AND ")
-  #   ))
-  #   XY <- XY[which(!is.na(XY[, 1])),]
-  #   XY <- XY[which(!is.na(XY[, 2])),]
-  # }
-  # 
-  # XY <- as.data.frame(XY)
-  
 
-  
-  # if (any(XY[, 2] > 180) ||
-  #     any(XY[, 2] < -180) ||
-  #     any(XY[, 1] < -180) ||
-  #     any(XY[, 1] > 180))
-  #   stop("coordinates are outside of expected range")
-  
   ### Getting by default land map if poly_borders is not provided
   if (is.null(country_map) & exclude.area) {
     country_map <-
@@ -169,20 +145,7 @@ EOO.computing <- function(XY,
   if (buff_width > 80)
     stop("buff_width has unrealistic value")
   
-  # if (!is.null(country_map))
-  #   country_map <-
-  #     suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
-  
-  # if (method.range == "convex.hull") {
-  #   convex.hull = TRUE
-  #   alpha.hull = FALSE
-  # }
-  # 
-  # if (method.range == "alpha.hull") {
-  #   convex.hull = FALSE
-  #   alpha.hull = TRUE
-  # }
-  
+
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
