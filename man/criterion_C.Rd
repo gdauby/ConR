@@ -98,7 +98,7 @@ The function `criterion_C` is similar to another `ConR` function:
   "criterion C applies only to small populations, the time frame over which
   the decline is measured is shorter (...) and the decline rate thresholds
   are lower, because the populations are already small".
-
+  
   Two basic tests are performed for each taxon for the assessment of criterion
   C. First, we test if the population is small. By default, we use the
   maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
@@ -106,7 +106,7 @@ The function `criterion_C` is similar to another `ConR` function:
   not performed. IUCN (2019) does not specify at what time the population
   size should be below the threshold. Here, we consider the year of the
   assessment.
-
+  
   Next, we test if population size is actually declining. IUCN (2019, p.43)
   defines: "A continuing decline is a recent, current or projected future
   decline (...) which is liable to continue unless remedial measures are
@@ -117,7 +117,7 @@ The function `criterion_C` is similar to another `ConR` function:
   criterion A). Therefore, function `criterion_C` consider two types of
   decline: (i) continuing decline at any rate (sub-criteria C2) and (ii)
   estimated continuing decline (sub-criteria C1).
-
+  
   The first type of decline is defined based on the mean change of population
   size between observations (no statistical fit); if the mean change from
   the first population size suggests a decline in the population size, then
@@ -128,7 +128,7 @@ The function `criterion_C` is similar to another `ConR` function:
   under criteria C2, "continuing declines can be observed, estimated,
   inferred or projected", here we consider only observed, estimated, inferred
   before the years of assessment.
-
+  
   The second type of decline is defined on the statistical models
   fitted to the observed and/or projected population data. Once the best model is
   selected, the confidence interval of the parameters is computed. If the
@@ -137,7 +137,7 @@ The function `criterion_C` is similar to another `ConR` function:
   negative, as well as the confidence interval around the slope estimate).
   For this type of decline, we consider observed, estimated or projected
   (IUCN 2019).
-
+  
   In the case of taxa with population size per subpopulation, there are two
   ways to entering subpopulation information. The first is to provide a named
   list with a vector of population sizes of each species at the year of
@@ -146,19 +146,29 @@ The function `criterion_C` is similar to another `ConR` function:
   case of subpopulations, the overall reduction in population size is
   obtained as recommended by IUCN (2019, p.38) which is average reduction across
   all subpopulation, weighted by their initial size.
-
+  
   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
   population size or area typically greater than one order of magnitude. In
   addition, "Fluctuations must be inferred only where there is reasonable
   certainty that a population change will be followed by a change in the
   reverse direction within a generation or two" IUCN (2019).
-}
-\examples{
-
-## No subpopulations
-data(example_criterionC)
-
-criterion_C(x = example_criterionC,
+  
+  
+  @author Lima, R.A.F. & Dauby, G.
+  @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+  
+  
+  @export criterion_C
+  
+  @examples
+  
+  
+  ## No subpopulations
+  data(example_criterionC)
+  
+  criterion_C(x = example_criterionC,
   years = NULL, 
   assess.year = 2000,
   project.years = NULL,
@@ -167,14 +177,4 @@ criterion_C(x = example_criterionC,
   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic")
   subcriteria = c("C1", "C2")
   )
-
-
-}
-\references{
-IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
-}
-\author{
-Lima, R.A.F. & Dauby, G.
 }

@@ -16,6 +16,7 @@ criterion_B(
   Resol_sub_pop = 5,
   Cell_size_locations = 10,
   method_locations = "fixed_grid",
+  Rel_cell_size = 0.05,
   method_protected_area = "no_more_than_one",
   ID_shape_PA = "WDPA_PID",
   country_map = NULL,
