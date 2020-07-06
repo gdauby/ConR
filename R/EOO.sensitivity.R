@@ -236,6 +236,8 @@ EOO.sensitivity <- function(XY,
                                alpha = alpha,
                                buff.alpha = buff.alpha,
                                method.less.than3 = method.less.than3,
+                               #alpha.hull = alpha.hull,
+                               #convex.hull = convex.hull,
                                write_results = write_results,
                                export_shp = export_shp[i],
                                parallel = parallel,
@@ -317,10 +319,10 @@ EOO.sensitivity <- function(XY,
         .combine = 'c',
         .options.snow = opts
       ) %d% {
-        #source("./over.valid.poly.R")
+        #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
         
         if (!parallel & show_progress)
-          utils::setTxtProgressBar(pb, x)
+         utils::setTxtProgressBar(pb, x)
         
         res <- .over.valid.poly(shps_df, list_data[[x]], 
                                 proj_user = proj_user, value = value)
