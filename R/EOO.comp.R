@@ -311,25 +311,26 @@ EOO.comp <-  function(XY,
       #     suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
       # }
       
-      if (mode == "spheroid") {
-        EOO <-
-          suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-      }
-      
-      if (mode == "planar") {
+      if(!is.na(p1)) {
+        if (mode == "spheroid") {
+          EOO <-
+            suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
+        }
         
-        EOO <-
-          as.numeric(sf::st_area(p1)) / 1000000
-        
-        p1 <- 
-          as(sf::st_transform(p1, 4326), "Spatial")
+        if (mode == "planar") {
+          
+          EOO <-
+            as.numeric(sf::st_area(p1)) / 1000000
+          
+          p1 <- 
+            as(sf::st_transform(p1, 4326), "Spatial")
+        }
+      } else  {
+        EOO <- NA
       }
-      
-      
     }
     
     OUTPUT <- list(EOO = EOO, spatial.polygon = p1)
-    
   }
   
   digits <-

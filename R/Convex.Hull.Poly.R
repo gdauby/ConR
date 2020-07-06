@@ -26,7 +26,7 @@ Convex.Hull.Poly <-
     if (exclude.area & is.null(poly_exclude))
       stop("exclude.area is TRUE but no shape provided")
     
-    if(grepl('Spatial', class(poly_exclude)))
+    if(any(grepl('Spatial', class(poly_exclude))))
       poly_exclude <- as(poly_exclude, "sf")
     
     if (mode == "spheroid") {
@@ -57,18 +57,24 @@ Convex.Hull.Poly <-
       if (exclude.area) {
         p1_sf <- as(p1, "sf")
         
-
-        
         p1 <-
           suppressWarnings(suppressMessages(sf::st_union(
             sf::st_intersection(p1_sf, poly_exclude)
           )))
         
-        
         sf::st_crs(p1) <-
           "+proj=longlat +datum=WGS84"
         
-        p1 <- as(p1, "Spatial")
+        if(length(p1) == 0) {
+          warning("After excluding areas, the convex hull is empty. EOO is NA.")
+         
+          p1 <- NA 
+        } else {
+          
+          p1 <- 
+            as(p1, "Spatial")
+          
+        }
         
       }
       
@@ -105,6 +111,17 @@ Convex.Hull.Poly <-
         
         p1 <-
           sf::st_union(sf::st_intersection(p1, poly_exclude_proj))
+        
+        if(length(p1) == 0) {
+          warning("After excluding areas, the convex hull is empty. EOO is NA.")
+          
+          p1 <- NA 
+        } else {
+          
+          p1 <- 
+            as(p1, "Spatial")
+          
+        }
         
       }
       

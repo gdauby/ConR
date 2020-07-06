@@ -104,13 +104,19 @@ alpha.hull.poly <-
         if (exclude.area) {
           
           poly_exclude_proj <-
-            st_transform(poly_exclude, crs = projEAC)
+            sf::st_transform(poly_exclude, crs = projEAC)
           
           NZfill <-
-            st_union(st_intersection(NZfill, poly_exclude_proj))
+            sf::st_union(sf::st_intersection(NZfill, poly_exclude_proj))
           
           sf::st_crs(NZfill) <-
             projEAC
+          
+          if(length(NZfill) == 0) {
+            warning("After excluding areas, the alpha hull is empty. EOO is NA.")
+            
+            NZfill <- NA 
+          }
           
           # NZfill <- as(NZfill, "Spatial")
           
@@ -132,11 +138,19 @@ alpha.hull.poly <-
               sf::st_intersection(NZfill_sf, poly_exclude)
             )))
           
+          if(length(NZfill) == 0) {
+            warning("After excluding areas, the alpha hull is empty. EOO is NA.")
+            
+            NZfill <- NA 
+          } else {
+            
+            sf::st_crs(NZfill) <-
+              "+proj=longlat +datum=WGS84"
+            
+            NZfill <- as(NZfill, "Spatial")
+            
+          }
           
-          sf::st_crs(NZfill) <-
-            "+proj=longlat +datum=WGS84"
-          
-          NZfill <- as(NZfill, "Spatial")
         }
         
       }
