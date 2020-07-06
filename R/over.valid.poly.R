@@ -102,6 +102,7 @@
     #                function(x) sqrt(stats::mahalanobis(coords[x, 1:2], center = rob[x]$center, cov = rob[x]$cov, tol=1e-20)))
     #max_dists <- tapply(1:nrow(coords.true), coords.true$tax,
     #                                 function(x) quantile(distances::distance_matrix(distances::distances(coords.true[x, 1:2])), prob=0.95 , na.rm = TRUE))
+    ## MAYBE USE FUNCTION rdist.eart INSTEAD
     max_dists <- tapply(1:nrow(coords.true), coords.true$tax, 
                          function(x) quantile(fields::rdist(coords.true[x, 1:2], compact = TRUE), prob=0.95 , na.rm = TRUE))
     tmp <- dplyr::left_join(data.frame(dist = dists, tax = points_sf$tax, stringsAsFactors = FALSE),
