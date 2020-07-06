@@ -61,7 +61,7 @@ criterion_B <- function(x,
   if (is.null(country_map)) {
     
     country_map <-
-      rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
+      rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
     
   }else{
     

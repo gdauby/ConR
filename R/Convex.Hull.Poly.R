@@ -26,6 +26,8 @@ Convex.Hull.Poly <-
     if (exclude.area & is.null(poly_exclude))
       stop("exclude.area is TRUE but no shape provided")
     
+    if(grepl('Spatial', class(poly_exclude)))
+      poly_exclude <- as(poly_exclude, "sf")
     
     if (mode == "spheroid") {
       hpts <- grDevices::chull(x =  XY[, 1], y = XY[, 2])
@@ -55,8 +57,10 @@ Convex.Hull.Poly <-
       if (exclude.area) {
         p1_sf <- as(p1, "sf")
         
+
+        
         p1 <-
-          suppressWarnings(suppressMessages(st_union(
+          suppressWarnings(suppressMessages(sf::st_union(
             sf::st_intersection(p1_sf, poly_exclude)
           )))
         
@@ -95,14 +99,14 @@ Convex.Hull.Poly <-
       sf::st_crs(p1) <- projEAC
       
       if (exclude.area) {
+
         poly_exclude_proj <-
           sf::st_transform(poly_exclude, crs = projEAC)
         
         p1 <-
-          sf::st_union(st_intersection(p1, poly_exclude_proj))
+          sf::st_union(sf::st_intersection(p1, poly_exclude_proj))
         
       }
-      
       
       # p1 <- suppressWarnings(geosphere::makePoly(as(p1, "Spatial")))
       

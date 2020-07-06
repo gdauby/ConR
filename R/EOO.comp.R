@@ -106,6 +106,10 @@ EOO.comp <-  function(XY,
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
   }
   
+  if(exclude.area)
+    if(any(grepl('Spatial', class(country_map))))
+    country_map <- as(country_map, "sf")
+  
   ### Checking if the method of calculating EOO has been chosen
   # if (!convex.hull & !alpha.hull)
   #   stop("alpha.hull and convex.hull are both FALSE, one should TRUE")
@@ -251,7 +255,7 @@ EOO.comp <-  function(XY,
             alpha = alpha,
             buff = buff.alpha,
             exclude.area = exclude.area,
-            poly_exclude = country_map,
+            poly_exclude = as(country_map, "sf"),
             mode = mode,
             proj_type = proj_type
           )
@@ -262,7 +266,7 @@ EOO.comp <-  function(XY,
                             mode = mode,
                             proj_type = proj_type, 
                             exclude.area = exclude.area,
-                            poly_exclude = country_map)
+                            poly_exclude = as(country_map, "sf"))
       
       # old <- function(XY) {
       #   p1 <-
