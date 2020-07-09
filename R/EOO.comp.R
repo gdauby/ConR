@@ -101,14 +101,24 @@ EOO.comp <-  function(XY,
     coord.check(XY = XY, listing = FALSE)
   
   ### Getting by default land map if poly_borders is not provided
-  if (is.null(country_map) & exclude.area) {
+  ### Getting by default land map if poly_borders is not provided
+  if (is.null(country_map)) {
+    
     country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
+    
+  }else{
+    
+    if(any(grepl('sf', class(country_map))))
+      country_map <- 
+        as(country_map, "Spatial")
+    
+    country_map <-
+      suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
+    
+    country_map <- 
+      as(country_map, "sf")
   }
-  
-  if(exclude.area)
-    if(any(grepl('Spatial', class(country_map))))
-    country_map <- as(country_map, "sf")
   
   ### Checking if the method of calculating EOO has been chosen
   # if (!convex.hull & !alpha.hull)
@@ -120,7 +130,7 @@ EOO.comp <-  function(XY,
         paste(
           "Occurrences spans more than 180 degrees longitude for species",
           as.character(Name_Sp),
-          ". EOO unlikely reliable, consider changing projection"
+          ". EOO unlikely reliable, check the projection for a proper estimation and used a 'planar' (projected) mode"
         )
       )
   
