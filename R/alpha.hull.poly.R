@@ -92,6 +92,9 @@ alpha.hull.poly <-
       # crs <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs = TRUE)
       # raster::crs(NZfill) <- crs
     
+      NZfill <-
+        suppressWarnings(rgeos::gBuffer(NZfill, byid = TRUE, width = 0))
+      
       if (mode == "planar") {
         
         NZfill <- as(NZfill, "sf")
@@ -104,10 +107,10 @@ alpha.hull.poly <-
         if (exclude.area) {
           
           poly_exclude_proj <-
-            sf::st_transform(poly_exclude, crs = projEAC)
+            sf::st_transform(sf::st_make_valid(poly_exclude), crs = projEAC)
           
           NZfill <-
-            sf::st_union(sf::st_intersection(NZfill, poly_exclude_proj))
+            sf::st_union(sf::st_intersection(sf::st_make_valid(NZfill), poly_exclude_proj))
           
           sf::st_crs(NZfill) <-
             projEAC
@@ -133,9 +136,12 @@ alpha.hull.poly <-
         if (exclude.area) {
           NZfill_sf <- as(NZfill, "sf")
           
+          poly_exclude <-
+            sf::st_make_valid(poly_exclude)
+          
           NZfill <-
             suppressWarnings(suppressMessages(sf::st_union(
-              sf::st_intersection(NZfill_sf, poly_exclude)
+              sf::st_intersection(sf::st_make_valid(NZfill_sf), poly_exclude)
             )))
           
           if(length(NZfill) == 0) {

@@ -65,9 +65,15 @@ criterion_B <- function(x,
     
   }else{
     
+    if(any(grepl('sf', class(country_map))))
+      country_map <- 
+        as(country_map, "Spatial")
+    
     country_map <-
       suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
     
+    country_map <- 
+      as(country_map, "sf")
   }
   
   if (!is.null(protec.areas)) {
