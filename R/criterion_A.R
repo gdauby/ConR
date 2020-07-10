@@ -141,18 +141,14 @@ criterion_A = function(x,
                        all.cats = TRUE,
                        ...) {
   
-  if(is.null(x))
+  if (is.null(x))
     stop("Please provide at least two estimates of population sizes")
   
-  if(!any(subcriteria %in% c("A1", "A2", "A3", "A4")))
+  if (!any(subcriteria %in% c("A1", "A2", "A3", "A4")))
     stop("Please provide at least one sub-criterion for the assessment: A1, A2, A3 and/or A4")
   
-  # if(is.vector(x)) {
-  #   
-  #   x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
-  #                     stringsAsFactors = FALSE)
-  #   
-  # }
+  if (is.matrix(x))
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
   
   if(is.null(years)) {
     

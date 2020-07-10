@@ -128,17 +128,19 @@ pop.decline.fit <- function(pop.size,
     proj <- project.years[!project.years %in% years]
     years1 <- c(years, proj)
     pop.size1 <- c(as.numeric(pop.size), rep(NA, length(proj)))
-    DATA <- cbind.data.frame(pop.size = pop.size1[order(years1)], 
-                             years = years1[order(years1)])
+    DATA <- cbind.data.frame(pop.size = as.numeric(pop.size1[order(years1)]), 
+                             years = as.numeric(years1[order(years1)]),
+                             stringsAsFactors = FALSE)
     
   } else {
     
     DATA <- cbind.data.frame(pop.size = as.numeric(pop.size), 
-                             years = as.numeric(years))
+                             years = as.numeric(years),
+                             stringsAsFactors = FALSE)
     
   }
   
-  DATA$ps <- DATA$pop.size/max(as.numeric(pop.size), na.rm = TRUE)
+  DATA$ps <- DATA$pop.size/max(pop.size, na.rm = TRUE)
   DATA$ys <- DATA$years - min(DATA$years, na.rm = TRUE)
   
   if(all(models == "all")) {
