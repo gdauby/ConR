@@ -26,6 +26,8 @@ Imports:
     sf,
     raster,
     sp,
+    nls.multstart,
+    segmented,
     lifecycle
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull

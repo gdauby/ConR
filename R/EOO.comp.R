@@ -221,7 +221,7 @@ EOO.comp <-  function(XY,
       p1 <- rgeos::readWKT(POLY)
       
       p1 <- rgeos::readWKT(POLY)
-      proj4string(p1) <- CRS(SRS_string='EPSG:4326')
+      sp::proj4string(p1) <- CRS(SRS_string='EPSG:4326')
       
       # crs <- CRS("+proj=longlat +datum=WGS84")
       # crs(p1) <- crs
@@ -332,7 +332,7 @@ EOO.comp <-  function(XY,
       #     suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
       # }
       
-      if(!is.na(p1)) {
+      if(class(p1) == "SpatialPolygons") {
         if (mode == "spheroid") {
           EOO <-
             suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
