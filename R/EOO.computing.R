@@ -200,6 +200,12 @@ EOO.computing <- function(XY,
       .options.snow = opts
     ) %d% {
       # source("./R/EOO.comp.R")
+      # source("./R/alpha.hull.poly.R")
+      # source("./R/proj_crs.R")
+      # source("./R/ahull_to_SPLDF.R")
+      # source("./R/coord.check.R")
+      # library(sf)
+      # library(sp)
       
       if (!parallel & show_progress)
         utils::setTxtProgressBar(pb, x)

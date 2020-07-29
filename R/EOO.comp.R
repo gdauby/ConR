@@ -76,11 +76,12 @@
 #' plot(st_transform(st_as_sf(country_map), proj_crs(proj_type = "Antarctic")), extent = p1)
 #' plot(p1, lwd = 2, col = 'red', add = TRUE)
 #' 
-#' @import sp raster
-#' @importFrom stats dist
+#' @importFrom sp proj4string CRS
+#' @importFrom stats dist cor
 #' @importFrom rgeos readWKT gBuffer
 #' @importFrom geosphere makeLine areaPolygon
-#' @importFrom sf st_area sf_project st_crs
+#' @importFrom sf st_area sf_project st_crs st_transform st_union st_intersection
+#' @importFrom rnaturalearth ne_countries
 #' 
 #' @export
 EOO.comp <-  function(XY,
@@ -100,7 +101,6 @@ EOO.comp <-  function(XY,
   XY <- 
     coord.check(XY = XY, listing = FALSE)
   
-  ### Getting by default land map if poly_borders is not provided
   ### Getting by default land map if poly_borders is not provided
   if (is.null(country_map)) {
     
@@ -167,15 +167,15 @@ EOO.comp <-  function(XY,
         #   ), ncol = 2))
         
         coordEAC <-
-          sf::sf_project(
-          from = sf::st_crs(4326),
+          sf_project(
+          from = st_crs(4326),
           to =
-            sf::st_crs(projEAC),
+            st_crs(projEAC),
           pts = XY[, c(1, 2)]
         )
         
         EOO <-
-          as.numeric(stats::dist(coordEAC / 1000) * 0.1 * stats::dist(coordEAC / 1000))
+          as.numeric(dist(coordEAC / 1000) * 0.1 * dist(coordEAC / 1000))
       }
       
       if (method.less.than3 == "not comp") {
@@ -198,7 +198,7 @@ EOO.comp <-  function(XY,
     ### Checking if all occurrences are on a straight line
     if (length(unique(XY[, 1])) == 1 ||
         length(unique(XY[, 2])) == 1 ||
-        round(abs(stats::cor(XY[, 1], XY[, 2])), 6) == 1) {
+        round(abs(cor(XY[, 1], XY[, 2])), 6) == 1) {
       ## If so, a straight line is built and a buffer of buff_width is added
       
       message(
@@ -221,7 +221,7 @@ EOO.comp <-  function(XY,
       p1 <- rgeos::readWKT(POLY)
       
       p1 <- rgeos::readWKT(POLY)
-      sp::proj4string(p1) <- CRS(SRS_string='EPSG:4326')
+      proj4string(p1) <- CRS(SRS_string='EPSG:4326')
       
       # crs <- CRS("+proj=longlat +datum=WGS84")
       # crs(p1) <- crs
@@ -235,17 +235,17 @@ EOO.comp <-  function(XY,
       ## If exclude.area is TRUE
       if (exclude.area) {
         
-        p1_sf <- as(p1, "sf")
-        
-        p1 <-
-          suppressWarnings(suppressMessages(sf::st_union(
-            sf::st_intersection(p1_sf, country_map)
-          )))
-        
-        sf::st_crs(p1) <-
-          "+proj=longlat +datum=WGS84"
-        
-        p1 <- as(p1, "Spatial")
+        # p1_sf <- as(p1, "sf")
+        # 
+        # p1 <-
+        #   suppressWarnings(suppressMessages(st_union(
+        #     st_intersection(p1_sf, country_map)
+        #   )))
+        # 
+        # st_crs(p1) <-
+        #   "+proj=longlat +datum=WGS84"
+        # 
+        # p1 <- as(p1, "Spatial")
 
         EOO <- 
           suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
@@ -258,17 +258,28 @@ EOO.comp <-  function(XY,
       
     } else {
       
-      if (method.range == "alpha.hull")
-        p1 <-
-          alpha.hull.poly(
-            XY = XY[, c(2, 1)],
-            alpha = alpha,
-            buff = buff.alpha,
-            exclude.area = exclude.area,
-            poly_exclude = as(country_map, "sf"),
-            mode = mode,
-            proj_type = proj_type
-          )
+      if (method.range == "alpha.hull") {
+        
+        ### work around to avoid bug appearing randomly
+        # cont_try <- TRUE
+        # while(cont_try) {
+          
+          p1 <-
+            alpha.hull.poly(
+              XY = XY[, c(2, 1)],
+              alpha = alpha,
+              buff = buff.alpha,
+              exclude.area = exclude.area,
+              poly_exclude = as(country_map, "sf"),
+              mode = mode,
+              proj_type = proj_type)
+
+        #   if (!grepl("trye-error", class(p1)))
+        #     cont_try <- FALSE
+        # }
+        
+      }
+        
       
       if (method.range == "convex.hull")
         p1 <-
@@ -330,10 +341,10 @@ EOO.comp <-  function(XY,
         if (mode == "planar") {
           
           EOO <-
-            as.numeric(sf::st_area(p1)) / 1000000
+            as.numeric(st_area(p1)) / 1000000
           
           p1 <- 
-            as(sf::st_transform(p1, 4326), "Spatial")
+            as(st_transform(p1, 4326), "Spatial")
         }
       } else  {
         EOO <- NA

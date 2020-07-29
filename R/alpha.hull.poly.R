@@ -12,11 +12,13 @@
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
-#' @import sp
 #' @importFrom rgeos gBuffer
 #' @importFrom geosphere makePoly
-#' @importFrom sf st_union st_intersection
-#' 
+#' @importFrom sf st_union st_intersection sf_project st_crs st_make_valid st_transform
+#' @importFrom sp SpatialPolygons Polygons CRS proj4string
+#' @importFrom stats median quantile dist
+#' @importFrom methods slot
+#' @importFrom utils installed.packages
 #' 
 alpha.hull.poly <-
   function(XY,
@@ -38,10 +40,10 @@ alpha.hull.poly <-
       }
       
       XY <-
-        sf::sf_project(
-          from = sf::st_crs(4326),
+        sf_project(
+          from = st_crs(4326),
           to =
-            sf::st_crs(projEAC),
+            st_crs(projEAC),
           pts = XY[, c(1, 2)]
         )
       
@@ -50,7 +52,7 @@ alpha.hull.poly <-
       }
 
       if (buff < quantile(dist(XY,  upper = F), probs = 0.01)/1000/5) {
-        warning("alpha value is defined in kilometer given planar estimation and might be too small to get any polygon")
+        warning("buff value is defined in kilometer given planar estimation and might be too small to get any polygon")
       }
       
             
@@ -63,29 +65,43 @@ alpha.hull.poly <-
     }
 
     
-    Used_data = unique(XY)
-    Used_data <- apply(Used_data, 2, jitter)
-    
-    if (any(rownames(utils::installed.packages()) == "alphahull")) {
+    Used_data <- unique(XY)
+    if (any(rownames(installed.packages()) == "alphahull")) {
       
       loadNamespace("alphahull")
-      ahull.obj <-
-        alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha)
+      
+      run_alpha <- TRUE
+      while(run_alpha) {
+        
+        ahull.obj <-
+          try(alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha), silent = T)
+        
+        if(class(ahull.obj) != "try-error") {
+          
+          run_alpha <- FALSE
+          
+        } else {
+          
+          Used_data <- apply(Used_data, 2, jitter)
+          
+        }
+      }
+      
       y.as.spldf <- ahull_to_SPLDF(ahull.obj)
       y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
       
-      NZp <- methods::slot(y.as.spldf_buff, "polygons")
+      NZp <- slot(y.as.spldf_buff, "polygons")
       holes <-
         lapply(NZp, function(x)
-          sapply(methods::slot(x, "Polygons"), slot,
+          sapply(slot(x, "Polygons"), slot,
                  "hole"))
       res <- lapply(1:length(NZp), function(i)
-        methods::slot(NZp[[i]],
+        slot(NZp[[i]],
                       "Polygons")[!holes[[i]]])
       IDs <- row.names(y.as.spldf_buff)
-      NZfill <- sp::SpatialPolygons(
+      NZfill <- SpatialPolygons(
         lapply(1:length(res), function(i)
-          sp::Polygons(res[[i]], ID = IDs[i])),
+          Polygons(res[[i]], ID = IDs[i])),
         proj4string = sp::CRS(sp::proj4string(y.as.spldf_buff), doCheckCRSArgs = TRUE)
       )
       
@@ -99,30 +115,44 @@ alpha.hull.poly <-
         
         NZfill <- as(NZfill, "sf")
         
-        sf::st_crs(NZfill) <-
+        st_crs(NZfill) <-
           projEAC
         
         # sp::proj4string(NZfill) <- projEAC
 
         if (exclude.area) {
-          
+
           poly_exclude_proj <-
-            sf::st_transform(sf::st_make_valid(poly_exclude), crs = projEAC)
-          
+            st_transform(st_make_valid(poly_exclude), crs = projEAC)
+
+
+          ### work around to avoid bug appearing randomly
+          # cont_try <- TRUE
+          # while(cont_try) {
+          #   NZfill <-
+          #     try(suppressWarnings(suppressMessages(st_union(
+          #       st_union(st_intersection(st_make_valid(NZfill), poly_exclude_proj))
+          #     ))))
+          #
+          #   if (class(NZfill) != "try-error")
+          #     cont_try <- FALSE
+          # }
+
+
           NZfill <-
-            sf::st_union(sf::st_intersection(sf::st_make_valid(NZfill), poly_exclude_proj))
-          
-          sf::st_crs(NZfill) <-
+            st_union(st_intersection(st_make_valid(NZfill), poly_exclude_proj))
+
+          st_crs(NZfill) <-
             projEAC
-          
+
           if(length(NZfill) == 0) {
             warning("After excluding areas, the alpha hull is empty. EOO is NA.")
-            
-            NZfill <- NA 
+
+            NZfill <- NA
           }
-          
-          # NZfill <- as(NZfill, "Spatial")
-          
+
+          NZfill <- as(NZfill, "Spatial")
+
         }
         
       }
@@ -131,32 +161,43 @@ alpha.hull.poly <-
         
         sp::proj4string(NZfill) <- sp::CRS(SRS_string = 'EPSG:4326')
         
-        NZfill <- suppressWarnings(geosphere::makePoly(NZfill))
+        NZfill_vertices <- 
+          try(suppressWarnings(geosphere::makePoly(NZfill)), silent = TRUE)
+        
+        if(class(NZfill_vertices) == "try-error") {
+          NZfill_vertices <- 
+            NZfill
+          
+          warning("Failed to add vertices to polygon, be careful with EOO estimation if large EOO")
+        }
         
         if (exclude.area) {
+
           NZfill_sf <- as(NZfill, "sf")
-          
-          poly_exclude <-
-            sf::st_make_valid(poly_exclude)
-          
+
+          # poly_exclude <-
+          #   st_make_valid(poly_exclude)
+
           NZfill <-
-            suppressWarnings(suppressMessages(sf::st_union(
-              sf::st_intersection(sf::st_make_valid(NZfill_sf), poly_exclude)
-            )))
-          
+            suppressWarnings(suppressMessages(st_union(
+            st_intersection(st_make_valid(NZfill_sf), poly_exclude)
+          )))
+
+          # NZfill <- NZfill_sf
+
           if(length(NZfill) == 0) {
             warning("After excluding areas, the alpha hull is empty. EOO is NA.")
-            
-            NZfill <- NA 
+
+            NZfill <- NA
           } else {
-            
-            sf::st_crs(NZfill) <-
+
+            st_crs(NZfill) <-
               "+proj=longlat +datum=WGS84"
-            
+
             NZfill <- as(NZfill, "Spatial")
-            
+
           }
-          
+
         }
         
       }
