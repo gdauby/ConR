@@ -104,7 +104,8 @@
 #'   exclude.area=TRUE, country_map=land)
 #' }
 #' 
-#' @import sp raster
+#' @importFrom rnaturalearth ne_countries
+#' @importFrom rgeos gBuffer
 #' @importFrom sf write_sf
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
@@ -182,12 +183,12 @@ EOO.computing <- function(XY,
   x <- NULL
   if (show_progress) {
     pb <-
-      utils::txtProgressBar(min = 0,
+      txtProgressBar(min = 0,
                             max = length(list_data),
                             style = 3)
     
     progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
+      setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
   } else {
     opts <- NULL
@@ -208,7 +209,7 @@ EOO.computing <- function(XY,
       # library(sp)
       
       if (!parallel & show_progress)
-        utils::setTxtProgressBar(pb, x)
+        setTxtProgressBar(pb, x)
       
       res <-
         EOO.comp(
@@ -304,7 +305,7 @@ EOO.computing <- function(XY,
   }
   
   if (write_results)
-    utils::write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
+    write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (!export_shp)
     output <- Results_short

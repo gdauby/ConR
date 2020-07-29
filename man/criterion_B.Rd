@@ -90,7 +90,6 @@ The function ...
 }
 \examples{
 
-
 }
 \references{
 

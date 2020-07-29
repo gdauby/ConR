@@ -8,7 +8,7 @@
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
-#'
+#' @importFrom sp Lines Line SpatialLines CRS SpatialLinesDataFrame
 #' 
 ahull_to_SPLDF <- function(x)
 {
@@ -37,19 +37,19 @@ ahull_to_SPLDF <- function(x)
     y <- cc[2] + r * sin(seqang)
     
     # convert to line segment
-    l.list[[i]] <- sp::Line(cbind(x, y))
+    l.list[[i]] <- Line(cbind(x, y))
   }
   
   # promote to Lines class, then to SpatialLines class
-  l <- sp::Lines(l.list, ID = 1)
+  l <- Lines(l.list, ID = 1)
   
   # copy over CRS data from original point data
   l.spl <-
-    sp::SpatialLines(list(l), proj4string = sp::CRS(as.character(NA), doCheckCRSArgs=TRUE))
+    SpatialLines(list(l), proj4string = CRS(as.character(NA), doCheckCRSArgs=TRUE))
   
   # promote to SpatialLinesDataFrame, required for export to GRASS / OGR
   l.spldf <-
-    sp::SpatialLinesDataFrame(l.spl, data = data.frame(id = 1), match.ID =
+    SpatialLinesDataFrame(l.spl, data = data.frame(id = 1), match.ID =
                                 FALSE)
   
   return(l.spldf)

@@ -90,12 +90,12 @@ AOO.computing <- function(XY,
   x <- NULL
   if(show_progress) {
     pb <-
-      utils::txtProgressBar(min = 0,
+      txtProgressBar(min = 0,
                             max = length(list_data),
                             style = 3)
     
     progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
+      setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
   }else{opts <- NULL}
   
@@ -108,7 +108,7 @@ AOO.computing <- function(XY,
       .combine = 'c', .options.snow = opts
     ) %d% {
       if (!parallel & show_progress)
-        utils::setTxtProgressBar(pb, x)
+        setTxtProgressBar(pb, x)
       # source("./R/IUCNeval.functionv11.R")
       
       res <- AOO.estimation(

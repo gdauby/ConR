@@ -47,7 +47,12 @@
 #' @export criterion_B
 #'
 #' @examples
-#'
+#' 
+#' @importFrom tibble is_tibble
+#' @importFrom rnaturalearth ne_countries
+#' @importFrom rgeos gBuffer
+#' @importFrom sp identicalCRS proj4string CRS
+#' 
 #'
 criterion_B <- function(x, 
                        protec.areas = NULL,

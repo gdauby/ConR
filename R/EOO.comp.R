@@ -168,9 +168,9 @@ EOO.comp <-  function(XY,
         
         coordEAC <-
           sf_project(
-          from = st_crs(4326),
+          from = sf::st_crs(4326),
           to =
-            st_crs(projEAC),
+            sf::st_crs(projEAC),
           pts = XY[, c(1, 2)]
         )
         
@@ -235,17 +235,17 @@ EOO.comp <-  function(XY,
       ## If exclude.area is TRUE
       if (exclude.area) {
         
-        # p1_sf <- as(p1, "sf")
-        # 
-        # p1 <-
-        #   suppressWarnings(suppressMessages(st_union(
-        #     st_intersection(p1_sf, country_map)
-        #   )))
-        # 
-        # st_crs(p1) <-
-        #   "+proj=longlat +datum=WGS84"
-        # 
-        # p1 <- as(p1, "Spatial")
+        p1_sf <- as(p1, "sf")
+
+        p1 <-
+          suppressWarnings(suppressMessages(st_union(
+            st_intersection(p1_sf, country_map)
+          )))
+
+        sf::st_crs(p1) <-
+          "+proj=longlat +datum=WGS84"
+
+        p1 <- as(p1, "Spatial")
 
         EOO <- 
           suppressWarnings(geosphere::areaPolygon(p1)) / 1000000

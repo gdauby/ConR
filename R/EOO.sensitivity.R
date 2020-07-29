@@ -301,12 +301,12 @@ EOO.sensitivity <- function(XY,
     
     if(show_progress) {
       pb <-
-        utils::txtProgressBar(min = 0,
+        txtProgressBar(min = 0,
                               max = length(list_data),
                               style = 3)
       
       progress <- function(n)
-        utils::setTxtProgressBar(pb, n)
+        setTxtProgressBar(pb, n)
       opts <- list(progress = progress)
     } else {
       opts <- NULL
@@ -322,7 +322,7 @@ EOO.sensitivity <- function(XY,
         #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
         
         if (!parallel & show_progress)
-         utils::setTxtProgressBar(pb, x)
+         setTxtProgressBar(pb, x)
         
         res <- .over.valid.poly(shps_df, list_data[[x]], 
                                 proj_user = proj_user, value = value)
@@ -344,7 +344,7 @@ EOO.sensitivity <- function(XY,
   }
   
   if (write_results)
-    utils::write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
+    write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (occ.based) {
     output <- list(Results_short,

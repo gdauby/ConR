@@ -12,6 +12,7 @@
 #'
 #'
 #' @importFrom raster rasterToPolygons extent rasterize
+#' @importFrom stats runif
 #' 
 cell.occupied <-
   function(nbe_rep = 0,
@@ -115,8 +116,8 @@ cell.occupied <-
       Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
       
       for (h in 1:nbe_rep) {
-        rd.1 <- stats::runif(1) * size * 1000
-        rd.2 <- stats::runif(1) * size * 1000
+        rd.1 <- runif(1) * size * 1000
+        rd.2 <- runif(1) * size * 1000
         
         ext = raster::extent(
           floor(Corners[1, 1]) - rd.1 - 2 * size * 1000,
@@ -257,8 +258,8 @@ cell.occupied <-
 #       Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
 # 
 #       for (h in 1:nbe_rep) {
-#         rd.1 <- stats::runif(1) * size * 1000
-#         rd.2 <- stats::runif(1) * size * 1000
+#         rd.1 <- runif(1) * size * 1000
+#         rd.2 <- runif(1) * size * 1000
 # 
 #         ext <-
 #           terra::ext(

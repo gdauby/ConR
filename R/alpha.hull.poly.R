@@ -41,9 +41,9 @@ alpha.hull.poly <-
       
       XY <-
         sf_project(
-          from = st_crs(4326),
+          from = sf::st_crs(4326),
           to =
-            st_crs(projEAC),
+            sf::st_crs(projEAC),
           pts = XY[, c(1, 2)]
         )
       
@@ -115,7 +115,7 @@ alpha.hull.poly <-
         
         NZfill <- as(NZfill, "sf")
         
-        st_crs(NZfill) <-
+        sf::st_crs(NZfill) <-
           projEAC
         
         # sp::proj4string(NZfill) <- projEAC
@@ -142,7 +142,7 @@ alpha.hull.poly <-
           NZfill <-
             st_union(st_intersection(st_make_valid(NZfill), poly_exclude_proj))
 
-          st_crs(NZfill) <-
+          sf::st_crs(NZfill) <-
             projEAC
 
           if(length(NZfill) == 0) {
@@ -191,7 +191,7 @@ alpha.hull.poly <-
             NZfill <- NA
           } else {
 
-            st_crs(NZfill) <-
+            sf::st_crs(NZfill) <-
               "+proj=longlat +datum=WGS84"
 
             NZfill <- as(NZfill, "Spatial")
