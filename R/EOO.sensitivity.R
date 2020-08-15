@@ -116,6 +116,8 @@
 #' @importFrom foreach %dopar% %do% foreach
 #' @importFrom dplyr left_join
 #' @importFrom rgeos gBuffer
+#' @importFrom methods slot
+#' @importFrom sp SpatialPolygonsDataFrame
 #' 
 #' @export EOO.sensitivity
 #' 
@@ -250,9 +252,9 @@ EOO.sensitivity <- function(XY,
     dimnames(eoos) <- list(sp_names[[n.levels]], "EOO")
     shps <- result[[n.levels]][grepl("spatial.polygon", names(result[[n.levels]]))]
     for (i in 1:length(shps))
-      slot(slot(shps[[i]], "polygons")[[1]], "ID") <- sp_names[[n.levels]][!is.na(eoos$EOO)][i]
+      methods::slot(methods::slot(shps[[i]], "polygons")[[1]], "ID") <- sp_names[[n.levels]][!is.na(eoos$EOO)][i]
     shps <- do.call(rbind, shps)
-    shps_df <- SpatialPolygonsDataFrame(shps, data.frame(tax = names(shps), row.names = names(shps)))
+    shps_df <- sp::SpatialPolygonsDataFrame(shps, data.frame(tax = names(shps), row.names = names(shps)))
     shps_df$tax <- as.character(shps_df$tax) 
     result[[n.levels]] <- eoos
     rm(eoos, shps)
@@ -300,10 +302,9 @@ EOO.sensitivity <- function(XY,
     }
     
     if(show_progress) {
-      pb <-
-        txtProgressBar(min = 0,
-                              max = length(list_data),
-                              style = 3)
+      pb <- txtProgressBar(min = 0,
+                       max = length(list_data),
+                       style = 3)
       
       progress <- function(n)
         setTxtProgressBar(pb, n)
@@ -335,9 +336,9 @@ EOO.sensitivity <- function(XY,
     XY.list[[1]]$prop.dist.eoo <- output
     Results_long <- dplyr::left_join(XY,
                                      XY.list[[1]][, c("recordID", "classes","prop.dist.eoo")],
-                                                     by = "recordID")
+                                     by = "recordID")
     Results_long$prop.dist.eoo[is.na(Results_long$prop.dist.eoo) &
-                            Results_long$classes >= max(Results_long$classes, na.rm = TRUE)] <- 0
+                                 Results_long$classes >= max(Results_long$classes, na.rm = TRUE)] <- 0
     Results_long <- Results_long[order(Results_long$recordID), ]
     Results_long <- 
       Results_long[, -which(names(Results_long) %in% c("recordID", "classes"))]
@@ -353,8 +354,8 @@ EOO.sensitivity <- function(XY,
   } else {
     output <- Results_short
   }
-
- cat("Returning the results.", sep= "\n") 
- output
+  
+  cat("Returning the results.", sep= "\n") 
+  output
 }
 

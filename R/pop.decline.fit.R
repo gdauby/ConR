@@ -69,7 +69,9 @@
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
 #' @examples
-#' ## Creating vectors with the population data and time intervals (adapted from the IUCN 2019 workbook for Criterion A, available at https://www.iucnredlist.org/resources/criterion-a)
+#' ## Creating vectors with the population data and time intervals 
+#' #(adapted from the IUCN 2019 workbook for Criterion A, available 
+#' #at: https://www.iucnredlist.org/resources/criterion-a)
 #' pop = c(10000, 9100, 8200, 7500, 7000)
 #' yrs = c(1970, 1975, 1980, 1985, 1990)
 #' 
@@ -89,8 +91,11 @@
 #' 
 #' @importFrom nls.multstart nls_multstart
 #' @importFrom segmented segmented seg.control
+#' @importFrom graphics plot
+#' @importFrom stats na.omit
 #'
-#' @export
+#' @export pop.decline.fit
+#' 
 pop.decline.fit <- function(pop.size, 
                             years,
                             models = "all", 
@@ -115,8 +120,7 @@ pop.decline.fit <- function(pop.size,
   }
   
   if(length(as.numeric(pop.size)) > length(as.numeric(anos)))
-    pop.size <- 
-      pop.size[grepl(paste0(years, collapse = "|"), names(pop.size))]
+    pop.size <- pop.size[grepl(paste0(years, collapse = "|"), names(pop.size))]
   
   years <- anos
   
@@ -140,7 +144,7 @@ pop.decline.fit <- function(pop.size,
     
   }
   
-  DATA$ps <- DATA$pop.size/max(pop.size, na.rm = TRUE)
+  DATA$ps <- DATA$pop.size/max(as.double(pop.size), na.rm = TRUE)
   DATA$ys <- DATA$years - min(DATA$years, na.rm = TRUE)
   
   if(all(models == "all")) {
@@ -189,7 +193,7 @@ pop.decline.fit <- function(pop.size,
                                                              start_lower = c(a=0.1, b=-0.5, c= -0.1),
                                                              start_upper = c(a=1, b=0.5, c= 0.1),
                                                              iter = 500, supp_errors = 'Y', convergence_count = 100,
-                                                             na.action = na.omit)
+                                                             na.action = stats::na.omit)
       )
     
     if (class(quad) == "try-error") 
@@ -211,7 +215,7 @@ pop.decline.fit <- function(pop.size,
                                                             start_lower = c(a=0.1, b=-0.1),
                                                             start_upper = c(a=1, b=0.01),
                                                             iter = 500, supp_errors = 'Y', convergence_count = 100,
-                                                            na.action = na.omit)
+                                                            na.action = stats::na.omit)
       )
       
     }
@@ -365,7 +369,7 @@ pop.decline.fit <- function(pop.size,
     if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) ylim = range(c(ylim, preds), na.rm=TRUE)     
     
     par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
-    plot(DATA$ps ~ DATA$ys, pch=19, cex=1.2, #data = DATA, 
+    graphics::plot(DATA$ps ~ DATA$ys, pch=19, cex=1.2, #data = DATA, 
          ylim = ylim, xlim = xlim,
          xlab = "Years", ylab = "Population size (%)",
          xaxt = "n", yaxt= "n", cex.lab = 1.2)

@@ -18,16 +18,19 @@ criterion_A(
   A1.threshold = c(50, 70, 90),
   A234.threshold = c(30, 50, 80),
   all.cats = TRUE,
+  parallel = FALSE,
+  NbeCores = 2,
+  show_progress = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{a vector (one species) or a data frame (multiple species/
-subpopulations) containing the population sizes (e.g. number of mature
-individuals) per year, from the oldest to the most recent estimate.}
+subpopulations) containing the population size per year, from the oldest 
+to the most recent population estimate.}
 
 \item{years}{a vector containing the years for which the population sizes
-is available (i.e. time series). It can be NULL if x contains the years as names.}
+are available (i.e. time series). It can be NULL if x contains the years as names.}
 
 \item{assess.year}{numeric. The year for which the assessment should be performed.}
 
@@ -38,7 +41,7 @@ were or should be projected.}
 average age of parents of the current cohort (IUCN 2019).}
 
 \item{models}{a vector containing the names of the models to be fitted to
-species population data to perform projections.}
+species population size to perform projections.}
 
 \item{subcriteria}{a vector containing the sub-criteria that should be
 included in the assessment (i.e. A1, A2, A3 and/or A4).}
@@ -60,12 +63,21 @@ recommended by the IUCN.}
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
 
+\item{parallel}{logical. Should calculations be parallelized? Default to 
+FALSE.}
+
+\item{NbeCores}{integer. Number of cores for parallel computing. Default 
+to 2.}
+
+\item{show_progress}{logical. Should the progress bar be displayed? Default
+to TRUE.}
+
 \item{...}{other parameters to be passed as arguments for function `pop.decline.fit`}
 }
 \value{
 A data frame containing, for each taxon, the year of assessment, the
   time interval of the assessment (include past and future estimates, if
-  any), the population sizes in the interval of assessment, the reduction of
+  any), the population size in the interval of assessment, the reduction of
   the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
   model used to obtain the projections of population size (if used), the IUCN
   categories associated with these sub-criteria and the consensus category
@@ -91,15 +103,15 @@ As described in IUCN (2019), the choice between criteria A1 or A2 depends on
   on types of threat (i.e. patterns of exploitation or habitat loss), life history 
   and ecology of the taxon being evaluated or any other processes that may contribute 
   to population decline. See IUCN (2019) for more details on the assumptions of each model.
-  The selection of models based solely on their fit to population data should only be used 
+  The selection of models based solely on their fit to population size should only be used 
   for larger time series (Number of observations > 10). 
   
   Some more technical notes. If `years` is a subset of all the years contained in `x`, 
   then `x` is filtered based on `years`. So, make sure you have selected the right years.
   If the year of assessment is not given, the most recent year is taken instead. The function 
   accepts a single generation length for all species or species-specific generation lengths. 
-  In the latter case, it is necessary to provide exactly one value for each species analyzed. 
-  Currently, only one assessment year can be assigned for all taxa. Similarly, only 
+  In the latter case, it is necessary to provide exactly one value for each species analyzed.
+  Currently, only one assessment year can be assigned for all taxa. Similarly, only
   one vector of years with population size available. Thus, it is advised not to mix
   taxa with great differences in generation length.
 }
@@ -114,7 +126,8 @@ As described in IUCN (2019), the choice between criteria A1 or A2 depends on
   generation.time = 10)
   
 ## Another example: one species, more observations and subcriteria
-pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000, "2030" = 4000)
+pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000,
+        "2030" = 4000)
 criterion_A(x = pop,
   years = c(1970, 1980, 1990, 2000, 2030), 
   assess.year = 2000,
@@ -131,7 +144,8 @@ criterion_A(x = pop,
   subcriteria = c("A2"),
   generation.time = 10)
 
-## The data and criterion A assessment as described in IUCN (2019) - https://www.iucnredlist.org/resources/criterion-a
+## The data and criterion A assessment as described in IUCN (2019)
+#available at: https://www.iucnredlist.org/resources/criterion-a
 data(example_criterionA)
 criterion_A(example_criterionA,
   years = seq(1970, 2000, by = 2), 

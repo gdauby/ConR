@@ -9,7 +9,10 @@ criterion_C(
   years = NULL,
   assess.year = NULL,
   project.years = NULL,
+  project = TRUE,
+  ignore.years = NULL,
   generation.time = NULL,
+  prop.mature = NULL,
   subpop.size = NULL,
   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic",
     "piecewise"),
@@ -21,6 +24,9 @@ criterion_C(
   mag.fluct = 10,
   high.alter = 80,
   all.cats = TRUE,
+  parallel = FALSE,
+  NbeCores = 2,
+  show_progress = TRUE,
   ...
 )
 }
@@ -37,8 +43,17 @@ available (i.e. time series). Can be NULL if x contain years as names.}
 \item{project.years}{a vector containing the years for which population sizes
 were or should be projected.}
 
+\item{project}{logical. Should population sizes be projected into the future? Default to 
+TRUE.}
+
+\item{ignore.years}{any year(s) that should be ignored for calculating continuing 
+decline of populations?}
+
 \item{generation.time}{a value or vector of generation lengths, i.e. the
 average age of parents of the current cohort (IUCN 2019).}
+
+\item{prop.mature}{a value or vector of the proportion of mature individuals in the 
+total population (IUCN 2019).}
 
 \item{subpop.size}{a named list containing the vector of number of mature
 individuals per subpopulation. The length of the list must match the length
@@ -70,10 +85,19 @@ differences between population minima and maxima to classify populations
 with extreme fluctuations. Default to 10 as recommended by IUCN (2019).}
 
 \item{high.alter}{numerical. Threshold of proportion of changes that are
-followed by a change in the opposite direction. Default to 80%. Currently NOT implemented.}
+followed by a change in the opposite direction. Default to 80\%. Currently NOT implemented.}
 
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
+
+\item{parallel}{logical. Should calculations be parallelized? Default to 
+FALSE.}
+
+\item{NbeCores}{integer. Number of cores for parallel computing. Default 
+to 2.}
+
+\item{show_progress}{logical. Should the progress bar be displayed? Default
+to TRUE.}
 
 \item{...}{other parameters to be passed as arguments for function `pop.decline.fit`}
 }
@@ -145,7 +169,7 @@ The function `criterion_C` is similar to another `ConR` function:
   in `x`, and repeat the name of the taxon in the first column of `x`. In the
   case of subpopulations, the overall reduction in population size is
   obtained as recommended by IUCN (2019, p.38) which is average reduction across
-  all subpopulation, weighted by their initial size.
+  all subpopulation, weighted by their initial sizes.
   
   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
   population size or area typically greater than one order of magnitude. In
@@ -153,19 +177,14 @@ The function `criterion_C` is similar to another `ConR` function:
   certainty that a population change will be followed by a change in the
   reverse direction within a generation or two" IUCN (2019).
   
+  The argument `prop.mature` can be used if the population data provided are not already the
+  number of mature individuals (i.e. population size sensu IUCN, 2019). By default, the
+  proportion of mature individuals in the total population proportion is taken as 1, but
+  the user can provide one proportion for all species or species-specific proportions.
+}
+\examples{
   
-  @author Lima, R.A.F. & Dauby, G.
-  @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
-  
-  
-  @export criterion_C
-  
-  @examples
-  
-  
-  ## No subpopulations
+  ## Example with subpopulations
   data(example_criterionC)
   
   criterion_C(x = example_criterionC,
@@ -174,7 +193,28 @@ The function `criterion_C` is similar to another `ConR` function:
   project.years = NULL,
   generation.time = 10,
   subpop.size = NULL,
-  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic")
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
   subcriteria = c("C1", "C2")
   )
+  
+  ## Same example, but using the argument `prop.mature` 
+  criterion_C(x = example_criterionC,
+  years = NULL, 
+  assess.year = 2000,
+  project.years = NULL,
+  generation.time = 10,
+  prop.mature = 0.85,
+  subpop.size = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+  subcriteria = c("C1", "C2")
+  )
+  
+}
+\references{
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+}
+\author{
+Lima, R.A.F. & Dauby, G.
 }

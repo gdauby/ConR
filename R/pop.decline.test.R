@@ -21,6 +21,9 @@
 #'   is negative and the confidence interval include zero, the trend is
 #'   'non-significantly decreasing'.
 #'   
+#'   For the particular case of the piecewise-regression model, the function
+#'   returns the classification of the population trend for each time interval.
+#'   
 #'   If the number of observations is too small (n. obs. <7) to obtain
 #'   confidence intervals for models with more than two parameters (e.g.
 #'   genealized logistic model), the assessment is carried out empirically, by
@@ -33,14 +36,16 @@
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-# @importFrom FuzzyNumbers.Ext.2 is.decreasing
-# @importFrom FuzzyNumbers.Ext.2 is.increasing
-# @importFrom segmented slope
+#' @importFrom FuzzyNumbers.Ext.2 is.decreasing
+#' @importFrom FuzzyNumbers.Ext.2 is.increasing
+#' @importFrom segmented slope
 #' 
 #' @export pop.decline.test
 #'
 #' @examples
-#' ## Creating vectors with the population data and time intervals (adapted from the IUCN 2019 workbook for Criterion A, available at https://www.iucnredlist.org/resources/criterion-a)
+#' ## Creating vectors with the population data and time intervals 
+#' #(adapted from the IUCN 2019 workbook for Criterion A, available 
+#' #at: https://www.iucnredlist.org/resources/criterion-a)
 #' pop = c(10000, 9600, 9100, 8200, 7500, 7200, 7000)
 #' yrs = c(1970, 1973, 1975, 1980, 1985, 1987, 1990)
 #' 
@@ -93,7 +98,7 @@ pop.decline.test <- function(x,
     
   } else {
     
-    if(best.name %in% c("linear", "exponential", "logistic", "logistic", "general_logistic")) {
+    if(best.name %in% c("linear", "exponential", "logistic", "general_logistic")) {
   
       if(any(is.na(CI["b",]))) {
         
@@ -137,19 +142,35 @@ pop.decline.test <- function(x,
     
     if(best.name == "piecewise") { 
       
+      ys.groups <- findInterval(ys, CI$ys[,1])
       params.CI <- segmented::slope(x$best.model)[[1]]
+      tests <- vector("list", length(unique(ys.groups)))
+      periods <- vector("list", length(unique(ys.groups)))
       
-      if(params.CI[,1][1] < 0)
-        test1 <- if(params.CI[,4][1]<0 & params.CI[,5][1]<0) "signif.decline" else "non.signif.decline"
-      if(params.CI[,1][2] < 0)
-        test2 <- if(params.CI[,4][2]<0 & params.CI[,5][2]<0) "signif.decline" else "non.signif.decline"
+      for(i in 1:length(unique(ys.groups))) {
+        grp <- unique(ys.groups)[i]
+        periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
+        if(params.CI[,1][i] < 0)
+          tests[[i]] <- if(params.CI[,4][i]<0 & params.CI[,5][i]<0) "signif.decline" else "non.signif.decline"
+        if(params.CI[,1][i] > 0)
+          tests[[i]] <- if(params.CI[,4][i]>0 & params.CI[,5][i]>0) "signif.increase" else "non.signif.increase"
+      }
       
-      if(params.CI[,1][1] > 0)
-        test1 <- if(params.CI[,4][1]>0 & params.CI[,5][1]>0) "signif.increase" else "non.signif.increase"
-      if(params.CI[,1][2] > 0)
-        test2 <- if(params.CI[,4][2]>0 & params.CI[,5][2]>0) "signif.increase" else "non.signif.increase"
-      
-      test = paste(unique(c(test1, test2)), collapse = "|", sep="")
+      test <- paste0(
+                paste0(do.call(c, tests), do.call(c, periods)), 
+                     collapse = "|")
+
+      # if(params.CI[,1][1] < 0)
+      #   test1 <- if(params.CI[,4][1]<0 & params.CI[,5][1]<0) "signif.decline" else "non.signif.decline"
+      # if(params.CI[,1][2] < 0)
+      #   test2 <- if(params.CI[,4][2]<0 & params.CI[,5][2]<0) "signif.decline" else "non.signif.decline"
+      # 
+      # if(params.CI[,1][1] > 0)
+      #   test1 <- if(params.CI[,4][1]>0 & params.CI[,5][1]>0) "signif.increase" else "non.signif.increase"
+      # if(params.CI[,1][2] > 0)
+      #   test2 <- if(params.CI[,4][2]>0 & params.CI[,5][2]>0) "signif.increase" else "non.signif.increase"
+      # 
+      # test = paste(unique(c(test1, test2)), collapse = "|", sep="")
       
     }
   }

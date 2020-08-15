@@ -1,7 +1,7 @@
 #' @title Extent of Occurrences multi-taxa computation
 #' 
 #' @description Compute extent of occurrences (EOO) for multiple taxa in square kilometers
-#' using \code{\link[geosphere]{geosphere}} package and provide
+#' using \code{"geosphere"} package and provide
 #' \code{SpatialPolygons} used for EOO computation
 #' 
 #' 

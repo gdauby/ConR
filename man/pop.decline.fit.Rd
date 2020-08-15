@@ -86,7 +86,9 @@ By default, the function compares the fit of six statistical models
   Anderson, 2004) is used for time intervals < 80.
 }
 \examples{
-## Creating vectors with the population data and time intervals (adapted from the IUCN 2019 workbook for Criterion A, available at https://www.iucnredlist.org/resources/criterion-a)
+## Creating vectors with the population data and time intervals 
+#(adapted from the IUCN 2019 workbook for Criterion A, available 
+#at: https://www.iucnredlist.org/resources/criterion-a)
 pop = c(10000, 9100, 8200, 7500, 7000)
 yrs = c(1970, 1975, 1980, 1985, 1990)
 

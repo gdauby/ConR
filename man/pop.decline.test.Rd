@@ -32,6 +32,9 @@ The function extracts the confidence interval of the parameters of
   is negative and the confidence interval include zero, the trend is
   'non-significantly decreasing'.
   
+  For the particular case of the piecewise-regression model, the function
+  returns the classification of the population trend for each time interval.
+  
   If the number of observations is too small (n. obs. <7) to obtain
   confidence intervals for models with more than two parameters (e.g.
   genealized logistic model), the assessment is carried out empirically, by
@@ -41,7 +44,9 @@ The function extracts the confidence interval of the parameters of
   as the test of 'continuing decline at any rate' (sub-criterion B2).
 }
 \examples{
-## Creating vectors with the population data and time intervals (adapted from the IUCN 2019 workbook for Criterion A, available at https://www.iucnredlist.org/resources/criterion-a)
+## Creating vectors with the population data and time intervals 
+#(adapted from the IUCN 2019 workbook for Criterion A, available 
+#at: https://www.iucnredlist.org/resources/criterion-a)
 pop = c(10000, 9600, 9100, 8200, 7500, 7200, 7000)
 yrs = c(1970, 1973, 1975, 1980, 1985, 1987, 1990)
 

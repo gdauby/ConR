@@ -52,8 +52,8 @@ If `exclude.area` is TRUE and country_map is not provided,
 the world country polygons used comes from the package \href{https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries}{rnaturalearth}
 
 By default (`mode = "spheroid"`),the area of the polygon is based on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid. 
-See \href{ttps://CRAN.R-project.org/package=geosphere}{geosphere} package.
-To make a polygon more accurate, the function use the function `makePoly` from the \href{ttps://CRAN.R-project.org/package=geosphere}{geosphere} package.
+See \href{https://CRAN.R-project.org/package=geosphere}{geosphere} package.
+To make a polygon more accurate, the function use the function `makePoly` from the \href{https://CRAN.R-project.org/package=geosphere}{geosphere} package.
 This adds vertices on the great circles (see example below) and can make important difference for species with large distribution.
 
 An estimation of EOO based on projected data is also possible (`mode = "planar"`).
@@ -62,7 +62,7 @@ By default, the projection (`proj_type = "cea"`) is a \href{https://epsg.io/6933
 It can makes sense to use a planar projection to estimate the EOO. See example.
 
 It is possible to use another projection by providing the EPSG code to `proj_type`. See example.
-Check \ref{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
+Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
 from the `rgdal` packag for getting the EPSG code.
 }
 \examples{

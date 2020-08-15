@@ -4,13 +4,14 @@
 \alias{example_criterionC}
 \title{Dataset to illustrate the assessment of IUCN criterion C}
 \format{
-A data frame with 27 rows and 8 variables
+A data frame with 9 rows and 7 variables
 }
 \usage{
 data(example_criterionC)
 }
 \description{
-A dataset containing the population sizes of three subpopulations for nine
-different taxa and from 1970 until 2000 at every five years.
+A dataset containing the population sizes for nine
+different taxa and from 1970 until 2000 at every five years,
+without information on subpopulation sizes.
 }
 \keyword{datasets}

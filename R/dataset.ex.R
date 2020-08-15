@@ -28,9 +28,21 @@ NULL
 #' different taxa and from 1970 until 2000 at every five years. 
 #'
 #' @keywords datasets
+#' @name example_criterionC_subpops
+#' @usage data(example_criterionC_subpops)
+#' @format A data frame with 27 rows and 8 variables
+NULL
+
+#' Dataset to illustrate the assessment of IUCN criterion C
+#'
+#' A dataset containing the population sizes for nine
+#' different taxa and from 1970 until 2000 at every five years,
+#' without information on subpopulation sizes. 
+#'
+#' @keywords datasets
 #' @name example_criterionC
 #' @usage data(example_criterionC)
-#' @format A data frame with 27 rows and 8 variables
+#' @format A data frame with 9 rows and 7 variables
 NULL
 
 #' Dataset to illustrate the assessment of populations with extreme fluctuation

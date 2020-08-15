@@ -59,7 +59,6 @@
 #'
 #' @export cat_criterion_c
 #'
-#' @examples
 #'
 cat_criterion_c <- function(C1_df = NULL,
                             C2_df = NULL,
@@ -77,7 +76,7 @@ cat_criterion_c <- function(C1_df = NULL,
   rank <- sapply(rank, function(x) rep(NA, dim(x)[1]))
   cat <- code <- rank
   
-  if(length(unique(lapply(L, function(x) dim(x)[1]))) > 1)
+  if((is.data.frame(C1_df) & is.data.frame(C2_df)) & length(unique(lapply(L, function(x) dim(x)[1]))) > 1)
     stop("Numbers of data frame rows provided for each criterion should be identical")
   
   if(any(unlist(lapply(L, is.null))))
@@ -97,7 +96,7 @@ cat_criterion_c <- function(C1_df = NULL,
     
     tmp <- L[["C1"]]
     tmp$check <- tmp$assess.pop.size < max(C.threshold) &
-                    tmp$cont.decline %in% c("decreasing")
+                    grepl("Decreasing", tmp$cont.decline)
     
     tmp$red_3gen <- sapply(1:length(tmp$reduction_3gen), 
                                  function(i) if (tmp$assess.pop.size[i] < C.threshold[1] & tmp$reduction_3gen[i] >= C1.threshold[1]) 1 else 0)
@@ -118,7 +117,7 @@ cat_criterion_c <- function(C1_df = NULL,
     
     tmp <- L[["C2"]]
     tmp$check <- tmp$assess.pop.size < max(C.threshold) &
-      tmp$any.decline %in% c("decreasing")
+                    grepl("Decreasing", tmp$any.decline)
     
     tmp$pop <- 3 - findInterval(tmp$assess.pop.size, sort(C.threshold))
     tmp$each <- 3 - findInterval(tmp$max.subpop.size, sort(C2ai.threshold))
@@ -138,7 +137,7 @@ cat_criterion_c <- function(C1_df = NULL,
     tmp$C2aii[tmp$check & tmp$pop == 3 & tmp$prop == 3] <- 3
     
     #### CHECK HERE: INCLUDE ANY CRITERIA RELATED TO HIGH ALTERNANCE IN THE FLUCTUATIONS AS WELL? ####
-    tmp$C2b = tmp$pop
+    tmp$C2b <- tmp$pop
     tmp$C2b[tmp$mean.fluctuation < mag.fluct] <- 0
     tmp$C2b[!tmp$check] <- 0
     
