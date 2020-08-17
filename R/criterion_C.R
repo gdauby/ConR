@@ -20,7 +20,7 @@
 #' @param generation.time a value or vector of generation lengths, i.e. the
 #'   average age of parents of the current cohort (IUCN 2019).
 #' @param prop.mature a value or vector of the proportion of mature individuals in the 
-#'   total population (IUCN 2019).
+#'   total population (IUCN 2019). Default to 1.
 #' @param subpop.size a named list containing the vector of number of mature
 #'   individuals per subpopulation. The length of the list must match the length
 #'   and order of the taxa being assessed.
@@ -123,10 +123,11 @@
 #'   certainty that a population change will be followed by a change in the
 #'   reverse direction within a generation or two" IUCN (2019).
 #'   
-#'   The argument `prop.mature` can be used if the population data provided are not already the
-#'   number of mature individuals (i.e. population size sensu IUCN, 2019). By default, the
-#'   proportion of mature individuals in the total population proportion is taken as 1, but
-#'   the user can provide one proportion for all species or species-specific proportions.
+#'   The argument `prop.mature` can be used if the population data provided are not 
+#'   already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
+#'   By default, the proportion of mature individuals in the total population proportion 
+#'   is taken as 1, but the user can provide one proportion for all species or species-
+#'   specific proportions.
 #'   
 #' @author Lima, R.A.F. & Dauby, G.
 #'   
@@ -630,24 +631,24 @@ criterion_C = function(x,
                                  )
   
   ## Estimated continuing decline?
-  Results$cont.decline <-  sapply(1:length(cont.decline), 
+  Results$cont.decline <- sapply(1:length(cont.decline), 
                                   function(y)
-                                    if (grepl("\\|", cont.decline[[y]])) {
-                                      cont.decline[[y]] <- gsub("non.signif.increase|non.signif.decline", "Stable", cont.decline[[y]])
-                                      cont.decline[[y]] <- gsub("signif.decline", "Decreasing", cont.decline[[y]])
-                                      cont.decline[[y]] <- gsub("signif.increase", "Increasing", cont.decline[[y]])
-                                      cont.decline[[y]]
+                                    if (grepl("\\|", cont.decline[y])) {
+                                      cont.decline[y] <- gsub("non.signif.increase|non.signif.decline", "Stable", cont.decline[y])
+                                      cont.decline[y] <- gsub("signif.decline", "Decreasing", cont.decline[y])
+                                      cont.decline[y] <- gsub("signif.increase", "Increasing", cont.decline[y])
+                                      cont.decline[y]
                                     } else {
-                                      if (cont.decline[[y]] %in% c("signif.decline")) 
-                                        "Decreasing"
-                                      if (cont.decline[[y]] %in% c("signif.increase")) 
-                                        "Increasing"
-                                      if (cont.decline[[y]] %in% c("non.signif.decline", "non.signif.increase")) 
-                                        "Stable"
-                                      if (cont.decline[[y]] %in% c("decrease", "not.increasing")) 
-                                        "Probably.Decreasing"
-                                      if (cont.decline[[y]] %in% c("increase", "not.decreasing")) 
-                                        "Probably.Increasing"
+                                      if (cont.decline[y] %in% c("signif.decline")) 
+                                        return("Decreasing")
+                                      if (cont.decline[y] %in% c("signif.increase")) 
+                                        return("Increasing")
+                                      if (cont.decline[y] %in% c("non.signif.decline", "non.signif.increase")) 
+                                        return("Stable")
+                                      if (cont.decline[y] %in% c("decrease", "not.increasing")) 
+                                        return("Probably.Decreasing")
+                                      if (cont.decline[y] %in% c("increase", "not.decreasing")) 
+                                        return("Probably.Increasing")
                                     }
                                   )  
 

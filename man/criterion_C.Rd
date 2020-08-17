@@ -53,7 +53,7 @@ decline of populations?}
 average age of parents of the current cohort (IUCN 2019).}
 
 \item{prop.mature}{a value or vector of the proportion of mature individuals in the 
-total population (IUCN 2019).}
+total population (IUCN 2019). Default to 1.}
 
 \item{subpop.size}{a named list containing the vector of number of mature
 individuals per subpopulation. The length of the list must match the length
@@ -177,10 +177,11 @@ The function `criterion_C` is similar to another `ConR` function:
   certainty that a population change will be followed by a change in the
   reverse direction within a generation or two" IUCN (2019).
   
-  The argument `prop.mature` can be used if the population data provided are not already the
-  number of mature individuals (i.e. population size sensu IUCN, 2019). By default, the
-  proportion of mature individuals in the total population proportion is taken as 1, but
-  the user can provide one proportion for all species or species-specific proportions.
+  The argument `prop.mature` can be used if the population data provided are not 
+  already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
+  By default, the proportion of mature individuals in the total population proportion 
+  is taken as 1, but the user can provide one proportion for all species or species-
+  specific proportions.
 }
 \examples{
   

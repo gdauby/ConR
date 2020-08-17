@@ -80,14 +80,16 @@ pop.decline.test <- function(x,
   params <- stats::coef(x$best.model)
   ys <- x$data$Year[1:which.min(assess.year - x$data$Year)] - 
           min(x$data$Year[1:which.min(assess.year - x$data$Year)], na.rm = TRUE) 
-  CI <- try(stats::confint(x$best.model), TRUE)
+  CI <- suppressMessages(
+          try(stats::confint(x$best.model), TRUE)
+            )
 
   if(class(CI) == "try-error") {
     
     seq.ys = seq(min(ys),  max(ys), by = 1)
     preds = predict(x$best.model, newdata = data.frame(ys = seq.ys))
     mod = stats::lm(I(diff(preds) / head(preds, 1)) ~ 1)
-    ci.diff = stats::confint(mod)
+    ci.diff = suppressMessages(stats::confint(mod))
     
     if(stats::coef(mod) < 0)
       test <- if(ci.diff[1]<0 & ci.diff[2]<0) "decrease" else "not.decreasing"

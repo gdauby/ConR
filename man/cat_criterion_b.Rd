@@ -50,7 +50,6 @@ AOO <- c(300, 25)
 locations <- c(1, 1)
 cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations)
 
-
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and

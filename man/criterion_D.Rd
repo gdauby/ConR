@@ -9,6 +9,7 @@ criterion_D(
   Name_Sp = NULL,
   AOO = NULL,
   n.Locs = NULL,
+  prop.mature = NULL,
   subcriteria = c("D", "D2"),
   D.threshold = c(1000, 250, 50),
   AOO.threshold = NULL,
@@ -28,6 +29,9 @@ number of taxa.}
 \item{AOO}{a vector containing the Area of Occupancy of each taxon (in km2).}
 
 \item{n.Locs}{a vector containing the number of locations for each taxon.}
+
+\item{prop.mature}{a value or vector of the proportion of mature individuals in the 
+total population (IUCN 2019). Default to 1.}
 
 \item{subcriteria}{a vector containing the sub-criteria that should be
 included in the assessment (i.e. D and/or D2).}
@@ -59,14 +63,20 @@ Preliminary assessment of species conservation status following
 This is a simple and fast function to assess IUCN criterion D. The
   assessment based solely on population sizes is done automatically, if a
   vector of population sizes is provided. Caution should be taken while
-  assessing sub-criterion D2. IUCN (2019, p71) emphasizes that there is no
+  assessing sub-criterion D2. IUCN (2019, p.71) emphasizes that there is no
   strict thresholds for D2 and that this sub-criterion should only be
   assessed if the "population is prone to the effects of human activities or
   stochastic events in an uncertain future, and is thus capable of becoming
   Critically Endangered or even Extinct in a very short time period. (...).
   So, simply meeting the suggested (or any other) threshold for AOO or number
-  of locations is not sufficient"". Therefore, `ConR` assumes no default
+  of locations is not sufficient". Therefore, `criterion_D` assumes no default
   thresholds for D2.
+  
+  The argument `prop.mature` can be used if the population data provided are not 
+  already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
+  By default, the proportion of mature individuals in the total population proportion 
+  is taken as 1, but the user can provide one proportion for all species or species-
+  specific proportions.
 
   Currenlty, the function does not supports data separated by subpopulation.
 }
