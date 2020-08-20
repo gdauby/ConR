@@ -13,8 +13,14 @@
 #' @param assess.year the year for which the assessment should be performed.
 #' @param project.years a vector containing the years for which population sizes
 #'   were or should be projected.
+#' @param project logical. Should population sizes be projected into the future? Default to 
+#'   TRUE.   
+#' @param ignore.years any year(s) that should be ignored for calculating continuing 
+#'   decline of populations?    
 #' @param generation.time a value or vector of generation lengths, i.e. the
 #'   average age of parents of the current cohort (IUCN 2019).
+#' @param prop.mature a value or vector of the proportion of mature individuals in the 
+#'   total population (IUCN 2019). Default to 1.
 #' @param subpop.size a named list containing the vector of number of mature
 #'   individuals per subpopulation. The length of the list must match the length
 #'   and order of the taxa being assessed.
@@ -37,9 +43,15 @@
 #'   differences between population minima and maxima to classify populations
 #'   with extreme fluctuations. Default to 10 as recommended by IUCN (2019).
 #' @param high.alter numerical. Threshold of proportion of changes that are
-#'   followed by a change in the opposite direction. Default to 80%. Currently NOT implemented.
+#'   followed by a change in the opposite direction. Default to 80\%. Currently NOT implemented.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
+#' @param parallel logical. Should calculations be parallelized? Default to 
+#'   FALSE.
+#' @param NbeCores  integer. Number of cores for parallel computing. Default 
+#'   to 2.
+#' @param show_progress logical. Should the progress bar be displayed? Default
+#'  to TRUE.
 #' @param ... other parameters to be passed as arguments for function `pop.decline.fit`
 #' 
 #' @return A data frame containing, for each of taxon, the year of assessment,
@@ -103,7 +115,7 @@
 #'   in `x`, and repeat the name of the taxon in the first column of `x`. In the
 #'   case of subpopulations, the overall reduction in population size is
 #'   obtained as recommended by IUCN (2019, p.38) which is average reduction across
-#'   all subpopulation, weighted by their initial size.
+#'   all subpopulation, weighted by their initial sizes.
 #'   
 #'   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
 #'   population size or area typically greater than one order of magnitude. In
@@ -111,19 +123,23 @@
 #'   certainty that a population change will be followed by a change in the
 #'   reverse direction within a generation or two" IUCN (2019).
 #'   
+#'   The argument `prop.mature` can be used if the population data provided are not 
+#'   already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
+#'   By default, the proportion of mature individuals in the total population proportion 
+#'   is taken as 1, but the user can provide one proportion for all species or species-
+#'   specific proportions.
 #'   
-#'   @author Lima, R.A.F. & Dauby, G.
-#'   @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+#' @author Lima, R.A.F. & Dauby, G.
+#'   
+#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'   
+#' @export criterion_C
 #'   
-#'   @export criterion_C
+#' @examples
 #'   
-#'   @examples
-#'   
-#'   
-#'   ## No subpopulations
+#'   ## Example with subpopulations
 #'   data(example_criterionC)
 #'   
 #'   criterion_C(x = example_criterionC,
@@ -132,14 +148,35 @@
 #'   project.years = NULL,
 #'   generation.time = 10,
 #'   subpop.size = NULL,
-#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic")
+#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
 #'   subcriteria = c("C1", "C2")
 #'   )
+#'   
+#'   ## Same example, but using the argument `prop.mature` 
+#'   criterion_C(x = example_criterionC,
+#'   years = NULL, 
+#'   assess.year = 2000,
+#'   project.years = NULL,
+#'   generation.time = 10,
+#'   prop.mature = 0.85,
+#'   subpop.size = NULL,
+#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+#'   subcriteria = c("C1", "C2")
+#'   )
+#'   
+#' @importFrom utils txtProgressBar setTxtProgressBar head
+#' @importFrom snow makeSOCKcluster stopCluster
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom foreach %dopar% %do% foreach
+#' 
 criterion_C = function(x,
                        years = NULL, 
                        assess.year = NULL, 
                        project.years = NULL,
+                       project = TRUE,
+                       ignore.years = NULL,
                        generation.time = NULL,
+                       prop.mature = NULL,
                        subpop.size = NULL,
                        models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
                        subcriteria = c("C1", "C2"),
@@ -152,6 +189,9 @@ criterion_C = function(x,
                        mag.fluct = 10,
                        high.alter = 80, 
                        all.cats = TRUE,
+                       parallel = FALSE,
+                       NbeCores = 2,
+                       show_progress = TRUE,
                        ...) {
   
   if(is.null(x))
@@ -175,19 +215,17 @@ criterion_C = function(x,
     
     if(is.null(names(x))) {
       
-      x <-
-        as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
+      x <- as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
                       stringsAsFactors = FALSE)
       
     } else {
       
-      x <-
-        as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
+      x <- as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
                       stringsAsFactors = FALSE)
       
     }
     
-    x = cbind.data.frame(data.frame(species = "species 1"), x)
+    x <- cbind.data.frame(data.frame(species = "species 1"), x)
     
   }
   
@@ -199,7 +237,7 @@ criterion_C = function(x,
     anos <- as.numeric(gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))]))
     all.yrs <- years
     if(!is.null(project.years)) 
-      all.yrs = unique(c(all.yrs, project.years))
+      all.yrs <- unique(c(all.yrs, project.years))
     
     if(!is.null(anos) & any(!anos %in% all.yrs)) {
       
@@ -242,8 +280,7 @@ criterion_C = function(x,
         
         subpop.size <- split(x[ , which(names(x) == assess.year)], f = x[,1])
         
-        x <-
-          cbind.data.frame(data.frame (species = unique(x$species)),
+        x <- cbind.data.frame(data.frame (species = unique(x$species)),
                            rowsum(x[, which(names(x) %in% years)], x$species, reorder = FALSE, row.names = FALSE))
         
         row.names(x) <- NULL 
@@ -264,23 +301,18 @@ criterion_C = function(x,
       
       numb.subpop <- stats::setNames(sapply(subpop.size, length), nm = unique(x$species))
       if (all(numb.subpop == 1))
-        stop(
-          "Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1"
-        )
+        stop("Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1")
+      
       if (any(x[, which(names(x) == assess.year)] != sapply(subpop.size, sum)))
-        stop(
-          "The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data"
-        )
-      if (is.null(names(subpop.size)) &
-          class(x[, 1]) %in% c("factor", "character"))
+        stop("The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data")
+      
+      if (is.null(names(subpop.size)) & class(x[, 1]) %in% c("factor", "character"))
         names(subpop.size) = unique(x$species)
-      warning(
-        "Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data"
-      )
-      if (is.null(names(subpop.size)) &
-          !class(x[, 1]) %in% c("factor", "character"))
+        warning("Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data")
+      
+      if (is.null(names(subpop.size)) & !class(x[, 1]) %in% c("factor", "character"))
         names(subpop.size) = paste("species", 1:dim(x)[1])
-      warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
+        warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
       
     }  
   }
@@ -293,24 +325,18 @@ criterion_C = function(x,
     proj.year1 <- assess.year + 3
     proj.year2 <- assess.year + 5
     proj.year3 <- assess.year + 10
-    warning(
-      "Generation length not given: assuming the IUCN defaults (3, 5 and 10 years). Please, check if this is accurate for your species"
-    )
+    warning("Generation length not given: assuming the IUCN defaults (3, 5 and 10 years). Please, check if this is accurate for your species")
     
   } else {
     
     if(dim(x)[1] != length(generation.time)) {
       
       if (length(unique(generation.time)) > 1)
-        stop(
-          "Number of generation lengths is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa"
-        )
+        stop("Number of generation lengths is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
       
       if (length(unique(generation.time)) == 1) {
         generation.time = rep(generation.time, dim(x)[1])
-        warning(
-          "Only one generation length provided for two or more taxa: assuming the same generation length for all taxa"
-        )
+        warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa"        )
         
       }
     }
@@ -356,29 +382,62 @@ criterion_C = function(x,
     
     if (any((proj.year1 - assess.year) > 100))
       proj.year1[(proj.year1 - assess.year) > 100] <-
-      assess.year + 100
+        assess.year + 100
     
     if (any((proj.year2 - assess.year) > 100))
       proj.year2[(proj.year2 - assess.year) > 100] <-
-      assess.year + 100
+        assess.year + 100
     
     if (any((proj.year3 - assess.year) > 100))
       proj.year3[(proj.year3 - assess.year) > 100] <-
-      assess.year + 100
+        assess.year + 100
     
   }
   
+  if(is.null(prop.mature)) {
+    
+    prop.mature <- rep(1, dim(x)[1])
+    
+  } else {
+    
+    if(any(prop.mature>1) | any(prop.mature<0))
+      warning("The proportion of mature individuals normally ranges between 0 and 1")
+    
+    if(dim(x)[1] != length(prop.mature)) {
+      
+      if(length(unique(prop.mature)) > 1)
+        stop("Number of proportions of mature individuals in the population is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      
+      if(length(unique(prop.mature)) == 1) {
+        
+        prop.mature <- rep(prop.mature, dim(x)[1])
+        warning("Only one proportion of mature individuals provided for two or more taxa: assuming the same proportion for all taxa")
+        
+      }
+    }
+  } 
+  
+  
   if ("C1" %in% subcriteria) {
     
-    yrs <- lapply(1:length(prev.year1), 
+    if (project) { 
+      yrs <- lapply(1:length(prev.year1), 
                       function(i) c(prev.year3[i], prev.year2[i], prev.year1[i], 
                                           assess.year, 
                                           proj.year1[i], proj.year2[i], proj.year3[i]))
+    } else {
+      yrs <- lapply(1:length(prev.year1), 
+                    function(i) c(prev.year3[i], prev.year2[i], prev.year1[i], 
+                                  assess.year))
+    }  
 
   } else {
     
-    yrs <- rep(list(unique(c(years, project.years))), length(prev.year1))
-
+    if (project) { 
+      yrs <- rep(list(unique(c(years, project.years))), length(prev.year1))
+    } else {
+      yrs <- rep(list(unique(c(years))), length(prev.year1))
+    }    
   }
   
   if(class(x[,1]) %in% c("factor", "character")) {
@@ -394,13 +453,25 @@ criterion_C = function(x,
     
   }
   
+  pop_data.names <- names(pop_data)
+  pop_data <- lapply(1:length(pop_data), function(i) {
+    df <- pop_data[[i]]
+    nomes <- names(df)
+    new.df <- as.data.frame(t(as.double(df) * prop.mature[i]), row.names = 1)
+    names(new.df) <- nomes
+    pop_data[[i]] <- new.df
+  })
+  names(pop_data) <- pop_data.names
+  
   ## Continuing decline at any rate
   any.decline <- sapply(pop_data, 
                         function(x) {
+                          if(!is.null(ignore.years)) 
+                            x = x[,!names(x) %in% ignore.years]
                           x1 = as.numeric(x[1:which(names(x) == assess.year)])
                           x1 = x1[!is.na(x1)]
                           mean(diff(x1), na.rm=TRUE) / 
-                            head(x1, 1)})
+                            utils::head(x1, 1)})
   
   ## Estimated continuing decline
   if("C1" %in% subcriteria) {
@@ -408,28 +479,84 @@ criterion_C = function(x,
     if(length(x) < 3) 
       stop("Too few year intervals to fit a model to population trends")
     
-    models.fit <- as.list(rep(NA, length(pop_data)))
-  
+    #models.fit <- as.list(rep(NA, length(pop_data)))
+    
     ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
     ## Je propose d'utiliser foreach et parallel comme dans criterion_b.
-    for(i in 1:length(pop_data)) {
+    ## Renato: Done in 14 Aug 2020
     
-    models.fit[[i]] <- pop.decline.fit(pop.size = pop_data[[i]], 
-                                 years = years, 
-                                 models = models,
-                                 project.years = yrs[[i]],
-                                 plot.fit = FALSE,
-                                 ...)
+    cat("Computing the estimated continuing decline (subcriteria C1)...", sep= "\n")
+    
+    if (parallel) {
+      cl <- snow::makeSOCKcluster(NbeCores)
+      doSNOW::registerDoSNOW(cl)
+      
+      message('Parallel running with ',
+              NbeCores, ' cores')
+      
+      `%d%` <- foreach::`%dopar%`
+      
+    } else {
+      `%d%` <- foreach::`%do%`
     }
+    
+    if (show_progress) {
+      pb <- txtProgressBar(min = 0,
+                       max = length(pop_data),
+                       style = 3)
+      
+      progress <- function(n)
+        setTxtProgressBar(pb, n)
+      opts <- list(progress = progress)
+      
+    } else {
+      opts <- NULL
+    }
+    
+    x <- NULL
+    models.fit <- foreach::foreach(
+        x = 1:length(pop_data),
+        .options.snow = opts
+      ) %d% {
+        #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//pop.decline.fit.R")
+        
+        if (!parallel & show_progress)
+          setTxtProgressBar(pb, x)
+        
+        pop.size.i <- pop_data[[x]]
+        years.i <- years
+        project.years.i <- yrs[[x]]
+        
+        if(!is.null(ignore.years)) {
+          pop.size.i <- pop.size.i[,!names(pop.size.i) %in% ignore.years]
+          years.i <- years.i[!years.i %in% ignore.years]
+          project.years.i <- project.years.i[!project.years.i %in% ignore.years]
+        }
+        
+        if(all(project.years.i %in% names(pop.size.i)))
+          project.years.i <- NULL
+        
+        res <- pop.decline.fit(pop.size = pop.size.i, 
+                               years = years.i, 
+                               models = models,
+                               project.years = project.years.i,
+                               plot.fit = FALSE
+                               #)
+                               ,...)
+        res
+      }
+    
+    if(parallel) snow::stopCluster(cl)
+    if(show_progress) close(pb)
     
     cont.decline <- sapply(models.fit, pop.decline.test, assess.year = assess.year)
   
   }
   
-  miss.years = lapply(1:length(yrs), 
+  miss.years <- lapply(1:length(yrs), 
                       function(i) !yrs[[i]] %in% names(pop_data[[i]]))
   
-  best.models = NULL
+  best.models <- NULL
   
   if(any(sapply(miss.years, any))) {   # Predictions based on the best model fit to population trends
     
@@ -448,25 +575,32 @@ criterion_C = function(x,
       
     }
   }
-  
-  assess.period <- lapply(1:length(pop_data),
-                          function(i)
-                            paste(unique(sort(
-                              c(prev.year3[i],
-                                assess.year,
-                                proj.year3[i])
-                            )), collapse = "-"))
-  pop_data1 <-
-    lapply(1:length(pop_data), function(i)
-      pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+
+  pop_data1 <- lapply(1:length(pop_data), function(i)
+    pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
   ps.interval <- sapply(1:length(pop_data1), function(i)
     paste(unique(
       c(
-        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])]),
-        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)]),
-        as.character(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])])
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])],1)),
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)],1)),
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])],1))
       )
     ), collapse = "-"))
+  
+  assess.period <- lapply(1:length(pop_data1),
+                          function(i)
+                            paste(unique(sort(
+                              c(min(names(pop_data1[[i]])),
+                                assess.year,
+                                max(names(pop_data1[[i]])))
+                            )), collapse = "-"))
+  # assess.period <- lapply(1:length(pop_data),
+  #                         function(i)
+  #                           paste(unique(sort(
+  #                             c(prev.year3[i],
+  #                               assess.year,
+  #                               proj.year3[i])
+  #                           )), collapse = "-"))
   
   ## Small population size and continuing decline using IUCN criteria
   Results <- data.frame(
@@ -487,16 +621,36 @@ criterion_C = function(x,
                                     function(i) as.numeric(pop_data[[i]][which(names(pop_data[[i]]) %in% assess.year)]))
   
   ## Are population declining at any rate?
-  Results$any.decline <- 
-    sapply(1:length(any.decline), function(y) if(as.numeric(any.decline[[y]]) < -0.001) "decreasing" else "not.decreasing")
+  Results$any.decline <-  sapply(1:length(any.decline), 
+                                 function(y) 
+                                   if(as.numeric(any.decline[[y]]) < -0.001) { 
+                                     "Decreasing" 
+                                   } else { 
+                                     if(as.numeric(any.decline[[y]]) > 0.001) "Increasing" else "Stable"
+                                   }
+                                 )
   
   ## Estimated continuing decline?
-  Results$cont.decline <- 
-    sapply(1:length(cont.decline), function(y) if(cont.decline[[y]] %in% c("signif.decline")) { 
-          "decreasing" 
-        } else {
-          if (cont.decline[[y]] %in% c("non.signif.decline","decrease")) "probably.decreasing" else "not.decreasing"
-        })  
+  Results$cont.decline <- sapply(1:length(cont.decline), 
+                                  function(y)
+                                    if (grepl("\\|", cont.decline[y])) {
+                                      cont.decline[y] <- gsub("non.signif.increase|non.signif.decline", "Stable", cont.decline[y])
+                                      cont.decline[y] <- gsub("signif.decline", "Decreasing", cont.decline[y])
+                                      cont.decline[y] <- gsub("signif.increase", "Increasing", cont.decline[y])
+                                      cont.decline[y]
+                                    } else {
+                                      if (cont.decline[y] %in% c("signif.decline")) 
+                                        return("Decreasing")
+                                      if (cont.decline[y] %in% c("signif.increase")) 
+                                        return("Increasing")
+                                      if (cont.decline[y] %in% c("non.signif.decline", "non.signif.increase")) 
+                                        return("Stable")
+                                      if (cont.decline[y] %in% c("decrease", "not.increasing")) 
+                                        return("Probably.Decreasing")
+                                      if (cont.decline[y] %in% c("increase", "not.decreasing")) 
+                                        return("Probably.Increasing")
+                                    }
+                                  )  
 
   
   ## Criteria C1: under criterion C1, the decline must be observed or estimated (thus removing projections of future decline)
@@ -526,13 +680,12 @@ criterion_C = function(x,
   ## Criteria C2: Under criteria B1b, B2b, and C2, continuing declines can be observed, estimated, inferred or projected
   if("C2" %in% subcriteria) {
    
-    Results$max.subpop.size <- 
-      sapply(subpop.size, max, na.rm = TRUE)
-    Results$prop.subpop.size <- 
-      sapply(subpop.size, function(x) 100*max(x, na.rm = TRUE)/sum(x, na.rm = TRUE) )
+    Results$max.subpop.size <- sapply(subpop.size, max, na.rm = TRUE)
+    Results$prop.subpop.size <- sapply(subpop.size, 
+                                       function(x) 100*max(x, na.rm = TRUE)/sum(x, na.rm = TRUE) )
 
-    fluctuations <- 
-      t(sapply(1:length(pop_data), function(i) pop.fluctuation(x = pop_data[[i]], years = years, plot.test = FALSE)))
+    fluctuations <- t(sapply(1:length(pop_data), 
+                             function(i) pop.fluctuation(x = pop_data[[i]], years = years, plot.test = FALSE)))
     Results$mean.fluctuation <- as.numeric(fluctuations[,"Magnitude.fluctuation"])
     Results$alternance <- as.numeric(fluctuations[,"Alternance.prop"])
     # Results$extreme.fluctuation <- 
@@ -543,10 +696,10 @@ criterion_C = function(x,
   }  
   
   ## specific function to categorize taxa based on reductions values
-  if("C1" %in% subcriteria) C1 <- cbind.data.frame(Results[,c("assess.pop.size", "cont.decline")],
+  if ("C1" %in% subcriteria) C1 <- cbind.data.frame(Results[,c("assess.pop.size", "cont.decline")],
                                                    Results[,grepl("reduction", names(Results))],
                                                    stringsAsFactors = FALSE)
-  if("C2" %in% subcriteria) C2 <- cbind.data.frame(Results[,c("assess.pop.size", "any.decline","max.subpop.size","prop.subpop.size","mean.fluctuation","alternance")],
+  if ("C2" %in% subcriteria) C2 <- cbind.data.frame(Results[,c("assess.pop.size", "any.decline","max.subpop.size","prop.subpop.size","mean.fluctuation","alternance")],
                                                    stringsAsFactors = FALSE)
   
   all_ranks <- cat_criterion_c(

@@ -74,9 +74,6 @@ By default, the function provides the consensus category, following
   same species i). Therefore, the order of the estimates of population size
   and continuing decline for each sub-criterion *must* be the same.
 }
-\examples{
-
-}
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

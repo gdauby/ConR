@@ -12,6 +12,8 @@
 #'   number of taxa.
 #' @param AOO a vector containing the Area of Occupancy of each taxon (in km2).  
 #' @param n.Locs a vector containing the number of locations for each taxon.
+#' @param prop.mature a value or vector of the proportion of mature individuals in the 
+#'   total population (IUCN 2019). Default to 1.
 #' @param subcriteria a vector containing the sub-criteria that should be
 #'   included in the assessment (i.e. D and/or D2).
 #' @param D.threshold numeric vector with the criterion D thresholds of very
@@ -31,14 +33,21 @@
 #' @details This is a simple and fast function to assess IUCN criterion D. The
 #'   assessment based solely on population sizes is done automatically, if a
 #'   vector of population sizes is provided. Caution should be taken while
-#'   assessing sub-criterion D2. IUCN (2019, p71) emphasizes that there is no
+#'   assessing sub-criterion D2. IUCN (2019, p.71) emphasizes that there is no
 #'   strict thresholds for D2 and that this sub-criterion should only be
 #'   assessed if the "population is prone to the effects of human activities or
 #'   stochastic events in an uncertain future, and is thus capable of becoming
 #'   Critically Endangered or even Extinct in a very short time period. (...).
 #'   So, simply meeting the suggested (or any other) threshold for AOO or number
-#'   of locations is not sufficient"". Therefore, `ConR` assumes no default
+#'   of locations is not sufficient". Therefore, `criterion_D` assumes no default
 #'   thresholds for D2.
+#'   
+#'   The argument `prop.mature` can be used if the population data provided are not 
+#'   already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
+#'   By default, the proportion of mature individuals in the total population proportion 
+#'   is taken as 1, but the user can provide one proportion for all species or species-
+#'   specific proportions.
+
 #'
 #'   Currenlty, the function does not supports data separated by subpopulation.
 #'   
@@ -78,6 +87,7 @@ criterion_D = function(pop.size = NULL,
                        Name_Sp = NULL,
                        AOO = NULL,
                        n.Locs = NULL,
+                       prop.mature = NULL,
                        subcriteria = c("D", "D2"),
                        D.threshold = c(1000, 250, 50),
                        AOO.threshold = NULL,
@@ -129,7 +139,32 @@ criterion_D = function(pop.size = NULL,
                            stringsAsFactors = FALSE)
   }
   
-  ## Small population size and continuing decline using IUCN criteria
+  if(is.null(prop.mature)) {
+    
+    prop.mature <- rep(1, dim(x)[1])
+    
+  } else {
+    
+    if(any(prop.mature>1) | any(prop.mature<0))
+      warning("The proportion of mature individuals normally ranges between 0 and 1")
+    
+    if(dim(x)[1] != length(prop.mature)) {
+      
+      if(length(unique(prop.mature)) > 1)
+        stop("Number of proportions of mature individuals in the population is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      
+      if(length(unique(prop.mature)) == 1) {
+        
+        prop.mature <- rep(prop.mature, dim(x)[1])
+        warning("Only one proportion of mature individuals provided for two or more taxa: assuming the same proportion for all taxa")
+        
+      }
+    }
+  } 
+  
+  x$pop.size <- as.double(x$pop.size) * prop.mature
+
+    ## Very small or restricted population using IUCN criteria
   Results <- data.frame(
     species = row.names(x),
     stringsAsFactors = FALSE

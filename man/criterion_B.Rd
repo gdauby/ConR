@@ -92,7 +92,9 @@ The function ...
 
 }
 \references{
-
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Dauby, G. & Lima, R.A.F.

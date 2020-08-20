@@ -16,9 +16,11 @@
 #' 
 #' @author Dauby, G. & Lima, R.A.F.
 #'
-#' @references 
+#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+#'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+#'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @export
+#' @export cat_criterion_b
 #'
 #' @examples
 #' 
@@ -32,6 +34,7 @@
 #' locations <- c(1, 1)
 #' cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations)
 #' 
+#' @importFrom utils tail
 #' 
 cat_criterion_b <- function(EOO = NULL,
                             AOO = NULL,

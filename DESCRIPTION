@@ -28,13 +28,19 @@ Imports:
     sp,
     nls.multstart,
     segmented,
-    lifecycle
+    lifecycle,
+    FuzzyNumbers.Ext.2,
+    dplyr,
+    stringr,
+    graphics,
+    stats,
+    utils
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1.9000
 Authors@R: c(
 	person("Gilles", "Dauby", role = c("cre", "aut"),
 	email = "gildauby@gmail.com", 

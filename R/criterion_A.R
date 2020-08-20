@@ -5,17 +5,17 @@
 #'  A2, A3, and A4)
 #'
 #' @param x a vector (one species) or a data frame (multiple species/
-#'   subpopulations) containing the population sizes (e.g. number of mature
-#'   individuals) per year, from the oldest to the most recent estimate.
+#'   subpopulations) containing the population size per year, from the oldest 
+#'   to the most recent population estimate.
 #' @param years a vector containing the years for which the population sizes
-#'   is available (i.e. time series). It can be NULL if x contains the years as names.
+#'   are available (i.e. time series). It can be NULL if x contains the years as names.
 #' @param assess.year numeric. The year for which the assessment should be performed.
 #' @param project.years a vector containing the years for which population sizes
 #'   were or should be projected.
 #' @param generation.time a value or vector of generation lengths, i.e. the
 #'   average age of parents of the current cohort (IUCN 2019).
 #' @param models a vector containing the names of the models to be fitted to
-#'   species population data to perform projections.
+#'   species population size to perform projections.
 #' @param subcriteria a vector containing the sub-criteria that should be
 #'   included in the assessment (i.e. A1, A2, A3 and/or A4).
 #' @param data.type a character corresponding to the type of data (IUCN 2019):
@@ -30,11 +30,17 @@
 #'   recommended by the IUCN.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
+#' @param parallel logical. Should calculations be parallelized? Default to 
+#'   FALSE.
+#' @param NbeCores  integer. Number of cores for parallel computing. Default 
+#'   to 2.
+#' @param show_progress logical. Should the progress bar be displayed? Default
+#'  to TRUE.
 #' @param ... other parameters to be passed as arguments for function `pop.decline.fit`    
 #'
 #' @return A data frame containing, for each taxon, the year of assessment, the
 #'   time interval of the assessment (include past and future estimates, if
-#'   any), the population sizes in the interval of assessment, the reduction of
+#'   any), the population size in the interval of assessment, the reduction of
 #'   the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
 #'   model used to obtain the projections of population size (if used), the IUCN
 #'   categories associated with these sub-criteria and the consensus category
@@ -54,20 +60,20 @@
 #'   on types of threat (i.e. patterns of exploitation or habitat loss), life history 
 #'   and ecology of the taxon being evaluated or any other processes that may contribute 
 #'   to population decline. See IUCN (2019) for more details on the assumptions of each model.
-#'   The selection of models based solely on their fit to population data should only be used 
+#'   The selection of models based solely on their fit to population size should only be used 
 #'   for larger time series (Number of observations > 10). 
 #'   
 #'   Some more technical notes. If `years` is a subset of all the years contained in `x`, 
 #'   then `x` is filtered based on `years`. So, make sure you have selected the right years.
 #'   If the year of assessment is not given, the most recent year is taken instead. The function 
 #'   accepts a single generation length for all species or species-specific generation lengths. 
-#'   In the latter case, it is necessary to provide exactly one value for each species analyzed. 
-#'   Currently, only one assessment year can be assigned for all taxa. Similarly, only 
+#'   In the latter case, it is necessary to provide exactly one value for each species analyzed.
+#'   Currently, only one assessment year can be assigned for all taxa. Similarly, only
 #'   one vector of years with population size available. Thus, it is advised not to mix
-#'   taxa with great differences in generation length.
+#'   taxa with great differences in generation length. 
 #'   
 #' @author Lima, R.A.F. & Dauby, G.
-#'
+#' 
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
@@ -85,7 +91,8 @@
 #'   generation.time = 10)
 #'   
 #' ## Another example: one species, more observations and subcriteria
-#' pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000, "2030" = 4000)
+#' pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000,
+#'         "2030" = 4000)
 #' criterion_A(x = pop,
 #'   years = c(1970, 1980, 1990, 2000, 2030), 
 #'   assess.year = 2000,
@@ -102,7 +109,8 @@
 #'   subcriteria = c("A2"),
 #'   generation.time = 10)
 #'
-#' ## The data and criterion A assessment as described in IUCN (2019) - https://www.iucnredlist.org/resources/criterion-a
+#' ## The data and criterion A assessment as described in IUCN (2019)
+#' #available at: https://www.iucnredlist.org/resources/criterion-a
 #' data(example_criterionA)
 #' criterion_A(example_criterionA,
 #'   years = seq(1970, 2000, by = 2), 
@@ -127,6 +135,11 @@
 #'   subcriteria = c("A1", "A2", "A3", "A4"),
 #'   generation.time = 10)
 #'   
+#' @importFrom utils txtProgressBar setTxtProgressBar head
+#' @importFrom snow makeSOCKcluster stopCluster
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom foreach %dopar% %do% foreach
+#' 
 criterion_A = function(x, 
                        years = NULL, 
                        assess.year = NULL, 
@@ -139,6 +152,9 @@ criterion_A = function(x,
                        A1.threshold = c(50, 70, 90),
                        A234.threshold = c(30, 50, 80),
                        all.cats = TRUE,
+                       parallel = FALSE,
+                       NbeCores = 2,
+                       show_progress = TRUE,
                        ...) {
   
   if (is.null(x))
@@ -165,17 +181,17 @@ criterion_A = function(x,
     
     if(is.null(names(x))) {
       
-      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
+      x <- as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, years)),
                         stringsAsFactors = FALSE)
       
     } else {
       
-      x = as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
+      x <- as.data.frame(matrix(x, ncol = length(x), dimnames = list(NULL, names(x))),
                         stringsAsFactors = FALSE)
       
     }
     
-    x = cbind.data.frame(data.frame(species = "species 1"), x)
+    x <- cbind.data.frame(data.frame(species = "species 1"), x)
     
   }
   
@@ -233,7 +249,7 @@ criterion_A = function(x,
       
       if(length(unique(generation.time)) == 1) {
         
-        generation.time = rep(generation.time, dim(x)[1])
+        generation.time <- rep(generation.time, dim(x)[1])
         warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa")
         
       }
@@ -256,9 +272,8 @@ criterion_A = function(x,
       warning("Maximum projection of population sizes is more than 100 years into the future: assuming 100 years after the year of assessment")
       
     }
-    
   }
-  
+
   if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) proj.year = rep(assess.year, length(proj.year))
   
   if(!any(subcriteria %in% c("A1", "A2")) & any(subcriteria %in% c("A3", "A4"))) prev.year = rep(assess.year, length(prev.year))
@@ -372,7 +387,7 @@ criterion_A = function(x,
     pop_data <- split(x, f = nomes)
     
   }
-  
+
   best.models <- NULL
   miss.years <- lapply(1:length(yrs),
                       function(i)
@@ -388,22 +403,85 @@ criterion_A = function(x,
     which.pred <- which(sapply(miss.years, any))
     
     ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
-    for (i in 1:length(which.pred)) {
+    ## Renato: Done in 14 Aug 2020
+    
+    cat("Computing the predictions based on population trends...", sep= "\n")
+    
+    if (parallel) {
+      cl <- snow::makeSOCKcluster(NbeCores)
+      doSNOW::registerDoSNOW(cl)
       
-      pred.sp <- pop.decline.fit(pop.size = pop_data[[which.pred[i]]], 
-                                 years = years, 
-                                 models = models,
-                                 project.years = yrs[[which.pred[i]]],
-                                 plot.fit = FALSE,
-                                 ...)
+      message('Parallel running with ',
+              NbeCores, ' cores')
+      
+      `%d%` <- foreach::`%dopar%`
+      
+    } else {
+      `%d%` <- foreach::`%do%`
+    }
+    
+    if (show_progress) {
+      pb <- txtProgressBar(min = 0,
+                           max = length(which.pred),
+                           style = 3)
+      
+      progress <- function(n)
+        setTxtProgressBar(pb, n)
+      opts <- list(progress = progress)
+      
+    } else {
+      opts <- NULL
+    }
+    
+    x <- NULL
+    models.fit <- foreach::foreach(
+      x = which.pred,
+      .options.snow = opts
+    ) %d% {
+      #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//pop.decline.fit.R")
+      
+      if (!parallel & show_progress) setTxtProgressBar(pb, x)
+      
+      pred.sp <- pop.decline.fit(pop.size = pop_data[[x]], 
+                             years = years, 
+                             models = models,
+                             project.years = yrs[[x]],
+                             plot.fit = FALSE
+                             #)
+                             ,...)
+      
       pred.pop.size <- pred.sp$data$Observed
       pred.pop.size[is.na(pred.sp$data$Observed)] <- 
         pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
       names(pred.pop.size) <- pred.sp$data$Year
-      pop_data[[which.pred[i]]] <- pred.pop.size
-      best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
-      
+      res <- list(pred.pop.size, attributes(pred.sp$best.model)$best.model.name)
+      res
     }
+    
+    if(parallel) snow::stopCluster(cl)
+    if(show_progress) close(pb)
+    
+    for (i in 1:length(which.pred)) { 
+      pop_data[[which.pred[i]]] <- models.fit[[i]][[1]]
+      best.models[[which.pred[i]]] <- models.fit[[i]][[2]]
+    }  
+    
+    # for (i in 1:length(which.pred)) {
+    #   
+    #   pred.sp <- pop.decline.fit(pop.size = pop_data[[which.pred[i]]], 
+    #                              years = years, 
+    #                              models = models,
+    #                              project.years = yrs[[which.pred[i]]],
+    #                              plot.fit = FALSE,
+    #                              ...)
+    #   pred.pop.size <- pred.sp$data$Observed
+    #   pred.pop.size[is.na(pred.sp$data$Observed)] <- 
+    #     pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
+    #   names(pred.pop.size) <- pred.sp$data$Year
+    #   pop_data[[which.pred[i]]] <- pred.pop.size
+    #   best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
+    #   
+    # }
   }
   
   assess.period <- lapply(1:length(pop_data), 

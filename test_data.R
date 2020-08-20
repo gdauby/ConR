@@ -80,21 +80,21 @@ save(example_criterionA,
 load("data/example_criterionA.rda")
 
 #### criterion C ####
-example_criterionC <- dic[[2]][,1:8]
+example_criterionC_subpops <- dic[[2]][,1:8]
 
 # Overall pop sizes
-example_criterionC1 <- rowsum(example_criterionC[,c(2:8)],
+example_criterionC <- rowsum(example_criterionC_subpops[,c(2:8)],
        example_criterionC$species)
 
 # checking
+example_criterionC_subpops
 example_criterionC
-example_criterionC1
 
-save(example_criterionC,
+save(example_criterionC_subpops,
      file = "data/example_criterionC_subpops.rda",
      compress = "xz")
 
-save(example_criterionC1,
+save(example_criterionC,
      file = "data/example_criterionC.rda",
      compress = "xz")
 
