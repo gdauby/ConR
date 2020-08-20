@@ -332,7 +332,7 @@ EOO.comp <-  function(XY,
       #     suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
       # }
       
-      if(class(p1) == "SpatialPolygons") {
+      if(any(class(p1) == "SpatialPolygons") | any(class(p1) == "sfc")) {
         if (mode == "spheroid") {
           EOO <-
             suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
@@ -346,8 +346,11 @@ EOO.comp <-  function(XY,
           p1 <- 
             as(st_transform(p1, 4326), "Spatial")
         }
+        
       } else  {
+        
         EOO <- NA
+        
       }
     }
     
