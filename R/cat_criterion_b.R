@@ -94,8 +94,16 @@ cat_criterion_b <- function(EOO = NULL,
                                  deparse.level = 0, 
                                  stringsAsFactors = FALSE)
   
+  all_missing <- 
+    apply(all_ranks, 1, function(x) ifelse(all(is.na(x)), TRUE, 
+                                           ifelse(all(is.na(x[1:2])), TRUE, FALSE)))
+  
+  if(sum(all_missing) > 0) {
+    warning(paste(sum(all_missing), "taxa are not categorized because EOO & AOO or EOO & AOO & locations are missing"))
+  }
+  
   ranks_B12a <- 
-    as.character(apply(all_ranks, 
+    as.character(apply(all_ranks[!all_missing, ], 
                        1, FUN = function(x) {
                          
                          min_b <- 
@@ -103,18 +111,6 @@ cat_criterion_b <- function(EOO = NULL,
                          
                          y <- 
                            max(c(min_b, x[3]), na.rm = T)
-                         
-                         # if(x[3] < 3) {
-                         #   
-                         #  y <- 
-                         #    max(c(min_b, x[3]), na.rm = T)
-                         #  
-                         # } else {
-                         #   
-                         #   y <-
-                         #     min(c(min_b, x[3]), na.rm = T)
-                         #   
-                         # }
                          
                          return(y)
                        }
@@ -168,15 +164,28 @@ cat_criterion_b <- function(EOO = NULL,
   
   cat_codes <- 
     apply(
-    all_ranks,
-    1,
-    FUN = function(x) {
-      y <- names(x[x == min(x, na.rm = T)])
-      paste(y[!is.na(y)], collapse = "+")
-    }
-  )
+      all_ranks[!all_missing,],
+      1,
+      FUN = function(x) {
+        y <- names(x[x == min(x, na.rm = T)])
+        paste(y[!is.na(y)], collapse = "+")
+      }
+    )
   
-  cat_codes[ranks_B12a == 'LC or NT'] <- NA
+  ranks_B12a_final <- cat_codes_final <- 
+    vector(mode = "character", length = nrow(all_ranks))
+  
+  ranks_B12a_final[!all_missing] <- 
+    ranks_B12a
+  ranks_B12a_final[all_missing] <- 
+    NA
+  
+  cat_codes_final[!all_missing] <- 
+    cat_codes
+  cat_codes_final[all_missing] <- 
+    NA
+  
+  cat_codes_final[ranks_B12a_final == 'LC or NT'] <- NA
   
   return(list(ranks_B12a = ranks_B12a, cat_codes = cat_codes))
 }
