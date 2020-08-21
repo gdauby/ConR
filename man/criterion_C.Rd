@@ -186,9 +186,9 @@ The function `criterion_C` is similar to another `ConR` function:
 \examples{
   
   ## Example with subpopulations
-  data(example_criterionC)
+  data(example_criterionC_subpops)
   
-  criterion_C(x = example_criterionC,
+  criterion_C(x = example_criterionC_subpops,
   years = NULL, 
   assess.year = 2000,
   project.years = NULL,
@@ -208,6 +208,19 @@ The function `criterion_C` is similar to another `ConR` function:
   subpop.size = NULL,
   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
   subcriteria = c("C1", "C2")
+  )
+  
+  ## Example without subpopulations (cannot assess subcriteria C2)
+  data(example_criterionC)
+  
+  criterion_C(x = example_criterionC,
+  years = NULL, 
+  assess.year = 2000,
+  project.years = NULL,
+  generation.time = 10,
+  subpop.size = NULL,
+  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+  subcriteria = c("C1")
   )
   
 }

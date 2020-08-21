@@ -9,34 +9,55 @@ cat_criterion_b(
   AOO = NULL,
   locations = NULL,
   protected = NULL,
+  decline = NULL,
+  ext.fluct = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
-  Loc.threshold = c(10, 5, 1)
+  Loc.threshold = c(10, 5, 1),
+  protected.threshold = 100,
+  fluct.threshold = 10
 )
 }
 \arguments{
-\item{EOO}{numeric vector}
+\item{EOO}{numeric vector with species extent of occurrence - EOO (i.e. sub-criterion B1)}
 
-\item{AOO}{numeric vector}
+\item{AOO}{numeric vector with species area of occupancy - AOO (i.e. sub-criterion B2)}
 
-\item{locations}{numeric vector}
+\item{locations}{numeric vector with the number of locations where the species occur (i.e. condition 'a')}
 
-\item{protected}{numeric vector}
+\item{protected}{numeric vector providing estimated percentage of species distribution in protected areas}
 
-\item{EOO.threshold}{numeric vector}
+\item{decline}{string vector providing the status of the species continuing decline in EOO, AOO, habitat,
+locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
+the species is classified as condition 'b' of criterion B will not be met.}
 
-\item{AOO.threshold}{numeric vector}
+\item{ext.fluct}{numeric. vector with the mean order of magnitude of the
+differences between population minima and maxima. Currently not implemented.}
 
-\item{Loc.threshold}{numeric vector}
+\item{EOO.threshold}{numeric vector with the EOO thresholds to convert estimates into threat categories. 
+Default is the thresholds recommended by IUCN.}
+
+\item{AOO.threshold}{numeric vector with the AOO thresholds to convert estimates into threat categories. 
+Default is the thresholds recommended by IUCN.}
+
+\item{Loc.threshold}{numeric vector with the thresholds of number of locations (condition 'a'). 
+Default is the thresholds recommended by IUCN.}
+
+\item{protected.threshold}{numeric, one value indicating the threshold for protected value above which 
+a taxa would not be threatened whatever the others parameters, by default is 100}
+
+\item{fluct.threshold}{numeric. Threshold of the order of magnitude of the
+differences between population minima and maxima to classify extreme fluctuations. 
+Default to 10 as recommended by IUCN.}
 }
 \value{
 list
 }
 \description{
-Provide IUCN category based on the four sub-criteria and provided thresholds
+Provide IUCN threat categories based on B sub-criteria, conditions and thresholds.
 }
 \details{
-The function ...
+The function categorizes taxa following criterion B and categories of the IUCN.
 }
 \examples{
 
@@ -49,6 +70,20 @@ EOO <- c(34000, 80)
 AOO <- c(300, 25)
 locations <- c(1, 1)
 cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations)
+
+EOO <- c(50, 5000)
+AOO <- c(5, 25)
+locations <- c(1, 10)
+protected <- c(80, 50)
+decline <- c("Stable", "Decreasing")
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
+
+EOO <- c(34000, 5000)
+AOO <- c(300, 25)
+locations <- c(9, 12)
+protected <- c(100, 80)
+decline <- c("Decreasing", "Decreasing")
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
 
 }
 \references{

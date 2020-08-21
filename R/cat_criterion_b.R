@@ -1,17 +1,28 @@
 #' @title Categorize taxa according to IUCN criterion B
 #'
-#' @description Provide IUCN category based on the four sub-criteria and provided thresholds
+#' @description Provide IUCN threat categories based on B sub-criteria, conditions and thresholds.
 #'
-#' @param EOO numeric vector
-#' @param AOO numeric vector
-#' @param locations numeric vector
+#' @param EOO numeric vector with species extent of occurrence - EOO (i.e. sub-criterion B1)
+#' @param AOO numeric vector with species area of occupancy - AOO (i.e. sub-criterion B2)
+#' @param locations numeric vector with the number of locations where the species occur (i.e. condition 'a')
 #' @param protected numeric vector providing estimated percentage of species distribution in protected areas
-#' @param decline string vector providing sub-populations decline status. If different of 'Decreasing', sub-criterion (b) of criterion B will not be met
-#' @param protected.threshold numeric, one value indicating the threshold for protected value above which a taxa would not be threatened whatever the others parameters, by default is 100
-#' @param EOO.threshold numeric vector
-#' @param AOO.threshold numeric vector
-#' @param Loc.threshold numeric vector
-#'
+#' @param decline string vector providing the status of the species continuing decline in EOO, AOO, habitat,
+#'  locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
+#'  the species is classified as condition 'b' of criterion B will not be met.
+#' @param ext.fluct numeric. vector with the mean order of magnitude of the
+#'   differences between population minima and maxima. Currently not implemented.
+#' @param EOO.threshold numeric vector with the EOO thresholds to convert estimates into threat categories. 
+#'  Default is the thresholds recommended by IUCN.
+#' @param AOO.threshold numeric vector with the AOO thresholds to convert estimates into threat categories. 
+#'  Default is the thresholds recommended by IUCN.
+#' @param Loc.threshold numeric vector with the thresholds of number of locations (condition 'a'). 
+#'  Default is the thresholds recommended by IUCN.
+#' @param protected.threshold numeric, one value indicating the threshold for protected value above which 
+#'  a taxa would not be threatened whatever the others parameters, by default is 100
+#' @param fluct.threshold numeric. Threshold of the order of magnitude of the
+#'   differences between population minima and maxima to classify extreme fluctuations. 
+#'   Default to 10 as recommended by IUCN.
+#'   
 #' @return list
 #' 
 #' @details The function categorizes taxa following criterion B and categories of the IUCN. 
@@ -55,12 +66,15 @@
 cat_criterion_b <- function(EOO = NULL,
                             AOO = NULL,
                             locations = NULL,
-                            protected = NULL, ## to include yet
+                            protected = NULL,
                             decline = NULL,
-                            protected.threshold = 100,
+                            ext.fluct = NULL,
                             EOO.threshold = c(20000, 5000, 100), 
                             AOO.threshold = c(2000, 500, 10), 
-                            Loc.threshold = c(10, 5, 1)) {
+                            Loc.threshold = c(10, 5, 1),
+                            protected.threshold = 100,
+                            fluct.threshold = 10
+                            ) {
   
   all.identical <-
     function(l)
@@ -77,9 +91,6 @@ cat_criterion_b <- function(EOO = NULL,
   
   if(protected.threshold > 100 | protected.threshold <= 0)
     stop("protected.threshold must be higher than 0 and lower or equal to 100")
-  
-  # ,
-  # length(protected)
   
   rank_eoo <- findInterval(EOO, sort(EOO.threshold))
   
@@ -138,7 +149,7 @@ cat_criterion_b <- function(EOO = NULL,
       
       if(any(ranks_B12a[which(decline != "Decreasing")] != '3')) {
         
-        message("Some taxa categorized as Threatened based on EOO/AOO/locations finally assessed as Not Threatened because no Decline detected")
+        message("Some taxa categorized as threatened based on EOO/AOO/locations were finally assessed as not threatened because no Decline detected")
         
         ranks_B12a[which(decline != "Decreasing")] <- 
           "3"
