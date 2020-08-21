@@ -187,6 +187,6 @@ cat_criterion_b <- function(EOO = NULL,
   
   cat_codes_final[ranks_B12a_final == 'LC or NT'] <- NA
   
-  return(list(ranks_B12a = ranks_B12a, cat_codes = cat_codes))
+  return(list(ranks_B12a = ranks_B12a_final, cat_codes = cat_codes_final))
 }
 
