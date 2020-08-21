@@ -287,7 +287,7 @@ EOO.comp <-  function(XY,
                             mode = mode,
                             proj_type = proj_type, 
                             exclude.area = exclude.area,
-                            poly_exclude = as(country_map, "sf"))
+                            poly_exclude = as(country_map, "sf")) ##Gilles, haven't you done the conversion to sf already above?
       
       # old <- function(XY) {
       #   p1 <-

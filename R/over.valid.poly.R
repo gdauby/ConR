@@ -4,13 +4,13 @@
 #'
 #' @param poly Spatial polygon
 #' @param points XY data frame
-#' @param proj_type projected coordinate system (in meters)
+#' @param proj_user projected coordinate system (in meters)
 #' @param min.dist minimum tolerated distance between polygons and points.
 #'   Default to 0.1 m.
 #' @param value output value: proportional distance ("dist") or inside/outside
 #'   the polygon ("flag")?
 #' 
-#' @details The spatial polygon must be a `SpatialPolygonsDataFrame` in whhich
+#' @details The spatial polygon must be a `SpatialPolygonsDataFrame` in which
 #'   each polygon/feature is one taxon, an the data frame contains a column
 #'   `tax` with the taxa name. The XY data frame has the same structure as other
 #'   XY objects within `ConR` with the three first columns being `ddlat`,
@@ -38,7 +38,7 @@
 #' @importFrom fields rdist
 #' @importFrom dplyr full_join
 #' 
-.over.valid.poly <- function(poly, points, proj_user = NULL, min.dist = 0.1, value = "dist") {
+over.valid.poly <- function(poly, points, proj_user = NULL, min.dist = 0.1, value = "dist") {
   
   if (all(!poly$tax %in% unique(points$tax)))
     return(rep(NA, nrow(points)))
@@ -52,9 +52,13 @@
   }
   
   poly_sf <- sf::st_as_sf(poly)
+  if (is.na(sf::st_crs(poly_sf)[[1]]))
+    sf::st_crs(poly_sf) <- proj_user
+
   points_sf <- sf::st_as_sf(points, coords = c("ddlon", "ddlat"))
+  if (is.na(sf::st_crs(points_sf)[[1]]))
+    sf::st_crs(points_sf) <- sf::st_crs(poly_sf)
   
-  sf::st_crs(points_sf) <- sf::st_crs(poly)
   points_sf <- sf::st_transform(points_sf, crs = proj_user)
   poly_sf <- sf::st_transform(poly_sf, crs = proj_user)
 

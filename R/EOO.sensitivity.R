@@ -82,6 +82,7 @@
 #' @param levels.order a character vector with at least two classes ordered from
 #'   the least confident to the more confident class of records. See Details.
 #' @param occ.based logical. Should the measure of influence of each record be returned? Default to TRUE.
+#' @param proj_user character string or numeric with the user-defined projection system
 #' @inheritParams EOO.computing
 #' @inheritParams .over.valid.poly
 #' 
@@ -325,7 +326,7 @@ EOO.sensitivity <- function(XY,
         if (!parallel & show_progress)
          setTxtProgressBar(pb, x)
         
-        res <- .over.valid.poly(shps_df, list_data[[x]], 
+        res <- over.valid.poly(shps_df, list_data[[x]], 
                                 proj_user = proj_user, value = value)
         res
       }

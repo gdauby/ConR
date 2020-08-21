@@ -143,7 +143,7 @@ EOO.computing <- function(XY,
     country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
     
-  }else{
+  } else {
     
     if(any(grepl('sf', class(country_map))))
       country_map <- 
@@ -212,7 +212,7 @@ EOO.computing <- function(XY,
         setTxtProgressBar(pb, x)
       
       res <-
-        EOO.comp(
+        ConR::EOO.comp(
           XY = list_data[[x]],
           exclude.area = exclude.area,
           buff_width = buff_width,

@@ -46,13 +46,17 @@ Convex.Hull.Poly <-
         
       }
       
-      p1 <- rgeos::readWKT(POLY)
+      p1 <- rgeos::readWKT(POLY) 
       
+      ## Gilles, there is a warning here that may be a potential the problem... use sf to make poly?
       sp::proj4string(p1) <-
         sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs = TRUE)
       
-      p1 <- suppressWarnings(geosphere::makePoly(p1))
+      p1 <- suppressWarnings(geosphere::makePoly(p1)) 
       
+      ##Gilles, why not define directly a polygon using 'sf'? See code examples commented below:
+      #p1_sf <- sf::st_sfc(sf::st_polygon(list(coord[,2:1])))
+      #sf::st_crs(p1_sf) <- sf::st_crs(poly_exclude)
       
       if (exclude.area) {
         p1_sf <- as(p1, "sf")
