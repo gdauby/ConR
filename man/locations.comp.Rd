@@ -60,6 +60,19 @@ Estimate the number of locations for multiple taxa
   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
   [,3] \tab tax \tab character or factor, taxa names\cr
 }
+
+Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for
+specifying the resolution). The number of locations is simply the number of
+occupied locations. Note that the grid position is overlaid in order to
+minimize the number of locations (several translation of the grid are
+performed and the one providing the minimum number of occupied cells is
+provided).
+
+If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined 
+by the argument \code{Cell_size_locations}.
+If \code{method} is "sliding scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
+and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default. 
+See Rivers M.C. et al. (2010) for more information on the methods.
 }
 \examples{
 data(dataset.ex)

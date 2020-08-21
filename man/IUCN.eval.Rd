@@ -200,7 +200,9 @@ a sub-graph in the map will be displayed (if \code{DrawMap} and
 \code{add.legend} are both TRUE) showing a barplot of collection year
 
 \strong{Starting position of the raster used for estimating the Area Of
-Occupancy}\cr Different starting position of the raster used for estimate
+Occupancy}\cr 
+
+Different starting position of the raster used for estimate
 the AOO may provide different number of occupied cells. Hence, by default, 4
 different translations of the raster is done (fixed increment of 1/4
 resolution north and east) and the minimum number of occupied cells is used
@@ -208,7 +210,9 @@ for estimating AOO. It is also possible to define a given number of random
 starting position of the raster using the argument
 \code{nbe.rep.rast.AOO}\cr
 
-\strong{Estimating number of locations}\cr Locations are estimated by
+\strong{Estimating number of locations}\cr 
+
+Locations are estimated by
 overlaying a grid of a given resolution (see \code{Cell_size_locations} for
 specifying the resolution). The number of locations is simply the number of
 occupied locations. Note that the grid position is overlaid in order to

@@ -9,6 +9,8 @@ cat_criterion_b(
   AOO = NULL,
   locations = NULL,
   protected = NULL,
+  decline = NULL,
+  protected.threshold = 100,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1)
@@ -21,7 +23,11 @@ cat_criterion_b(
 
 \item{locations}{numeric vector}
 
-\item{protected}{numeric vector}
+\item{protected}{numeric vector providing estimated percentage of species distribution in protected areas}
+
+\item{decline}{string vector providing sub-populations decline status. If different of 'Decreasing', sub-criterion (b) of criterion B will not be met}
+
+\item{protected.threshold}{numeric, one value indicating the threshold for protected value above which a taxa would not be threatened whatever the others parameters, by default is 100}
 
 \item{EOO.threshold}{numeric vector}
 
@@ -36,7 +42,7 @@ list
 Provide IUCN category based on the four sub-criteria and provided thresholds
 }
 \details{
-The function ...
+The function categorizes taxa following criterion B and categories of the IUCN.
 }
 \examples{
 
@@ -49,6 +55,20 @@ EOO <- c(34000, 80)
 AOO <- c(300, 25)
 locations <- c(1, 1)
 cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations)
+
+EOO <- c(50, 5000)
+AOO <- c(5, 25)
+locations <- c(1, 10)
+protected <- c(80, 50)
+decline <- c("Stable", "Decreasing")
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
+
+EOO <- c(34000, 5000)
+AOO <- c(300, 25)
+locations <- c(9, 12)
+protected <- c(100, 80)
+decline <- c("Decreasing", "Decreasing")
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
 
 }
 \references{
