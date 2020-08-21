@@ -303,7 +303,7 @@ criterion_C = function(x,
       if (all(numb.subpop == 1))
         stop("Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1")
       
-      if (any(x[, which(names(x) == assess.year)] != sapply(subpop.size, sum)))
+      if (any(round(x[, which(names(x) == assess.year)], 0) != round(sapply(subpop.size, sum), 0)))
         stop("The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data")
       
       if (is.null(names(subpop.size)) & class(x[, 1]) %in% c("factor", "character"))
