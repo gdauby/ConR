@@ -216,6 +216,7 @@ criterion_B <- function(x,
     data.frame(
       taxa = names(AOO),
       EOO = EOO,
+      AOO = AOO,
       locations = locations_res[[2]],
       category = categories$ranks_B12a,
       cat_codes = categories$cat_codes,

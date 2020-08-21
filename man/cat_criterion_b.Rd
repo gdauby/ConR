@@ -10,7 +10,11 @@ cat_criterion_b(
   locations = NULL,
   protected = NULL,
   decline = NULL,
+<<<<<<< HEAD
   ext.fluct = NULL,
+=======
+  protected.threshold = 100,
+>>>>>>> aba09f401c641872e98e213328b0835b44904134
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
@@ -26,6 +30,13 @@ cat_criterion_b(
 \item{locations}{numeric vector with the number of locations where the species occur (i.e. condition 'a')}
 
 \item{protected}{numeric vector providing estimated percentage of species distribution in protected areas}
+<<<<<<< HEAD
+=======
+
+\item{decline}{string vector providing sub-populations decline status. If different of 'Decreasing', sub-criterion (b) of criterion B will not be met}
+
+\item{protected.threshold}{numeric, one value indicating the threshold for protected value above which a taxa would not be threatened whatever the others parameters, by default is 100}
+>>>>>>> aba09f401c641872e98e213328b0835b44904134
 
 \item{decline}{string vector providing the status of the species continuing decline in EOO, AOO, habitat,
 locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
