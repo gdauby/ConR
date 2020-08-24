@@ -140,9 +140,9 @@
 #' @examples
 #'   
 #'   ## Example with subpopulations
-#'   data(example_criterionC)
+#'   data(example_criterionC_subpops)
 #'   
-#'   criterion_C(x = example_criterionC,
+#'   criterion_C(x = example_criterionC_subpops,
 #'   years = NULL, 
 #'   assess.year = 2000,
 #'   project.years = NULL,
@@ -162,6 +162,19 @@
 #'   subpop.size = NULL,
 #'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
 #'   subcriteria = c("C1", "C2")
+#'   )
+#'   
+#'   ## Example without subpopulations (cannot assess subcriteria C2)
+#'   data(example_criterionC)
+#'   
+#'   criterion_C(x = example_criterionC,
+#'   years = NULL, 
+#'   assess.year = 2000,
+#'   project.years = NULL,
+#'   generation.time = 10,
+#'   subpop.size = NULL,
+#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+#'   subcriteria = c("C1")
 #'   )
 #'   
 #' @importFrom utils txtProgressBar setTxtProgressBar head
@@ -464,14 +477,42 @@ criterion_C = function(x,
   names(pop_data) <- pop_data.names
   
   ## Continuing decline at any rate
-  any.decline <- sapply(pop_data, 
-                        function(x) {
-                          if(!is.null(ignore.years)) 
-                            x = x[,!names(x) %in% ignore.years]
-                          x1 = as.numeric(x[1:which(names(x) == assess.year)])
-                          x1 = x1[!is.na(x1)]
-                          mean(diff(x1), na.rm=TRUE) / 
-                            utils::head(x1, 1)})
+  
+  # any.decline <- sapply(pop_data,  ## old version -> all years
+  #                       function(y) {
+  #                         if(!is.null(ignore.years)) 
+  #                           y = y[,!names(y) %in% ignore.years]
+  #                         y1 = as.numeric(y[1:which(names(y) == assess.year)])
+  #                         y1 = y1[!is.na(y1)]
+  #                         mean(diff(y1), na.rm=TRUE) / 
+  #                           utils::head(y1, 1)})
+
+  any.decline <- sapply(1:length(pop_data), ## new version -> decline between today and 1 gen.len in the past
+                        function(i) {
+                          y <- pop_data[[i]]
+                          if (!is.null(ignore.years)) 
+                            y = y[,!names(y) %in% ignore.years]
+                          
+                          pv.yr <- prev.year1[i]
+                          
+                          if (pv.yr %in% names(y)) {
+                            
+                            y1 <- as.numeric(y[which(names(y) == pv.yr):which(names(y) == assess.year)])
+                            
+                          } else {
+                            
+                            avail.ys <- as.double(names(pop_data[[i]]))
+                            avail.ys <- avail.ys[avail.ys > pv.yr] 
+                            y1 <- as.numeric(y[which(names(y) %in% avail.ys)])
+                            warning(paste0("Minimum year to assess recent population decline at any rate is not in the provided time series: assuming the closest year: ",
+                                           assess.year))
+                            
+                          }
+                            
+                          y1 <- y1[!is.na(y1)]
+                          mean(diff(y1), na.rm=TRUE) / 
+                            utils::head(y1, 1)
+                          })
   
   ## Estimated continuing decline
   if("C1" %in% subcriteria) {
