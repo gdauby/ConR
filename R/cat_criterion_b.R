@@ -94,6 +94,18 @@ cat_criterion_b <- function(EOO = NULL,
                                  deparse.level = 0, 
                                  stringsAsFactors = FALSE)
   
+  if(!is.null(decline)) {
+    
+    names(all_ranks) <- 
+      paste0(names(all_ranks), "b")
+    
+  } else {
+    
+    message("No information on decline range provided, continuing decline is assumed to be true")
+    
+  }
+  
+  
   all_missing <- 
     apply(all_ranks, 1, function(x) ifelse(all(is.na(x)), TRUE, 
                                            ifelse(all(is.na(x[1:2])), TRUE, FALSE)))
@@ -164,7 +176,7 @@ cat_criterion_b <- function(EOO = NULL,
   
   cat_codes <- 
     apply(
-      all_ranks[!all_missing,],
+      all_ranks[!all_missing,][,1:2],
       1,
       FUN = function(x) {
         y <- names(x[x == min(x, na.rm = T)])
