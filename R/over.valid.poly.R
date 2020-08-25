@@ -38,6 +38,8 @@
 #' @importFrom fields rdist
 #' @importFrom dplyr full_join
 #' 
+#' @export over.valid.poly
+#' 
 over.valid.poly <- function(poly, points, proj_user = NULL, min.dist = 0.1, value = "dist") {
   
   if (all(!poly$tax %in% unique(points$tax)))

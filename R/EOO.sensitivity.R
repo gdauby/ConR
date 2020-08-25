@@ -84,7 +84,7 @@
 #' @param occ.based logical. Should the measure of influence of each record be returned? Default to TRUE.
 #' @param proj_user character string or numeric with the user-defined projection system
 #' @inheritParams EOO.computing
-#' @inheritParams .over.valid.poly
+#' @inheritParams over.valid.poly
 #' 
 #' @author Renato A. Ferreira de Lima & Gilles Dauby
 #' 

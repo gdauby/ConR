@@ -32,6 +32,9 @@ the least confident to the more confident class of records. See Details.}
 
 \item{occ.based}{logical. Should the measure of influence of each record be returned? Default to TRUE.}
 
+\item{value}{output value: proportional distance ("dist") or inside/outside
+the polygon ("flag")?}
+
 \item{proj_user}{character string or numeric with the user-defined projection system}
 
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}

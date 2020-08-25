@@ -503,8 +503,8 @@ criterion_A = function(x,
     reduction_A12 = NA,
     reduction_A3 = NA,
     reduction_A4 = NA,
-    category_cA = NA,
-    category_cA_code = NA,
+    category_A = NA,
+    category_A_code = NA,
     stringsAsFactors = FALSE
   )
   row.names(Results) = NULL
@@ -633,8 +633,8 @@ criterion_A = function(x,
                                deparse.level = 0,
                                stringsAsFactors = FALSE)
   
-  Results$category_cA <- all_ranks$ranks_A
-  Results$category_cA_code <- all_ranks$cats_code
+  Results$category_A <- all_ranks$ranks_A
+  Results$category_A_code <- all_ranks$cats_code
   
   Results <-
     Results[, apply(Results, MARGIN = 2, function(x)
