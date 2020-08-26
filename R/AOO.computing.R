@@ -6,7 +6,7 @@
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' @param XY \code{"dataframe"} see Details
-#' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2
+#' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)
 #' @param nbe.rep.rast.AOO numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done
 #' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2

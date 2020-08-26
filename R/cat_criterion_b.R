@@ -9,8 +9,8 @@
 #' @param decline string vector providing the status of the species continuing decline in EOO, AOO, habitat,
 #'  locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
 #'  the species is classified as condition 'b' of criterion B will not be met.
-#' @param ext.fluct numeric. vector with the mean order of magnitude of the
-#'   differences between population minima and maxima. Currently not implemented.
+#' @param ext.fluct numeric vector with the mean order of magnitude of the
+#'   differences between population minima and maxima (Currently not implemented).
 #' @param EOO.threshold numeric vector with the EOO thresholds to convert estimates into threat categories. 
 #'  Default is the thresholds recommended by IUCN.
 #' @param AOO.threshold numeric vector with the AOO thresholds to convert estimates into threat categories. 

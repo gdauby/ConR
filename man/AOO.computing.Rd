@@ -18,7 +18,7 @@ AOO.computing(
 \arguments{
 \item{XY}{\code{"dataframe"} see Details}
 
-\item{Cell_size_AOO}{numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2}
+\item{Cell_size_AOO}{numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)}
 
 \item{nbe.rep.rast.AOO}{numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done}
 
