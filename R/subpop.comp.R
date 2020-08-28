@@ -1,11 +1,11 @@
 
 #' @title Number of subpopulations
 #'
-#' @description Estimate the number of locations following the method **circular buffer method**
+#' @description Estimate the number of subpopulations following the method **circular buffer method**
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
-#' @param XY string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
+#' @param XY
 #' @param Resol_sub_pop numeric. Defines in kilometers the radius of the circles around each occurrence
 #' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
