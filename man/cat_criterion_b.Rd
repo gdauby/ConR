@@ -32,8 +32,8 @@ cat_criterion_b(
 locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
 the species is classified as condition 'b' of criterion B will not be met.}
 
-\item{ext.fluct}{numeric. vector with the mean order of magnitude of the
-differences between population minima and maxima. Currently not implemented.}
+\item{ext.fluct}{numeric vector with the mean order of magnitude of the
+differences between population minima and maxima (Currently not implemented).}
 
 \item{EOO.threshold}{numeric vector with the EOO thresholds to convert estimates into threat categories. 
 Default is the thresholds recommended by IUCN.}

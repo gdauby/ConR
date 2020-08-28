@@ -12,7 +12,6 @@ Depends:
 License: GPL-2
 Imports: 
     fields,
-    geosphere,
     grDevices,
     methods,
     rgdal,
@@ -30,11 +29,11 @@ Imports:
     segmented,
     lifecycle,
     FuzzyNumbers.Ext.2,
-    dplyr,
     stringr,
     graphics,
     stats,
-    utils
+    utils,
+    data.table
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8

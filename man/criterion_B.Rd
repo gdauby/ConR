@@ -78,7 +78,9 @@ locations following the grid system, see Details. By default, it is
 protected areas}
 }
 \value{
-
+A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
+  the IUCN categories associated with the sub-criteria and the consensus category
+  for criterion B.
 }
 \description{
 Preliminary assessment of species conservation status following

@@ -36,7 +36,9 @@
 #' \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of
 #' protected areas
 #' 
-#' @return 
+#' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
+#'   the IUCN categories associated with the sub-criteria and the consensus category
+#'   for criterion B.
 #' 
 #' @details The function ... 
 #' 
