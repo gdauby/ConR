@@ -2,7 +2,7 @@
 % Please edit documentation in R/EOO.sensitivity.R
 \name{EOO.sensitivity}
 \alias{EOO.sensitivity}
-\title{Sensitiity of Extent of Occurrences}
+\title{Sensitivity of Extent of Occurrences}
 \usage{
 EOO.sensitivity(
   XY,
@@ -15,13 +15,14 @@ EOO.sensitivity(
   alpha = 1,
   buff.alpha = 0.1,
   method.range = "convex.hull",
-  buff_width = 0.1,
   method.less.than3 = "not comp",
   write_results = FALSE,
   file.name = "EOO.sensitivity.results",
   parallel = FALSE,
   NbeCores = 2,
-  show_progress = TRUE
+  show_progress = TRUE,
+  proj_type = "cea",
+  mode = "spheroid"
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ EOO.sensitivity(
 the least confident to the more confident class of records. See Details.}
 
 \item{occ.based}{logical. Should the measure of influence of each record be returned? Default to TRUE.}
+
+\item{value}{output value: proportional distance ("dist") or inside/outside
+the polygon ("flag")?}
 
 \item{proj_user}{character string or numeric with the user-defined projection system}
 
@@ -52,9 +56,6 @@ the buffer in decimal degree added to alpha hull. By default is 0.1}
 \item{method.range}{a character string, "convex.hull" or "alpha.hull". By
 default is "convex.hull"}
 
-\item{buff_width}{a numeric. For a specific case where all points of a taxa
-are on a straight line, see Details. By default is 0.1}
-
 \item{method.less.than3}{a character string. If equal to "arbitrary", will
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
@@ -72,9 +73,13 @@ FALSE}
 execution. By default, it is 2}
 
 \item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'#'}
 }
 \value{
-A data frame containing, for each taxon, the EOO in square kilometers
+A data frame containing, for each taxon, the EOO in square kilometres
   for each level of confidence or a list containing this same data frame and
   the input data with a new column for each confidence level with a measure 
   of influence of the occurrences on the estimation of EOO.
@@ -82,7 +87,7 @@ A data frame containing, for each taxon, the EOO in square kilometers
 \description{
 Compute changes in the extent of occurrences (EOO) in square
   kilometers using occurrence data with different confidence level and
-  quantifies indirectly the most influentional occurrences related to EOO
+  quantifies indirectly the most influential occurrences related to EOO
   estimation.
 }
 \details{
@@ -96,37 +101,37 @@ degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
 [,3] \tab tax \tab character or factor, taxa names\cr 
 [,4] \tab valid \tab character or factor, classes of confidence level}
 
-The function works with a minimum of two classes, that can be levels of
-confidence in the geographical coordinate, the species determination or a
+The function works with a minimum of two classes, that can be, for example, levels of
+confidence in the geographical coordinates, the taxonomic determination or a
 period of collection year. For each confidence level, the EOO is computed for
 a more restricted and reliable set of records. It is essential that the
-classes of of confidence level provided using the argument `levels.order`.
+classes of confidence level provided using the argument `levels.order`.
 For instance, these classes can simply be `c("low", "high")` or `c(FALSE,
 TRUE)`. But they should match the classes provided in \code{XY}.  
 
-If argument `occ.based` is `TRUE` (the default), the function calculates and
+If argument `occ.based` is `TRUE` (default), the function calculates and
 return a measure of influence of each occurrence on the estimation of EOO.
-This measure simply is the distance of each occurrence to the convex hull
-polygon (i.e. EOO) obtained using only the occurrences in the highest level
+This measure is simply the distance of each occurrence to the convex hull
+polygon (i.e. EOO) obtained using only with the occurrences in the highest level
 of confidence declared, divided by the 95% quantile of the pair-wise
 distances of the occurrences within the high confidence EOO. Thus, this is
 only an indirect measure of how much the EOO should increase if a given
-occurrence was included, beacuse in practice the difference in EOO is not
+occurrence was included, because in practice the difference in EOO is not
 calculated for subsets with and without each occurrence (i.e leave-one-out
 cross validation).   
 
 The measure is thus a proportion and the highest the value, the more distant
 the occurrence is from the high confidence EOO. Zeros means that the
 occurrence is within the high confidence EOO and `NA` means that the high
-confidence EOO could not be obtained (i.e. less then 2 or 3 high confidence
-occurrences) or that latitude or longitude was missing for the occurrence.
-Note that even if the EOO cannot not be calculated or if coordinates were
+confidence EOO could not be obtained (e.g. less than 2 or 3 high confidence
+occurrences).
+Note that even if the EOO cannot be calculated or if coordinates were
 missing, the function returns a zero for all occurrences with the highest
 confidence level, which would be by definition within the high confidence
 EOO.
 
 It is up to the user to define the most appropriate threshold to include or
-exclude occurrences. A preliminary assessment assuming a circular hgh
+exclude occurrences. A preliminary assessment assuming a circular high
 confidence EOO suggest that values of 0.5, 1 and 2 would lead to increases of
 about 25, 50 and 100% in EOO.
 
@@ -137,16 +142,14 @@ for species with two unique occurrences will be equal to Dist*Dist*0.1 where
 Dist is the distance in kilometers separating the two points.
 
 For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null), EOO is
-estimated by the area of polygon surrounding this straight line with a
-buffer of \code{buff.alpha} decimal degree. There is a warning when this
-happen.
+localized on a straight line (in which case EOO would be null), 
+'noises' are added to coordinates. There is a warning when this happens.
 
 \strong{Notes on computational time} The processing time depends on several
 factors, including the total number of occurrences, number of confidence
-levels rpovided and user's computer specifications. Using argument `parellel`
+levels rpovided and user's computer specifications. Using argument `parallel`
 equals `TRUE`, greatly increase the processing time, but the processing of
-large data sets (milions of occurrences) may take hours. On a Intel Core i5,
+large data sets (millions of occurrences) may take hours. On a Intel Core i5,
 CPU 1.70GHz, 64-bit OS and 16 GB RAM it took 20 min to process about 800
 thousand records from ~5100 species using 5 cores.
 }

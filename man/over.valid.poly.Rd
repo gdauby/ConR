@@ -4,20 +4,29 @@
 \alias{over.valid.poly}
 \title{Internal function}
 \usage{
-over.valid.poly(poly, points, proj_user = NULL, min.dist = 0.1, value = "dist")
+over.valid.poly(
+  poly,
+  points,
+  names_poly,
+  names_taxa,
+  mode = "spheroid",
+  proj_type = "cea",
+  min.dist = 0.1,
+  value = "dist"
+)
 }
 \arguments{
 \item{poly}{Spatial polygon}
 
 \item{points}{XY data frame}
 
-\item{proj_user}{projected coordinate system (in meters)}
-
 \item{min.dist}{minimum tolerated distance between polygons and points.
 Default to 0.1 m.}
 
 \item{value}{output value: proportional distance ("dist") or inside/outside
 the polygon ("flag")?}
+
+\item{proj_user}{projected coordinate system (in meters)}
 }
 \description{
 Get Occurrences Distance to a Polygon
