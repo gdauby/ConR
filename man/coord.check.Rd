@@ -4,7 +4,7 @@
 \alias{coord.check}
 \title{Coordinates check}
 \usage{
-coord.check(XY, listing = TRUE, proj_type = NULL)
+coord.check(XY, listing = TRUE, proj_type = NULL, listing_by_valid = FALSE)
 }
 \arguments{
 \item{XY}{}

@@ -11,11 +11,10 @@
 #' @param poly_exclude polygon
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' 
+#' @import sf
+#' 
 #' @importFrom grDevices chull
 #' @importFrom rgeos readWKT
-#' @importFrom geosphere makePoly
-#' @importFrom sf st_convex_hull st_transform st_crs st_union st_intersection sf_project st_sfc st_multipoint
-#' 
 Convex.Hull.Poly <-
   function(XY,
            mode = "spheroid",
@@ -46,39 +45,49 @@ Convex.Hull.Poly <-
         
       }
       
-      p1 <- rgeos::readWKT(POLY) 
+      p1 <- sf::st_as_sf(data.frame(a = 1, geom = POLY), wkt = "geom")
+      sf::st_crs(p1) <-
+        4326
+      p1_lines <- suppressWarnings(sf::st_cast(p1, "LINESTRING"))
+      p1_lines_seg <-
+        sf::st_segmentize(p1_lines, units::set_units(20, km))
+      p1 <- sf::st_cast(p1_lines_seg, "POLYGON")
+      
+      # p1_sp <- rgeos::readWKT(POLY) 
+      # p1_sp <- suppressWarnings(geosphere::makePoly(p1_sp)) 
       
       ## Gilles, there is a warning here that may be a potential the problem... use sf to make poly?
-      sp::proj4string(p1) <-
-        sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs = TRUE)
+      # sp::proj4string(p1) <-
+      #   sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs = TRUE)
       
-      p1 <- suppressWarnings(geosphere::makePoly(p1)) 
+      # p1 <- suppressWarnings(geosphere::makePoly(p1))
       
       ##Gilles, why not define directly a polygon using 'sf'? See code examples commented below:
       #p1_sf <- sf::st_sfc(sf::st_polygon(list(coord[,2:1])))
       #sf::st_crs(p1_sf) <- sf::st_crs(poly_exclude)
       
       if (exclude.area) {
-        p1_sf <- as(p1, "sf")
+        # p1_sf <- as(p1, "sf")
         
         p1 <-
           suppressWarnings(suppressMessages(sf::st_union(
-            sf::st_intersection(p1_sf, poly_exclude)
+            sf::st_intersection(p1, poly_exclude)
           )))
         
         sf::st_crs(p1) <-
-          "+proj=longlat +datum=WGS84"
+          4326
         
         if(length(p1) == 0) {
-          warning("After excluding areas, the convex hull is empty. EOO is NA.")
+          warning("After excluding areas, the convex hull is empty. EOO is set as NA.")
          
           p1 <- NA 
-        } else {
-          
-          p1 <- 
-            as(p1, "Spatial")
-          
-        }
+        } 
+        # else {
+        #   
+        #   p1 <- 
+        #     as(p1, "Spatial")
+        #   
+        # }
         
       }
       
@@ -87,9 +96,13 @@ Convex.Hull.Poly <-
     if (mode == "planar") {
       
       if(class(proj_type) != "CRS") {
+        
         projEAC <- proj_crs(proj_type = proj_type)
+        
       } else {
+        
         projEAC <- proj_type
+        
       }
       
       XY_sf_proj <-
@@ -120,12 +133,13 @@ Convex.Hull.Poly <-
           warning("After excluding areas, the convex hull is empty. EOO is NA.")
           
           p1 <- NA 
-        } else {
-          
-          p1 <- 
-            as(p1, "Spatial")
-          
-        }
+        } 
+        # else {
+        #   
+        #   p1 <- 
+        #     as(p1, "Spatial")
+        #   
+        # }
         
       }
       

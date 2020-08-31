@@ -14,8 +14,6 @@ subpop.comp(
 )
 }
 \arguments{
-\item{XY}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
-
 \item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
 
 \item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
@@ -30,7 +28,7 @@ subpop.comp(
 A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
 }
 \description{
-Estimate the number of locations following the method **circular buffer method**
+Estimate the number of subpopulations following the method **circular buffer method**
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:

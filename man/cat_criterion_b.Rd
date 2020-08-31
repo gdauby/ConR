@@ -15,7 +15,8 @@ cat_criterion_b(
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
   protected.threshold = 100,
-  fluct.threshold = 10
+  fluct.threshold = 10,
+  all.cats = TRUE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ a taxa would not be threatened whatever the others parameters, by default is 100
 \item{fluct.threshold}{numeric. Threshold of the order of magnitude of the
 differences between population minima and maxima to classify extreme fluctuations. 
 Default to 10 as recommended by IUCN.}
+
+\item{all.cats}{logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.}
 }
 \value{
 list

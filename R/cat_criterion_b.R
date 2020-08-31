@@ -22,7 +22,7 @@
 #' @param fluct.threshold numeric. Threshold of the order of magnitude of the
 #'   differences between population minima and maxima to classify extreme fluctuations. 
 #'   Default to 10 as recommended by IUCN.
-#'   
+#' @param all.cats logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.
 #' @return list
 #' 
 #' @details The function categorizes taxa following criterion B and categories of the IUCN. 
@@ -73,7 +73,8 @@ cat_criterion_b <- function(EOO = NULL,
                             AOO.threshold = c(2000, 500, 10), 
                             Loc.threshold = c(10, 5, 1),
                             protected.threshold = 100,
-                            fluct.threshold = 10
+                            fluct.threshold = 10,
+                            all.cats = TRUE
                             ) {
   
   all.identical <-
@@ -99,11 +100,14 @@ cat_criterion_b <- function(EOO = NULL,
   rank_loc <- 
     findInterval(locations, sort(Loc.threshold), left.open = T)
 
-  all_ranks <-  cbind.data.frame(B1a = rank_eoo,
-                                 B2a = rank_aoo,
-                                 Ba = rank_loc,
-                                 deparse.level = 0, 
-                                 stringsAsFactors = FALSE)
+  
+
+    all_ranks <-  cbind.data.frame(B1a = rank_eoo,
+                                   B2a = rank_aoo,
+                                   Ba = rank_loc,
+                                   deparse.level = 0, 
+                                   stringsAsFactors = FALSE)    
+
   
   if(!is.null(decline)) {
     
@@ -129,8 +133,8 @@ cat_criterion_b <- function(EOO = NULL,
     as.character(apply(all_ranks[!all_missing, ], 
                        1, FUN = function(x) {
                          
-                         min_b <- 
-                           y <- min(x[1:2], na.rm = T)
+                         min_b <-
+                           min(x[1:2], na.rm = T)
                          
                          y <- 
                            max(c(min_b, x[3]), na.rm = T)
@@ -158,7 +162,6 @@ cat_criterion_b <- function(EOO = NULL,
     
     if(any(decline != "Decreasing") & any(ranks_B12a != "3")) {
       
-      
       if(any(ranks_B12a[which(decline != "Decreasing")] != '3')) {
         
         message("Some taxa categorized as threatened based on EOO/AOO/locations were finally assessed as not threatened because no Decline detected")
@@ -174,16 +177,58 @@ cat_criterion_b <- function(EOO = NULL,
     }
   }
   
-  ranks_B12a <- 
-    gsub("0", "CR", ranks_B12a)
-  ranks_B12a <- 
-    gsub("1", "EN", ranks_B12a)
-  ranks_B12a <- 
-    gsub("2", "VU", ranks_B12a)
-  ranks_B12a <- 
-    gsub("3", "LC or NT", ranks_B12a)
+  replace_code <- 
+    data.frame(code = c("0", "1", "2", "3"),
+             cat = c("CR", "EN", "VU", "LC or NT"))
+  
+  for (i in 1:nrow(replace_code))
+    ranks_B12a <-
+    gsub(replace_code[i, 1], replace_code[i, 2], ranks_B12a)
+  
   # ranks_B12a <- 
-  #   gsub("4", "LC or NT (protected)", ranks_B12a)
+  #   gsub("0", "CR", ranks_B12a)
+  # ranks_B12a <- 
+  #   gsub("1", "EN", ranks_B12a)
+  # ranks_B12a <- 
+  #   gsub("2", "VU", ranks_B12a)
+  # ranks_B12a <- 
+  #   gsub("3", "LC or NT", ranks_B12a)
+  
+  if(all.cats) {
+    ranks_B1a <- 
+      as.character(apply(all_ranks, 
+                         1, FUN = function(x) {
+                           
+                           min_b <- min(x[1])
+                           
+                           y <- 
+                             max(c(min_b, x[3]))
+                           
+                           return(y)
+                         }
+      ))
+    
+    ranks_B2a <- 
+      as.character(apply(all_ranks, 
+                         1, FUN = function(x) {
+                           
+                           min_b <- min(x[2])
+                           
+                           y <- 
+                             max(c(min_b, x[3]))
+                           
+                           return(y)
+                         }
+      ))
+    
+    for (i in 1:nrow(replace_code))
+      ranks_B1a <-
+      gsub(replace_code[i, 1], replace_code[i, 2], ranks_B1a)
+    
+    for (i in 1:nrow(replace_code))
+      ranks_B2a <-
+      gsub(replace_code[i, 1], replace_code[i, 2], ranks_B2a)
+  }
   
   cat_codes <- 
     apply(
@@ -210,6 +255,9 @@ cat_criterion_b <- function(EOO = NULL,
   
   cat_codes_final[ranks_B12a_final == 'LC or NT'] <- NA
   
-  return(list(ranks_B12a = ranks_B12a_final, cat_codes = cat_codes_final))
+  if(!all.cats) return(list(cat_cb = ranks_B12a_final, cat_codes_cb = cat_codes_final))
+  
+  if(all.cats) return(list(cat_cb = ranks_B12a_final, cat_codes_cb = cat_codes_final, ranks_B1a = ranks_B2a, ranks_B2a = ranks_B2a ))
+  
 }
 

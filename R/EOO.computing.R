@@ -24,10 +24,11 @@
 #' points.
 #' 
 #' For the very specific (and infrequent) case where all occurrences are
-#' localized on a straight line (in which case EOO would be null), EOO is
-#' estimated by the area of polygon surrounding this straight line with a
-#' buffer of \code{buff.alpha} decimal degree. There is a warning when this
-#' happen.
+#' localized on a straight line (in which case EOO would be null), 
+#' 'noises' are added to coordinates, using the `jitter` function, 
+#' see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}. 
+#' There is a warning when this happens. This means that EOO value will not be constant 
+#' across multiple estimation (although the variation should be small)
 #' 
 #' \strong{Limitation}\cr
 #' 
@@ -45,6 +46,8 @@
 #' exclude.area is TRUE
 #' @param export_shp a logical, whether shapefiles should be exported or not,
 #' see Value. By default is FALSE
+#' @param driver_shp a string, define the driver for exporting shapefiles, 
+#' by default "ESRI Shapefile". See \code{\link[sf]{st_write}}
 #' @param write_shp a logical, if TRUE, export \code{SpatialPolygons} used for
 #' EOO computation as ESRI shapefiles in the working directory. By default is
 #' FALSE
@@ -57,8 +60,6 @@
 #' @param Name_Sp a character string, if \code{XY} is for one taxon and field
 #' containing taxon names is not provided, this item provide taxon name. By
 #' default is "Species1"
-#' @param buff_width a numeric. For a specific case where all points of a taxa
-#' are on a straight line, see Details. By default is 0.1
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
@@ -104,9 +105,10 @@
 #'   exclude.area=TRUE, country_map=land)
 #' }
 #' 
+#' @import sf
+#' 
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom rgeos gBuffer
-#' @importFrom sf write_sf
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
@@ -117,12 +119,12 @@ EOO.computing <- function(XY,
                           exclude.area = FALSE,
                           country_map = NULL,
                           export_shp = FALSE,
+                          driver_shp = "ESRI Shapefile",
                           write_shp = FALSE,
                           alpha = 1,
                           buff.alpha = 0.1,
                           method.range = "convex.hull",
                           Name_Sp = "species1",
-                          buff_width = 0.1,
                           method.less.than3 = "not comp",
                           write_results = TRUE,
                           file.name = "EOO.results",
@@ -156,8 +158,8 @@ EOO.computing <- function(XY,
       as(country_map, "sf")
   }
   
-  if (buff_width > 80)
-    stop("buff_width has unrealistic value")
+  # if (buff_width > 80)
+  #   stop("buff_width has unrealistic value")
   
 
   if (parallel) {
@@ -201,7 +203,7 @@ EOO.computing <- function(XY,
       .options.snow = opts
     ) %d% {
       # source("./R/EOO.comp.R")
-      # source("./R/alpha.hull.poly.R")
+      # source("./R/Convex.Hull.Poly.R")
       # source("./R/proj_crs.R")
       # source("./R/ahull_to_SPLDF.R")
       # source("./R/coord.check.R")
@@ -212,10 +214,9 @@ EOO.computing <- function(XY,
         setTxtProgressBar(pb, x)
       
       res <-
-        ConR::EOO.comp(
+        EOO.comp(
           XY = list_data[[x]],
           exclude.area = exclude.area,
-          buff_width = buff_width,
           country_map = country_map,
           Name_Sp = names_[x],
           method.range = method.range,
@@ -251,57 +252,63 @@ EOO.computing <- function(XY,
     message("Writing EOO shapefiles in shapesIUCN directory")
     
     dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
-    output_spatial <- unlist(output[grep("spatial", names(output))])
-    output_spatial <- 
-      output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
+    output_spatial <- output[grep("spatial", names(output))]
+    output_spatial <- output_spatial[!is.na(output_spatial)]
+    
     id_spatial <-
       as.numeric(unlist(lapply(strsplit(
         names(output_spatial), "_"
       ), function(x)
         x[[2]])))
     
+    if(length(output_spatial) > 1) {
+      output_spatial <- 
+        do.call("rbind", output_spatial)
+    } else {
+      output_spatial <- 
+        output_spatial[[1]]
+    }
+    
+    output_spatial <- 
+      st_as_sf(data.frame(output_spatial, name = names_[id_spatial]))
+    
+    # output_spatial <- 
+    #   output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
+
+    
     # exi_files <- 
     #   list.files(paste(getwd(), "/shapesIUCN", sep = ""))
     
-    for (i in 1:length(output_spatial)) {
-      
-      ## removing existing files
-      # if (length(exi_files) > 0) {
-      #   if(length(grep(paste(names(output)[i], "_EOO_poly", sep = ""),
-      #                  unique(sub(
-      #                    "....$", '', 
-      #                    exi_files
-      #                  )))) > 0) {
-      #     
-      #     FILES <-
-      #       list.files(paste(getwd(), "/shapesIUCN", sep = ""), full.names = TRUE)
-      #     file.remove(FILES[grep(paste(names(output)[i], "_EOO_poly", sep =
-      #                                    ""), FILES)])
-      #   }
-      # }
-      
-      NAME <- names_[id_spatial[i]]
-      NAME <- gsub(" ", "_", NAME)
-      
-      sf::write_sf(as(output_spatial[[i]], "sf"),
-                   dsn = "shapesIUCN",
-                   layer = paste(NAME, "_EOO_poly", sep = ""),
-                   driver = "ESRI Shapefile",
-                   overwrite = TRUE)
-      
-      # output_spatial[[i]]@polygons[[1]]@ID <- "1"
-      # ConvexHulls_poly_dataframe <-
-      #   sp::SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
-      # colnames(ConvexHulls_poly_dataframe@data) <-
-      #   paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
-      # rgdal::writeOGR(
-      #   ConvexHulls_poly_dataframe,
-      #   "shapesIUCN",
-      #   paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
-      #   driver = "ESRI Shapefile",
-      #   overwrite_layer = TRUE
-      # )
-    }
+    sf::write_sf(output_spatial,
+                 dsn = "shapesIUCN",
+                 layer = paste("EOO_poly", sep = ""),
+                 driver = driver_shp,
+                 overwrite = TRUE)
+    
+    # for (i in 1:length(output_spatial)) {
+    #   
+    #   NAME <- names_[id_spatial[i]]
+    #   NAME <- gsub(" ", "_", NAME)
+    #   
+    #   sf::write_sf(output_spatial[[i]],
+    #                dsn = "shapesIUCN",
+    #                layer = paste(NAME, "_EOO_poly", sep = ""),
+    #                driver = driver_shp,
+    #                overwrite = TRUE)
+    #   
+    #   # output_spatial[[i]]@polygons[[1]]@ID <- "1"
+    #   # ConvexHulls_poly_dataframe <-
+    #   #   sp::SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
+    #   # colnames(ConvexHulls_poly_dataframe@data) <-
+    #   #   paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
+    #   # rgdal::writeOGR(
+    #   #   ConvexHulls_poly_dataframe,
+    #   #   "shapesIUCN",
+    #   #   paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
+    #   #   driver = "ESRI Shapefile",
+    #   #   overwrite_layer = TRUE
+    #   # )
+    # }
   }
   
   if (write_results)
