@@ -391,7 +391,7 @@ EOO.sensitivity <- function(XY,
         .combine = 'rbind',
         .options.snow = opts
       ) %d% {
-        #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
+        source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
         
         if (!parallel & show_progress)
          setTxtProgressBar(pb, x)
