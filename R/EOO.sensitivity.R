@@ -140,11 +140,11 @@ EOO.sensitivity <- function(XY,
   
   XY$recordID <- 1:dim(XY)[1]
   
-  if(is_tibble(XY))
-    XY <- 
-      as.data.frame(XY)
+  # if(is_tibble(XY))
+  #   XY <- 
+  #     as.data.frame(XY)
   
-  if(length(unique(XY[,4])) < 2)
+  if(length(unique(as.data.frame(XY)[,4])) < 2)
     stop("there is only one class of confidence level")
   
   if (ncol(XY) > 4) {
@@ -176,7 +176,8 @@ EOO.sensitivity <- function(XY,
   
   
   XY.list <- 
-    coord.check(XY = XY, listing = TRUE, listing_by_valid = TRUE)
+    coord.check(XY = XY, 
+                listing = TRUE, listing_by_valid = TRUE)
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -347,6 +348,7 @@ EOO.sensitivity <- function(XY,
         output_spatial[[1]]
     }
     
+    ### convert into sf, may be slow for large dataset, see if necessary step
     output_spatial <- 
       st_as_sf(data.frame(output_spatial, name = names_[id_spatial]))
     
@@ -391,7 +393,7 @@ EOO.sensitivity <- function(XY,
         .combine = 'rbind',
         .options.snow = opts
       ) %d% {
-        source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
+        # source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
         
         if (!parallel & show_progress)
          setTxtProgressBar(pb, x)

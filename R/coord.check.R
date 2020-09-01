@@ -129,6 +129,8 @@ coord.check <- function(XY, listing = TRUE, proj_type = NULL, listing_by_valid =
         # list_data <- 
         #   split(XY, f = XY$tax_class)
         
+        list_data <- list_data[!unlist(lapply(list_data, is.null))]
+        
       } else {
         
         list_data <- split(XY, f = XY$tax)
