@@ -1,8 +1,7 @@
 #' @title Extent of Occurrences multi-taxa computation
 #' 
 #' @description Compute extent of occurrences (EOO) for multiple taxa in square kilometers
-#' using \code{"geosphere"} package and provide
-#' \code{SpatialPolygons} used for EOO computation
+#' and provide polygons used for EOO computation
 #' 
 #' 
 #' @details 
@@ -32,9 +31,8 @@
 #' 
 #' \strong{Limitation}\cr
 #' 
-#' For a species whose occurrences span more than 180 degrees, EOO is not
-#' computed. This is the case for example for species whose distribution span
-#' the 180th meridian.
+#' For a species whose occurrences span more than 180 degrees, EOO should not be considered. 
+#' This is the case for example for species whose distribution span the 180th meridian.
 #' 
 #' @param XY \code{dataframe} see Details
 #' @param exclude.area a logical, if TRUE, areas outside of \code{country_map}
@@ -86,6 +84,7 @@
 #' @author Gilles Dauby
 #' 
 #' \email{gildauby@@gmail.com}
+#' 
 #' @seealso \code{\link[alphahull]{ahull}}
 #' 
 #' \url{https://github.com/azizka/speciesgeocodeR}
