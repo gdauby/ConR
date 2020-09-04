@@ -17,6 +17,8 @@
 #'   TRUE.   
 #' @param ignore.years any year(s) that should be ignored for calculating continuing 
 #'   decline of populations?    
+#' @param recent.year the year to be used as a the starting year used to assess
+#'   recent continuing decline (see details).
 #' @param generation.time a value or vector of generation lengths, i.e. the
 #'   average age of parents of the current cohort (IUCN 2019).
 #' @param prop.mature a value or vector of the proportion of mature individuals in the 
@@ -89,15 +91,18 @@
 #'   estimated continuing decline (sub-criteria C1).
 #'   
 #'   The first type of decline is defined based on the mean change of population
-#'   size between observations (no statistical fit); if the mean change from
-#'   the first population size suggests a decline in the population size, then
-#'   the population is classified as declining. Although IUCN (2019) considers
-#'   declines at any rate, here we consider populations in decline those with an
-#'   average decline of 0.1% or more, in order to incorporate small fluctuations
-#'   in stable populations. Moreover, although (IUCN 2019, p.43) states that
-#'   under criteria C2, "continuing declines can be observed, estimated,
-#'   inferred or projected", here we consider only observed, estimated, inferred
-#'   before the years of assessment.
+#'   size between observations (no statistical fit); if the mean change from the
+#'   first population size suggests a decline in the population size, then the
+#'   population is classified as declining. The user have to provide the year to
+#'   delimit the period considered to be recent, which should include
+#'   threatening processes that are representative or indicative of present-day
+#'   patterns. Although IUCN (2019) considers declines at any rate, here we
+#'   consider populations in decline those with an average decline of 0.1% or
+#'   more, in order to incorporate small fluctuations in stable populations.
+#'   Moreover, although (IUCN 2019, p.43) states that under criteria C2,
+#'   "continuing declines can be observed, estimated, inferred or projected",
+#'   here we consider only observed, estimated, inferred before the years of
+#'   assessment.
 #'   
 #'   The second type of decline is defined on the statistical models
 #'   fitted to the observed and/or projected population data. Once the best model is
@@ -188,6 +193,7 @@ criterion_C = function(x,
                        project.years = NULL,
                        project = TRUE,
                        ignore.years = NULL,
+                       recent.year = NULL,
                        generation.time = NULL,
                        prop.mature = NULL,
                        subpop.size = NULL,
@@ -487,13 +493,14 @@ criterion_C = function(x,
   #                         mean(diff(y1), na.rm=TRUE) / 
   #                           utils::head(y1, 1)})
 
-  any.decline <- sapply(1:length(pop_data), ## new version -> decline between today and 1 gen.len in the past
+  any.decline <- sapply(1:length(pop_data), ## new version -> recent decline between assess.year and recent.year
                         function(i) {
                           y <- pop_data[[i]]
                           if (!is.null(ignore.years)) 
                             y = y[,!names(y) %in% ignore.years]
                           
-                          pv.yr <- prev.year1[i]
+                          # pv.yr <- prev.year1[i]
+                          pv.yr <- recent.year
                           
                           if (pv.yr %in% names(y)) {
                             

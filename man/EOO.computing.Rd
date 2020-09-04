@@ -89,7 +89,7 @@ be computed because there is less than three unique occurrences (or two if
 \code{method.less.than3} is put to "arbitrary").
 
 If \code{export_shp} is TRUE, a \code{list} with: \enumerate{ \item EOO in
-square kilometers \item \code{SpatialPolygons} used for EOO computation }
+square kilometers \item \code{SpatialPolygons} used for EOO computation}
 }
 \description{
 Compute extent of occurrences (EOO) for multiple taxa in square kilometers

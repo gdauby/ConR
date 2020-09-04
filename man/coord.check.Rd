@@ -2,19 +2,18 @@
 % Please edit documentation in R/coord.check.R
 \name{coord.check}
 \alias{coord.check}
-\title{Coordinates check}
+\title{Internal function}
 \usage{
 coord.check(XY, listing = TRUE, proj_type = NULL, listing_by_valid = FALSE)
 }
 \arguments{
-\item{XY}{}
+\item{XY}{...}
 
-\item{listing}{}
+\item{listing}{...}
 
-\item{proj_type}{}
-}
-\value{
+\item{proj_type}{...}
 
+\item{listing_by_valid}{...}
 }
 \description{
 Coordinates check

@@ -1,11 +1,12 @@
-
+#' Internal function
+#'
 #' Coordinates check
 #'
-#' @param XY 
-#' @param listing 
-#' @param proj_type
+#' @param XY ...
+#' @param listing ... 
+#' @param proj_type ...
+#' @param listing_by_valid ...
 #'
-#' @return
 #'
 coord.check <- function(XY, listing = TRUE, proj_type = NULL, listing_by_valid = FALSE) {
   

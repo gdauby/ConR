@@ -11,6 +11,7 @@ criterion_C(
   project.years = NULL,
   project = TRUE,
   ignore.years = NULL,
+  recent.year = NULL,
   generation.time = NULL,
   prop.mature = NULL,
   subpop.size = NULL,
@@ -48,6 +49,9 @@ TRUE.}
 
 \item{ignore.years}{any year(s) that should be ignored for calculating continuing 
 decline of populations?}
+
+\item{recent.year}{the year to be used as a the starting year used to assess
+recent continuing decline (see details).}
 
 \item{generation.time}{a value or vector of generation lengths, i.e. the
 average age of parents of the current cohort (IUCN 2019).}
@@ -143,15 +147,18 @@ The function `criterion_C` is similar to another `ConR` function:
   estimated continuing decline (sub-criteria C1).
   
   The first type of decline is defined based on the mean change of population
-  size between observations (no statistical fit); if the mean change from
-  the first population size suggests a decline in the population size, then
-  the population is classified as declining. Although IUCN (2019) considers
-  declines at any rate, here we consider populations in decline those with an
-  average decline of 0.1% or more, in order to incorporate small fluctuations
-  in stable populations. Moreover, although (IUCN 2019, p.43) states that
-  under criteria C2, "continuing declines can be observed, estimated,
-  inferred or projected", here we consider only observed, estimated, inferred
-  before the years of assessment.
+  size between observations (no statistical fit); if the mean change from the
+  first population size suggests a decline in the population size, then the
+  population is classified as declining. The user have to provide the year to
+  delimit the period considered to be recent, which should include
+  threatening processes that are representative or indicative of present-day
+  patterns. Although IUCN (2019) considers declines at any rate, here we
+  consider populations in decline those with an average decline of 0.1% or
+  more, in order to incorporate small fluctuations in stable populations.
+  Moreover, although (IUCN 2019, p.43) states that under criteria C2,
+  "continuing declines can be observed, estimated, inferred or projected",
+  here we consider only observed, estimated, inferred before the years of
+  assessment.
   
   The second type of decline is defined on the statistical models
   fitted to the observed and/or projected population data. Once the best model is
