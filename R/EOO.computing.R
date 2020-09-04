@@ -247,11 +247,9 @@ EOO.computing <- function(XY,
   if (length(output) == 1)
     names(output) <- Name_Sp
   
-  if(write_shp) {
+  
+  if(export_shp) {
     
-    message("Writing EOO shapefiles in shapesIUCN directory")
-    
-    dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     output_spatial <- output[grep("spatial", names(output))]
     output_spatial <- output_spatial[!is.na(output_spatial)]
     
@@ -270,7 +268,18 @@ EOO.computing <- function(XY,
     }
     
     output_spatial <- 
-      st_as_sf(data.frame(output_spatial, name = names_[id_spatial]))
+      st_as_sf(data.frame(output_spatial[, -which(colnames(output_spatial) == 'a')], 
+                          taxa = names_[id_spatial]))
+    
+  }
+  
+  if(write_shp) {
+    
+    message("Writing EOO shapefiles in shapesIUCN directory")
+    
+    dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
+    
+
     
     # output_spatial <- 
     #   output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
@@ -316,6 +325,10 @@ EOO.computing <- function(XY,
   
   if (!export_shp)
     output <- Results_short
+
+  if (export_shp)
+    output <- list(results = Results_short,
+                   spatial = output_spatial)
   
   output
 }
