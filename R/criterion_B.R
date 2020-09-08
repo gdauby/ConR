@@ -50,7 +50,7 @@
 #'
 #' @export criterion_B
 #'
-#' @examples
+#' @examples To be included
 #' 
 #' @importFrom tibble is_tibble
 #' @importFrom rnaturalearth ne_countries

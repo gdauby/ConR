@@ -4,12 +4,14 @@
 \alias{subpop.estimation}
 \title{Internal function}
 \usage{
-subpop.estimation(XY, Resol_sub_pop, proj_type)
+subpop.estimation(XY, Resol_sub_pop, export_shp = FALSE, proj_type)
 }
 \arguments{
 \item{XY}{data.frame}
 
 \item{Resol_sub_pop}{integer}
+
+\item{export_shp}{logical}
 }
 \description{
 Subpopulations estimation

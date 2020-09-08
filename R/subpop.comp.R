@@ -1,16 +1,30 @@
 
-#' @title Number of subpopulations
+#' @title Number of Subpopulations
 #'
-#' @description Estimate the number of subpopulations following the method **circular buffer method**
+#' @description Estimate the number of subpopulations following the method
+#'   **circular buffer method** (Rivers et al. 2010).
 #'
-#' @author Gilles Dauby, \email{gildauby@gmail.com}
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
-#' @param XY
-#' @param Resol_sub_pop numeric. Defines in kilometers the radius of the circles around each occurrence
-#' @param parallel logical, whether running in parallel. By default, it is FALSE
-#' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
-#' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' @param XY a data frame containing the geographical coordinates for each taxon
+#'   (see Details).
+#' @param Resol_sub_pop numeric. Defines the radius of the circles
+#'   around each occurrence, in kilometers.
+#' @param Resol_sub_pop a value defining the radius of the circles around each
+#'   occurrence (in kilometers) or data frame vector containig a column 'tax' 
+#'   with the taxa names and a column 'radius' with the species-specific radius
+#'   (in kilometer as well). Tipically, this data frame is the output of
+#'   ```ConR``` function ```subpop.radius```.
+#' @param export_shp logical. Whether the resulting shapefiles should be
+#'   exported. Default to FALSE.
+#' @param parallel logical. Whether compute should run in parallel. Default to
+#'   FALSE.
+#' @param NbeCores integer. Number of cores for parallel computation. Default to
+#'   2.
+#' @param show_progress logical. Whether a bar showing progress in computation
+#'   should be shown. Default to TRUE
+#' @param proj_type character string or numeric or object of CRS class, by
+#'   default is "cea"
 #' 
 #' @details 
 #' \strong{Input} as a \code{dataframe} should have the following structure:
@@ -23,28 +37,60 @@
 #'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
-#' @references Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA (2010) Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data. Biodiversity and Conservation 19: 2071-2085. doi: 10.1007/s10531-010-9826-9
+#' @references Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA
+#'   (2010) Subpopulations, locations and fragmentation: applying IUCN red list
+#'   criteria to herbarium specimen data. Biodiversity and Conservation 19:
+#'   2071-2085. doi: 10.1007/s10531-010-9826-9
 #'
 #' @return A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
 #' 
 #' @examples 
 #' data(dataset.ex)
-#' \dontrun{
-#'subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 5)
-#'}
 #'
+#' subpop.comp(dataset.ex, Resol_sub_pop = 5)
+#' rad.df <- data.frame(
+#'     tax = unique(dataset.ex$tax),
+#'     radius = seq(3,13, by=2),
+#'     stringsAsFactors = FALSE
+#'   )
+#' subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
+#' subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
 #' 
-#' @export
+#' @importFrom snow makeSOCKcluster stopCluster
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @importFrom foreach foreach
+#' 
+#' 
+#' @export subpop.comp
+#' 
 subpop.comp <- function(XY, 
-                        Resol_sub_pop = 5, 
+                        Resol_sub_pop = NULL, 
                         proj_type = "cea",
+                        export_shp = FALSE,
                         parallel = FALSE,
                         show_progress = TRUE,
                         NbeCores = 2) {
   
-  proj_type <- proj_crs(proj_type = proj_type)
+  ### ADDED BY RENATO: SPC RECOMMEND NOT USING ANY DEFAULTS TO FORCE ASSESSORS TO THINK ###
+  if (is.null(Resol_sub_pop)) 
+    stop("Radius is missing, please provide a value for all species or a data frame with species-specific values")
   
-  list_data <- coord.check(XY = XY, listing = T, proj_type)
+  proj_type <- 
+    proj_crs(proj_type = proj_type)
+  
+  ### PART INCLUDED BY RENATO ###
+  if ("data.frame" %in% class(Resol_sub_pop)) {
+    XY <- merge(XY, Resol_sub_pop, 
+                by = "tax", all.X = TRUE, sort = FALSE)
+    XY <- XY[,c("ddlat", "ddlon", "tax", "radius")]
+  } else {
+    XY$radius <- Resol_sub_pop   
+  }
+  ### END OF PART INCLUDED BY RENATO ###
+  
+  list_data <-
+    coord.check(XY = XY, listing = TRUE, proj_type)
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -60,7 +106,7 @@ subpop.comp <- function(XY,
   
   x <- NULL
   
-  if(show_progress) {
+  if (show_progress) {
     pb <-
       utils::txtProgressBar(min = 0,
                             max = length(list_data),
@@ -69,7 +115,9 @@ subpop.comp <- function(XY,
     progress <- function(n)
       utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
-  }else{opts <- NULL}
+  } else{
+    opts <- NULL
+  }
   
   output <-
     foreach::foreach(
@@ -84,8 +132,9 @@ subpop.comp <- function(XY,
       res <- 
         subpop.estimation(
           XY = list_data[[x]], 
-          Resol_sub_pop = Resol_sub_pop, 
-          proj_type = proj_type
+          Resol_sub_pop = unique(list_data[[x]]$radius), #### PART EDITED BY RENATO #### 
+          proj_type = proj_type,
+          export_shp = export_shp #### NEW RGUMENT ADDED BY RENATO ####
         )
       
       res
@@ -96,16 +145,47 @@ subpop.comp <- function(XY,
   
   number_subpop <- 
     unlist(output[names(output) == "number_subpop"])
-  poly <- 
-    unlist(output[names(output) == "poly_subpop"])
-  names(number_subpop) <-
-    names(poly) <-
-    gsub(pattern = " ",
-         replacement = "_",
-         names(list_data))
   
-  # if (length(OUTPUT) == 1)
-  #   OUTPUT <- OUTPUT[[1]]
+  ### GILLES, NOT SURE WHY IT IS NECESSARY TO TRANFORM SPECIES ORIGINAL NAMES...
+  #SO I CHANGED IT, BUT LEFT THE PREVIOUS CODE IF YOU WANT TO TAKE IT BACK
+  # SpNames <- gsub(pattern = " ", 
+  #                 replacement = "_", 
+  #                 names(list_data))
+  SpNames <- names(list_data)
+  names(number_subpop) <- SpNames
+
+  if (export_shp) { ## IF/ELSE ADDED BY RENATO
+    poly <- 
+      output[names(output) == "poly_subpop"]
+    names(poly) <- SpNames
+
+    ### GILLES: I INCLUDE THIS PART FROM ANOTHER FUNCTION, SINCE NOW
+    #THE OUTPUT 'subpop.estimation' ARE sf OBJECTS WITH MULTIPLE POLYGONS/CIRCLES
+    if(length(poly) > 1) {
+      poly <-
+        do.call("rbind", poly)
+      row.names(poly) <- NULL
+      #### GILLES: MAYBE RETURN THE POLYGONS IN THE SAME CRS OF THE OCCURRENCES: WSG84?   
+      # poly <- 
+      #   sf::st_transform(poly, crs = 4326)
+      
+    } else {
+      poly <-
+        poly[[1]]
+      poly <- 
+        sf::st_as_sf(data.frame(poly, tax = SpNames[1]))
+    }
+
+    # if (length(OUTPUT) == 1)
+    #   OUTPUT <- OUTPUT[[1]]
   
-  return(list(number_subpop = number_subpop, poly_subpop = poly))
+    OUTPUT <- list(number_subpop = number_subpop, poly_subpop = poly)
+  
+  } else {
+    
+    OUTPUT <- number_subpop
+    
+  }  
+
+  return(OUTPUT)
 }

@@ -2,33 +2,49 @@
 % Please edit documentation in R/subpop.comp.R
 \name{subpop.comp}
 \alias{subpop.comp}
-\title{Number of subpopulations}
+\title{Number of Subpopulations}
 \usage{
 subpop.comp(
   XY,
-  Resol_sub_pop = 5,
+  Resol_sub_pop = NULL,
   proj_type = "cea",
+  export_shp = FALSE,
   parallel = FALSE,
   show_progress = TRUE,
   NbeCores = 2
 )
 }
 \arguments{
-\item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
+\item{XY}{a data frame containing the geographical coordinates for each taxon
+(see Details).}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{Resol_sub_pop}{a value defining the radius of the circles around each
+occurrence (in kilometers) or data frame vector containig a column 'tax' 
+with the taxa names and a column 'radius' with the species-specific radius
+(in kilometer as well). Tipically, this data frame is the output of
+```ConR``` function ```subpop.radius```.}
 
-\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
+\item{proj_type}{character string or numeric or object of CRS class, by
+default is "cea"}
 
-\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+\item{export_shp}{logical. Whether the resulting shapefiles should be
+exported. Default to FALSE.}
 
-\item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
+\item{parallel}{logical. Whether compute should run in parallel. Default to
+FALSE.}
+
+\item{show_progress}{logical. Whether a bar showing progress in computation
+should be shown. Default to TRUE}
+
+\item{NbeCores}{integer. Number of cores for parallel computation. Default to
+2.}
 }
 \value{
 A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
 }
 \description{
-Estimate the number of subpopulations following the method **circular buffer method**
+Estimate the number of subpopulations following the method
+  **circular buffer method** (Rivers et al. 2010).
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
@@ -43,15 +59,23 @@ Estimate the number of subpopulations following the method **circular buffer met
 }
 \examples{
 data(dataset.ex)
-\dontrun{
-subpop <- subpop.comp(dataset.ex, Resol_sub_pop = 5)
-}
 
+subpop.comp(dataset.ex, Resol_sub_pop = 5)
+rad.df <- data.frame(
+    tax = unique(dataset.ex$tax),
+    radius = seq(3,13, by=2),
+    stringsAsFactors = FALSE
+  )
+subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
+subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
 
 }
 \references{
-Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA (2010) Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data. Biodiversity and Conservation 19: 2071-2085. doi: 10.1007/s10531-010-9826-9
+Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA
+  (2010) Subpopulations, locations and fragmentation: applying IUCN red list
+  criteria to herbarium specimen data. Biodiversity and Conservation 19:
+  2071-2085. doi: 10.1007/s10531-010-9826-9
 }
 \author{
-Gilles Dauby, \email{gildauby@gmail.com}
+Gilles Dauby & Renato A. Ferreira de Lima
 }

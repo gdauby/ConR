@@ -79,7 +79,7 @@
 #' \code{method.less.than3} is put to "arbitrary").
 #' 
 #' If \code{export_shp} is TRUE, a \code{list} with: \enumerate{ \item EOO in
-#' square kilometers \item \code{SpatialPolygons} used for EOO computation }
+#' square kilometers \item \code{SpatialPolygons} used for EOO computation}
 #' 
 #' @author Gilles Dauby
 #' 

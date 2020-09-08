@@ -7,8 +7,8 @@
 over.valid.poly(
   poly,
   points,
-  names_poly,
-  names_taxa,
+  names_poly = NULL,
+  names_taxa = NULL,
   mode = "spheroid",
   proj_type = "cea",
   min.dist = 0.1,
@@ -49,11 +49,12 @@ mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0),
                    valid = c(c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE)),
                    stringsAsFactors = FALSE)
 mydf$classes = as.double(mydf$valid)
-shp <- SpatialPolygonsDataFrame(EOO.computing(mydf[mydf$valid,], export_shp = TRUE)[[2]], data.frame(tax = "a"))
+shp <- EOO.computing(mydf[mydf$valid,], export_shp = TRUE)[[2]]
+shp$a <- data.frame(tax = "a", stringsAsFactors = FALSE)
 plot(mydf[,2:1])
-plot(shp, add=TRUE)
-.over.valid.poly(shp, mydf)
-.over.valid.poly(shp, mydf, proj_user = 5641)
-.over.valid.poly(shp, mydf, proj_user = 5641, value = "flag")  
+plot(sf::st_geometry(shp), add=TRUE)
+over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "a")
+over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "a", value = "flag")  
+over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "b")
 
 }

@@ -4,16 +4,25 @@
 \alias{get.patches}
 \title{Internal function}
 \usage{
-get.patches(points, Cell_size_AOO = 2, EOO.poly, proj_user, Resol_sub_pop = 5)
+get.patches(
+  points,
+  cell_size = 2,
+  nbe_rep = 0,
+  EOO.poly = NULL,
+  proj_type = "3857",
+  Resol_sub_pop = 50
+)
 }
 \arguments{
 \item{points}{XY data frame}
 
-\item{Cell_size_AOO}{numeric}
+\item{cell_size}{numeric}
+
+\item{nbe_rep}{numeric}
 
 \item{EOO.poly}{Spatial polygon}
 
-\item{proj_user}{projected coordinate system (in meters)}
+\item{proj_type}{projected coordinate system (in meters)}
 
 \item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
 }
@@ -22,20 +31,15 @@ Get Occupied Cells and Patches
 }
 \details{
 The ...
+
+"A taxon can be considered to be severely fragmented if most (>50%) of its total area of occupancy 
+is in habitat patches that are (...) (2) separated from other habitat patches by a large distance."
 }
 \examples{
 
-mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0),
-                   ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2),
+mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-48.0),
+                   ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-37.2),
                    tax = rep("a", 7),
-                   valid = c(c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE)),
                    stringsAsFactors = FALSE)
-mydf$classes = as.double(mydf$valid)
-shp <- SpatialPolygonsDataFrame(EOO.computing(mydf[mydf$valid,], export_shp = TRUE)[[2]], data.frame(tax = "a"))
-plot(mydf[,2:1])
-plot(shp, add=TRUE)
-.over.valid.poly(shp, mydf)
-.over.valid.poly(shp, mydf, proj_user = 5641)
-.over.valid.poly(shp, mydf, proj_user = 5641, value = "flag")  
 
 }
