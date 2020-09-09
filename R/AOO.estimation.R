@@ -25,6 +25,30 @@ AOO.estimation <- function(coordEAC,
       proj_type = proj_type
     )
   
+  
+  # mbm <- microbenchmark("1" = { res <-
+  #   cell.occupied(
+  #     nbe_rep = nbe_rep,
+  #     size = cell_size,
+  #     coord = coordEAC[,c(2, 1)],
+  #     export_shp = export_shp,
+  #     proj_type = proj_type
+  #   )
+  #                       },
+  #                       "2" = {
+  #                         res <-
+  #                           .cell.occupied.stars(
+  #                             nbe_rep = nbe_rep,
+  #                             size = cell_size,
+  #                             coord = coordEAC[,c(2, 1)],
+  #                             export_shp = export_shp,
+  #                             proj_type = proj_type
+  #                           )
+  #                       },
+  #                       check = NULL)
+  
+  
+  
   # Corners <- rbind(c(min(coordEAC[, 1]),
   #                    max(coordEAC[, 1])),
   #                  c(min(coordEAC[, 2]),
