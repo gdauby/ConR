@@ -6,13 +6,13 @@
 #'   circular buffer method (Rivers et al 2010) to obtain subpopulations for
 #'   conservation assessments of extinction risk.
 #'
-#' @param XY a data frame containing the geographical coordinates for each taxon.
+#' @param XY a data.frame. containing the geographical coordinates for each taxon.
 #' @param factor.div. numeric. denominator value used to obtain the fraction of
 #'   the maximum distance. Default to 10.
 #' @param quant.max numeric. The upper-quantile of the inter-point distance to
-#'   be considered as a threshold of maximum distance. Can very between 0 and 1.
+#'   be considered as a threshold of maximum distance. Can vary between 0 and 1.
 #'   Default to 1.
-#' @param proj_type   
+#' @param proj_type
 #' 
 #' @details 
 #' \strong{Input} as a \code{dataframe} should have the following structure:
@@ -25,7 +25,7 @@
 #'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
-#' @return The estimated radius in kilometers for each taxon.
+#' @return The estimated radius in kilometres for each taxon.
 #' 
 #' @author Renato A. Ferreira de Lima & Gilles Dauby
 #'   
@@ -47,34 +47,55 @@
 #' 
 #' @import sf
 #' @import data.table
-#' @importFrom stats quantile
+#' @importFrom stats quantile dist
 #' 
 #' @export subpop.radius
 #' 
 subpop.radius = function(XY,
                          factor.div = 10,
-                         quant.max = 1) {
+                         quant.max = 1,
+                         mode = "spheroid",
+                         proj_type = "cea") {
   
-  XY <- 
-    ConR:::coord.check(XY = XY, listing = FALSE)
+  if(mode == "spheroid")
+    XY <-
+      coord.check(XY = XY, listing = FALSE)
+  
+  if (mode == "planar")
+    XY <-
+      coord.check(XY = XY,
+                  listing = FALSE,
+                  proj_type = proj_crs(proj_type = proj_type)
+      )
   
   ## Getting the maximum inter-point distance
   #### GILLES: The function 'subpop.radius' is so small that I did not put 'f'
   # as a separate internal function
-  f <- function(lat, lon) {
+  f <- function(lat, lon, proj = FALSE) {
     
     x <- cbind.data.frame(lon, lat)
     
     if (dim(x)[1] > 3) {
       
-      points_sf <- sf::st_as_sf(x, coords = c("lon", "lat"))
-      sf::st_crs(points_sf) <- sf::st_crs(4326)
+      if(mode == "spheroid") {
+        
+        points_sf <- sf::st_as_sf(x, coords = c("lon", "lat"))
+        sf::st_crs(points_sf) <- sf::st_crs(4326)
+        dist <- sf::st_distance(points_sf)
+        dist <- matrix(dist, nrow = dim(dist)[1], ncol = dim(dist)[2])
+        
+      }
       
-      dist <- sf::st_distance(points_sf)
-      dist <- matrix(dist, nrow = dim(dist)[1], ncol = dim(dist)[2])
+      if(mode == "planar") {
+        
+        dist <- as.matrix(dist(x))
+        
+      }
+      
       dist <- dist[upper.tri(dist)]
       
-      d.inter <- as.character(round(stats::quantile(
+      d.inter <- 
+        as.character(round(stats::quantile(
         as.double(dist / 1000),
         prob = quant.max,
         na.rm = TRUE
@@ -85,7 +106,7 @@ subpop.radius = function(XY,
       d.inter <- NA_character_
     }
     return(d.inter)
-  }  
+  }
 
   ## Getting the maximum inter-point distance
   #### GILLES: I did not changed yet this part, which is done using
@@ -95,7 +116,7 @@ subpop.radius = function(XY,
   
   XY.dt <- data.table::data.table(XY)
   data.table::setkeyv(XY.dt, "tax") ## setting 'tax' as key/group to the data.table (makes computations faster)
-  radius <- as.data.frame(XY.dt[ , f(ddlat, ddlon) , by = tax]) 
+  radius <- as.data.frame(XY.dt[ , f(ddlat, ddlon, proj = ifelse(is.null(proj_type), FALSE, TRUE)) , by = tax]) 
   names(radius) <- c("tax", "radius")
   
   return(radius)
