@@ -7,6 +7,7 @@
 #' @param nbe_rep numeric
 #' @param proj_type projected coordinate system (in meters)
 #' @param Resol_sub_pop numeric. Defines in kilometres the radius of the circles around each occurrence
+#' @param subpop_poly Simple feature collection, output of ```subpop.estimation``` function
 #' @param dist_isolated numeric. Distance in kilometres for identifying subpopulations considered to be isolated
 #' 
 #' @details 
@@ -37,6 +38,7 @@ get.patches <- function(XY,
                         nbe_rep = 0,
                         proj_type = "cea",
                         Resol_sub_pop = 10,
+                        subpop_poly = NULL,
                         dist_isolated) {
   
   proj_type <- 
@@ -61,18 +63,28 @@ get.patches <- function(XY,
   res_aoo_poly <- 
     res_aoo$poly_AOO
   
-  res_subpop <-
-    subpop.estimation(
-      XY = XY_proj_coord,
-      Resol_sub_pop = Resol_sub_pop,
-      proj_type = proj_type,
-      export_shp = TRUE
-    )
   
-  res_subpop_poly <- 
-    res_subpop$poly_subpop
+  ## if not subpopulation sf provided, getting it
+  if(is.null(subpop_poly)) {
+    res_subpop <-
+      subpop.estimation(
+        XY = XY_proj_coord,
+        Resol_sub_pop = Resol_sub_pop,
+        proj_type = proj_type,
+        export_shp = TRUE
+      )
+    
+    res_subpop_poly <- 
+      res_subpop$poly_subpop
+    
+  } else {
+    
+    res_subpop_poly <- 
+      subpop_poly
+    
+  }
   
-  mapview::mapview(res_subpop_poly) + mapview::mapview(res_aoo_poly, col.regions = "red")
+  # mapview::mapview(res_subpop_poly) + mapview::mapview(res_aoo_poly, col.regions = "red")
   
   dist_btw_poly <- st_distance(res_subpop_poly)
   dist_btw_poly <- matrix(dist_btw_poly, nrow = nrow(dist_btw_poly), ncol =nrow(dist_btw_poly))
@@ -137,3 +149,6 @@ get.patches <- function(XY,
   # calculer numero de patches/numero de pixels occupés (
 
 }
+
+
+
