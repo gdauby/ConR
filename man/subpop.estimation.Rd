@@ -7,9 +7,10 @@
 subpop.estimation(XY, Resol_sub_pop, export_shp = FALSE, proj_type)
 }
 \arguments{
-\item{XY}{data.frame}
+\item{XY}{data.frame with first two columns are projected coordinates (numeric)}
 
-\item{Resol_sub_pop}{integer}
+\item{Resol_sub_pop}{numeric. Defines the radius of the circles
+around each occurrence, in kilometres.}
 
 \item{export_shp}{logical}
 }

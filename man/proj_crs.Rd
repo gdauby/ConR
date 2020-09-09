@@ -2,13 +2,39 @@
 % Please edit documentation in R/proj_crs.R
 \name{proj_crs}
 \alias{proj_crs}
-\title{Get Coordinate Reference System}
+\title{Get the projection system}
 \usage{
 proj_crs(proj_type = "cea")
 }
 \arguments{
 \item{proj_type}{string or numeric}
 }
+\value{
+`CRS` class object
+}
 \description{
-get proj CRS
+get class "CRS" of coordinate reference system
+}
+\examples{
+## By default, the output projection is Equal-Area Scalable Earth (EASE) Global
+## Global cylindrical equal-area projection
+## See https://epsg.io/6933
+proj_crs(proj_type = "cea")
+
+## Another readily available projection is Antarctic Polar Stereographic
+## https://epsg.io/3031
+proj_crs(proj_type = "Antarctic")
+
+## Otherwise, many projection can be retrieved from EPSG code
+## Check  for EPSG code
+\dontrun{
+all_projs <- rgdal::make_EPSG()
+head(all_projs)
+}
+proj_crs(proj_type = 3395)
+
+
+}
+\author{
+Gilles Dauby & Renato A. Ferreira de Lima
 }

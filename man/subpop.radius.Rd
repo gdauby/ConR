@@ -4,22 +4,28 @@
 \alias{subpop.radius}
 \title{Estimate Taxon Dispersal Radius}
 \usage{
-subpop.radius(XY, factor.div = 10, quant.max = 1)
+subpop.radius(
+  XY,
+  factor.div = 10,
+  quant.max = 1,
+  mode = "spheroid",
+  proj_type = "cea"
+)
 }
 \arguments{
-\item{XY}{a data frame containing the geographical coordinates for each taxon.}
+\item{XY}{a data.frame. containing the geographical coordinates for each taxon.}
 
 \item{quant.max}{numeric. The upper-quantile of the inter-point distance to
-be considered as a threshold of maximum distance. Can very between 0 and 1.
+be considered as a threshold of maximum distance. Can vary between 0 and 1.
 Default to 1.}
+
+\item{proj_type}{}
 
 \item{factor.div.}{numeric. denominator value used to obtain the fraction of
 the maximum distance. Default to 10.}
-
-\item{proj_type}{}
 }
 \value{
-The estimated radius in kilometers for each taxon.
+The estimated radius in kilometres for each taxon.
 }
 \description{
 Calculates the fraction of the maximum distance between

@@ -7,9 +7,9 @@
 coord.check(XY, listing = TRUE, proj_type = NULL, listing_by_valid = FALSE)
 }
 \arguments{
-\item{XY}{...}
+\item{XY}{data.frame, of at least two columns (coordinates), third is taxa}
 
-\item{listing}{...}
+\item{listing}{logical, whether the dataset should be splitted in a list by taxa}
 
 \item{proj_type}{...}
 

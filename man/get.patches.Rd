@@ -5,35 +5,40 @@
 \title{Internal function}
 \usage{
 get.patches(
-  points,
+  XY,
   cell_size = 2,
   nbe_rep = 0,
-  EOO.poly = NULL,
-  proj_type = "3857",
-  Resol_sub_pop = 50
+  proj_type = "cea",
+  Resol_sub_pop = 10,
+  dist_isolated
 )
 }
 \arguments{
-\item{points}{XY data frame}
-
 \item{cell_size}{numeric}
 
 \item{nbe_rep}{numeric}
 
-\item{EOO.poly}{Spatial polygon}
-
 \item{proj_type}{projected coordinate system (in meters)}
 
-\item{Resol_sub_pop}{numeric. Defines in kilometers the radius of the circles around each occurrence}
+\item{Resol_sub_pop}{numeric. Defines in kilometres the radius of the circles around each occurrence}
+
+\item{dist_isolated}{numeric. Distance in kilometres for identifying subpopulations considered to be isolated}
+
+\item{points}{XY data frame}
 }
 \description{
 Get Occupied Cells and Patches
 }
 \details{
-The ...
-
+This function evaluates the proportion of the total area of occupancy 
+in habitat patches separated from others by a large distance.
+Based on IUCN guidelines page(48):
 "A taxon can be considered to be severely fragmented if most (>50%) of its total area of occupancy 
 is in habitat patches that are (...) (2) separated from other habitat patches by a large distance."
+
+This function interpret subpopulations as obtained using ```subpop.estimation``` function as habitat patches. 
+First, subpopulations that are isolated i.e. distant to all others subpopulations by at ```least dist_isolated``` kilometres, are identified.
+Then, the proportion of the AOO concerned by those "isolated" subpopulations is calculated.
 }
 \examples{
 
@@ -41,5 +46,7 @@ mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-48.0),
                    ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-37.2),
                    tax = rep("a", 7),
                    stringsAsFactors = FALSE)
+
+get.patches(XY = mydf, dist_isolated = 200)
 
 }

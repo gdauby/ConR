@@ -19,32 +19,32 @@ subpop.comp(
 (see Details).}
 
 \item{Resol_sub_pop}{a value defining the radius of the circles around each
-occurrence (in kilometers) or data frame vector containig a column 'tax' 
+occurrence (in kilometres) or data frame vector containing a column 'tax' 
 with the taxa names and a column 'radius' with the species-specific radius
-(in kilometer as well). Tipically, this data frame is the output of
+(in kilometre as well). Typically, this data frame is the output of
 ```ConR``` function ```subpop.radius```.}
 
 \item{proj_type}{character string or numeric or object of CRS class, by
 default is "cea"}
 
 \item{export_shp}{logical. Whether the resulting shapefiles should be
-exported. Default to FALSE.}
+exported. FALSE by default.}
 
-\item{parallel}{logical. Whether compute should run in parallel. Default to
-FALSE.}
+\item{parallel}{logical. Whether compute should run in parallel. FALSE by default.}
 
 \item{show_progress}{logical. Whether a bar showing progress in computation
-should be shown. Default to TRUE}
+should be shown. TRUE by default.}
 
 \item{NbeCores}{integer. Number of cores for parallel computation. Default to
 2.}
 }
 \value{
-A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
+If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop a `Simple feature collection` with as many MULTIPOLYGON as taxa
+If `export_shp` is FALSE, a vector with estimated number of subpopulation per taxa
 }
 \description{
 Estimate the number of subpopulations following the method
-  **circular buffer method** (Rivers et al. 2010).
+  **circular buffer method** (overlapping buffered circles form a single subpopulation)
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:

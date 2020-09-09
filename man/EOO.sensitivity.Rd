@@ -9,7 +9,6 @@ EOO.sensitivity(
   levels.order = NULL,
   occ.based = TRUE,
   value = "dist",
-  proj_user = NULL,
   exclude.area = FALSE,
   country_map = NULL,
   alpha = 1,
@@ -35,8 +34,6 @@ the least confident to the more confident class of records. See Details.}
 
 \item{value}{output value: proportional distance ("dist") or inside/outside
 the polygon ("flag")?}
-
-\item{proj_user}{character string or numeric with the user-defined projection system}
 
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
