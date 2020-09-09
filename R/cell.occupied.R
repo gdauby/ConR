@@ -11,15 +11,16 @@
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #'
-#' @importFrom raster rasterToPolygons extent rasterize
+#' @importFrom stars st_as_stars st_rasterize
 #' @importFrom stats runif
+#' @import sf
 #' 
 cell.occupied <-
   function(nbe_rep = 0,
            size = 4,
            coord,
            export_shp = TRUE,
-           proj_type = NULL)  {
+           proj_type = NULL) {
     
     crs_proj <-
       proj_type
@@ -34,73 +35,48 @@ cell.occupied <-
       
       Occupied_cells <- vector(mode = "numeric", length = 4)
       decal <- c(0, 1, 2, 3)
-      
-      # if (abs(Corners[1, 1] - Corners[1, 2]) > abs(Corners[2, 1] - Corners[2, 2])) {
-      #   longer <-
-      #     abs(Corners[1, 1] - Corners[1, 2])
-      # } else{
-      #   longer <-
-      #     abs(Corners[2, 1] - Corners[2, 2])
-      # }
-      
-      
+
       for (h in decal) {
         
-        # bbox_sp <- 
-        #   st_bbox(c(xmin = min(coord[, 1]), xmax = 
-        #               max(coord[, 1]), ymax = max(coord[, 2]), ymin = min(coord[, 2])), 
-        #           crs = proj_type)
-        # 
-        # grid_sp <- 
-        #   st_make_grid(st_as_sfc(bbox_sp), cellsize = cell_size*1000)
-        
-      
-        # test <- st_sfc(st_linestring(rbind(c(0, 2), c(0 , 0))), crs = 4326)
-        # 
-        # st_length(test)
-        
-        ext <-
-          raster::extent(
-            floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000,
-            floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
-              size * 1000,
-            floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
-              size * 1000,
-            floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
-              size * 1000
-          )
-        
+        bbox_sp <-
+          st_bbox(c(xmin = floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000, 
+                    xmax = floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 * size * 1000, 
+                    ymax = floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 * size * 1000, 
+                    ymin = floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 * size * 1000),
+                  crs = proj_type)
         
         # ext <-
-        #   terra::ext(
-        #     c(
-        #       floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 *
-        #         size * 1000,
-        #       floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
-        #         size * 1000,
-        #       floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
-        #         size * 1000,
-        #       floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
-        #         size * 1000
-        #     )
+        #   raster::extent(
+        #     floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000,
+        #     floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
+        #       size * 1000,
+        #     floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
+        #       size * 1000,
+        #     floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
+        #       size * 1000
         #   )
-        #
-        # r <-
-        #   terra::rast(extent = ext,
+        
+        
+        r <- stars::st_as_stars(bbox_sp, dx = size * 1000, dy = size * 1000, values = NA)
+        
+        xy_sf <- 
+          st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
+        
+        r2_ <- stars::st_rasterize(xy_sf, r)
+        
+        # r_rast <-
+        #   raster::raster(ext,
         #                  resolution = size * 1000,
         #                  crs = crs_proj)
         
+        # r2_ <-
+        #   raster::rasterize(coord[, 1:2], r_rast)
         
-        r <-
-          raster::raster(ext,
-                         resolution = size * 1000,
-                         crs = crs_proj)
-        
-        r2_ <-
-          raster::rasterize(coord[, 1:2], r)
+        # OCC <-
+        #   length(which(!is.na(raster::values(r2_))))
         
         OCC <-
-          length(which(!is.na(raster::values(r2_))))
+          length(r2_$ID[!is.na(r2_$ID)])
         
         Occupied_cells[h + 1] <- OCC
         
@@ -119,17 +95,37 @@ cell.occupied <-
         rd.1 <- runif(1) * size * 1000
         rd.2 <- runif(1) * size * 1000
         
-        ext = raster::extent(
-          floor(Corners[1, 1]) - rd.1 - 2 * size * 1000,
-          floor(Corners[1, 2]) + rd.1 + 2 * size * 1000,
-          floor(Corners[2, 1]) - rd.2 - 2 * size * 1000,
-          floor(Corners[2, 2]) + rd.2 + 2 * size * 1000
-        )
-        r = raster::raster(ext, resolution = size * 1000, crs = crs_proj)
-        # r
-        r2_ <- raster::rasterize(coord[, 1:2], r)
-        OCC <- length(which(!is.na(raster::values(r2_))))
-        Occupied_cells[h] <- OCC
+        bbox_sp <-
+          st_bbox(c(xmin = floor(Corners[1, 1]) - rd.1 - 2 * (size * 1000 / 4) - 2 * size * 1000, 
+                    xmax = floor(Corners[1, 2]) + rd.1 + 2 * (size * 1000 / 4) + 2 * size * 1000, 
+                    ymax = floor(Corners[2, 2]) + rd.2 + 2 * (size * 1000 / 4) + 2 * size * 1000, 
+                    ymin = floor(Corners[2, 1]) - rd.2 - 2 * (size * 1000 / 4) - 2 * size * 1000),
+                  crs = proj_type)
+        
+        # ext = raster::extent(
+        #   floor(Corners[1, 1]) - rd.1 - 2 * size * 1000,
+        #   floor(Corners[1, 2]) + rd.1 + 2 * size * 1000,
+        #   floor(Corners[2, 1]) - rd.2 - 2 * size * 1000,
+        #   floor(Corners[2, 2]) + rd.2 + 2 * size * 1000
+        # )
+        # r = raster::raster(ext, resolution = size * 1000, crs = crs_proj)
+        # # r
+        # r2_ <- raster::rasterize(coord[, 1:2], r)
+        # OCC <- length(which(!is.na(raster::values(r2_))))
+        # Occupied_cells[h] <- OCC
+        
+        r <- stars::st_as_stars(bbox_sp, dx = size * 1000, dy = size * 1000, values = NA)
+        
+        xy_sf <- 
+          st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
+        
+        r2_ <- stars::st_rasterize(xy_sf, r)
+        
+        OCC <-
+          length(r2_$ID[!is.na(r2_$ID)])
+        
+        Occupied_cells[h + 1] <- OCC
+        
         # rd.1.vec <- c(rd.1.vec, rd.1)
         # rd.2.vec <- c(rd.2.vec, rd.2)
         if (OCC == 1)
@@ -147,24 +143,173 @@ cell.occupied <-
     #   suppressWarnings(raster::projectRaster(from = r2_,
     #                                          crs = "+proj=longlat +datum=WGS84 +no_defs"))
     
+    
+    r2_$ID[!is.na(r2_$ID)] <- 1
+    
     if (export_shp)
-      r2_pol <-
-      raster::rasterToPolygons(
-        r2_,
-        fun = NULL,
-        n = 4,
-        na.rm = TRUE,
-        digits = 6,
-        dissolve = FALSE
-      )
+      r2_pol <- 
+      suppressWarnings(st_as_sf(r2_, na.rm = TRUE, merge = FALSE))
     
     if (export_shp)
       return(list(r2_pol, Occupied_cells))
     if (!export_shp)
       return(list(NA, Occupied_cells))
-    
-  }
+}
 
+
+# cell.occupied.old <-
+#   function(nbe_rep = 0,
+#            size = 4,
+#            coord,
+#            export_shp = TRUE,
+#            proj_type = NULL)  {
+#     
+#     crs_proj <-
+#       proj_type
+#     
+#     Corners <- rbind(c(min(coord[, 1]),
+#                        max(coord[, 1])),
+#                      c(min(coord[, 2]),
+#                        max(coord[, 2])))
+#     
+#     
+#     if (nbe_rep == 0) {
+#       
+#       Occupied_cells <- vector(mode = "numeric", length = 4)
+#       decal <- c(0, 1, 2, 3)
+#       
+#       # if (abs(Corners[1, 1] - Corners[1, 2]) > abs(Corners[2, 1] - Corners[2, 2])) {
+#       #   longer <-
+#       #     abs(Corners[1, 1] - Corners[1, 2])
+#       # } else{
+#       #   longer <-
+#       #     abs(Corners[2, 1] - Corners[2, 2])
+#       # }
+#       
+#       
+#       for (h in decal) {
+#         
+#         # bbox_sp <- 
+#         #   st_bbox(c(xmin = min(coord[, 1]), xmax = 
+#         #               max(coord[, 1]), ymax = max(coord[, 2]), ymin = min(coord[, 2])), 
+#         #           crs = proj_type)
+#         # 
+#         # grid_sp <- 
+#         #   st_make_grid(st_as_sfc(bbox_sp), cellsize = cell_size*1000)
+#         
+#         
+#         # test <- st_sfc(st_linestring(rbind(c(0, 2), c(0 , 0))), crs = 4326)
+#         # 
+#         # st_length(test)
+#         
+#         ext <-
+#           raster::extent(
+#             floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000,
+#             floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
+#               size * 1000,
+#             floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
+#               size * 1000,
+#             floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
+#               size * 1000
+#           )
+#         
+#         
+#         # ext <-
+#         #   terra::ext(
+#         #     c(
+#         #       floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 *
+#         #         size * 1000,
+#         #       floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 *
+#         #         size * 1000,
+#         #       floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 *
+#         #         size * 1000,
+#         #       floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 *
+#         #         size * 1000
+#         #     )
+#         #   )
+#         #
+#         # r <-
+#         #   terra::rast(extent = ext,
+#         #                  resolution = size * 1000,
+#         #                  crs = crs_proj)
+#         
+#         
+#         r <-
+#           raster::raster(ext,
+#                          resolution = size * 1000,
+#                          crs = crs_proj)
+#         
+#         r2_ <-
+#           raster::rasterize(coord[, 1:2], r)
+#         
+#         OCC <-
+#           length(which(!is.na(raster::values(r2_))))
+#         
+#         Occupied_cells[h + 1] <- OCC
+#         
+#         ### If only one occupied cell, stop the production of raster
+#         if (OCC == 1)
+#           break
+#       }
+#       # h <- decal[which.min(Occupied_cells)]
+#       # Occupied_cells <- min(Occupied_cells)
+#     }
+#     
+#     if (nbe_rep > 0) {
+#       Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
+#       
+#       for (h in 1:nbe_rep) {
+#         rd.1 <- runif(1) * size * 1000
+#         rd.2 <- runif(1) * size * 1000
+#         
+#         ext = raster::extent(
+#           floor(Corners[1, 1]) - rd.1 - 2 * size * 1000,
+#           floor(Corners[1, 2]) + rd.1 + 2 * size * 1000,
+#           floor(Corners[2, 1]) - rd.2 - 2 * size * 1000,
+#           floor(Corners[2, 2]) + rd.2 + 2 * size * 1000
+#         )
+#         r = raster::raster(ext, resolution = size * 1000, crs = crs_proj)
+#         # r
+#         r2_ <- raster::rasterize(coord[, 1:2], r)
+#         OCC <- length(which(!is.na(raster::values(r2_))))
+#         Occupied_cells[h] <- OCC
+#         # rd.1.vec <- c(rd.1.vec, rd.1)
+#         # rd.2.vec <- c(rd.2.vec, rd.2)
+#         if (OCC == 1)
+#           break
+#       }
+#       
+#     }
+#     
+#     Occupied_cells <- Occupied_cells[Occupied_cells > 0]
+#     Occupied_cells <- min(Occupied_cells)
+#     
+#     ## CRS object has comment, which is lost in output warning
+#     # if (export_shp)
+#     #   r2_ <-
+#     #   suppressWarnings(raster::projectRaster(from = r2_,
+#     #                                          crs = "+proj=longlat +datum=WGS84 +no_defs"))
+#     
+#     if (export_shp)
+#       r2_pol <-
+#       raster::rasterToPolygons(
+#         r2_,
+#         fun = NULL,
+#         n = 4,
+#         na.rm = TRUE,
+#         digits = 6,
+#         dissolve = FALSE
+#       )
+#     
+#     r2_pol <- 
+#       as(r2_pol, "sf")
+#     
+#     if (export_shp)
+#       return(list(r2_pol, Occupied_cells))
+#     if (!export_shp)
+#       return(list(NA, Occupied_cells))
+#     
+#   }
 
 
 # .cell.occupied.terra <-
