@@ -1,12 +1,36 @@
 
-#' @title Get Coordinate Reference System
+#' @title Get the projection system
 #'
-#' @description get proj CRS
+#' @description get class "CRS" of coordinate reference system
+#' 
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #' 
 #' @param proj_type string or numeric
 #' 
-#' @importFrom utils packageVersion
-#' @importFrom rgdal showWKT rgdal_extSoftVersion make_EPSG
+#' @importFrom sp CRS
+#' @importFrom rgdal rgdal_extSoftVersion make_EPSG
+#' 
+#' @return `CRS` class object
+#' 
+#' 
+#' @examples 
+#' ## By default, the output projection is Equal-Area Scalable Earth (EASE) Global
+#' ## Global cylindrical equal-area projection
+#' ## See https://epsg.io/6933
+#' proj_crs(proj_type = "cea")
+#' 
+#' ## Another readily available projection is Antarctic Polar Stereographic
+#' ## https://epsg.io/3031
+#' proj_crs(proj_type = "Antarctic")
+#' 
+#' ## Otherwise, many projection can be retrieved from EPSG code
+#' ## Check  for EPSG code
+#' \dontrun{
+#' all_projs <- rgdal::make_EPSG()
+#' head(all_projs)
+#' }
+#' proj_crs(proj_type = 3395)
+#' 
 #' 
 #' @export
 proj_crs <- function(proj_type = "cea") {
@@ -29,10 +53,12 @@ proj_crs <- function(proj_type = "cea") {
       proj <-
         "+proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
     
+    # https://epsg.io/3031
     if(proj_type == "Antarctic")
       proj <-
         "+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
 
+    # https://epsg.io/102022
     if(proj_type == "Africa_eac")
       proj <-
         "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
@@ -48,6 +74,9 @@ proj_crs <- function(proj_type = "cea") {
     
     if(length(proj) == 0)
       stop("No projection found given proj_type")
+    
+    print(all_epsg[which(all_epsg$code == proj_type), ])
+    
   }
 
   
