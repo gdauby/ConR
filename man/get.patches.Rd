@@ -10,6 +10,7 @@ get.patches(
   nbe_rep = 0,
   proj_type = "cea",
   Resol_sub_pop = 10,
+  subpop_poly = NULL,
   dist_isolated
 )
 }
@@ -21,6 +22,8 @@ get.patches(
 \item{proj_type}{projected coordinate system (in meters)}
 
 \item{Resol_sub_pop}{numeric. Defines in kilometres the radius of the circles around each occurrence}
+
+\item{subpop_poly}{Simple feature collection, output of ```subpop.estimation``` function}
 
 \item{dist_isolated}{numeric. Distance in kilometres for identifying subpopulations considered to be isolated}
 
