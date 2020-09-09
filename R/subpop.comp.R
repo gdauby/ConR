@@ -2,27 +2,24 @@
 #' @title Number of Subpopulations
 #'
 #' @description Estimate the number of subpopulations following the method
-#'   **circular buffer method** (Rivers et al. 2010).
+#'   **circular buffer method** (overlapping buffered circles form a single subpopulation)
 #'
 #' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
 #' @param XY a data frame containing the geographical coordinates for each taxon
 #'   (see Details).
-#' @param Resol_sub_pop numeric. Defines the radius of the circles
-#'   around each occurrence, in kilometers.
 #' @param Resol_sub_pop a value defining the radius of the circles around each
-#'   occurrence (in kilometers) or data frame vector containig a column 'tax' 
+#'   occurrence (in kilometres) or data frame vector containing a column 'tax' 
 #'   with the taxa names and a column 'radius' with the species-specific radius
-#'   (in kilometer as well). Tipically, this data frame is the output of
+#'   (in kilometre as well). Typically, this data frame is the output of
 #'   ```ConR``` function ```subpop.radius```.
 #' @param export_shp logical. Whether the resulting shapefiles should be
-#'   exported. Default to FALSE.
-#' @param parallel logical. Whether compute should run in parallel. Default to
-#'   FALSE.
+#'   exported. FALSE by default.
+#' @param parallel logical. Whether compute should run in parallel. FALSE by default.
 #' @param NbeCores integer. Number of cores for parallel computation. Default to
 #'   2.
 #' @param show_progress logical. Whether a bar showing progress in computation
-#'   should be shown. Default to TRUE
+#'   should be shown. TRUE by default.
 #' @param proj_type character string or numeric or object of CRS class, by
 #'   default is "cea"
 #' 
@@ -42,7 +39,9 @@
 #'   criteria to herbarium specimen data. Biodiversity and Conservation 19:
 #'   2071-2085. doi: 10.1007/s10531-010-9826-9
 #'
-#' @return A list with one list for each taxa containing [[1]]Number of subpopulation and [[2]]SpatialPolygons.
+#' @return 
+#' If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop a `Simple feature collection` with as many MULTIPOLYGON as taxa
+#' If `export_shp` is FALSE, a vector with estimated number of subpopulation per taxa
 #' 
 #' @examples 
 #' data(dataset.ex)
@@ -90,7 +89,7 @@ subpop.comp <- function(XY,
   ### END OF PART INCLUDED BY RENATO ###
   
   list_data <-
-    coord.check(XY = XY, listing = TRUE, proj_type)
+    coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
