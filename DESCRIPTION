@@ -23,7 +23,7 @@ Imports:
     foreach,
     rnaturalearth,
     sf,
-    raster,
+    stars,
     sp,
     nls.multstart,
     segmented,
