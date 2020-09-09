@@ -80,7 +80,6 @@
 #' @param levels.order a character vector with at least two classes ordered from
 #'   the least confident to the more confident class of records. See Details.
 #' @param occ.based logical. Should the measure of influence of each record be returned? Default to TRUE.
-#' @param proj_user character string or numeric with the user-defined projection system
 #' @inheritParams EOO.computing
 #' @inheritParams over.valid.poly
 #' 
@@ -121,7 +120,6 @@ EOO.sensitivity <- function(XY,
                           levels.order = NULL,
                           occ.based = TRUE,
                           value = "dist",
-                          proj_user = NULL,
                           exclude.area = FALSE,
                           country_map = NULL,
                           alpha = 1,
