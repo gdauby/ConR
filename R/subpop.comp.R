@@ -89,7 +89,7 @@ subpop.comp <- function(XY,
   ### END OF PART INCLUDED BY RENATO ###
   
   list_data <-
-    coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
+    ConR:::coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -129,7 +129,7 @@ subpop.comp <- function(XY,
         utils::setTxtProgressBar(pb, x)
       
       res <- 
-        subpop.estimation(
+        ConR:::subpop.estimation(
           XY = list_data[[x]], 
           Resol_sub_pop = unique(list_data[[x]]$radius), #### PART EDITED BY RENATO #### 
           proj_type = proj_type,
