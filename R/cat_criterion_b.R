@@ -1,28 +1,42 @@
 #' @title Categorize taxa according to IUCN criterion B
 #'
-#' @description Provide IUCN threat categories based on B sub-criteria, conditions and thresholds.
+#' @description Provide IUCN threat categories based on B sub-criteria,
+#'   conditions and thresholds.
 #'
-#' @param EOO numeric vector with species extent of occurrence - EOO (i.e. sub-criterion B1)
-#' @param AOO numeric vector with species area of occupancy - AOO (i.e. sub-criterion B2)
-#' @param locations numeric vector with the number of locations where the species occur (i.e. condition 'a')
-#' @param protected numeric vector providing estimated percentage of species distribution in protected areas
-#' @param decline string vector providing the status of the species continuing decline in EOO, AOO, habitat,
-#'  locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
-#'  the species is classified as condition 'b' of criterion B will not be met.
+#' @param EOO numeric vector with species extent of occurrence - EOO (i.e.
+#'   sub-criterion B1)
+#' @param AOO numeric vector with species area of occupancy - AOO (i.e.
+#'   sub-criterion B2)
+#' @param locations numeric vector with the number of locations where the
+#'   species occur (i.e. condition 'a' of criterion B)
+#' @param sever.frag logical. Is the population severely fragmented? If TRUE 
+#'   the condition 'a' of criterion B will be met.
+#' @param protected numeric vector providing estimated percentage of species
+#'   distribution in protected areas
+#' @param decline string vector providing the status of the species continuing
+#'   decline in EOO, AOO, habitat, locations or subpopulations or population
+#'   size (i.e. condition 'b'). If different of 'Decreasing', the condition 'b'
+#'   of criterion B will not be met.
 #' @param ext.fluct numeric vector with the mean order of magnitude of the
-#'   differences between population minima and maxima (Currently not implemented).
-#' @param EOO.threshold numeric vector with the EOO thresholds to convert estimates into threat categories. 
-#'  Default is the thresholds recommended by IUCN.
-#' @param AOO.threshold numeric vector with the AOO thresholds to convert estimates into threat categories. 
-#'  Default is the thresholds recommended by IUCN.
-#' @param Loc.threshold numeric vector with the thresholds of number of locations (condition 'a'). 
-#'  Default is the thresholds recommended by IUCN.
-#' @param protected.threshold numeric, one value indicating the threshold for protected value above which 
-#'  a taxa would not be threatened whatever the others parameters, by default is 100
+#'   differences between population minima and maxima (Currently not
+#'   implemented).
+#' @param EOO.threshold numeric vector with the EOO thresholds to convert
+#'   estimates into threat categories. Default is the thresholds recommended by
+#'   IUCN.
+#' @param AOO.threshold numeric vector with the AOO thresholds to convert
+#'   estimates into threat categories. Default is the thresholds recommended by
+#'   IUCN.
+#' @param Loc.threshold numeric vector with the thresholds of number of
+#'   locations (condition 'a'). Default is the thresholds recommended by IUCN.
+#' @param protected.threshold numeric, one value indicating the threshold for
+#'   protected value above which a taxa would not be threatened whatever the
+#'   others parameters, by default is 100
 #' @param fluct.threshold numeric. Threshold of the order of magnitude of the
-#'   differences between population minima and maxima to classify extreme fluctuations. 
-#'   Default to 10 as recommended by IUCN.
-#' @param all.cats logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.
+#'   differences between population minima and maxima to classify extreme
+#'   fluctuations. Default to 10 as recommended by IUCN.
+#' @param all.cats logical. Should the categories from all criteria be returned
+#'   and not just the consensus categories? Default to TRUE.
+#'   
 #' @return list
 #' 
 #' @details The function categorizes taxa following criterion B and categories of the IUCN. 
@@ -57,15 +71,25 @@
 #' EOO <- c(34000, 5000)
 #' AOO <- c(300, 25)
 #' locations <- c(9, 12)
+#' sever.frag <- c(FALSE, TRUE)
 #' protected <- c(100, 80)
 #' decline <- c("Decreasing", "Decreasing")
-#' cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
+#' cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
+#'
+#' EOO <- c(34000, 5000)
+#' AOO <- c(300, 25)
+#' locations <- c(15, 12)
+#' sever.frag <- c(TRUE, TRUE)
+#' protected <- c(80, 50)
+#' decline <- c("Decreasing", "Decreasing")
+#' cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
 #' 
 #' @importFrom utils tail
 #' 
 cat_criterion_b <- function(EOO = NULL,
                             AOO = NULL,
                             locations = NULL,
+                            sever.frag = NULL,
                             protected = NULL,
                             decline = NULL,
                             ext.fluct = NULL,
@@ -77,8 +101,7 @@ cat_criterion_b <- function(EOO = NULL,
                             all.cats = TRUE
                             ) {
   
-  all.identical <-
-    function(l)
+  all.identical <- function(l)
       all(mapply(identical, head(l, 1), tail(l,-1)))
   
   if (!all.identical(c(
@@ -86,7 +109,8 @@ cat_criterion_b <- function(EOO = NULL,
     length(AOO),
     length(locations),
     ifelse(is.null(protected), length(EOO), length(protected)),
-    ifelse(is.null(decline), length(EOO), length(decline))
+    ifelse(is.null(decline), length(EOO), length(decline)),
+    ifelse(is.null(sever.frag), length(EOO), length(sever.frag))
   )))
     stop("Numbers of values provided for each parameters should be identical")
   
@@ -94,21 +118,25 @@ cat_criterion_b <- function(EOO = NULL,
     stop("protected.threshold must be higher than 0 and lower or equal to 100")
   
   rank_eoo <- findInterval(EOO, sort(EOO.threshold))
-  
+
   rank_aoo <- findInterval(AOO, sort(AOO.threshold))
   
   rank_loc <- 
-    findInterval(locations, sort(Loc.threshold), left.open = T)
-
+    findInterval(locations, sort(Loc.threshold), left.open = TRUE)
   
-
-    all_ranks <-  cbind.data.frame(B1a = rank_eoo,
+  if (!is.null(sever.frag)) {
+    rank_sev.frag <- sever.frag
+  } else {
+    rank_sev.frag <- rep("", length(EOO))
+  }
+  
+  all_ranks <-  cbind.data.frame(B1a = rank_eoo,
                                    B2a = rank_aoo,
-                                   Ba = rank_loc,
+                                   Baii = rank_loc,
+                                   Bai = rank_sev.frag,
                                    deparse.level = 0, 
                                    stringsAsFactors = FALSE)    
 
-  
   if(!is.null(decline)) {
     
     names(all_ranks) <- 
@@ -116,17 +144,16 @@ cat_criterion_b <- function(EOO = NULL,
     
   } else {
     
-    message("No information on decline range provided, continuing decline is assumed to be true")
+    message("No information on continuing decline is provided: assumed to be true")
     
   }
-  
-  
+
   all_missing <- 
-    apply(all_ranks, 1, function(x) ifelse(all(is.na(x)), TRUE, 
+    apply(all_ranks, 1, function(x) ifelse(all(is.na(x[1:3])), TRUE, 
                                            ifelse(all(is.na(x[1:2])), TRUE, FALSE)))
   
   if(sum(all_missing) > 0) {
-    warning(paste(sum(all_missing), "taxa are not categorized because EOO & AOO or EOO & AOO & locations are missing"))
+    warning(paste(sum(all_missing), "Taxa cannot be categorized because EOO & AOO or EOO & AOO & locations are missing"))
   }
   
   ranks_B12a <- 
@@ -134,45 +161,49 @@ cat_criterion_b <- function(EOO = NULL,
                        1, FUN = function(x) {
                          
                          min_b <-
-                           min(x[1:2], na.rm = T)
+                           min(x[1:2], na.rm = TRUE)
                          
-                         y <- 
-                           max(c(min_b, x[3]), na.rm = T)
-                         
+                         if (x[4] %in% TRUE) {
+                           y <- min_b
+                         } else {
+                           y <- 
+                            max(c(min_b, x[3]), na.rm = TRUE)
+                         }
+                           
                          return(y)
                        }
                        ))
   
-  if(!is.null(protected)) {
+  ranks_B12a_orig <- NULL
+  
+  if (!is.null(protected)) {
     
-    if(any(protected >= protected.threshold) & any(ranks_B12a != "3")) {
+    if (any(protected >= protected.threshold) & any(ranks_B12a != "3")) {
       
-      if(any(ranks_B12a[which(protected >= protected.threshold)] != '3')) {
+      if (any(ranks_B12a[which(protected >= protected.threshold)] != '3')) {
         
         message("Some taxa categorized as Threatened finally assessed as Not Threatened because percentage of their area in protected areas above the protected.threshold")
         
-        ranks_B12a[which(protected >= protected.threshold)] <- 
-          "3"
+        ranks_B12a_orig <- ranks_B12a
+        ranks_B12a[which(protected >= protected.threshold)] <- "3"
         
       }
     }
   }
   
-  if(!is.null(decline)) {
+  if (!is.null(decline)) {
     
-    if(any(decline != "Decreasing") & any(ranks_B12a != "3")) {
+    if (any(decline != "Decreasing") & any(ranks_B12a != "3")) {
       
-      if(any(ranks_B12a[which(decline != "Decreasing")] != '3')) {
+      if (any(ranks_B12a[which(decline[!all_missing] != "Decreasing")] != '3')) {
         
-        message("Some taxa categorized as threatened based on EOO/AOO/locations were finally assessed as not threatened because no Decline detected")
+        message("Some taxa categorized as threatened based on EOO/AOO/locations were finally assessed as not threatened because no continuing decline was detected")
         
-        ranks_B12a[which(decline != "Decreasing")] <- 
-          "3"
+        ranks_B12a[!decline[!all_missing] %in% "Decreasing"] <- "3"
         
       }
       
-      ranks_B12a[which(decline != "Decreasing")] <- 
-        "3"
+      ranks_B12a[!decline[!all_missing] %in% "Decreasing"] <- "3"
       
     }
   }
@@ -182,27 +213,28 @@ cat_criterion_b <- function(EOO = NULL,
              cat = c("CR", "EN", "VU", "LC or NT"))
   
   for (i in 1:nrow(replace_code))
-    ranks_B12a <-
-    gsub(replace_code[i, 1], replace_code[i, 2], ranks_B12a)
+    ranks_B12a <- 
+      gsub(replace_code[i, 1], replace_code[i, 2], ranks_B12a)
   
-  # ranks_B12a <- 
-  #   gsub("0", "CR", ranks_B12a)
-  # ranks_B12a <- 
-  #   gsub("1", "EN", ranks_B12a)
-  # ranks_B12a <- 
-  #   gsub("2", "VU", ranks_B12a)
-  # ranks_B12a <- 
-  #   gsub("3", "LC or NT", ranks_B12a)
+  if (!is.null(ranks_B12a_orig)) {
+    for (i in 1:nrow(replace_code))
+      ranks_B12a_orig <- 
+        gsub(replace_code[i, 1], replace_code[i, 2], ranks_B12a_orig)
+  }
   
-  if(all.cats) {
+  if (all.cats) {
     ranks_B1a <- 
       as.character(apply(all_ranks, 
                          1, FUN = function(x) {
                            
-                           min_b <- min(x[1])
+                           min_b <- as.double(x[1])
                            
-                           y <- 
-                             max(c(min_b, x[3]))
+                           if (x[4] %in% TRUE) {
+                             y <- min_b
+                           } else {
+                             y <- 
+                               max(c(min_b, as.double(x[3])))
+                           }
                            
                            return(y)
                          }
@@ -212,10 +244,14 @@ cat_criterion_b <- function(EOO = NULL,
       as.character(apply(all_ranks, 
                          1, FUN = function(x) {
                            
-                           min_b <- min(x[2])
+                           min_b <- as.double(x[2])
                            
-                           y <- 
-                             max(c(min_b, x[3]))
+                           if (x[4] %in% TRUE) {
+                             y <- min_b
+                           } else {
+                             y <- 
+                               max(c(min_b, as.double(x[3])))
+                           }
                            
                            return(y)
                          }
@@ -223,11 +259,11 @@ cat_criterion_b <- function(EOO = NULL,
     
     for (i in 1:nrow(replace_code))
       ranks_B1a <-
-      gsub(replace_code[i, 1], replace_code[i, 2], ranks_B1a)
+        gsub(replace_code[i, 1], replace_code[i, 2], ranks_B1a)
     
     for (i in 1:nrow(replace_code))
       ranks_B2a <-
-      gsub(replace_code[i, 1], replace_code[i, 2], ranks_B2a)
+        gsub(replace_code[i, 1], replace_code[i, 2], ranks_B2a)
   }
   
   cat_codes <- 
@@ -255,9 +291,22 @@ cat_criterion_b <- function(EOO = NULL,
   
   cat_codes_final[ranks_B12a_final == 'LC or NT'] <- NA
   
-  if(!all.cats) return(list(cat_cb = ranks_B12a_final, cat_codes_cb = cat_codes_final))
+  if (!all.cats) {
+    if (is.null(ranks_B12a_orig))
+      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final))
+    if (!is.null(ranks_B12a_orig))
+      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, orig_ranks_B = ranks_B12a_orig))
+    
+  }
   
-  if(all.cats) return(list(cat_cb = ranks_B12a_final, cat_codes_cb = cat_codes_final, ranks_B1a = ranks_B2a, ranks_B2a = ranks_B2a ))
-  
+  if(all.cats) {
+    all_cats <- cbind.data.frame(B1a = ranks_B1a, B2a = ranks_B2a, 
+                                 stringsAsFactors = FALSE)
+    if (is.null(ranks_B12a_orig))
+      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, all_cats = all_cats))
+    if (!is.null(ranks_B12a_orig))
+      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, orig_ranks_B = ranks_B12a_orig, all_cats = all_cats))
+    
+  }
 }
 
