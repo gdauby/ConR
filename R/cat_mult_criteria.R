@@ -1,0 +1,103 @@
+#' @title Categorize Taxa Using Multiple IUCN Criteria
+#' 
+#' @description Provide the consensus IUCN category based on multiples IUCN sub-criteria.
+#'
+#' @param assess.df a data frame containing the taxon name in the first columns
+#'   and the assessments under each criterion in the subsequent columns.
+#' @param evidence.df a data frame (not currently implemented)
+#' 
+#' @return The same data frame as ```assess.df``` with three new columns: the
+#'   consensus category ('category'), the main criteria that lead to this
+#'   category ('main.criteria'). It also returns the auxiliary category provided
+#'   by other criteria ('aux.criteria'), separated by a ';'
+#' 
+#' @details The definiton of the main category of threat, follows the
+#'   recommendations of IUCN (2019) that states "Only the criteria for the
+#'   highest category of threat that the taxon qualifies for should be listed".
+#'   Therefore, the consensus category is the highest category of threat among
+#'   the sub-criteria evaluated. Nevertheless, the function also returns the
+#'   categories and sub-criteria related to lower categories of threat.
+#' 
+#' @author Lima, R.A.F.
+#'
+#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+#'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+#'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+#'
+#' @export cat_mult_criteria
+#'
+#' @importFrom stringr str_replace_all
+#'
+#' @examples
+#' df <- data.frame(tax = c("sp1","sp2","sp3","sp4"),
+#'                     A2 = c(NA, "VU", "VU", NA),
+#'                     B1 = c("LC", "VU", "LC", "LC"),
+#'                     B2 = c("LC", "EN", "LC", "VU"),
+#'                     D = c(NA, "LC", "LC", NA),
+#'                     stringsAsFactors = FALSE)
+#' cat_mult_criteria(df)                     
+#' 
+#'
+cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
+  
+  tmp <- assess.df
+  tax <- names(tmp)[1]
+  n.crits <- dim(tmp)[2]
+  assess.df$order <- 1:dim(tmp)[1]
+  
+  ## Establishing an hierarchy of data availability
+  hier <- c("Observed","Estimated","Projected","Inferred","Suspected")
+  names(hier) <- c("2", "2", "1", "1", "0")
+  
+  ## Replacing the categories by ordered numbers
+  tmp[] <- lapply(tmp, gsub, pattern = "^LC or NT$", replacement = 0)
+  tmp[] <- lapply(tmp, gsub, pattern = "^LC$", replacement = 0)
+  tmp[] <- lapply(tmp, gsub, pattern = "^DD$", replacement = 0.5)
+  tmp[] <- lapply(tmp, gsub, pattern = "^NT$", replacement = 1)
+  tmp[] <- lapply(tmp, gsub, pattern = "^VU$", replacement = 2)
+  tmp[] <- lapply(tmp, gsub, pattern = "^EN$", replacement = 3)
+  tmp[] <- lapply(tmp, gsub, pattern = "^CR$", replacement = 4)
+  tmp[] <- lapply(tmp, gsub, pattern = "^EW$|^EX$|^RE$", replacement = 5)
+  
+  ## Getting the main (highest) criteria for each species
+  tmp[,2:n.crits] <- apply(tmp[,2:n.crits], 2, as.double)
+  tmp$category <- as.character(apply(tmp[,2:n.crits], 1, max, na.rm=TRUE))
+  
+  tmp$main.criteria <- 
+    apply(tmp[,2:n.crits], 1, 
+          function(x) paste(names(x)[which(x == max(x, na.rm = TRUE))], collapse="+"))
+  rpl.cds <- c("EW","EX","RE","CR", "EN", "VU", "NT", "DD","LC", "LC or NT")
+  names(rpl.cds) <- c("5", "5", "5", "4", "3", "2", "1", "0.5", "0", "0")
+  
+  ## Getting the auxiliary criteria for each species
+  tmp$aux.criteria <- 
+    apply(tmp[,2:n.crits], 1, function(x) 
+      if(length(unique(x)) > 1) {
+        crits <- sort(unique(as.double(x)), decreasing = TRUE)[-1]
+        cats <- sapply(crits, function(y) paste(names(tmp[,2:n.crits])[x==y], collapse = "+"))
+        paste(paste(stringr::str_replace_all(crits, rpl.cds),": ", cats, sep=""), collapse = "; ")
+      } else {
+        ""
+      }  
+    )
+  
+  #Final edits on the results
+  tmp$aux.criteria <- gsub("^: $", "", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("\\+NA\\+", "+", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("NA\\+", "+", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("\\+NA", "+", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("\\+\\+", "+", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub(": \\+", ": ", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("\\+$", "", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("\\+;", ";", tmp$aux.criteria)
+  
+  tmp$main.criteria[is.infinite(as.double(tmp$category))] <- NA
+  tmp$category[is.infinite(as.double(tmp$category))] <- NA
+  tmp$category <- stringr::str_replace_all(tmp$category,  rpl.cds)
+  
+  #Merging with the entry data.frame
+  res <- merge(assess.df, tmp[,c(tax,"category","main.criteria","aux.criteria")], by = tax)
+  res <- res[order(res$order),]
+  res <- res[,-which(names(res) %in% "order")]
+  return(res)
+}
