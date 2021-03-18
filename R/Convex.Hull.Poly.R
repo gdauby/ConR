@@ -81,7 +81,12 @@ Convex.Hull.Poly <-
           warning("After excluding areas, the convex hull is empty. EOO is set as NA.")
          
           p1 <- NA 
-        } 
+        }
+        
+        
+        
+        p1 <- st_sf(geom = p1)
+        
         # else {
         #   
         #   p1 <- 
@@ -142,6 +147,8 @@ Convex.Hull.Poly <-
         # }
         
       }
+      
+      p1 <- st_sf(geom = p1)
       
       # p1 <- suppressWarnings(geosphere::makePoly(as(p1, "Spatial")))
       

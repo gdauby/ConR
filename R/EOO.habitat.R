@@ -12,8 +12,8 @@
 #' @param EOO.poly an 'sf' or 'sp' object containing the EOO polygons and a data
 #'   frame with the taxon name in a column called 'tax'.
 #' @param hab.map raster, raster layer/stack or spatial polygons containing the
-#'   habitat spatial informaton
-#' @param hab.class classess of values in ```hab.map``` to be considered as 'habitat'.
+#'   habitat spatial information
+#' @param hab.class classes of values in ```hab.map``` to be considered as 'habitat'.
 #' @param years numeric. Time interval between the first and last ```hab.map```
 #'   if more than one raster is provided (e.g. if ```hab.map``` is a RasterStack object).
 #' @param export_shp logical. Should the species habitat map be exported?
@@ -23,6 +23,7 @@
 #'   variables and not categories. Default to "summary".
 #' @param ID_shape string. Indicate the field name in ```hab.map``` data frame
 #'   containing the ID or name of each polygon.
+#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #' @param proj_type character string, numeric or object of CRS class. Default to "cea".
 #' @param parallel logical. Should computing run in parallel? Default to FALSE.
 #' @param NbeCores integer. The number of cores for parallel execution. Default to 2.
@@ -54,21 +55,21 @@
 #'   function returns a data frame containing the taxon name (tax), the
 #'   percentage of habitat within the taxon EOO (prop.EOO) and the approximate
 #'   area that this percentage represents. If habitat change is also estimated
-#'   the function returns addition columns, namely: 
+#'   the function returns additional columns, namely: 
 #'   - the total percentage loss and recover of habitat within the EOO (loss,
 #'   recover);
 #'   - the percentage loss and recover relative to the amount of habitat and
 #'   non-habitat within the EOO at the beginning of the time interval (rel.loss,
 #'   rel.recover);
 #'   - the annual rate of habitat loss and recover (rate.loss, rate.recover,
-#'   i.e. rel.loss and rel.recover diveded by ```years```);
-#'   - An habitat quality index which is obtained by averaging values of quality
+#'   i.e. rel.loss and rel.recover divided by ```years```);
+#'   - A habitat quality index which is obtained by averaging values of quality
 #'   to pixels according to their transition between the first and last year of
 #'   the times series, namely habitat to habitat = 2, non-habitat to habitat =
 #'   1, non-habitat to non-habitat = 0, and habitat to non-habitat = -1
 #'   (hab.quality, hab.quality.lo, hab.quality.hi). The index thus vary from -1
 #'   (i.e., all pixels were habitat in time one and all was lost in time two) until 2
-#'   (i.e., all pixels were habitat in time one and they remianed so in time 2).
+#'   (i.e., all pixels were habitat in time one and they remained so in time 2).
 #'    
 #'   If ```hab.map``` is a *Raster object with continuous variables, the
 #'   function returns a data frame containing the taxon name (tax), and, by
@@ -103,6 +104,7 @@ EOO.habitat <- function(EOO.poly,
                         plot = FALSE,
                         output_raster = "summary",
                         ID_shape = NULL,
+                        mode = "spheroid",
                         proj_type = "cea",
                         parallel = FALSE,
                         NbeCores = 2,
@@ -132,10 +134,12 @@ EOO.habitat <- function(EOO.poly,
   
   proj_hab <- raster::crs(hab.map)
   
+  
+  #### GILLES: EOO.poly is supposed to be the output of EOO.comp and if so should never have empty crs. Useful? 
   if (is.na(sf::st_crs(EOO.poly))) { 
     sf::st_crs(EOO.poly) <- 4326
-    warning("Empty coordinate system for EOO polygons: assuming WSG84")
-  }  
+    warning("No coordinate system for EOO polygons: assuming WSG84")
+  }
   
   if(any(grepl("SpatialPolygon", class(hab.map))))
     hab.map <- sf::st_as_sf(hab.map)
@@ -147,15 +151,17 @@ EOO.habitat <- function(EOO.poly,
   EOO.poly.crop <- suppressWarnings(
     sf::st_intersection(EOO.poly, sf::st_as_sfc(sf::st_bbox(hab.map))))
   
-  if (length(EOO.poly$geometry) > length(EOO.poly.crop$geometry))
+  
+  ### GILLES: it was EOO.poly$geometry, but the output of EOO.comp is 'geom' and not 'geometry'. Dont know why, perhaps different classes
+  if (length(EOO.poly$geom) > length(EOO.poly.crop$geom))
     warning(paste0("The EOO of ",
                    length(EOO.poly$geometry) - length(EOO.poly.crop$geometry),
-                   " species became empty after croping them to the habitat map extent"))
+                   " species is empty after croping them to the habitat map extent"))
   
   # Getting main descriptors for the EOO polygons
   EOO.poly.proj <- sf::st_transform(EOO.poly.crop, crs = proj_crs)
-  EOO.poly.area <- as.double(sf::st_area(EOO.poly.proj)) / 1000000 # area in km2
-  EOO.poly.peri <- as.double(lwgeom::st_perimeter(EOO.poly.proj)) / 1000 # perimeter in km
+  EOO.poly.area <- as.numeric(sf::st_area(EOO.poly.proj)) / 1000000 # area in km2
+  EOO.poly.peri <- as.numeric(lwgeom::st_perimeter(EOO.poly.proj)) / 1000 # perimeter in km
   per.area <- EOO.poly.peri / # perimeter-area relationship (to detect alongated polygons)
                 EOO.poly.area 
   
@@ -168,7 +174,7 @@ EOO.habitat <- function(EOO.poly,
     classes <- seq(hab.map[[1]]@data@min, hab.map[[1]]@data@max, 1)
 
   ### EXTRACTION PER SE ###
-  #Preparing to paralellize
+  #Preparing to parallel computing
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
@@ -196,10 +202,10 @@ EOO.habitat <- function(EOO.poly,
     opts <- NULL
   }
 
-  #Stating the foreach loops
+  #Starting the foreach loops
   output <-
     foreach::foreach(
-      x = 1:length(EOO.poly.crop$geometry),
+      x = 1:length(EOO.poly.crop$geom),
       #.packages=c("raster","sf"),
       .options.snow = opts
     ) %d% {
@@ -207,7 +213,7 @@ EOO.habitat <- function(EOO.poly,
         setTxtProgressBar(pb, x)
 
     # Methods is hab.map are sp or sf objects
-    if(any(grepl("sf", class(hab.map)))) { 
+    if(any(grepl("sf", class(hab.map)))) {
 
       crop1 <- sf::st_intersection(hab.map, EOO.poly.crop[x,]) # cropping to the extent of the polygon
       crop.proj <- sf::st_transform(crop1, crs = proj_crs)
@@ -266,9 +272,12 @@ EOO.habitat <- function(EOO.poly,
       
       raster.res <- raster::res(crop1)
       if (grepl("longlat", raster::crs(crop1))) {
+        
         raster.res.km <- ((raster.res * 0.11) / 0.000001) / 1000
         aprox.cell.size <- raster.res.km[1] * raster.res.km[2]
+        
       } else {
+        
         aprox.cell.size <- raster.res[1] * raster.res[2]
       }
       

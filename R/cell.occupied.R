@@ -30,7 +30,6 @@ cell.occupied <-
                      c(min(coord[, 2]),
                        max(coord[, 2])))
     
-    
     if (nbe_rep == 0) {
       
       Occupied_cells <- vector(mode = "numeric", length = 4)
@@ -57,12 +56,20 @@ cell.occupied <-
         #   )
         
         
-        r <- stars::st_as_stars(bbox_sp, dx = size * 1000, dy = size * 1000, values = NA)
+        r <-
+          stars::st_as_stars(
+            bbox_sp,
+            dx = size * 1000,
+            dy = size * 1000,
+            values = NA,
+            name = "aoo",
+            ignore_file = TRUE
+          )
         
         xy_sf <- 
           st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
         
-        r2_ <- stars::st_rasterize(xy_sf, r)
+        r <- stars::st_rasterize(xy_sf, r)
         
         # r_rast <-
         #   raster::raster(ext,
@@ -76,7 +83,9 @@ cell.occupied <-
         #   length(which(!is.na(raster::values(r2_))))
         
         OCC <-
-          length(r2_$ID[!is.na(r2_$ID)])
+          length(r$ID[!is.na(r$ID)])
+        
+        rm(r)
         
         Occupied_cells[h + 1] <- OCC
         
@@ -84,12 +93,37 @@ cell.occupied <-
         if (OCC == 1)
           break
       }
-      # h <- decal[which.min(Occupied_cells)]
+      h <- decal[which.min(Occupied_cells)]
+      
+      bbox_sp <-
+        st_bbox(c(xmin = floor(Corners[1, 1]) - h * (size * 1000 / 4) - 2 * size * 1000, 
+                  xmax = floor(Corners[1, 2]) + h * (size * 1000 / 4) + 2 * size * 1000, 
+                  ymax = floor(Corners[2, 2]) + h * (size * 1000 / 4) + 2 * size * 1000, 
+                  ymin = floor(Corners[2, 1]) - h * (size * 1000 / 4) - 2 * size * 1000),
+                crs = proj_type)
+      
+      r <-
+        stars::st_as_stars(
+          bbox_sp,
+          dx = size * 1000,
+          dy = size * 1000,
+          values = NA,
+          name = "aoo",
+          ignore_file = TRUE
+        )
+      
+      xy_sf <- 
+        st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
+      
+      r <- stars::st_rasterize(xy_sf, r)
+      
       # Occupied_cells <- min(Occupied_cells)
     }
     
     if (nbe_rep > 0) {
       Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
+      rd.1.v <- vector(mode = "numeric", length = nbe_rep)
+      rd.2.v <- vector(mode = "numeric", length = nbe_rep)
       
       for (h in 1:nbe_rep) {
         rd.1 <- runif(1) * size * 1000
@@ -114,23 +148,60 @@ cell.occupied <-
         # OCC <- length(which(!is.na(raster::values(r2_))))
         # Occupied_cells[h] <- OCC
         
-        r <- stars::st_as_stars(bbox_sp, dx = size * 1000, dy = size * 1000, values = NA)
+        r <-
+          stars::st_as_stars(
+            bbox_sp,
+            dx = size * 1000,
+            dy = size * 1000,
+            values = NA,
+            name = "aoo",
+            ignore_file = TRUE
+          )
         
         xy_sf <- 
           st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
         
-        r2_ <- stars::st_rasterize(xy_sf, r)
+        r <- stars::st_rasterize(xy_sf, r)
         
         OCC <-
-          length(r2_$ID[!is.na(r2_$ID)])
+          length(r$ID[!is.na(r$ID)])
         
-        Occupied_cells[h + 1] <- OCC
+        rm(r)
+        
+        Occupied_cells[h] <- OCC
+        rd.1.v[h] <- rd.1
+        rd.2.v[h] <- rd.2
         
         # rd.1.vec <- c(rd.1.vec, rd.1)
         # rd.2.vec <- c(rd.2.vec, rd.2)
         if (OCC == 1)
           break
       }
+      
+      rd.1 <- rd.1.v[which.min(Occupied_cells)]
+      rd.2 <- rd.2.v[which.min(Occupied_cells)]
+      
+      bbox_sp <-
+        st_bbox(c(xmin = floor(Corners[1, 1]) - rd.1 - 2 * (size * 1000 / 4) - 2 * size * 1000, 
+                  xmax = floor(Corners[1, 2]) + rd.1 + 2 * (size * 1000 / 4) + 2 * size * 1000, 
+                  ymax = floor(Corners[2, 2]) + rd.2 + 2 * (size * 1000 / 4) + 2 * size * 1000, 
+                  ymin = floor(Corners[2, 1]) - rd.2 - 2 * (size * 1000 / 4) - 2 * size * 1000),
+                crs = proj_type)
+      
+      r <-
+        stars::st_as_stars(
+          bbox_sp,
+          dx = size * 1000,
+          dy = size * 1000,
+          values = NA,
+          name = "aoo",
+          ignore_file = TRUE
+        )
+      
+      xy_sf <- 
+        st_as_sf(coord[, 1:2], coords = c(1, 2), crs = crs_proj)
+      
+      r <- stars::st_rasterize(xy_sf, r)
       
     }
     
@@ -144,11 +215,15 @@ cell.occupied <-
     #                                          crs = "+proj=longlat +datum=WGS84 +no_defs"))
     
     
-    r2_$ID[!is.na(r2_$ID)] <- 1
+    r$ID[!is.na(r$ID)] <- 1
     
     if (export_shp)
       r2_pol <- 
-      suppressWarnings(st_as_sf(r2_, na.rm = TRUE, merge = FALSE))
+      suppressWarnings(st_as_sf(r, na.rm = TRUE, merge = FALSE))
+    
+    # rm(r)
+    # 
+    # removeTmpFiles()
     
     if (export_shp)
       return(list(r2_pol, Occupied_cells))

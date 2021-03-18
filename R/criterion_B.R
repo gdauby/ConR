@@ -100,7 +100,7 @@ criterion_B <- function(x,
     country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
     
-  }else{
+  } else {
     
     if(any(grepl('sf', class(country_map))))
       country_map <- 

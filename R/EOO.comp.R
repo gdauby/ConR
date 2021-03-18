@@ -377,6 +377,9 @@ EOO.comp <-  function(XY,
           p1 <-
             sf::st_transform(p1, 4326)
         
+        p1$tax <- 
+          Name_Sp
+        
       } else  {
         
         EOO <- NA

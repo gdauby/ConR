@@ -234,6 +234,8 @@ alpha.hull.poly <-
       
       # raster::crs(NZfill) <- "+proj=longlat +datum=WGS84"
       
+      NZfill <- st_sf(geom = NZfill)
+      
     } else{
       
       stop("The package alphahull is required for this procedure, please install it")

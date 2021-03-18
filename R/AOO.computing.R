@@ -98,7 +98,7 @@ AOO.computing <- function(XY,
     progress <- function(n)
       setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
-  }else{opts <- NULL}
+  } else {opts <- NULL}
   
   
   # print(proj_type)
