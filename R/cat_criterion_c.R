@@ -53,13 +53,10 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-# @importFrom stringr str_replace_all
 #'
 #' @importFrom stringr str_replace_all
 #'
 #' @export cat_criterion_c
-#'
-#'
 cat_criterion_c <- function(C1_df = NULL,
                             C2_df = NULL,
                             C.threshold = c(10000, 2500, 250),

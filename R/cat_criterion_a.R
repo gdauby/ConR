@@ -27,11 +27,7 @@
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @importFrom stringr str_replace_all
 #' 
-#' @export cat_criterion_a
-#'
-#' @importFrom stringr str_replace_all
 #'
 #'
 #' @examples
@@ -80,6 +76,10 @@
 #'   A4_val = NULL
 #' )
 #'
+#' @importFrom stringr str_replace_all
+#' 
+#' 
+#' @export cat_criterion_a
 cat_criterion_a <- function(A1_val = NULL,
                             A2_val = NULL,
                             A3_val = NULL,

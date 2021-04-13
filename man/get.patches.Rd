@@ -6,12 +6,14 @@
 \usage{
 get.patches(
   XY,
-  cell_size = 2,
+  cell_size = NULL,
   nbe_rep = 0,
-  proj_type = "cea",
-  Resol_sub_pop = 10,
+  AOO = NULL,
+  Resol_sub_pop = NULL,
   subpop_poly = NULL,
-  dist_isolated
+  dist_isolated = NULL,
+  proj_type = "cea",
+  export_shp = FALSE
 )
 }
 \arguments{
@@ -19,13 +21,20 @@ get.patches(
 
 \item{nbe_rep}{numeric}
 
+\item{AOO}{numeric. AOO of the species in squared kilometres.}
+
+\item{Resol_sub_pop}{numeric. Defines in kilometres the radius of the circles
+around each occurrence}
+
+\item{subpop_poly}{Simple feature collection, output of
+```subpop.estimation``` function}
+
+\item{dist_isolated}{numeric. Distance in kilometres for identifying
+subpopulations considered to be isolated}
+
 \item{proj_type}{projected coordinate system (in meters)}
 
-\item{Resol_sub_pop}{numeric. Defines in kilometres the radius of the circles around each occurrence}
-
-\item{subpop_poly}{Simple feature collection, output of ```subpop.estimation``` function}
-
-\item{dist_isolated}{numeric. Distance in kilometres for identifying subpopulations considered to be isolated}
+\item{export_shp}{logical}
 
 \item{points}{XY data frame}
 }
@@ -33,15 +42,18 @@ get.patches(
 Get Occupied Cells and Patches
 }
 \details{
-This function evaluates the proportion of the total area of occupancy 
-in habitat patches separated from others by a large distance.
-Based on IUCN guidelines page(48):
-"A taxon can be considered to be severely fragmented if most (>50%) of its total area of occupancy 
-is in habitat patches that are (...) (2) separated from other habitat patches by a large distance."
+This function evaluates the proportion of the total area of
+occupancy in habitat patches separated from others by a large distance. Based
+on IUCN guidelines page(48): "A taxon can be considered to be severely
+fragmented if most (>50%) of its total area of occupancy is in habitat
+patches that are (...) (2) separated from other habitat patches by a large
+distance."
 
-This function interpret subpopulations as obtained using ```subpop.estimation``` function as habitat patches. 
-First, subpopulations that are isolated i.e. distant to all others subpopulations by at ```least dist_isolated``` kilometres, are identified.
-Then, the proportion of the AOO concerned by those "isolated" subpopulations is calculated.
+This function interpret subpopulations as obtained using
+```subpop.estimation``` function as habitat patches. First, subpopulations
+that are isolated i.e. distant to all others subpopulations by at ```least
+dist_isolated``` kilometres, are identified. Then, the percentage of the AOO
+concerned by those "isolated" subpopulations is calculated.
 }
 \examples{
 

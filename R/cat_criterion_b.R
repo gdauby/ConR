@@ -47,7 +47,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @export cat_criterion_b
 #'
 #' @examples
 #' 
@@ -86,6 +85,7 @@
 #' 
 #' @importFrom utils tail
 #' 
+#' @export cat_criterion_b
 cat_criterion_b <- function(EOO = NULL,
                             AOO = NULL,
                             locations = NULL,

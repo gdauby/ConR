@@ -13,6 +13,7 @@ EOO.habitat(
   plot = FALSE,
   output_raster = "summary",
   ID_shape = NULL,
+  mode = "spheroid",
   proj_type = "cea",
   parallel = FALSE,
   NbeCores = 2,
@@ -24,9 +25,9 @@ EOO.habitat(
 frame with the taxon name in a column called 'tax'.}
 
 \item{hab.map}{raster, raster layer/stack or spatial polygons containing the
-habitat spatial informaton}
+habitat spatial information}
 
-\item{hab.class}{classess of values in ```hab.map``` to be considered as 'habitat'.}
+\item{hab.class}{classes of values in ```hab.map``` to be considered as 'habitat'.}
 
 \item{years}{numeric. Time interval between the first and last ```hab.map```
 if more than one raster is provided (e.g. if ```hab.map``` is a RasterStack object).}
@@ -42,6 +43,8 @@ variables and not categories. Default to "summary".}
 \item{ID_shape}{string. Indicate the field name in ```hab.map``` data frame
 containing the ID or name of each polygon.}
 
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+
 \item{proj_type}{character string, numeric or object of CRS class. Default to "cea".}
 
 \item{parallel}{logical. Should computing run in parallel? Default to FALSE.}
@@ -56,21 +59,21 @@ If ```hab.map``` is a *Raster object with categorical variables, the
   function returns a data frame containing the taxon name (tax), the
   percentage of habitat within the taxon EOO (prop.EOO) and the approximate
   area that this percentage represents. If habitat change is also estimated
-  the function returns addition columns, namely: 
+  the function returns additional columns, namely: 
   - the total percentage loss and recover of habitat within the EOO (loss,
   recover);
   - the percentage loss and recover relative to the amount of habitat and
   non-habitat within the EOO at the beginning of the time interval (rel.loss,
   rel.recover);
   - the annual rate of habitat loss and recover (rate.loss, rate.recover,
-  i.e. rel.loss and rel.recover diveded by ```years```);
-  - An habitat quality index which is obtained by averaging values of quality
+  i.e. rel.loss and rel.recover divided by ```years```);
+  - A habitat quality index which is obtained by averaging values of quality
   to pixels according to their transition between the first and last year of
   the times series, namely habitat to habitat = 2, non-habitat to habitat =
   1, non-habitat to non-habitat = 0, and habitat to non-habitat = -1
   (hab.quality, hab.quality.lo, hab.quality.hi). The index thus vary from -1
   (i.e., all pixels were habitat in time one and all was lost in time two) until 2
-  (i.e., all pixels were habitat in time one and they remianed so in time 2).
+  (i.e., all pixels were habitat in time one and they remained so in time 2).
    
   If ```hab.map``` is a *Raster object with continuous variables, the
   function returns a data frame containing the taxon name (tax), and, by

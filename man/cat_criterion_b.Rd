@@ -8,6 +8,7 @@ cat_criterion_b(
   EOO = NULL,
   AOO = NULL,
   locations = NULL,
+  sever.frag = NULL,
   protected = NULL,
   decline = NULL,
   ext.fluct = NULL,
@@ -20,44 +21,58 @@ cat_criterion_b(
 )
 }
 \arguments{
-\item{EOO}{numeric vector with species extent of occurrence - EOO (i.e. sub-criterion B1)}
+\item{EOO}{numeric vector with species extent of occurrence - EOO (i.e.
+sub-criterion B1)}
 
-\item{AOO}{numeric vector with species area of occupancy - AOO (i.e. sub-criterion B2)}
+\item{AOO}{numeric vector with species area of occupancy - AOO (i.e.
+sub-criterion B2)}
 
-\item{locations}{numeric vector with the number of locations where the species occur (i.e. condition 'a')}
+\item{locations}{numeric vector with the number of locations where the
+species occur (i.e. condition 'a' of criterion B)}
 
-\item{protected}{numeric vector providing estimated percentage of species distribution in protected areas}
+\item{sever.frag}{logical. Is the population severely fragmented? If TRUE 
+the condition 'a' of criterion B will be met.}
 
-\item{decline}{string vector providing the status of the species continuing decline in EOO, AOO, habitat,
-locations or subpopulations or population size (i.e. condition 'b'). If different of 'Decreasing', 
-the species is classified as condition 'b' of criterion B will not be met.}
+\item{protected}{numeric vector providing estimated percentage of species
+distribution in protected areas}
+
+\item{decline}{string vector providing the status of the species continuing
+decline in EOO, AOO, habitat, locations or subpopulations or population
+size (i.e. condition 'b'). If different of 'Decreasing', the condition 'b'
+of criterion B will not be met.}
 
 \item{ext.fluct}{numeric vector with the mean order of magnitude of the
-differences between population minima and maxima (Currently not implemented).}
+differences between population minima and maxima (Currently not
+implemented).}
 
-\item{EOO.threshold}{numeric vector with the EOO thresholds to convert estimates into threat categories. 
-Default is the thresholds recommended by IUCN.}
+\item{EOO.threshold}{numeric vector with the EOO thresholds to convert
+estimates into threat categories. Default is the thresholds recommended by
+IUCN.}
 
-\item{AOO.threshold}{numeric vector with the AOO thresholds to convert estimates into threat categories. 
-Default is the thresholds recommended by IUCN.}
+\item{AOO.threshold}{numeric vector with the AOO thresholds to convert
+estimates into threat categories. Default is the thresholds recommended by
+IUCN.}
 
-\item{Loc.threshold}{numeric vector with the thresholds of number of locations (condition 'a'). 
-Default is the thresholds recommended by IUCN.}
+\item{Loc.threshold}{numeric vector with the thresholds of number of
+locations (condition 'a'). Default is the thresholds recommended by IUCN.}
 
-\item{protected.threshold}{numeric, one value indicating the threshold for protected value above which 
-a taxa would not be threatened whatever the others parameters, by default is 100}
+\item{protected.threshold}{numeric, one value indicating the threshold for
+protected value above which a taxa would not be threatened whatever the
+others parameters, by default is 100}
 
 \item{fluct.threshold}{numeric. Threshold of the order of magnitude of the
-differences between population minima and maxima to classify extreme fluctuations. 
-Default to 10 as recommended by IUCN.}
+differences between population minima and maxima to classify extreme
+fluctuations. Default to 10 as recommended by IUCN.}
 
-\item{all.cats}{logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.}
+\item{all.cats}{logical. Should the categories from all criteria be returned
+and not just the consensus categories? Default to TRUE.}
 }
 \value{
 list
 }
 \description{
-Provide IUCN threat categories based on B sub-criteria, conditions and thresholds.
+Provide IUCN threat categories based on B sub-criteria,
+  conditions and thresholds.
 }
 \details{
 The function categorizes taxa following criterion B and categories of the IUCN.
@@ -84,9 +99,18 @@ cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protect
 EOO <- c(34000, 5000)
 AOO <- c(300, 25)
 locations <- c(9, 12)
+sever.frag <- c(FALSE, TRUE)
 protected <- c(100, 80)
 decline <- c("Decreasing", "Decreasing")
-cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
+
+EOO <- c(34000, 5000)
+AOO <- c(300, 25)
+locations <- c(15, 12)
+sever.frag <- c(TRUE, TRUE)
+protected <- c(80, 50)
+decline <- c("Decreasing", "Decreasing")
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
 
 }
 \references{

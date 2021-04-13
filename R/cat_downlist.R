@@ -35,9 +35,6 @@
 #'   at Regional and National Levels (Version 4.0). IUCN. Gland, Switzerland and
 #'   Cambridge, UK. 41pp.
 #'
-#' @export cat_downlist
-#'
-#' @importFrom stringr str_replace_all
 #'
 #' @examples
 #' cats <- c("EX","CR","EN","VU","NT","DD","LC","NA","NE")
@@ -49,6 +46,9 @@
 #' 
 #' 
 #'
+#' @importFrom stringr str_replace_all
+#' 
+#' @export cat_downlist
 cat_downlist <- function(cats = NULL, down.by = 1, dd = FALSE, sign = TRUE){
 
   rpl.cds <- 

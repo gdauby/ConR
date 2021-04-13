@@ -78,7 +78,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @export criterion_A
 #'
 #' @examples
 #' ## Simplest example: one species, two observations in time, one subcriterion
@@ -140,6 +139,7 @@
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
 #' 
+#' @export criterion_A
 criterion_A = function(x, 
                        years = NULL, 
                        assess.year = NULL, 

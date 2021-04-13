@@ -48,7 +48,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @export criterion_B
 #'
 #' @examples To be included
 #' 
@@ -57,7 +56,7 @@
 #' @importFrom rgeos gBuffer
 #' @importFrom sp identicalCRS proj4string CRS
 #' 
-#'
+#' @export criterion_B
 criterion_B <- function(x, 
                        protec.areas = NULL,
                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 

@@ -13,7 +13,6 @@
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
 #' @import sf
-#' 
 #' @importFrom rgeos gBuffer
 #' @importFrom sp SpatialPolygons Polygons CRS proj4string
 #' @importFrom stats median quantile dist

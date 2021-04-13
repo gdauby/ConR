@@ -46,7 +46,7 @@
 #' subpop.radius(mydf, factor.div = 15)
 #' 
 #' @import sf
-#' @import data.table
+#' @importFrom data.table data.table setkeyv
 #' @importFrom stats quantile dist
 #' 
 #' @export subpop.radius

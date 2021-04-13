@@ -91,7 +91,6 @@
 #' 
 #' @importFrom nls.multstart nls_multstart
 #' @importFrom segmented segmented seg.control
-#' @importFrom graphics plot
 #' @importFrom stats na.omit
 #'
 #' @export pop.decline.fit

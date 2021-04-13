@@ -86,7 +86,6 @@
 #' 
 #' 
 #' @import sf
-#' 
 #' @importFrom sp proj4string CRS
 #' @importFrom stats dist cor
 #' @importFrom rgeos gBuffer

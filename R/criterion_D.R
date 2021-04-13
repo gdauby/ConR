@@ -57,9 +57,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @importFrom stringr str_replace_all
-#'
-#' @export criterion_D
 #'
 #' @examples
 #' 
@@ -82,7 +79,10 @@
 #'             subcriteria = c("D2"),
 #'             AOO.threshold = 20,
 #'             Loc.threshold = 5)
+#'             
+#' @importFrom stringr str_replace_all
 #'
+#' @export criterion_D
 criterion_D = function(pop.size = NULL,
                        Name_Sp = NULL,
                        AOO = NULL,

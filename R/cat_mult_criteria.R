@@ -24,10 +24,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @export cat_mult_criteria
-#'
-#' @importFrom stringr str_replace_all
-#'
 #' @examples
 #' df <- data.frame(tax = c("sp1","sp2","sp3","sp4"),
 #'                     A2 = c(NA, "VU", "VU", NA),
@@ -38,6 +34,10 @@
 #' cat_mult_criteria(df)                     
 #' 
 #'
+#'
+#' @importFrom stringr str_replace_all
+#' 
+#' @export cat_mult_criteria
 cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   
   tmp <- assess.df

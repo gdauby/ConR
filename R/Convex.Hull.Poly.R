@@ -12,9 +12,9 @@
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' 
 #' @import sf
-#' 
 #' @importFrom grDevices chull
 #' @importFrom rgeos readWKT
+#' 
 Convex.Hull.Poly <-
   function(XY,
            mode = "spheroid",

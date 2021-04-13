@@ -140,7 +140,6 @@
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 #'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'   
-#' @export criterion_C
 #'   
 #' @examples
 #'   
@@ -187,6 +186,7 @@
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
 #' 
+#' @export criterion_C
 criterion_C = function(x,
                        years = NULL, 
                        assess.year = NULL, 
