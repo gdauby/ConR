@@ -138,24 +138,28 @@ EOO.computing <- function(XY,
   list_data <- coord.check(XY = XY)
   
 
-  ### Getting by default land map if poly_borders is not provided
-  if (is.null(country_map)) {
-    
-    country_map <-
-      rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-    
-  } else {
-    
-    if(any(grepl('sf', class(country_map))))
+  if (exclude.area) {
+    ### Getting by default land map if poly_borders is not provided
+    if (is.null(country_map)) {
+      
+      country_map <-
+        rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
+      
+    } else {
+      
+      if(any(grepl('sf', class(country_map))))
+        country_map <- 
+          as(country_map, "Spatial")
+      
+      country_map <-
+        suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
+      
       country_map <- 
-        as(country_map, "Spatial")
+        as(country_map, "sf")
+    }
     
-    country_map <-
-      suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
-    
-    country_map <- 
-      as(country_map, "sf")
   }
+
   
   # if (buff_width > 80)
   #   stop("buff_width has unrealistic value")
