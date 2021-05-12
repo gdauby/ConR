@@ -62,7 +62,7 @@
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
 #' @param write_results a logical. If TRUE, results will be exported in the
-#' working environment as a csv file. By default is TRUE
+#' working environment as a csv file. By default it is FALSE
 #' @param file.name a character string. Name file for exported results in csv
 #' file. By default is "EOO.results"
 #' @param parallel a logical. Whether running in parallel. By default, it is
@@ -125,7 +125,7 @@ EOO.computing <- function(XY,
                           method.range = "convex.hull",
                           Name_Sp = "species1",
                           method.less.than3 = "not comp",
-                          write_results = TRUE,
+                          write_results = FALSE,
                           file.name = "EOO.results",
                           parallel = FALSE,
                           NbeCores = 2,
@@ -271,8 +271,9 @@ EOO.computing <- function(XY,
     }
     
     output_spatial <- 
-      st_as_sf(data.frame(output_spatial[, -which(colnames(output_spatial) == 'a')], 
-                          taxa = names_[id_spatial]))
+      st_as_sf(data.frame(output_spatial[, -which(colnames(output_spatial) == 'a')]))
+    # , 
+    # taxa = names_[id_spatial]
     
   }
   
@@ -282,11 +283,8 @@ EOO.computing <- function(XY,
     
     dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     
-
-    
     # output_spatial <- 
     #   output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
-
     
     # exi_files <- 
     #   list.files(paste(getwd(), "/shapesIUCN", sep = ""))
