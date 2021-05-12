@@ -112,7 +112,7 @@
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
-#' @import data.table
+#' @importFrom  data.table setDT data.table
 #' 
 #' @export EOO.sensitivity
 #' 
@@ -279,7 +279,7 @@ EOO.sensitivity <- function(XY,
                   by = .(tax), .SDcols = "classes"]
   
   increases <- 
-    data.table(increases, classes = comp_names$classes)
+    data.table::data.table(increases, classes = comp_names$classes)
   
   colnames(increases)[colnames(increases) == "EOO"] <- 
     "EOO.increase"

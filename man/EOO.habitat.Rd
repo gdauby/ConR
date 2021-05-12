@@ -95,7 +95,7 @@ If ```hab.map``` is a *Raster object with categorical variables, the
 \description{
 The function compute the amount of 'habitat' within the EOO of
   each species, which may represent habitat itself or any other value or
-  categprie the user may find useful (i.e. area covered by protected areas,
+  category the user may find useful (i.e. area covered by protected areas,
   altitude, etc...). If two or more time intervals are provided, the function
   also returns the habitat change between intervals. Currently, the type of
   habitat maps objects currently accepted are sp, sf and Raster*. In

@@ -1,8 +1,8 @@
 #' @title  Habitat Metrics for EOO Polygons
 #' 
 #' @description The function compute the amount of 'habitat' within the EOO of
-#'   each species, which may represent habitat itself or any other value or
-#'   categprie the user may find useful (i.e. area covered by protected areas,
+#'   each species, which may represent habitat itself or any other proxy, value or
+#'   category the user may find relevant (e.g. area covered by protected areas,
 #'   altitude, etc...). If two or more time intervals are provided, the function
 #'   also returns the habitat change between intervals. Currently, the type of
 #'   habitat maps objects currently accepted are sp, sf and Raster*. In
@@ -90,9 +90,8 @@
 #'   
 #' @examples No examples available yet.
 #' 
-#' @import raster
+#' @importFrom  raster extent crop crs res extract getValues mask area cellStats rasterFromXYZ coordinates extend brick
 #' @import sf
-#' @importFrom lwgeom st_perimeter
 #' 
 #' @export EOO.habitat
 #' 
@@ -132,7 +131,9 @@ EOO.habitat <- function(EOO.poly,
     stop("Please provide a valid coordinate system for the habitat map")
   }
   
-  proj_hab <- raster::crs(hab.map)
+  # proj_hab <- raster::crs(hab.map)
+  
+  proj_hab <- sf::st_crs(hab.map)
   
   
   #### GILLES: EOO.poly is supposed to be the output of EOO.comp and if so should never have empty crs. Useful? 
@@ -148,26 +149,29 @@ EOO.habitat <- function(EOO.poly,
     sf::st_transform(EOO.poly, crs = proj_hab)
   
   # Croping EOO shapefiles to the habitat map extent (to speed up computational time)
-  EOO.poly.crop <- suppressWarnings(
-    sf::st_intersection(EOO.poly, sf::st_as_sfc(sf::st_bbox(hab.map))))
-  
+  EOO.poly.crop <- suppressMessages(suppressWarnings(
+    sf::st_intersection(EOO.poly, sf::st_as_sfc(sf::st_bbox(hab.map)))))
   
   ### GILLES: it was EOO.poly$geometry, but the output of EOO.comp is 'geom' and not 'geometry'. Dont know why, perhaps different classes
   if (length(EOO.poly$geom) > length(EOO.poly.crop$geom))
-    warning(paste0("The EOO of ",
-                   length(EOO.poly$geometry) - length(EOO.poly.crop$geometry),
+    stop(paste0("The EOO of ",
+                   length(EOO.poly$geom) - length(EOO.poly.crop$geom),
                    " species is empty after croping them to the habitat map extent"))
   
   # Getting main descriptors for the EOO polygons
-  EOO.poly.proj <- sf::st_transform(EOO.poly.crop, crs = proj_crs)
-  EOO.poly.area <- as.numeric(sf::st_area(EOO.poly.proj)) / 1000000 # area in km2
-  EOO.poly.peri <- as.numeric(lwgeom::st_perimeter(EOO.poly.proj)) / 1000 # perimeter in km
+  EOO.poly.area <- as.numeric(sf::st_area(EOO.poly.crop)) / 1000000 # area in km2
+  EOO.poly.peri <- as.numeric(sf::st_length(EOO.poly.crop)) / 1000 # perimeter in km
+  
+  # EOO.poly.proj <- sf::st_transform(EOO.poly.crop, crs = proj_crs)
+  # EOO.poly.area <- as.numeric(sf::st_area(EOO.poly.proj)) / 1000000 # area in km2
+
+  # EOO.poly.peri <- as.numeric(lwgeom::st_perimeter(EOO.poly.proj)) / 1000 # perimeter in km
   per.area <- EOO.poly.peri / # perimeter-area relationship (to detect alongated polygons)
                 EOO.poly.area 
   
   EOO.poly.name <- EOO.poly.crop
   sf::st_geometry(EOO.poly.name) <- NULL
-  EOO.poly.name <- EOO.poly.name[,1] 
+  EOO.poly.name <- EOO.poly.name[,"tax"]
   
   # Getting raster values/categories if habitat classes are not provided
   if (is.null(hab.class) & any(grepl("Raster", class(hab.map))))
@@ -191,7 +195,7 @@ EOO.habitat <- function(EOO.poly,
     pb <-
       txtProgressBar(
         min = 0,
-        max = length(EOO.poly.crop$geometry),
+        max = nrow(EOO.poly.crop),
         style = 3
       )
 
@@ -205,7 +209,7 @@ EOO.habitat <- function(EOO.poly,
   #Starting the foreach loops
   output <-
     foreach::foreach(
-      x = 1:length(EOO.poly.crop$geom),
+      x = 1:nrow(EOO.poly.crop),
       #.packages=c("raster","sf"),
       .options.snow = opts
     ) %d% {
@@ -236,8 +240,9 @@ EOO.habitat <- function(EOO.poly,
         )
       row.names(hab.mat) <- c("non_habitat", "habitat")
       colnames(hab.mat) <- c("numb.polys", "prop.EOO", "area.EOO")
-      res <- cbind.data.frame(tax = EOO.poly.name[x], hab.mat,
-                              stringsAsFactors = FALSE)["habitat", ]
+      res <- cbind.data.frame(tax = EOO.poly.name[x], 
+                              hab.mat,
+                              stringsAsFactors = FALSE)["habitat",]
       
 
       if(export_shp) {
@@ -264,8 +269,8 @@ EOO.habitat <- function(EOO.poly,
 
     }
 
-    # Methods is hab.map is a Raster* object  
-    if (grepl("Raster", class(hab.map))) {
+    # Methods if hab.map is a Raster* object  
+    if (any(grepl("Raster", class(hab.map)))) {
       
       ext <- raster::extent(sf::st_bbox(EOO.poly.crop[x, ])[c(1,3,2,4)])
       crop1 <- raster::crop(hab.map, ext) # cropping raster to the extent of the polygon
@@ -439,7 +444,7 @@ EOO.habitat <- function(EOO.poly,
 
             if (plot) {
               par(mar = c(3,3,2,2), las=1, tcl=-0.25, mgp=c(2.5,0.5,0))
-              raster::plot(r, col = c("red", "grey", "green", "darkgreen"),
+              plot(r, col = c("red", "grey", "green", "darkgreen"),
                    main = EOO.poly.name[x])
               plot(sf::st_geometry(EOO.poly.crop[x,]), add = TRUE, bg = 0)
             }
@@ -489,16 +494,20 @@ EOO.habitat <- function(EOO.poly,
           prop <-  matrix(round(100*unclass(tmp1)/pixs, 8), nrow = 1, ncol = length(classes),
                           dimnames = list("", classes))
           
-        if(output_raster %in% "prop.table")
+        if(output_raster == "prop.table")
           res <- cbind.data.frame(tax = EOO.poly.name[x],
                    prop,
                    stringsAsFactors = FALSE)
 
-        if(output_raster %in% "area.table")
+        if(output_raster == "area.table") {
+          
           area <- round((prop * r.area)/100, 3)
           res <- cbind.data.frame(tax = EOO.poly.name[x],
-                   area,
-                   stringsAsFactors = FALSE)
+                                  area,
+                                  stringsAsFactors = FALSE)
+          
+        }
+
           
         } 
       }
@@ -519,7 +528,7 @@ EOO.habitat <- function(EOO.poly,
     rownames(result) <- NULL
     
     #Getting the rasters
-    if (grepl("Raster", class(hab.map))) {
+    if (any(grepl("Raster", class(hab.map)))) {
       maps <- 
         sapply(output, '[[', "raster", simplify = FALSE, USE.NAMES = FALSE)
       

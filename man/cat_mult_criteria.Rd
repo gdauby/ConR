@@ -39,6 +39,7 @@ df <- data.frame(tax = c("sp1","sp2","sp3","sp4"),
 cat_mult_criteria(df)                     
 
 
+
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and

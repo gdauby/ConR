@@ -101,7 +101,7 @@ criterion_D(pop.size = NULL,
             subcriteria = c("D2"),
             AOO.threshold = 20,
             Loc.threshold = 5)
-
+            
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
