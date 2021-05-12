@@ -29,29 +29,40 @@ Convex.Hull.Poly <-
       poly_exclude <- as(poly_exclude, "sf")
     
     if (mode == "spheroid") {
+      
       hpts <- grDevices::chull(x =  XY[, 1], y = XY[, 2])
       hpts <- c(hpts, hpts[1])
-      coord <- matrix(NA, length(hpts), 2)
-      POLY <- "POLYGON(("
-      for (i in 1:length(hpts)) {
-        POLY <- paste(POLY, XY[hpts[i], 1], " ", XY[hpts[i], 2], sep = "")
-        if (i != length(hpts))
-          POLY <- paste(POLY, ", ", sep = "")
-        if (i == length(hpts))
-          POLY <- paste(POLY, "))", sep = "")
-        
-        coord[i, 1] <- XY[hpts[i], 2]
-        coord[i, 2] <- XY[hpts[i], 1]
-        
-      }
       
-      p1 <- sf::st_as_sf(data.frame(a = 1, geom = POLY), wkt = "geom")
+      coord <- matrix(NA, length(hpts), 2)
+      
+      coord[,1] <- XY[hpts, 1]
+      coord[,2] <- XY[hpts, 2]
+      
+      # POLY <- "POLYGON(("
+      # for (i in 1:length(hpts)) {
+      #   # POLY <- paste(POLY, XY[hpts[i], 1], " ", XY[hpts[i], 2], sep = "")
+      #   # if (i != length(hpts))
+      #   #   POLY <- paste(POLY, ", ", sep = "")
+      #   # if (i == length(hpts))
+      #   #   POLY <- paste(POLY, "))", sep = "")
+      # 
+      #   coord[i, 1] <- XY[hpts[i], 2]
+      #   coord[i, 2] <- XY[hpts[i], 1]
+      # 
+      # }
+      
+      POLY <- st_polygon(x = list(coord))
+
+      p1 <- sf::st_sf(a = 1, geometry = list(POLY))
+      
+      # p1 <- sf::st_as_sf(data.frame(a = 1, geometry = POLY), wkt = "geometry")
       sf::st_crs(p1) <-
         4326
       p1_lines <- suppressWarnings(sf::st_cast(p1, "LINESTRING"))
       p1_lines_seg <-
         sf::st_segmentize(p1_lines, units::set_units(20, km))
       p1 <- sf::st_cast(p1_lines_seg, "POLYGON")
+      p1 <- sf::st_make_valid(p1)
       
       # p1_sp <- rgeos::readWKT(POLY) 
       # p1_sp <- suppressWarnings(geosphere::makePoly(p1_sp)) 
