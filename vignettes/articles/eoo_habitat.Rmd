@@ -1,0 +1,56 @@
+---
+title: "EOO.habitat"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup, echo=F, include = FALSE}
+# library(ConR)
+devtools::load_all()
+```
+
+
+
+## Example 1
+
+
+Generate an artificial example dataset
+```{r}
+
+set.seed(3)
+nbe_occ <- sample(seq(3, 100, 1), 500, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+head(test_data)
+dim(test_data)
+
+
+```
+
+
+```{r}
+
+ex_sp1 <- test_data[which(test_data$taxa == "tax1"),]
+eoo <- EOO.comp(XY = ex_sp1)
+spatial_eoo <- eoo$spatial.polygon
+
+extract_elevation <- 
+  elevatr::get_elev_raster(locations = as(spatial_eoo, "Spatial"), z = 6)
+
+
+
+```
+
+
+
