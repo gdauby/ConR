@@ -1,6 +1,6 @@
 #' land
 #'
-#' A SpatialPolygonDataFrame showing land cover
+#' A Simple feature collection with 1 feature MULTIPOLYGON showing land border WGS 84 CRS
 #'
 #'
 #' @keywords datasets
@@ -9,4 +9,3 @@
 #' @format A dataframe
 #' @source \url{http://www.naturalearthdata.com/downloads/10m-physical-vectors/}
 NULL
-

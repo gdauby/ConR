@@ -1,6 +1,6 @@
 #' Dataset of Malagasy protected areas
 #'
-#' A SpatialPolygonDataFrame showing Malagasy protected areas
+#' A Simple feature collection with 127 features and 3 fields showing Malagasy protected areas WGS 84 CRS
 #'
 #'
 #' @keywords datasets
