@@ -275,11 +275,11 @@
   
   if (nrow(unique(XY)) > 1)
     if (max(stats::dist(XY[, 2]), na.rm = T) >= 180)
-      stop(
+      warning(
         paste(
           "EOO for species",
           as.character(Name_Sp),
-          "cannot be computed because occurrences spans more than 180 degrees longitude"
+          "is likely to be wrong because occurrences spans more than 180 degrees longitude"
         )
       )
   
