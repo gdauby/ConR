@@ -47,6 +47,8 @@ SpatialPolygons used for EOO computation" />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -58,9 +60,15 @@ SpatialPolygons used for EOO computation" />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -81,12 +89,6 @@ SpatialPolygons used for EOO computation" />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -108,7 +110,7 @@ SpatialPolygons used for EOO computation" />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/gdauby/ConR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -136,24 +138,24 @@ using <code><a href='https://rdrr.io/pkg/geosphere/man/geosphere-package.html'>g
 <code>SpatialPolygons</code> used for EOO computation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EOO.computing</span>(
-  <span class='no'>XY</span>,
-  <span class='kw'>exclude.area</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>country_map</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>export_shp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_shp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>buff.alpha</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>method.range</span> <span class='kw'>=</span> <span class='st'>"convex.hull"</span>,
-  <span class='kw'>Name_Sp</span> <span class='kw'>=</span> <span class='st'>"species1"</span>,
-  <span class='kw'>buff_width</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>method.less.than3</span> <span class='kw'>=</span> <span class='st'>"not comp"</span>,
-  <span class='kw'>write_results</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>file.name</span> <span class='kw'>=</span> <span class='st'>"EOO.results"</span>,
-  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>NbeCores</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>show_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>EOO.computing</span><span class='op'>(</span>
+  <span class='va'>XY</span>,
+  exclude.area <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  country_map <span class='op'>=</span> <span class='cn'>NULL</span>,
+  export_shp <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  write_shp <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  buff.alpha <span class='op'>=</span> <span class='fl'>0.1</span>,
+  method.range <span class='op'>=</span> <span class='st'>"convex.hull"</span>,
+  Name_Sp <span class='op'>=</span> <span class='st'>"species1"</span>,
+  buff_width <span class='op'>=</span> <span class='fl'>0.1</span>,
+  method.less.than3 <span class='op'>=</span> <span class='st'>"not comp"</span>,
+  write_results <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  file.name <span class='op'>=</span> <span class='st'>"EOO.results"</span>,
+  parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  NbeCores <span class='op'>=</span> <span class='fl'>2</span>,
+  show_progress <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -292,18 +294,24 @@ Journal of Applied Ecology, 49 1-9</p>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/alphahull/man/ahull.html'>ahull</a></code></p>
 <p><a href='https://github.com/azizka/speciesgeocodeR'>https://github.com/azizka/speciesgeocodeR</a></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Gilles Dauby</p>
+<p><a href='mailto:gildauby@gmail.com'>gildauby@gmail.com</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>dataset.ex</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>land</span>)
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>EOO</span> <span class='kw'>&lt;-</span> <span class='fu'>EOO.computing</span>(<span class='no'>dataset.ex</span>)
-
-<span class='co'>## This exclude areas outside of land (i.e. ocean) for EOO computation</span>
-<span class='no'>EOO</span> <span class='kw'>&lt;-</span> <span class='fu'>EOO.computing</span>(<span class='no'>dataset.ex</span>,
-  <span class='kw'>exclude.area</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>country_map</span><span class='kw'>=</span><span class='no'>land</span>)
-}</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dataset.ex</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>land</span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>EOO</span> <span class='op'>&lt;-</span> <span class='fu'>EOO.computing</span><span class='op'>(</span><span class='va'>dataset.ex</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## This exclude areas outside of land (i.e. ocean) for EOO computation</span></span>
+<span class='r-in'><span class='va'>EOO</span> <span class='op'>&lt;-</span> <span class='fu'>EOO.computing</span><span class='op'>(</span><span class='va'>dataset.ex</span>, </span>
+<span class='r-in'>  exclude.area<span class='op'>=</span><span class='cn'>TRUE</span>, country_map<span class='op'>=</span><span class='va'>land</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -315,11 +323,11 @@ Journal of Applied Ecology, 49 1-9</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Dauby.</p>
+  <p><p>Developed by Gilles Dauby.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -327,6 +335,8 @@ Journal of Applied Ecology, 49 1-9</p>
 
   
 
+
+  
 
   </body>
 </html>

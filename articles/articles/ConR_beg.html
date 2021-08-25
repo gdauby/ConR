@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,12 +39,6 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../../reference/index.html">Reference</a>
 </li>
@@ -64,8 +60,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/gdauby/ConR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/gdauby/ConR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -79,13 +75,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="ConR_beg_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>ConR for beginner</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/gdauby/ConR/blob/master/vignettes/articles/ConR_beg.Rmd"><code>vignettes/articles/ConR_beg.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gdauby/ConR/blob/master/vignettes/articles/ConR_beg.Rmd" class="external-link"><code>vignettes/articles/ConR_beg.Rmd</code></a></small>
       <div class="hidden name"><code>ConR_beg.Rmd</code></div>
 
     </div>
@@ -96,14 +92,14 @@
 <hr>
 <div id="computing-eoo-using-eoo-computing-function" class="section level1">
 <h1 class="hasAnchor">
-<a href="#computing-eoo-using-eoo-computing-function" class="anchor"></a>Computing EOO using <code>EOO.computing</code> function</h1>
+<a href="#computing-eoo-using-eoo-computing-function" class="anchor" aria-hidden="true"></a>Computing EOO using <code>EOO.computing</code> function</h1>
 <p>The Extent of Occurrence (EOO) is</p>
 <blockquote>
-<p>the area contained within the shortest continuous imaginary boundary which can be drawn to encompass all the known, inferred or projected sites of present occurrence of a taxon, excluding cases of vagrancy <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" title="IUCN. 2012b. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN.">1</a> (IUCN 2012)</p>
+<p>the area contained within the shortest continuous imaginary boundary which can be drawn to encompass all the known, inferred or projected sites of present occurrence of a taxon, excluding cases of vagrancy <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" title="IUCN. 2012b. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN." class="external-link">1</a> (IUCN 2012)</p>
 </blockquote>
 <div id="input-file" class="section level2">
 <h2 class="hasAnchor">
-<a href="#input-file" class="anchor"></a>Input file</h2>
+<a href="#input-file" class="anchor" aria-hidden="true"></a>Input file</h2>
 <p>You can prepare an excel file with three different columns:</p>
 <table class="table">
 <thead><tr class="header">
@@ -153,28 +149,29 @@
 <p><strong><em>Note 2</em>: missing coordinates will be automatically skipped</strong></p>
 <p><strong><em>Note 3</em>: example files are included in the package, you can have access to these files by using the following codes</strong>.</p>
 <p>For a six plant species example dataset:</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(dataset.ex)
+<pre><code>data(dataset.ex)
 head(dataset.ex)
-?dataset.ex ## if you want to have information on this dataset</a></code></pre>
+?dataset.ex ## if you want to have information on this dataset</code></pre>
 <p>The following dataset include occurrences of Malagasy amphibian:</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(Malagasy.amphibian)
+<pre><code>data(Malagasy.amphibian)
 head(Malagasy.amphibian)
-?Malagasy.amphibian ## if you want to have information on this dataset</a></code></pre>
+?Malagasy.amphibian ## if you want to have information on this dataset</code></pre>
 <p>You can import your input file by using the following code. This will register your input file as an object you may name <em>MyData</em>, as below:</p>
 <pre><code>MyData &lt;- read.csv("MyInput.csv")</code></pre>
 <p>Depending on the parameters defined in your computer, the separator in csv file may be comma or semi-colon. If you note the importing process does not order correctly the fields of your input file, try to modify the separator used by the argument <code>sep</code>, see below an example defining a comma as a separator:</p>
 <pre><code>MyData &lt;- read.csv("MyInput.csv", sep=",")</code></pre>
 <p>You can have a glimpse of the first rows of your input file by running the following code:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">MyData</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">MyData</span><span class="op">)</span>
 <span class="co">#&gt;      ddlat    ddlon               tax</span>
 <span class="co">#&gt; 1 0.750000 29.75000 Psychotria minuta</span>
 <span class="co">#&gt; 2 3.566670 16.11670 Psychotria minuta</span>
 <span class="co">#&gt; 3 1.183330  9.86666 Psychotria minuta</span>
 <span class="co">#&gt; 4 3.238050 10.58060 Psychotria minuta</span>
 <span class="co">#&gt; 5 4.085580  9.04972 Psychotria minuta</span>
-<span class="co">#&gt; 6 0.766667 24.45000 Psychotria minuta</span></pre></body></html></div>
+<span class="co">#&gt; 6 0.766667 24.45000 Psychotria minuta</span></code></pre></div>
 <p>Now you can run <code>EOO.computing</code> function on your input data by the following code:</p>
-<pre><code><a href="../../reference/EOO.computing.html">EOO.computing(MyData)</a></code></pre>
+<pre><code>EOO.computing(MyData)</code></pre>
 <p>The following information will appear in the console</p>
 <pre><code>#&gt; 
   |                                                                            
@@ -195,268 +192,273 @@ head(Malagasy.amphibian)
 <p>You can see that in this example, the input file contained occurrences for four species.</p>
 <p>By default, a csv file is created in your working directory <em>Your_R_directory</em>. This csv file is named by default <em>EOO.results.csv</em>.</p>
 <p>You can modify the name of the exported file using the following code line (for this example by the name <em>MyResults</em>) :</p>
-<pre><code><a href="../../reference/EOO.computing.html">EOO.computing(MyData, file.name = "MyResults")</a></code></pre>
+<pre><code>EOO.computing(MyData, file.name = "MyResults")</code></pre>
 <hr>
 </div>
 <div id="exporting-shapefiles-used-to-estimate-eoo" class="section level2">
 <h2 class="hasAnchor">
-<a href="#exporting-shapefiles-used-to-estimate-eoo" class="anchor"></a>Exporting shapefiles used to estimate EOO</h2>
+<a href="#exporting-shapefiles-used-to-estimate-eoo" class="anchor" aria-hidden="true"></a>Exporting shapefiles used to estimate EOO</h2>
 <p>It is possible to export in R the spatial polygon object used for estimating the EOO. This is done by using the argument <code>export_shp</code> which is a logical argument. A logical argument can take only two values: <code>TRUE</code> and <code>FALSE</code>. By default, this argument is specified as <code>FALSE</code>. Hence, if you want to get these spatial polygons, you have specify it using the following code:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r">EOO.computing(MyData, export_shp = T)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-#&gt; $EOO_1
-#&gt; [1] 2635042
-#&gt; 
-#&gt; $spatial.polygon_1
-#&gt; class       : SpatialPolygons 
-#&gt; features    : 1 
-#&gt; extent      : 9.56667, 29.35, -11.2667, 4.48333  (xmin, xmax, ymin, ymax)
-#&gt; crs         : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-#&gt; 
-#&gt; $EOO_2
-#&gt; [1] 657704
-#&gt; 
-#&gt; $spatial.polygon_2
-#&gt; class       : SpatialPolygons 
-#&gt; features    : 1 
-#&gt; extent      : 5.7, 21.95, -2.39667, 5.91667  (xmin, xmax, ymin, ymax)
-#&gt; crs         : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-#&gt; 
-#&gt; $EOO_3
-#&gt; [1] 3422563
-#&gt; 
-#&gt; $spatial.polygon_3
-#&gt; class       : SpatialPolygons 
-#&gt; features    : 1 
-#&gt; extent      : 9.325, 33.7333, -15.1667, 4.43333  (xmin, xmax, ymin, ymax)
-#&gt; crs         : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-#&gt; 
-#&gt; $EOO_4
-#&gt; [1] 760348
-#&gt; 
-#&gt; $spatial.polygon_4
-#&gt; class       : SpatialPolygons 
-#&gt; features    : 1 
-#&gt; extent      : 9.04972, 29.75, -1.88333, 4.08558  (xmin, xmax, ymin, ymax)
-#&gt; crs         : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">EOO.computing</span>(MyData, <span class="dt">export_shp =</span> T)</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co">#&gt; </span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb9-5"><a href="#cb9-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb9-7"><a href="#cb9-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb9-9"><a href="#cb9-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb9-11"><a href="#cb9-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; $EOO_1</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; [1] 2635042</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; </span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; $spatial.polygon_1</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; class       : SpatialPolygons </span></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co">#&gt; features    : 1 </span></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="co">#&gt; extent      : 9.56667, 29.35, -11.2667, 4.48333  (xmin, xmax, ymin, ymax)</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="co">#&gt; </span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; $EOO_2</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; [1] 657704</span></span>
+<span id="cb9-24"><a href="#cb9-24"></a><span class="co">#&gt; </span></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="co">#&gt; $spatial.polygon_2</span></span>
+<span id="cb9-26"><a href="#cb9-26"></a><span class="co">#&gt; class       : SpatialPolygons </span></span>
+<span id="cb9-27"><a href="#cb9-27"></a><span class="co">#&gt; features    : 1 </span></span>
+<span id="cb9-28"><a href="#cb9-28"></a><span class="co">#&gt; extent      : 5.7, 21.95, -2.39667, 5.91667  (xmin, xmax, ymin, ymax)</span></span>
+<span id="cb9-29"><a href="#cb9-29"></a><span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span></span>
+<span id="cb9-30"><a href="#cb9-30"></a><span class="co">#&gt; </span></span>
+<span id="cb9-31"><a href="#cb9-31"></a><span class="co">#&gt; $EOO_3</span></span>
+<span id="cb9-32"><a href="#cb9-32"></a><span class="co">#&gt; [1] 3422563</span></span>
+<span id="cb9-33"><a href="#cb9-33"></a><span class="co">#&gt; </span></span>
+<span id="cb9-34"><a href="#cb9-34"></a><span class="co">#&gt; $spatial.polygon_3</span></span>
+<span id="cb9-35"><a href="#cb9-35"></a><span class="co">#&gt; class       : SpatialPolygons </span></span>
+<span id="cb9-36"><a href="#cb9-36"></a><span class="co">#&gt; features    : 1 </span></span>
+<span id="cb9-37"><a href="#cb9-37"></a><span class="co">#&gt; extent      : 9.325, 33.7333, -15.1667, 4.43333  (xmin, xmax, ymin, ymax)</span></span>
+<span id="cb9-38"><a href="#cb9-38"></a><span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span></span>
+<span id="cb9-39"><a href="#cb9-39"></a><span class="co">#&gt; </span></span>
+<span id="cb9-40"><a href="#cb9-40"></a><span class="co">#&gt; $EOO_4</span></span>
+<span id="cb9-41"><a href="#cb9-41"></a><span class="co">#&gt; [1] 760348</span></span>
+<span id="cb9-42"><a href="#cb9-42"></a><span class="co">#&gt; </span></span>
+<span id="cb9-43"><a href="#cb9-43"></a><span class="co">#&gt; $spatial.polygon_4</span></span>
+<span id="cb9-44"><a href="#cb9-44"></a><span class="co">#&gt; class       : SpatialPolygons </span></span>
+<span id="cb9-45"><a href="#cb9-45"></a><span class="co">#&gt; features    : 1 </span></span>
+<span id="cb9-46"><a href="#cb9-46"></a><span class="co">#&gt; extent      : 9.04972, 29.75, -1.88333, 4.08558  (xmin, xmax, ymin, ymax)</span></span>
+<span id="cb9-47"><a href="#cb9-47"></a><span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs</span></span></code></pre></div>
 <p>You can see that the output of the function now includes, in addition to the EOO values, objects of class <code>SpatialPolygons</code>.</p>
 <p>It is possible to extract and map these objects by using the code below.</p>
 <p>First, store your results into the object here named <code>EOO.results</code>:</p>
 <pre><code>EOO.results &lt;- EOO.computing(MyData, export_shp = T)</code></pre>
 <p>Then, for the first species (mapped in grey color):</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">EOO.results</span>$<span class="no">spatial.polygon_1</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">"grey"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">EOO.results</span><span class="op">$</span><span class="va">spatial.polygon_1</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>You can add easily get a map of countries using the package <a href="https://CRAN.R-project.org/package=rnaturalearth">rnaturalearth</a>:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">land</span> <span class="kw">&lt;-</span>
-  <span class="kw pkg">rnaturalearth</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html">ne_countries</a></span>(<span class="kw">scale</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">returnclass</span> <span class="kw">=</span> <span class="st">"sp"</span>)</pre></body></html></div>
+<p>You can add easily get a map of countries using the package <a href="https://CRAN.R-project.org/package=rnaturalearth" class="external-link">rnaturalearth</a>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> 
+  <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="fl">50</span>, returnclass <span class="op">=</span> <span class="st">"sp"</span><span class="op">)</span></code></pre></div>
 <p>Now you can add the land cover as a background by running the following code:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">EOO.results</span>$<span class="no">spatial.polygon_1</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">"grey"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">land</span>, <span class="kw">add</span><span class="kw">=</span><span class="no">T</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">EOO.results</span><span class="op">$</span><span class="va">spatial.polygon_1</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>For mapping the convex hull of the second species (mapped in red)</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">EOO.results</span>$<span class="no">spatial.polygon_2</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">"red"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">land</span>, <span class="kw">add</span><span class="kw">=</span><span class="no">T</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">EOO.results</span><span class="op">$</span><span class="va">spatial.polygon_2</span>, col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-<p>You may want to <strong>use your own land cover background shapefile</strong>. This is easily done by using the function <a href="https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR"><code>readOGR</code></a>.</p>
-<p>For using this function, you first has to install (if not yet installed) and load the package <a href="https://CRAN.R-project.org/package=rgdal">rgdal</a>.</p>
-<p><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("rgdal")</a></code> <code><a href="https://rdrr.io/pkg/rgdal/man">library(rgdal)</a></code></p>
+<p>You may want to <strong>use your own land cover background shapefile</strong>. This is easily done by using the function <a href="https://www.rdocumentation.org/packages/rgdal/versions/1.4-8/topics/readOGR" class="external-link"><code>readOGR</code></a>.</p>
+<p>For using this function, you first has to install (if not yet installed) and load the package <a href="https://CRAN.R-project.org/package=rgdal" class="external-link">rgdal</a>.</p>
+<p><code>install.packages("rgdal")</code> <code><a href="http://rgdal.r-forge.r-project.org" class="external-link">library(rgdal)</a></code></p>
 <p>For example, for importing a shapefile named <em>MyShapefile</em>, just run the code (after transferring your file into <em>Your_R_directory</em>) : <code>readOGR("MyShapefile.shp")</code></p>
 <hr>
 </div>
 <div id="writing-shapefiles-used-to-estimate-eoo" class="section level2">
 <h2 class="hasAnchor">
-<a href="#writing-shapefiles-used-to-estimate-eoo" class="anchor"></a>Writing shapefiles used to estimate EOO</h2>
+<a href="#writing-shapefiles-used-to-estimate-eoo" class="anchor" aria-hidden="true"></a>Writing shapefiles used to estimate EOO</h2>
 <p>The above manipulation allows you to extract in R the spatial polygons. It is also possible to create and export these spatial polygons as shapefiles into your working directory, which can later be imported in a GIS software. This is done by using the logical argument <code>write_shp</code> which is FALSE by default. If you define it as TRUE as below, a directory named <em>shapesIUCN</em> is created in your working directory and will contain all the shapefiles created for computing EOO.</p>
-<pre><code><a href="../../reference/EOO.computing.html">EOO.computing(MyData, write_shp = T)</a></code></pre>
+<pre><code>EOO.computing(MyData, write_shp = T)</code></pre>
 <hr>
 </div>
 <div id="cropping-spatial-polygon-for-excluding-unsuitable-area" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cropping-spatial-polygon-for-excluding-unsuitable-area" class="anchor"></a>Cropping spatial polygon for excluding unsuitable area</h2>
+<a href="#cropping-spatial-polygon-for-excluding-unsuitable-area" class="anchor" aria-hidden="true"></a>Cropping spatial polygon for excluding unsuitable area</h2>
 <p>You may want to exclude areas that are not suitable for your species when computing EOO. This is feasible using the logical argument <code>exclude.area</code> which is FALSE by default. When define as TRUE, cropped areas will be defined by the shapefile you provide with the argument <code>country_map</code>. Note that it is mandatory to provide a shapefile for <code>country_map</code> if <code>exclude.area</code> is TRUE. In the example, below, we provide the <code>land</code> world cover. Ocean cover is therefore excluded when computing EOO.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r">EOO.computing(MyData, exclude.area = T, country_map = land)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                              EOO
-#&gt; Berlinia bruneelii     2628788.7
-#&gt; Oncocalamus mannii      565151.8
-#&gt; Platycoryne guingangae 3413217.0
-#&gt; Psychotria minuta       747744.0</pre></body></html></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">EOO.computing</span>(MyData, <span class="dt">exclude.area =</span> T, <span class="dt">country_map =</span> land)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co">#&gt; </span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb16-5"><a href="#cb16-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb16-7"><a href="#cb16-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb16-11"><a href="#cb16-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb16-12"><a href="#cb16-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb16-13"><a href="#cb16-13"></a><span class="co">#&gt;                              EOO</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a><span class="co">#&gt; Berlinia bruneelii     2628788.7</span></span>
+<span id="cb16-15"><a href="#cb16-15"></a><span class="co">#&gt; Oncocalamus mannii      565151.8</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt; Platycoryne guingangae 3413217.0</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt; Psychotria minuta       747744.0</span></span></code></pre></div>
 <p>Results of the EOO are higher for species that have an overlapping hull convex with the ocean cover:</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r">EOO.computing(MyData, exclude.area = F, country_map = land)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                            EOO
-#&gt; Berlinia bruneelii     2635042
-#&gt; Oncocalamus mannii      657704
-#&gt; Platycoryne guingangae 3422563
-#&gt; Psychotria minuta       760348</pre></body></html></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">EOO.computing</span>(MyData, <span class="dt">exclude.area =</span> F, <span class="dt">country_map =</span> land)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="co">#&gt; </span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb17-5"><a href="#cb17-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb17-6"><a href="#cb17-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb17-7"><a href="#cb17-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb17-9"><a href="#cb17-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb17-10"><a href="#cb17-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb17-11"><a href="#cb17-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb17-12"><a href="#cb17-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb17-13"><a href="#cb17-13"></a><span class="co">#&gt;                            EOO</span></span>
+<span id="cb17-14"><a href="#cb17-14"></a><span class="co">#&gt; Berlinia bruneelii     2635042</span></span>
+<span id="cb17-15"><a href="#cb17-15"></a><span class="co">#&gt; Oncocalamus mannii      657704</span></span>
+<span id="cb17-16"><a href="#cb17-16"></a><span class="co">#&gt; Platycoryne guingangae 3422563</span></span>
+<span id="cb17-17"><a href="#cb17-17"></a><span class="co">#&gt; Psychotria minuta       760348</span></span></code></pre></div>
 <p>The result can be visually verified by mapping the spatial polygon:</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, exclude.area = T, country_map = land, export_shp = T)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-plot(EOO.results$spatial.polygon_2, col="red")
-plot(land, add=T)</pre></body></html></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">exclude.area =</span> T, <span class="dt">country_map =</span> land, <span class="dt">export_shp =</span> T)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="co">#&gt; </span></span>
+<span id="cb18-3"><a href="#cb18-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb18-5"><a href="#cb18-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb18-7"><a href="#cb18-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb18-9"><a href="#cb18-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb18-11"><a href="#cb18-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb18-12"><a href="#cb18-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb18-13"><a href="#cb18-13"></a><span class="kw">plot</span>(EOO.results<span class="op">$</span>spatial.polygon_<span class="dv">2</span>, <span class="dt">col=</span><span class="st">"red"</span>)</span>
+<span id="cb18-14"><a href="#cb18-14"></a><span class="kw">plot</span>(land, <span class="dt">add=</span>T)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 <hr>
 </div>
 <div id="using-an-alpha-hull-to-compute-eoo" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-an-alpha-hull-to-compute-eoo" class="anchor"></a>Using an alpha hull to compute EOO</h2>
-<p>By default, EOO is based on a convex hull. You may want to use instead an <a href="https://CRAN.R-project.org/package=alphahull">alpha hull</a> (see <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> for guidelines on when it is relevant). This is feasible by using the argument <code>method.range</code> as follows:</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r">EOO.computing(MyData, method.range = "alpha.hull")
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                           EOO
-#&gt; Berlinia bruneelii     154111
-#&gt; Oncocalamus mannii      28646
-#&gt; Platycoryne guingangae  32687
-#&gt; Psychotria minuta        3940</pre></body></html></div>
+<a href="#using-an-alpha-hull-to-compute-eoo" class="anchor" aria-hidden="true"></a>Using an alpha hull to compute EOO</h2>
+<p>By default, EOO is based on a convex hull. You may want to use instead an <a href="https://CRAN.R-project.org/package=alphahull" class="external-link">alpha hull</a> (see <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> for guidelines on when it is relevant). This is feasible by using the argument <code>method.range</code> as follows:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">EOO.computing</span>(MyData, <span class="dt">method.range =</span> <span class="st">"alpha.hull"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co">#&gt; </span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb19-5"><a href="#cb19-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb19-6"><a href="#cb19-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb19-11"><a href="#cb19-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb19-12"><a href="#cb19-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb19-13"><a href="#cb19-13"></a><span class="co">#&gt;                           EOO</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a><span class="co">#&gt; Berlinia bruneelii     154394</span></span>
+<span id="cb19-15"><a href="#cb19-15"></a><span class="co">#&gt; Oncocalamus mannii      28689</span></span>
+<span id="cb19-16"><a href="#cb19-16"></a><span class="co">#&gt; Platycoryne guingangae  32624</span></span>
+<span id="cb19-17"><a href="#cb19-17"></a><span class="co">#&gt; Psychotria minuta        4070</span></span></code></pre></div>
 <p>To visually map the result:</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-plot(EOO.results$spatial.polygon_1, col="red")
-plot(land, add=T)</pre></body></html></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">method.range =</span> <span class="st">"alpha.hull"</span>, <span class="dt">export_shp =</span> T)</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt; </span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb20-7"><a href="#cb20-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb20-9"><a href="#cb20-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb20-10"><a href="#cb20-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb20-11"><a href="#cb20-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb20-12"><a href="#cb20-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb20-13"><a href="#cb20-13"></a><span class="kw">plot</span>(EOO.results<span class="op">$</span>spatial.polygon_<span class="dv">1</span>, <span class="dt">col=</span><span class="st">"red"</span>)</span>
+<span id="cb20-14"><a href="#cb20-14"></a><span class="kw">plot</span>(land, <span class="dt">add=</span>T)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
 <p>The alpha parameter of the alpha-hull can be modified by the <code>alpha</code> argument. Below an example with the second species:</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-plot(EOO.results$spatial.polygon_1, col="red")
-plot(land, add=T)</pre></body></html></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">method.range =</span> <span class="st">"alpha.hull"</span>, <span class="dt">export_shp =</span> T, <span class="dt">alpha=</span><span class="dv">5</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="co">#&gt; </span></span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb21-5"><a href="#cb21-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb21-7"><a href="#cb21-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb21-9"><a href="#cb21-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb21-10"><a href="#cb21-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb21-11"><a href="#cb21-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb21-12"><a href="#cb21-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb21-13"><a href="#cb21-13"></a><span class="kw">plot</span>(EOO.results<span class="op">$</span>spatial.polygon_<span class="dv">1</span>, <span class="dt">col=</span><span class="st">"red"</span>)</span>
+<span id="cb21-14"><a href="#cb21-14"></a><span class="kw">plot</span>(land, <span class="dt">add=</span>T)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 <p>Alpha hull can be equally cropped for unsuitable area:</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, method.range = "alpha.hull", export_shp = T, alpha=5, exclude.area = T, country_map = land)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |======================================================================| 100%
-plot(EOO.results$spatial.polygon_1, col="red")
-plot(land, add=T)</pre></body></html></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">method.range =</span> <span class="st">"alpha.hull"</span>, <span class="dt">export_shp =</span> T, <span class="dt">alpha=</span><span class="dv">5</span>, <span class="dt">exclude.area =</span> T, <span class="dt">country_map =</span> land)</span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="co">#&gt; </span></span>
+<span id="cb22-3"><a href="#cb22-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb22-5"><a href="#cb22-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="st">  </span><span class="er">|==================</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">25</span>%</span>
+<span id="cb22-7"><a href="#cb22-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb22-8"><a href="#cb22-8"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb22-9"><a href="#cb22-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="st">  </span><span class="er">|====================================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">75</span>%</span>
+<span id="cb22-11"><a href="#cb22-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb22-12"><a href="#cb22-12"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="kw">plot</span>(EOO.results<span class="op">$</span>spatial.polygon_<span class="dv">1</span>, <span class="dt">col=</span><span class="st">"red"</span>)</span>
+<span id="cb22-14"><a href="#cb22-14"></a><span class="kw">plot</span>(land, <span class="dt">add=</span>T)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
 <hr>
 </div>
 <div id="messages" class="section level2">
 <h2 class="hasAnchor">
-<a href="#messages" class="anchor"></a>Messages</h2>
-<p>The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016). In that specific case, there is a message and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.<br>
+<a href="#messages" class="anchor" aria-hidden="true"></a>Messages</h2>
+<p>The EOO is null when occurrences form a straight segment. This is a very infrequent case and obviously represents an underestimate of the EOO <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016). In that specific case, there is a message and the EOO will be estimated using a different method: a polygon is built by adding a buffer of a defined size to the segment.<br>
 The buffer is by default equal to 0.1 and is defined by the argument <code>buff.alpha</code>.</p>
 <p>As an illustration, see this example below with an hypothetical species of three occurrences</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, export_shp = T)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-#&gt; 
-#&gt; Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
-plot(EOO.results$spatial.polygon_1, col="red")
-points(MyData[,2], MyData[,1], pch=19) ### map the occurrences.</pre></body></html></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">export_shp =</span> T)</span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="co">#&gt; </span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb23-5"><a href="#cb23-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb23-6"><a href="#cb23-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="co">#&gt; </span></span>
+<span id="cb23-8"><a href="#cb23-8"></a><span class="co">#&gt; Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="kw">plot</span>(EOO.results<span class="op">$</span>spatial.polygon_<span class="dv">1</span>, <span class="dt">col=</span><span class="st">"red"</span>)</span>
+<span id="cb23-10"><a href="#cb23-10"></a><span class="kw">points</span>(MyData[,<span class="dv">2</span>], MyData[,<span class="dv">1</span>], <span class="dt">pch=</span><span class="dv">19</span>) <span class="co">### map the occurrences.</span></span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
 <p>The EOO cannot be computed when there is less than three unique occurrences <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. When this is the case, a message appears.</p>
 <p>See this example below with an artificial species having less than three occurrences</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r">EOO.results &lt;- EOO.computing(MyData, export_shp = T)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-#&gt; 
-#&gt; EOO parameter cannot be estimated for species_1 because there is less than 3 unique occurrences
-EOO.results
-#&gt; species1 
-#&gt;       NA</pre></body></html></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>EOO.results &lt;-<span class="st"> </span><span class="kw">EOO.computing</span>(MyData, <span class="dt">export_shp =</span> T)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="co">#&gt; </span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb24-5"><a href="#cb24-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="co">#&gt; </span></span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co">#&gt; EOO parameter cannot be estimated for species_1 because there is less than 3 unique occurrences</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a>EOO.results</span>
+<span id="cb24-10"><a href="#cb24-10"></a><span class="co">#&gt; species1 </span></span>
+<span id="cb24-11"><a href="#cb24-11"></a><span class="co">#&gt;       NA</span></span></code></pre></div>
 <hr>
 <hr>
 </div>
 </div>
 <div id="subpopulations-computation-using-subpop-comp-function" class="section level1">
 <h1 class="hasAnchor">
-<a href="#subpopulations-computation-using-subpop-comp-function" class="anchor"></a>Subpopulations computation using <code>subpop.comp</code> function</h1>
+<a href="#subpopulations-computation-using-subpop-comp-function" class="anchor" aria-hidden="true"></a>Subpopulations computation using <code>subpop.comp</code> function</h1>
 <div id="input-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#input-data" class="anchor"></a>Input data</h2>
+<a href="#input-data" class="anchor" aria-hidden="true"></a>Input data</h2>
 <p>See 1.3.1.</p>
 </div>
 <div id="using-subpop-comp-function" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-subpop-comp-function" class="anchor"></a>Using <code>subpop.comp</code> function</h2>
+<a href="#using-subpop-comp-function" class="anchor" aria-hidden="true"></a>Using <code>subpop.comp</code> function</h2>
 <p>This function applies the method called <strong>circular buffer method</strong> for estimating the number of subpopulation (Rivers <em>et al.</em>, 2010).</p>
 <p>The argument <code>Resol_sub_pop</code> must be given and defines in kilometres the radius of the circles around each occurrence.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">SUB</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/subpop.comp.html">subpop.comp</a></span>(<span class="no">MyData</span>, <span class="kw">Resol_sub_pop</span> <span class="kw">=</span> <span class="fl">30</span>)
-<span class="no">SUB</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">SUB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/subpop.comp.html">subpop.comp</a></span><span class="op">(</span><span class="va">MyData</span>, Resol_sub_pop <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
+<span class="va">SUB</span>
 <span class="co">#&gt; $`Berlinia bruneelii`</span>
 <span class="co">#&gt; $`Berlinia bruneelii`$`Number of subpopulation`</span>
 <span class="co">#&gt; [1] 48</span>
@@ -465,7 +467,7 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 48 </span>
 <span class="co">#&gt; extent      : 9.297175, 29.61949, -11.54333, 4.755502  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
@@ -477,7 +479,7 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 13 </span>
 <span class="co">#&gt; extent      : 5.430505, 22.21949, -2.668239, 6.189462  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
@@ -489,7 +491,7 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 21 </span>
 <span class="co">#&gt; extent      : 9.055505, 34.00279, -15.44773, 4.705483  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
@@ -501,7 +503,7 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 10 </span>
 <span class="co">#&gt; extent      : 8.780225, 30.01949, -2.154805, 4.357609  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
@@ -513,7 +515,7 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 2 </span>
 <span class="co">#&gt; extent      : 11.19721, 13.21949, -2.221486, 1.6214  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
@@ -525,10 +527,10 @@ EOO.results
 <span class="co">#&gt; class       : SpatialPolygonsDataFrame </span>
 <span class="co">#&gt; features    : 2 </span>
 <span class="co">#&gt; extent      : 11.19721, 13.45279, -2.221486, -1.678556  (xmin, xmax, ymin, ymax)</span>
-<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 </span>
+<span class="co">#&gt; crs         : +proj=longlat +datum=WGS84 +no_defs </span>
 <span class="co">#&gt; variables   : 0</span>
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">SUB</span><span class="kw">[[</span><span class="st">"Platycoryne guingangae"</span>]]<span class="kw">[[</span><span class="st">"subpop.poly"</span>]], <span class="kw">col</span><span class="kw">=</span><span class="st">"red"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">land</span>, <span class="kw">add</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">SUB</span><span class="op">[[</span><span class="st">"Platycoryne guingangae"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"subpop.poly"</span><span class="op">]</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="ConR_beg_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 <hr>
 <hr>
@@ -536,10 +538,10 @@ EOO.results
 </div>
 <div id="preliminary-iucn-assessment-for-multiple-species-using-iucn-eval-function" class="section level1">
 <h1 class="hasAnchor">
-<a href="#preliminary-iucn-assessment-for-multiple-species-using-iucn-eval-function" class="anchor"></a>Preliminary IUCN assessment for multiple species using <code>IUCN.eval</code> function</h1>
+<a href="#preliminary-iucn-assessment-for-multiple-species-using-iucn-eval-function" class="anchor" aria-hidden="true"></a>Preliminary IUCN assessment for multiple species using <code>IUCN.eval</code> function</h1>
 <div id="input-data-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#input-data-1" class="anchor"></a>Input data</h2>
+<a href="#input-data-1" class="anchor" aria-hidden="true"></a>Input data</h2>
 <p>You can prepare an excel file with three mandatory different columns and two optional ones:</p>
 <table class="table">
 <thead><tr class="header">
@@ -652,84 +654,86 @@ EOO.results
 <p>You can import your input file by using the following code. This will register your input file as an object you may name <em>MyData</em>, as below:</p>
 <pre><code>MyData &lt;- read.csv("MyInput.csv")</code></pre>
 <p>You can have a glimpse of the first rows of your input file by running the following code:</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">MyData</span>)
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">MyData</span><span class="op">)</span>
 <span class="co">#&gt;      ddlat    ddlon               tax</span>
 <span class="co">#&gt; 1 0.750000 29.75000 Psychotria minuta</span>
 <span class="co">#&gt; 2 3.566670 16.11670 Psychotria minuta</span>
 <span class="co">#&gt; 3 1.183330  9.86666 Psychotria minuta</span>
 <span class="co">#&gt; 4 3.238050 10.58060 Psychotria minuta</span>
 <span class="co">#&gt; 5 4.085580  9.04972 Psychotria minuta</span>
-<span class="co">#&gt; 6 0.766667 24.45000 Psychotria minuta</span></pre></body></html></div>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">MyData2</span>)
+<span class="co">#&gt; 6 0.766667 24.45000 Psychotria minuta</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">MyData2</span><span class="op">)</span>
 <span class="co">#&gt;      ddlat   ddlon                tax higher.tax.rank coly</span>
-<span class="co">#&gt; 1 -4.46667 11.4167 Berlinia bruneelii        Fabaceae 1878</span>
-<span class="co">#&gt; 2 -5.66667 29.3500 Berlinia bruneelii        Fabaceae 1814</span>
-<span class="co">#&gt; 3  3.88333 18.6833 Berlinia bruneelii        Fabaceae 1889</span>
-<span class="co">#&gt; 4  4.48333 20.3000 Berlinia bruneelii        Fabaceae 2007</span>
-<span class="co">#&gt; 5 -2.76667 18.4833 Berlinia bruneelii        Fabaceae 1820</span>
-<span class="co">#&gt; 6 -1.26667 24.5500 Berlinia bruneelii        Fabaceae 1804</span></pre></body></html></div>
+<span class="co">#&gt; 1 -4.46667 11.4167 Berlinia bruneelii        Fabaceae 1968</span>
+<span class="co">#&gt; 2 -5.66667 29.3500 Berlinia bruneelii        Fabaceae 1815</span>
+<span class="co">#&gt; 3  3.88333 18.6833 Berlinia bruneelii        Fabaceae 1978</span>
+<span class="co">#&gt; 4  4.48333 20.3000 Berlinia bruneelii        Fabaceae 1857</span>
+<span class="co">#&gt; 5 -2.76667 18.4833 Berlinia bruneelii        Fabaceae 1948</span>
+<span class="co">#&gt; 6 -1.26667 24.5500 Berlinia bruneelii        Fabaceae 1830</span></code></pre></div>
 </div>
 <div id="running-iucn-eval-function-by-default" class="section level2">
 <h2 class="hasAnchor">
-<a href="#running-iucn-eval-function-by-default" class="anchor"></a>Running <code>IUCN.eval</code> function by default</h2>
+<a href="#running-iucn-eval-function-by-default" class="anchor" aria-hidden="true"></a>Running <code>IUCN.eval</code> function by default</h2>
 <p>To see what are the default values, see <code><a href="../../reference/IUCN.eval.html">?IUCN.eval</a></code></p>
 <p>You can simply run the following code:</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r">IUCN.eval(MyData)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |=======================                                               |  33%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |==========================================================            |  83%
-#&gt; 
-#&gt; EOO parameter cannot be estimated for species_1 because there is less than 3 records
-#&gt; 
-  |                                                                            
-  |======================================================================| 100%
-#&gt; 
-#&gt; Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width
-#&gt; 
-#&gt; [1] "Number of species per category"
-#&gt; 
-#&gt;       EN LC or NT       VU 
-#&gt;        2        3        1 
-#&gt; [1] "Ratio of species per category"
-#&gt; 
-#&gt;       EN LC or NT       VU 
-#&gt;     33.3     50.0     16.7
-#&gt;                                          taxa       EOO AOO Nbe_unique_occ.
-#&gt; Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
-#&gt; Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47
-#&gt; Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37
-#&gt; Psychotria minuta           Psychotria minuta  760348.0  40              11
-#&gt; species_1                           species_1        NA   8               2
-#&gt; species_2                           species_2    4603.7  12               3
-#&gt;                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code
-#&gt; Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a
-#&gt; Oncocalamus mannii             29      35           LC or NT LC or NT B1a+B2a
-#&gt; Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a
-#&gt; Psychotria minuta              10      10                 VU           VU B2a
-#&gt; species_1                       2       2                 EN           EN B2a
-#&gt; species_2                       3       3                 EN       EN B1a+B2a
-#&gt;                        Category_AOO Category_EOO
-#&gt; Berlinia bruneelii         LC or NT     LC or NT
-#&gt; Oncocalamus mannii         LC or NT     LC or NT
-#&gt; Platycoryne guingangae     LC or NT     LC or NT
-#&gt; Psychotria minuta                VU     LC or NT
-#&gt; species_1                        EN         &lt;NA&gt;
-#&gt; species_2                        EN           EN</pre></body></html></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">IUCN.eval</span>(MyData)</span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="co">#&gt; </span></span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb29-5"><a href="#cb29-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-6"><a href="#cb29-6"></a><span class="st">  </span><span class="er">|============</span><span class="st">                                                          </span><span class="er">|</span><span class="st">  </span><span class="dv">17</span>%</span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-8"><a href="#cb29-8"></a><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-10"><a href="#cb29-10"></a><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</span>
+<span id="cb29-11"><a href="#cb29-11"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-12"><a href="#cb29-12"></a><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</span>
+<span id="cb29-13"><a href="#cb29-13"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-14"><a href="#cb29-14"></a><span class="st">  </span><span class="er">|==========================================================</span><span class="st">            </span><span class="er">|</span><span class="st">  </span><span class="dv">83</span>%</span>
+<span id="cb29-15"><a href="#cb29-15"></a><span class="co">#&gt; </span></span>
+<span id="cb29-16"><a href="#cb29-16"></a><span class="co">#&gt; EOO parameter cannot be estimated for species_1 because there is less than 3 records</span></span>
+<span id="cb29-17"><a href="#cb29-17"></a><span class="co">#&gt; </span></span>
+<span id="cb29-18"><a href="#cb29-18"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb29-19"><a href="#cb29-19"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb29-20"><a href="#cb29-20"></a><span class="co">#&gt; </span></span>
+<span id="cb29-21"><a href="#cb29-21"></a><span class="co">#&gt; Occurrences of species_2 follow a straight line, thus EOO is based on an artificial polygon using buff_width</span></span>
+<span id="cb29-22"><a href="#cb29-22"></a><span class="co">#&gt; </span></span>
+<span id="cb29-23"><a href="#cb29-23"></a><span class="co">#&gt; [1] "Number of species per category"</span></span>
+<span id="cb29-24"><a href="#cb29-24"></a><span class="co">#&gt; </span></span>
+<span id="cb29-25"><a href="#cb29-25"></a><span class="co">#&gt;       EN LC or NT       VU </span></span>
+<span id="cb29-26"><a href="#cb29-26"></a><span class="co">#&gt;        2        3        1 </span></span>
+<span id="cb29-27"><a href="#cb29-27"></a><span class="co">#&gt; [1] "Ratio of species per category"</span></span>
+<span id="cb29-28"><a href="#cb29-28"></a><span class="co">#&gt; </span></span>
+<span id="cb29-29"><a href="#cb29-29"></a><span class="co">#&gt;       EN LC or NT       VU </span></span>
+<span id="cb29-30"><a href="#cb29-30"></a><span class="co">#&gt;     33.3     50.0     16.7</span></span>
+<span id="cb29-31"><a href="#cb29-31"></a><span class="co">#&gt;                                          taxa       EOO AOO Nbe_unique_occ.</span></span>
+<span id="cb29-32"><a href="#cb29-32"></a><span class="co">#&gt; Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105</span></span>
+<span id="cb29-33"><a href="#cb29-33"></a><span class="co">#&gt; Oncocalamus mannii         Oncocalamus mannii  657704.0 176              47</span></span>
+<span id="cb29-34"><a href="#cb29-34"></a><span class="co">#&gt; Platycoryne guingangae Platycoryne guingangae 3422563.0 148              37</span></span>
+<span id="cb29-35"><a href="#cb29-35"></a><span class="co">#&gt; Psychotria minuta           Psychotria minuta  760348.0  40              11</span></span>
+<span id="cb29-36"><a href="#cb29-36"></a><span class="co">#&gt; species_1                           species_1        NA   8               2</span></span>
+<span id="cb29-37"><a href="#cb29-37"></a><span class="co">#&gt; species_2                           species_2    4603.7  12               3</span></span>
+<span id="cb29-38"><a href="#cb29-38"></a><span class="co">#&gt;                        Nbe_subPop Nbe_loc Category_CriteriaB    Category_code</span></span>
+<span id="cb29-39"><a href="#cb29-39"></a><span class="co">#&gt; Berlinia bruneelii             88      94           LC or NT LC or NT B1a+B2a</span></span>
+<span id="cb29-40"><a href="#cb29-40"></a><span class="co">#&gt; Oncocalamus mannii             29      35           LC or NT LC or NT B1a+B2a</span></span>
+<span id="cb29-41"><a href="#cb29-41"></a><span class="co">#&gt; Platycoryne guingangae         34      35           LC or NT LC or NT B1a+B2a</span></span>
+<span id="cb29-42"><a href="#cb29-42"></a><span class="co">#&gt; Psychotria minuta              10      10                 VU           VU B2a</span></span>
+<span id="cb29-43"><a href="#cb29-43"></a><span class="co">#&gt; species_1                       2       2                 EN           EN B2a</span></span>
+<span id="cb29-44"><a href="#cb29-44"></a><span class="co">#&gt; species_2                       3       3                 EN       EN B1a+B2a</span></span>
+<span id="cb29-45"><a href="#cb29-45"></a><span class="co">#&gt;                        Category_AOO Category_EOO</span></span>
+<span id="cb29-46"><a href="#cb29-46"></a><span class="co">#&gt; Berlinia bruneelii         LC or NT     LC or NT</span></span>
+<span id="cb29-47"><a href="#cb29-47"></a><span class="co">#&gt; Oncocalamus mannii         LC or NT     LC or NT</span></span>
+<span id="cb29-48"><a href="#cb29-48"></a><span class="co">#&gt; Platycoryne guingangae     LC or NT     LC or NT</span></span>
+<span id="cb29-49"><a href="#cb29-49"></a><span class="co">#&gt; Psychotria minuta                VU     LC or NT</span></span>
+<span id="cb29-50"><a href="#cb29-50"></a><span class="co">#&gt; species_1                        EN         &lt;NA&gt;</span></span>
+<span id="cb29-51"><a href="#cb29-51"></a><span class="co">#&gt; species_2                        EN           EN</span></span></code></pre></div>
 <p>Because the EOO computation (using <code>EOO.computing</code>, see 1.3) is included within <code>IUCN.eval</code> function, we have the <strong>same arguments</strong> available (see 1.3) and the <strong>same warnings</strong> (see 1.3.6)</p>
 </div>
 <div id="output-iucn-categories-and-parameters-estimation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#output-iucn-categories-and-parameters-estimation" class="anchor"></a>Output: IUCN categories and parameters estimation</h2>
+<a href="#output-iucn-categories-and-parameters-estimation" class="anchor" aria-hidden="true"></a>Output: IUCN categories and parameters estimation</h2>
 <p>The output of the function is a data frame that provides several parameters as well as the preliminary IUCN category.</p>
 <pre><code>#&gt;                                          taxa       EOO AOO Nbe_unique_occ.
 #&gt; Berlinia bruneelii         Berlinia bruneelii 2635042.0 404             105
@@ -753,10 +757,23 @@ EOO.results
 #&gt; species_1                        EN         &lt;NA&gt;
 #&gt; species_2                        EN           EN</code></pre>
 <p>Note that by default, an excel file has been created in your working directory <em>Your_R_directory</em>. If you prefer to have your output exported as csv file, you can do it by changing the argument <em>write_file_option</em>:</p>
-<pre><code><a href="../../reference/IUCN.eval.html">IUCN.eval(DATA = MyData, write_file_option = "csv")</a></code></pre>
-<table class="table">
+<pre><code>IUCN.eval(DATA = MyData, write_file_option = "csv")</code></pre>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="14%">
+<col width="14%">
+<col width="6%">
+<col width="2%">
+<col width="10%">
+<col width="7%">
+<col width="5%">
+<col width="12%">
+<col width="10%">
+<col width="8%">
+<col width="8%">
+</colgroup>
 <thead><tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">taxa</th>
 <th align="right">EOO</th>
 <th align="right">AOO</th>
@@ -770,7 +787,7 @@ EOO.results
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Berlinia bruneelii</td>
+<td align="left">Berlinia bruneelii</td>
 <td align="left">Berlinia bruneelii</td>
 <td align="right">2635042.0</td>
 <td align="right">404</td>
@@ -783,7 +800,7 @@ EOO.results
 <td align="left">LC or NT</td>
 </tr>
 <tr class="even">
-<td>Oncocalamus mannii</td>
+<td align="left">Oncocalamus mannii</td>
 <td align="left">Oncocalamus mannii</td>
 <td align="right">657704.0</td>
 <td align="right">176</td>
@@ -796,7 +813,7 @@ EOO.results
 <td align="left">LC or NT</td>
 </tr>
 <tr class="odd">
-<td>Platycoryne guingangae</td>
+<td align="left">Platycoryne guingangae</td>
 <td align="left">Platycoryne guingangae</td>
 <td align="right">3422563.0</td>
 <td align="right">148</td>
@@ -809,7 +826,7 @@ EOO.results
 <td align="left">LC or NT</td>
 </tr>
 <tr class="even">
-<td>Psychotria minuta</td>
+<td align="left">Psychotria minuta</td>
 <td align="left">Psychotria minuta</td>
 <td align="right">760348.0</td>
 <td align="right">40</td>
@@ -822,7 +839,7 @@ EOO.results
 <td align="left">LC or NT</td>
 </tr>
 <tr class="odd">
-<td>species_1</td>
+<td align="left">species_1</td>
 <td align="left">species_1</td>
 <td align="right">NA</td>
 <td align="right">8</td>
@@ -835,7 +852,7 @@ EOO.results
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td>species_2</td>
+<td align="left">species_2</td>
 <td align="left">species_2</td>
 <td align="right">4603.7</td>
 <td align="right">12</td>
@@ -854,7 +871,7 @@ EOO.results
 <p>The different fields of the output data frame are:</p>
 <p><strong>EOO</strong> field: provides EOO in square kilometres.</p>
 <ul>
-<li><p>if EOO is lower than AOO, EOO is put equal to AOO, as suggested by IUCN guidelines <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016).</p></li>
+<li><p>if EOO is lower than AOO, EOO is put equal to AOO, as suggested by IUCN guidelines <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016).</p></li>
 <li><p>NA is given when EOO cannot be computed because the taxon has less than three unique occurrences.</p></li>
 </ul>
 <p><strong>AOO</strong> field: provides AOO in square kilometres.</p>
@@ -883,7 +900,7 @@ IUCN categories and criteria
 </p>
 </div>
 <p><strong><em>Subcriteria and conditions for determining the conservation status following IUCN criterion B (IUCN 2012). Only sub-criteria B1 and B2 and condition (a) (number of locations) are taken into account, while condition (b)(iii) is assumed to be true</em></strong></p>
-<p><strong>Category_code</strong> field: code indicating which sub-criteria or conditions (see table above) are met <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016).</p>
+<p><strong>Category_code</strong> field: code indicating which sub-criteria or conditions (see table above) are met <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016).</p>
 <ul>
 <li>for example <em>EN B2a</em> mean the category EN is preliminary assigned to this taxa because sub-criterion <em>B2</em> (AOO) is lower than 500 km² and higher than 10 km² and condition (a) (number of locations) is lower than 6 and higher than 1.</li>
 </ul>
@@ -892,7 +909,7 @@ IUCN categories and criteria
 </div>
 <div id="output-maps" class="section level2">
 <h2 class="hasAnchor">
-<a href="#output-maps" class="anchor"></a>Output maps</h2>
+<a href="#output-maps" class="anchor" aria-hidden="true"></a>Output maps</h2>
 <p>By default, <code>IUCN.eval</code> creates for each taxa a map in png format. These maps are stored in a directory, named <em>IUCN_results_map</em> that has been created in your working directory <em>Your_R_directory</em>.</p>
 <div class="figure">
 <img src="IUCN_Berlinia_bruneelii.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
@@ -917,99 +934,100 @@ Example of a map output exported in IUCN_results_map directory
 </div>
 <div id="options-concerning-the-computation-of-area-of-occupancy-aoo" class="section level2">
 <h2 class="hasAnchor">
-<a href="#options-concerning-the-computation-of-area-of-occupancy-aoo" class="anchor"></a>Options concerning the computation of area of occupancy (AOO)</h2>
-<p>The area of occupancy (AOO) is computed by calculating the area covered by the number of occupied cells of a grid for a given resolution. By default, the size of grid cells is 2 km, as recommended by IUCN guidelines <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016).<br>
+<a href="#options-concerning-the-computation-of-area-of-occupancy-aoo" class="anchor" aria-hidden="true"></a>Options concerning the computation of area of occupancy (AOO)</h2>
+<p>The area of occupancy (AOO) is computed by calculating the area covered by the number of occupied cells of a grid for a given resolution. By default, the size of grid cells is 2 km, as recommended by IUCN guidelines <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016).<br>
 It is nevertheless possible to modify the resolution using the argument <code>Cell_size_AOO</code>, as follows:</p>
 <p>Cell size of 20 km:</p>
-<div class="sourceCode" id="cb33"><html><body><pre class="r">MyResults &lt;- IUCN.eval(MyData, Cell_size_AOO = 20)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-MyResults
-#&gt;                                taxa    EOO  AOO Nbe_unique_occ. Nbe_subPop
-#&gt; Psychotria minuta Psychotria minuta 760348 4000              11         10
-#&gt;                   Nbe_loc Category_CriteriaB    Category_code Category_AOO
-#&gt; Psychotria minuta      10           LC or NT LC or NT B1a+B2a     LC or NT
-#&gt;                   Category_EOO
-#&gt; Psychotria minuta     LC or NT</pre></body></html></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>MyResults &lt;-<span class="st"> </span><span class="kw">IUCN.eval</span>(MyData, <span class="dt">Cell_size_AOO =</span> <span class="dv">20</span>)</span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="co">#&gt; </span></span>
+<span id="cb33-3"><a href="#cb33-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb33-5"><a href="#cb33-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb33-6"><a href="#cb33-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb33-7"><a href="#cb33-7"></a>MyResults</span>
+<span id="cb33-8"><a href="#cb33-8"></a><span class="co">#&gt;                                taxa    EOO  AOO Nbe_unique_occ. Nbe_subPop</span></span>
+<span id="cb33-9"><a href="#cb33-9"></a><span class="co">#&gt; Psychotria minuta Psychotria minuta 760348 4000              11         10</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a><span class="co">#&gt;                   Nbe_loc Category_CriteriaB    Category_code Category_AOO</span></span>
+<span id="cb33-11"><a href="#cb33-11"></a><span class="co">#&gt; Psychotria minuta      10           LC or NT LC or NT B1a+B2a     LC or NT</span></span>
+<span id="cb33-12"><a href="#cb33-12"></a><span class="co">#&gt;                   Category_EOO</span></span>
+<span id="cb33-13"><a href="#cb33-13"></a><span class="co">#&gt; Psychotria minuta     LC or NT</span></span></code></pre></div>
 <p>AOO is now equal to 4000 km².</p>
 <p><strong>Important note:</strong></p>
-<p>A grid may give different numbers of occupied cells (and thus different AOO values) depending on the position of the grid. The script currently tests different positions of the grid by several translations. When the number of occupied cells vary for the different positions, the minimum is chosen, as suggested by the guidelines of IUCN <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016).</p>
+<p>A grid may give different numbers of occupied cells (and thus different AOO values) depending on the position of the grid. The script currently tests different positions of the grid by several translations. When the number of occupied cells vary for the different positions, the minimum is chosen, as suggested by the guidelines of IUCN <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016).</p>
 </div>
 <div id="options-concerning-the-computation-of-extent-of-occurence-eoo" class="section level2">
 <h2 class="hasAnchor">
-<a href="#options-concerning-the-computation-of-extent-of-occurence-eoo" class="anchor"></a>Options concerning the computation of extent of occurence (EOO)</h2>
+<a href="#options-concerning-the-computation-of-extent-of-occurence-eoo" class="anchor" aria-hidden="true"></a>Options concerning the computation of extent of occurence (EOO)</h2>
 <p>See point 1.3.</p>
 </div>
 <div id="options-concerning-the-computation-of-number-of-location" class="section level2">
 <h2 class="hasAnchor">
-<a href="#options-concerning-the-computation-of-number-of-location" class="anchor"></a>Options concerning the computation of number of location</h2>
+<a href="#options-concerning-the-computation-of-number-of-location" class="anchor" aria-hidden="true"></a>Options concerning the computation of number of location</h2>
 <p>A location is defined by the IUCN as</p>
 <blockquote>
-<p>a geographically or ecologically distinct area in which a single threatening event can rapidly affect all individuals of the taxon present. The size of the location depends on the area covered by the threatening event and may include part of one or many subpopulations. Where a taxon is affected by more than one threatening event, location should be defined by considering the most serious plausible threat <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" title="IUCN. 2012b. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN.">1</a> (IUCN 2012) <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee.">2</a> (IUCN 2016).</p>
+<p>a geographically or ecologically distinct area in which a single threatening event can rapidly affect all individuals of the taxon present. The size of the location depends on the area covered by the threatening event and may include part of one or many subpopulations. Where a taxon is affected by more than one threatening event, location should be defined by considering the most serious plausible threat <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" title="IUCN. 2012b. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN." class="external-link">1</a> (IUCN 2012) <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" title="IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee." class="external-link">2</a> (IUCN 2016).</p>
 </blockquote>
 <p>Given this definition, it is clear that the number of locations can only properly be assessed using a species by species procedure. We nevertheless propose a procedure in ConR that estimates the number of locations using the following method:</p>
 <p>The number of locations is the number of occupied cells of a grid for a given resolution. By default, the size of grid cells is 10 km.</p>
 <p>It is also possible to take into account different levels of threat by including a map of protected areas (see below)</p>
 <div id="estimation-of-the-number-of-locations-by-default" class="section level3">
 <h3 class="hasAnchor">
-<a href="#estimation-of-the-number-of-locations-by-default" class="anchor"></a>Estimation of the number of locations by default</h3>
+<a href="#estimation-of-the-number-of-locations-by-default" class="anchor" aria-hidden="true"></a>Estimation of the number of locations by default</h3>
 <p>It is possible to modify the resolution using the argument <code>Cell_size_locations</code>.<br>
 Below is an example for amphibian species of Madagascar.</p>
-<p>First, for the example, I select one species among the Malagasy amphibians example dataset included in the package loaded by using the <code><a href="https://rdrr.io/r/utils/data.html">data()</a></code> function:</p>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">Malagasy.amphibian</span>)
-<span class="no">MyData</span> <span class="kw">&lt;-</span> <span class="no">Malagasy.amphibian</span>[<span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">Malagasy.amphibian</span>[,<span class="st">"tax"</span>] <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Anodonthyla moramora"</span>)),]</pre></body></html></div>
+<p>First, for the example, I select one species among the Malagasy amphibians example dataset included in the package loaded by using the <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code> function:</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Malagasy.amphibian</span><span class="op">)</span>
+<span class="va">MyData</span> <span class="op">&lt;-</span> <span class="va">Malagasy.amphibian</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">Malagasy.amphibian</span><span class="op">[</span>,<span class="st">"tax"</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Anodonthyla moramora"</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span></code></pre></div>
 <p>Locations computed for a grid of 10 km cell size:</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r">IUCN.eval(MyData, Cell_size_locations = 10)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-#&gt; Anodonthyla moramora       4                 EN    EN B1a+B2a           EN
-#&gt;                      Category_EOO
-#&gt; Anodonthyla moramora           EN</pre></body></html></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">IUCN.eval</span>(MyData, <span class="dt">Cell_size_locations =</span> <span class="dv">10</span>)</span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="co">#&gt; </span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb35-5"><a href="#cb35-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb35-6"><a href="#cb35-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb35-7"><a href="#cb35-7"></a><span class="co">#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop</span></span>
+<span id="cb35-8"><a href="#cb35-8"></a><span class="co">#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3</span></span>
+<span id="cb35-9"><a href="#cb35-9"></a><span class="co">#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO</span></span>
+<span id="cb35-10"><a href="#cb35-10"></a><span class="co">#&gt; Anodonthyla moramora       4                 EN    EN B1a+B2a           EN</span></span>
+<span id="cb35-11"><a href="#cb35-11"></a><span class="co">#&gt;                      Category_EOO</span></span>
+<span id="cb35-12"><a href="#cb35-12"></a><span class="co">#&gt; Anodonthyla moramora           EN</span></span></code></pre></div>
 <div class="figure">
 <img src="loc1Anodonthyla_moramora.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
 Example of a map output exported in IUCN_results_map directory
 </p>
 </div>
 <p>Locations computed for a grid of 30 km cell size:</p>
-<div class="sourceCode" id="cb36"><html><body><pre class="r">IUCN.eval(MyData, Cell_size_locations = 30)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-#&gt; Anodonthyla moramora       2                 EN    EN B1a+B2a           EN
-#&gt;                      Category_EOO
-#&gt; Anodonthyla moramora           EN</pre></body></html></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="kw">IUCN.eval</span>(MyData, <span class="dt">Cell_size_locations =</span> <span class="dv">30</span>)</span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="co">#&gt; </span></span>
+<span id="cb36-3"><a href="#cb36-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb36-4"><a href="#cb36-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb36-5"><a href="#cb36-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb36-6"><a href="#cb36-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb36-7"><a href="#cb36-7"></a><span class="co">#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop</span></span>
+<span id="cb36-8"><a href="#cb36-8"></a><span class="co">#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3</span></span>
+<span id="cb36-9"><a href="#cb36-9"></a><span class="co">#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO</span></span>
+<span id="cb36-10"><a href="#cb36-10"></a><span class="co">#&gt; Anodonthyla moramora       2                 EN    EN B1a+B2a           EN</span></span>
+<span id="cb36-11"><a href="#cb36-11"></a><span class="co">#&gt;                      Category_EOO</span></span>
+<span id="cb36-12"><a href="#cb36-12"></a><span class="co">#&gt; Anodonthyla moramora           EN</span></span></code></pre></div>
 <div class="figure">
 <img src="loc2Anodonthyla_moramora.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
 Example of a map output exported in IUCN_results_map directory
 </p>
 </div>
 <p>Locations computed for a grid of 50 km cell size:</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r">IUCN.eval(MyData, Cell_size_locations = 50)
-#&gt; 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop
-#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3
-#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO
-#&gt; Anodonthyla moramora       2                 EN    EN B1a+B2a           EN
-#&gt;                      Category_EOO
-#&gt; Anodonthyla moramora           EN</pre></body></html></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="kw">IUCN.eval</span>(MyData, <span class="dt">Cell_size_locations =</span> <span class="dv">50</span>)</span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="co">#&gt; </span></span>
+<span id="cb37-3"><a href="#cb37-3"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb37-4"><a href="#cb37-4"></a><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</span>
+<span id="cb37-5"><a href="#cb37-5"></a>  <span class="op">|</span><span class="st">                                                                            </span></span>
+<span id="cb37-6"><a href="#cb37-6"></a><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</span>
+<span id="cb37-7"><a href="#cb37-7"></a><span class="co">#&gt;                                      taxa EOO AOO Nbe_unique_occ. Nbe_subPop</span></span>
+<span id="cb37-8"><a href="#cb37-8"></a><span class="co">#&gt; Anodonthyla moramora Anodonthyla moramora 799  36              13          3</span></span>
+<span id="cb37-9"><a href="#cb37-9"></a><span class="co">#&gt;                      Nbe_loc Category_CriteriaB Category_code Category_AOO</span></span>
+<span id="cb37-10"><a href="#cb37-10"></a><span class="co">#&gt; Anodonthyla moramora       2                 EN    EN B1a+B2a           EN</span></span>
+<span id="cb37-11"><a href="#cb37-11"></a><span class="co">#&gt;                      Category_EOO</span></span>
+<span id="cb37-12"><a href="#cb37-12"></a><span class="co">#&gt; Anodonthyla moramora           EN</span></span></code></pre></div>
 <div class="figure">
 <img src="loc3Anodonthyla_moramora.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
 Example of a map output exported in IUCN_results_map directory
@@ -1028,7 +1046,7 @@ Example of a map output exported in IUCN_results_map directory
 </div>
 <div id="estimation-of-the-number-of-locations-by-taking-into-account-protected-areas" class="section level3">
 <h3 class="hasAnchor">
-<a href="#estimation-of-the-number-of-locations-by-taking-into-account-protected-areas" class="anchor"></a>Estimation of the number of locations by taking into account protected areas</h3>
+<a href="#estimation-of-the-number-of-locations-by-taking-into-account-protected-areas" class="anchor" aria-hidden="true"></a>Estimation of the number of locations by taking into account protected areas</h3>
 <p>In order to take into account different levels of threat, we propose a procedure to take into account protected areas. The rationale is that occurrences within and outside protected areas are under different levels of threat. We propose two different methods using the <code>IUCN.eval</code> function. The method can be specified by the argument <code>method_protected_area</code>:</p>
 <ul>
 <li>
@@ -1036,8 +1054,8 @@ Example of a map output exported in IUCN_results_map directory
 Occurrences outside the protected area will be used for estimating the number of locations using an overlaying grid.</li>
 </ul>
 <p>The example below illustrates this method:</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(Madagascar.protec)
-IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec)</a></code></pre>
+<pre><code>data(Madagascar.protec)
+IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec)</code></pre>
 <div class="figure">
 <img src="protecAnodonthyla_moramora.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
 Example of a map output exported in IUCN_results_map directory
@@ -1048,17 +1066,17 @@ Example of a map output exported in IUCN_results_map directory
 <li>
 <code>method_protected_area = "other"</code> In that case, occurrences within and outside protected area are treated separately by the same procedure: overlaying of grid of a given resolution.</li>
 </ul>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(Madagascar.protec)
-IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, method_protected_area = "other")</a></code></pre>
+<pre><code>data(Madagascar.protec)
+IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, method_protected_area = "other")</code></pre>
 <p>Contrary to the previous results, the number of locations within protected area is not equal to the number of occupied protected areas.</p>
 <div class="figure">
 <img src="protec2Anodonthyla_moramora.png" alt="Example of a map output exported in IUCN_results_map directory" width="100%"><p class="caption">
 Example of a map output exported in IUCN_results_map directory
 </p>
 </div>
-<p><strong>Note 1:</strong> Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function <a href="https://CRAN.R-project.org/package=maptools"><code>readShapePoly</code></a>. Protected area shapefile can be freely downloaded from the World Database on Protected Areas (WDPA, <a href="http://www.protectedplanet.net/" class="uri">http://www.protectedplanet.net/</a>). For example, for importing a shapefile names <em>MyShapefile</em>, just run the code (after transferring your file into <em>Your_R_directory</em>) : <code>readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))</code>.</p>
+<p><strong>Note 1:</strong> Only a map of protected areas from Madagascar is included in ConR, as an example dataset. If you want to import your own protected area shapefile, you can do it by using the function <a href="https://CRAN.R-project.org/package=maptools" class="external-link"><code>readShapePoly</code></a>. Protected area shapefile can be freely downloaded from the World Database on Protected Areas (WDPA, <a href="http://www.protectedplanet.net/" class="external-link uri">http://www.protectedplanet.net/</a>). For example, for importing a shapefile names <em>MyShapefile</em>, just run the code (after transferring your file into <em>Your_R_directory</em>) : <code>readShapePoly("MyShapefile" , proj4string=CRS("+proj=longlat +datum=WGS84"))</code>.</p>
 <p><strong>Note 2:</strong> The protected areas shapefile should be given as <code>SpatialPolygonsDataFrame</code> in the argument <code>protec.areas</code> as above. The argument <code>ID_shape_PA</code> should also be given and should represent the unique ID of each protected area in the provided shapefile. This can be checked by the following code:</p>
-<p><code><a href="https://rdrr.io/r/base/colnames.html">colnames(Madagascar.protec@data)</a></code> with the malagasy protected area shapefile.</p>
+<p><code>colnames(Madagascar.protec@data)</code> with the malagasy protected area shapefile.</p>
 <hr>
 <hr>
 </div>
@@ -1066,29 +1084,29 @@ Example of a map output exported in IUCN_results_map directory
 </div>
 <div id="compute-in-parallel" class="section level1">
 <h1 class="hasAnchor">
-<a href="#compute-in-parallel" class="anchor"></a>Compute in parallel</h1>
+<a href="#compute-in-parallel" class="anchor" aria-hidden="true"></a>Compute in parallel</h1>
 <p>For large datasets (typically more than 100 species or when producing maps is required), I recommend to run the computation in parallel, which is feasible by using the following code.</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(Madagascar.protec)
-IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, parallel=T, NbeCores=4)</a></code></pre>
-<p>The argument <code>NbeCores</code> indicate the number of cores on which you want to run the analysis. For more information, see the package <a href="https://CRAN.R-project.org/package=doParallel">doparallel</a>.</p>
+<pre><code>data(Madagascar.protec)
+IUCN.eval(MyData, Cell_size_locations = 10, protec.areas = Madagascar.protec, parallel=T, NbeCores=4)</code></pre>
+<p>The argument <code>NbeCores</code> indicate the number of cores on which you want to run the analysis. For more information, see the package <a href="https://CRAN.R-project.org/package=doParallel" class="external-link">doparallel</a>.</p>
 <hr>
 <hr>
 </div>
 <div id="mapping-results-of-iucn-eval-using-map-res-function" class="section level1">
 <h1 class="hasAnchor">
-<a href="#mapping-results-of-iucn-eval-using-map-res-function" class="anchor"></a>Mapping results of <code>IUCN.eval</code> using <code>map.res</code> function</h1>
+<a href="#mapping-results-of-iucn-eval-using-map-res-function" class="anchor" aria-hidden="true"></a>Mapping results of <code>IUCN.eval</code> using <code>map.res</code> function</h1>
 <p>If you assess the preliminary conservation status of large number of species in a given region, you can map the number of records, species, threatened species and the proportion of threatened species by using the <code>map.res</code> function. Maps are drawn in fixed grid cells whose resolution and extent can be defined.</p>
 <p>Below, preliminary conservation status of all malagasy amphibian species of the example dataset are assessed by using the <code>IUCN.eval</code> function. Results are stored in an object MyResults.</p>
 <p>This computation should be relatively time consuming (depending on the computer power) given the number of species assessed, so be patient. For a high number of species, paralleling is a good option for fastening the computation.</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(Madagascar.protec)
+<pre><code>data(Madagascar.protec)
 data(Malagasy.amphibian)
-MyResults &lt;- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE)</a></code></pre>
+MyResults &lt;- IUCN.eval(Malagasy.amphibian, protec.areas = Madagascar.protec, ID_shape_PA = "WDPA_PID", showWarnings = FALSE)</code></pre>
 <p>You can map the result by using the following code:</p>
-<pre><code><a href="https://rdrr.io/r/utils/data.html">data(land)
+<pre><code>data(land)
 map.res(MyResults, Occurrences=Malagasy.amphibian, country_map=land, export_map=TRUE, threshold=3, 
-    LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)</a></code></pre>
+    LatMin=-25,LatMax=-12,LongMin=42, LongMax=52, Resol=1)</code></pre>
 <p>The argument <code>Occurrences</code> should include the input file.</p>
-<p>The argument <code>country_map</code> should include the background spatial polygon. In this case, we use the default <code>land</code> shapefile that should be loaded once before using <code><a href="https://rdrr.io/r/utils/data.html">data()</a></code>.</p>
+<p>The argument <code>country_map</code> should include the background spatial polygon. In this case, we use the default <code>land</code> shapefile that should be loaded once before using <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>.</p>
 <p>The argument <code>export_map</code> is logical. If <code>TRUE</code>, maps are exported in your working environment.</p>
 <p>The argument <code>Resol</code> must be numerical. It indicates the resolution of the grid cell.</p>
 <p>The argument <code>threshold</code> must be numerical. It indicates the minimum number of occurrences within each grid cell: above, it is defined as 3. Hence, only grid cells with at least three occurrences are shown.</p>
@@ -1117,9 +1135,9 @@ Example of a map output exported in IUCN_results_map directory
 </div>
 <div id="references" class="section level1">
 <h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
-<p>IUCN. 2012. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN. <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" class="uri">http://www.iucnredlist.org/technical-documents/categories-and-criteria</a></p>
-<p>IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee. <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" class="uri">http://www.iucnredlist.org/documents/RedListGuidelines.pdf</a></p>
+<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
+<p>IUCN. 2012. IUCN Red List Categories and Criteria: Version 3.1. Second edition. Gland, Switzerland and Cambridge, UK: IUCN. <a href="http://www.iucnredlist.org/technical-documents/categories-and-criteria" class="external-link uri">http://www.iucnredlist.org/technical-documents/categories-and-criteria</a></p>
+<p>IUCN Standards and Petitions Subcommittee. 2016. Guidelines for Using the IUCN Red List Categories and Criteria. Version 12. Prepared by the Standards and Petitions Subcommittee. <a href="http://www.iucnredlist.org/documents/RedListGuidelines.pdf" class="external-link uri">http://www.iucnredlist.org/documents/RedListGuidelines.pdf</a></p>
 <p>Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA (2010) Subpopulations, locations and fragmentation: applying IUCN red list criteria to herbarium specimen data. Biodiversity and Conservation 19: 2071-2085. doi: 10.1007/s10531-010-9826-9</p>
 </div>
 <div class="footnotes">
@@ -1141,11 +1159,13 @@ Example of a map output exported in IUCN_results_map directory
 
 
       <footer><div class="copyright">
-  <p>Developed by Gilles Dauby.</p>
+  <p></p>
+<p>Developed by Gilles Dauby.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -1153,6 +1173,8 @@ Example of a map output exported in IUCN_results_map directory
 
   
 
+
+  
 
   </body>
 </html>

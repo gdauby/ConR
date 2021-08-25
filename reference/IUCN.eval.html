@@ -49,6 +49,8 @@ is also available." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -60,9 +62,15 @@ is also available." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -83,12 +91,6 @@ is also available." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -110,7 +112,7 @@ is also available." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/gdauby/ConR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -140,37 +142,37 @@ conservation status following Criterion B of IUCN.  A graphical map output
 is also available.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>IUCN.eval</span>(
-  <span class='no'>DATA</span>,
-  <span class='kw'>country_map</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Cell_size_AOO</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>Cell_size_locations</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>Resol_sub_pop</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>method_locations</span> <span class='kw'>=</span> <span class='st'>"fixed_grid"</span>,
-  <span class='kw'>Rel_cell_size</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>DrawMap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>add.legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>file_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>export_shp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_shp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_results</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>protec.areas</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>map_pdf</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>draw.poly.EOO</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>exclude.area</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>method_protected_area</span> <span class='kw'>=</span> <span class='st'>"no_more_than_one"</span>,
-  <span class='kw'>ID_shape_PA</span> <span class='kw'>=</span> <span class='st'>"WDPA_PID"</span>,
-  <span class='kw'>buff_width</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>SubPop</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>buff.alpha</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>method.range</span> <span class='kw'>=</span> <span class='st'>"convex.hull"</span>,
-  <span class='kw'>nbe.rep.rast.AOO</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>showWarnings</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>write_file_option</span> <span class='kw'>=</span> <span class='st'>"excel"</span>,
-  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>NbeCores</span> <span class='kw'>=</span> <span class='fl'>2</span>
-)</pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>IUCN.eval</span><span class='op'>(</span>
+  <span class='va'>DATA</span>,
+  country_map <span class='op'>=</span> <span class='cn'>NULL</span>,
+  Cell_size_AOO <span class='op'>=</span> <span class='fl'>2</span>,
+  Cell_size_locations <span class='op'>=</span> <span class='fl'>10</span>,
+  Resol_sub_pop <span class='op'>=</span> <span class='fl'>5</span>,
+  method_locations <span class='op'>=</span> <span class='st'>"fixed_grid"</span>,
+  Rel_cell_size <span class='op'>=</span> <span class='fl'>0.05</span>,
+  DrawMap <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  add.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  file_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  export_shp <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  write_shp <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  write_results <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  protec.areas <span class='op'>=</span> <span class='cn'>NULL</span>,
+  map_pdf <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  draw.poly.EOO <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  exclude.area <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method_protected_area <span class='op'>=</span> <span class='st'>"no_more_than_one"</span>,
+  ID_shape_PA <span class='op'>=</span> <span class='st'>"WDPA_PID"</span>,
+  buff_width <span class='op'>=</span> <span class='fl'>0.1</span>,
+  SubPop <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  buff.alpha <span class='op'>=</span> <span class='fl'>0.1</span>,
+  method.range <span class='op'>=</span> <span class='st'>"convex.hull"</span>,
+  nbe.rep.rast.AOO <span class='op'>=</span> <span class='fl'>0</span>,
+  showWarnings <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  write_file_option <span class='op'>=</span> <span class='st'>"excel"</span>,
+  parallel <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  NbeCores <span class='op'>=</span> <span class='fl'>2</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -421,7 +423,7 @@ See the vignette for illustration. <br /></p>
 <code>ID_shape_PA</code> should also be given and should represent the unique ID
 of each protected area in the provided shapefile. This can be checked by the
 following code:</p>
-<p><code><a href='https://rdrr.io/r/base/colnames.html'>colnames(ProtectedAreas@data)</a></code> Where ProtectedAreas is the name of
+<p><code>colnames(ProtectedAreas@data)</code> Where ProtectedAreas is the name of
 your shapefile.</p>
 <p><strong>Limitation in the estimations of EOO</strong><br /></p>
 <p>For a species whose occurrences span more than 180 degrees, EOO is not
@@ -441,9 +443,13 @@ Biodiversity Conservation 19:2071-2085</p>
 
     <div class='dont-index'><p><a href='https://CRAN.R-project.org/package=biogeo'>https://CRAN.R-project.org/package=biogeo</a></p>
 <p><a href='https://github.com/azizka/speciesgeocodeR'>https://github.com/azizka/speciesgeocodeR</a></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Gilles Dauby</p>
+<p><a href='mailto:gildauby@gmail.com'>gildauby@gmail.com</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <div class="ref-examples sourceCode"></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -455,11 +461,11 @@ Biodiversity Conservation 19:2071-2085</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Dauby.</p>
+  <p><p>Developed by Gilles Dauby.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -467,6 +473,8 @@ Biodiversity Conservation 19:2071-2085</p>
 
   
 
+
+  
 
   </body>
 </html>

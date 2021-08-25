@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -56,9 +58,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,12 +87,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -106,7 +108,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/gdauby/ConR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -132,35 +134,35 @@
     <p>Compute IUCN eval</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.IUCN.comp</span>(
-  <span class='no'>DATA</span>,
-  <span class='kw'>poly_borders</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Cell_size_AOO</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>Cell_size_locations</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>Resol_sub_pop</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>method_locations</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fixed_grid"</span>),
-  <span class='kw'>Rel_cell_size</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>protec.areas</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>exclude.area</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>method_protected_area</span> <span class='kw'>=</span> <span class='st'>"no_more_than_one"</span>,
-  <span class='kw'>ID_shape_PA</span> <span class='kw'>=</span> <span class='st'>"WDPA_PID"</span>,
-  <span class='kw'>buff_width</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>NamesSp</span> <span class='kw'>=</span> <span class='st'>"species1"</span>,
-  <span class='kw'>write_shp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>file_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>add.legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>DrawMap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>map_pdf</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>draw.poly.EOO</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>SubPop</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>MinMax</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>buff.alpha</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>method.range</span> <span class='kw'>=</span> <span class='st'>"convex.hull"</span>,
-  <span class='kw'>nbe.rep.rast.AOO</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>showWarnings</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>.IUCN.comp</span><span class='op'>(</span>
+  <span class='va'>DATA</span>,
+  poly_borders <span class='op'>=</span> <span class='cn'>NULL</span>,
+  Cell_size_AOO <span class='op'>=</span> <span class='fl'>2</span>,
+  Cell_size_locations <span class='op'>=</span> <span class='fl'>10</span>,
+  Resol_sub_pop <span class='op'>=</span> <span class='fl'>5</span>,
+  method_locations <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"fixed_grid"</span><span class='op'>)</span>,
+  Rel_cell_size <span class='op'>=</span> <span class='fl'>0.05</span>,
+  protec.areas <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exclude.area <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method_protected_area <span class='op'>=</span> <span class='st'>"no_more_than_one"</span>,
+  ID_shape_PA <span class='op'>=</span> <span class='st'>"WDPA_PID"</span>,
+  buff_width <span class='op'>=</span> <span class='fl'>0.1</span>,
+  NamesSp <span class='op'>=</span> <span class='st'>"species1"</span>,
+  write_shp <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  file_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  add.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  DrawMap <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  map_pdf <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  draw.poly.EOO <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  SubPop <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>MinMax</span>,
+  alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  buff.alpha <span class='op'>=</span> <span class='fl'>0.1</span>,
+  method.range <span class='op'>=</span> <span class='st'>"convex.hull"</span>,
+  nbe.rep.rast.AOO <span class='op'>=</span> <span class='fl'>0</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  showWarnings <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -287,11 +289,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Dauby.</p>
+  <p><p>Developed by Gilles Dauby.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -299,6 +301,8 @@
 
   
 
+
+  
 
   </body>
 </html>
