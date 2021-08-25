@@ -137,7 +137,7 @@ EOO.habitat <- function(EOO.poly,
   
   
   #### GILLES: EOO.poly is supposed to be the output of EOO.comp and if so should never have empty crs. Useful? 
-  if (is.na(sf::st_crs(EOO.poly))) { 
+  if (is.na(sf::st_crs(EOO.poly))) {
     sf::st_crs(EOO.poly) <- 4326
     warning("No coordinate system for EOO polygons: assuming WSG84")
   }
@@ -167,7 +167,7 @@ EOO.habitat <- function(EOO.poly,
 
   # EOO.poly.peri <- as.numeric(lwgeom::st_perimeter(EOO.poly.proj)) / 1000 # perimeter in km
   per.area <- EOO.poly.peri / # perimeter-area relationship (to detect alongated polygons)
-                EOO.poly.area 
+                EOO.poly.area
   
   EOO.poly.name <- EOO.poly.crop
   sf::st_geometry(EOO.poly.name) <- NULL
@@ -209,310 +209,408 @@ EOO.habitat <- function(EOO.poly,
   #Starting the foreach loops
   output <-
     foreach::foreach(
+      
       x = 1:nrow(EOO.poly.crop),
       #.packages=c("raster","sf"),
       .options.snow = opts
+      
     ) %d% {
+      
       if (!parallel & show_progress)
         setTxtProgressBar(pb, x)
-
-    # Methods is hab.map are sp or sf objects
-    if(any(grepl("sf", class(hab.map)))) {
-
-      crop1 <- sf::st_intersection(hab.map, EOO.poly.crop[x,]) # cropping to the extent of the polygon
-      crop.proj <- sf::st_transform(crop1, crs = proj_crs)
-      area.hab <-
-        as.numeric(sum(sf::st_area(crop.proj), na.rm = TRUE)) / 1000000
-      area.poly <- 
-        as.numeric(sf::st_area(sf::st_transform(EOO.poly.crop[x,], crs = proj_crs))) / 1000000
-      tmp <-
-        c(area.poly - area.hab, area.hab)
-      tmp1 <- crop.proj
-      sf::st_geometry(tmp1) <- NULL
-      tmp1 <- as.data.frame(tmp1)
-      n.polys <-
-        length(unique(as.character(tmp1[, ID_shape])))
-      hab.mat <- matrix(
+      
+      # Methods is hab.map are sp or sf objects
+      if (any(grepl("sf", class(hab.map)))) {
+        crop1 <-
+          sf::st_intersection(hab.map, EOO.poly.crop[x, ]) # cropping to the extent of the polygon
+        crop.proj <- sf::st_transform(crop1, crs = proj_crs)
+        area.hab <-
+          as.numeric(sum(sf::st_area(crop.proj), na.rm = TRUE)) / 1000000
+        area.poly <-
+          as.numeric(sf::st_area(sf::st_transform(EOO.poly.crop[x, ], crs = proj_crs))) / 1000000
+        tmp <-
+          c(area.poly - area.hab, area.hab)
+        tmp1 <- crop.proj
+        sf::st_geometry(tmp1) <- NULL
+        tmp1 <- as.data.frame(tmp1)
+        n.polys <-
+          length(unique(as.character(tmp1[, ID_shape])))
+        hab.mat <- matrix(
           c(NA,  n.polys, 100 * tmp / area.poly, tmp),
           ncol = 3,
           nrow = 2,
           byrow = FALSE
         )
-      row.names(hab.mat) <- c("non_habitat", "habitat")
-      colnames(hab.mat) <- c("numb.polys", "prop.EOO", "area.EOO")
-      res <- cbind.data.frame(tax = EOO.poly.name[x], 
-                              hab.mat,
-                              stringsAsFactors = FALSE)["habitat",]
-      
-
-      if(export_shp) {
-
-        ## Tried to combine the two sf objects but could not make it with the df info
-        # toto <- c(st_geometry(crop1), st_geometry(EOO.poly.crop[x, ]))
-        # merge(toto, crop1)
-        # toto <- sf::st_multipolygon(st_geometry(eoo1), st_geometry(crop1))
-        # crop1 <- st_cast(crop1, "POLYGON")
-        # eoo1 <- st_cast(EOO.poly.crop[x,], "POLYGON")
-
-        #### CHECK HERE ####
-        #crop1 <- sf::st_cast(crop1, "POLYGON")
-        res <- list(data.frame = res, poly = crop1)
-
-        if (plot) {
-          par(mar = c(3,3,2,2), las=1, tcl=-0.25, mgp=c(2.5,0.5,0))
-          plot(sf::st_geometry(EOO.poly.crop[x, ]),
-               main = EOO.poly.name[x], bg=0)
-          plot(sf::st_geometry(crop1), add = TRUE, col = 1)
-        }
-
-      }
-
-    }
-
-    # Methods if hab.map is a Raster* object  
-    if (any(grepl("Raster", class(hab.map)))) {
-      
-      ext <- raster::extent(sf::st_bbox(EOO.poly.crop[x, ])[c(1,3,2,4)])
-      crop1 <- raster::crop(hab.map, ext) # cropping raster to the extent of the polygon
-      
-      raster.res <- raster::res(crop1)
-      if (grepl("longlat", raster::crs(crop1))) {
+        row.names(hab.mat) <- c("non_habitat", "habitat")
+        colnames(hab.mat) <- c("numb.polys", "prop.EOO", "area.EOO")
+        res <- cbind.data.frame(tax = EOO.poly.name[x],
+                                hab.mat,
+                                stringsAsFactors = FALSE)["habitat", ]
         
-        raster.res.km <- ((raster.res * 0.11) / 0.000001) / 1000
-        aprox.cell.size <- raster.res.km[1] * raster.res.km[2]
         
-      } else {
-        
-        aprox.cell.size <- raster.res[1] * raster.res[2]
-      }
-      
-      if (EOO.poly.area[x] < aprox.cell.size |
-            (per.area[x] > 2 & EOO.poly.area[x] < 10 * aprox.cell.size)) {
-        
-        transect <- sf::st_zm(
-          sf::st_linestring(
-          sf::st_coordinates(EOO.poly.crop[x, ])
-        ))
-        transect <- sf::st_sfc(transect, crs = sf::st_crs(EOO.poly.crop))
-        transect <- sf::st_sf(transect)
-        ext.transect <- raster::extract(crop1, transect, 
-                                   along = TRUE, cellnumbers = TRUE)
-        tmp <- ext.transect[[1]][!duplicated(ext.transect[[1]][,1]), -1, drop = FALSE]
-        #Setting an empty object of the raster area (to ease code flow)
-        mask1 <- NULL
-        r.area <- NULL
-        
-      } else {
-        
-        mask1 <- raster::mask(crop1, mask = EOO.poly.crop[x, ])
-        tmp  <- raster::getValues(mask1) # much faster than raster::extract
-        #Getting the approximated area of the masked raster (in km2)
-        mask.area <- raster::area(mask1[[1]], na.rm = TRUE)
-        r.area <- raster::cellStats(mask.area, 'sum')
-        
-      }
-      
-      #Removing NA pixels for calculations
-      if (class(tmp) %in% c("numeric", "integer"))
-        tmp <- tmp[!is.na(tmp)] # excluding pixels outside the EOO
-      if (class(tmp) %in% c("matrix", "data.frame"))
-        tmp  <- tmp[!is.na(tmp[, 1]), , drop = FALSE] # excluding pixels outside the EOO
-      
-      #Getting approximate raster area touching the EOO polygon (very small or elongated EOOs)
-      #This way of getting the area overestimates the real EOO area...
-      if (is.null(r.area) & class(tmp) %in% c("numeric", "integer"))
-        r.area <- length(tmp) * raster.res.km[1] * raster.res.km[2]
-      if (is.null(r.area) & class(tmp) %in% c("matrix", "data.frame"))
-        r.area <- dim(tmp)[1] * raster.res.km[1] * raster.res.km[2]
-      
-      #Methods if raster contains categorical variables (e.g. land-use classes)
-      if (!is.null(hab.class)) {
-
-        # Getting habitat quantities (land-use maps)
-        if (r.area == 0) {
+        if (export_shp) {
+          ## Tried to combine the two sf objects but could not make it with the df info
+          # toto <- c(st_geometry(crop1), st_geometry(EOO.poly.crop[x, ]))
+          # merge(toto, crop1)
+          # toto <- sf::st_multipolygon(st_geometry(eoo1), st_geometry(crop1))
+          # crop1 <- st_cast(crop1, "POLYGON")
+          # eoo1 <- st_cast(EOO.poly.crop[x,], "POLYGON")
           
-          res <- matrix(NA, nrow = 1, ncol=2,
-                        dimnames = list("habitat", c("prop.EOO", "area.EOO")))  
+          #### CHECK HERE ####
+          #crop1 <- sf::st_cast(crop1, "POLYGON")
+          res <- list(data.frame = res, poly = crop1)
+          
+          if (plot) {
+            par(
+              mar = c(3, 3, 2, 2),
+              las = 1,
+              tcl = -0.25,
+              mgp = c(2.5, 0.5, 0)
+            )
+            plot(sf::st_geometry(EOO.poly.crop[x,]),
+                 main = EOO.poly.name[x],
+                 bg = 0)
+            plot(sf::st_geometry(crop1), add = TRUE, col = 1)
+          }
+          
+        }
+      }
+
+      # Methods if hab.map is a Raster* object
+      if (any(grepl("Raster", class(hab.map)))) {
+        
+        ext <- raster::extent(sf::st_bbox(EOO.poly.crop[x,])[c(1, 3, 2, 4)])
+        crop1 <-
+          raster::crop(hab.map, ext) # cropping raster to the extent of the polygon
+        
+        raster.res <- raster::res(crop1)
+        if (grepl("longlat", raster::crs(crop1))) {
+          
+          raster.res.km <- ((raster.res * 0.11) / 0.000001) / 1000
+          aprox.cell.size <- raster.res.km[1] * raster.res.km[2]
           
         } else {
           
-          mask.dim <- dim(tmp)
-          pixs <- mask.dim[1]
-          last <- mask.dim[2]
-          hab.mat <- 
-            as.matrix(table(factor(tmp[, last] %in% hab.class, 
-                                   levels = c(FALSE, TRUE))))
-          row.names(hab.mat) <- c("non_habitat", "habitat")
-          hab.mat <- cbind(hab.mat, 100 * hab.mat/pixs)
-          hab.mat <- cbind(hab.mat, (hab.mat[,2]* r.area)/100)
-          colnames(hab.mat) <- c("n.pixs", "prop.EOO", "area.EOO")
-        }  
-
-        # Extra codes if more than one raster is provided
-        if (class(crop1) == "RasterBrick") {
-
-          if(r.area == 0) {
+          aprox.cell.size <- raster.res[1] * raster.res[2]
+          
+        }
+        
+        if (EOO.poly.area[x] < aprox.cell.size |
+            (per.area[x] > 2 &
+             EOO.poly.area[x] < 10 * aprox.cell.size)) {
+          
+          transect <- sf::st_zm(sf::st_linestring(sf::st_coordinates(EOO.poly.crop[x,])))
+          transect <-
+            sf::st_sfc(transect, crs = sf::st_crs(EOO.poly.crop))
+          transect <- sf::st_sf(transect)
+          ext.transect <- raster::extract(crop1, transect,
+                                          along = TRUE, cellnumbers = TRUE)
+          tmp <-
+            ext.transect[[1]][!duplicated(ext.transect[[1]][, 1]),-1, drop = FALSE]
+          #Setting an empty object of the raster area (to ease code flow)
+          mask1 <- NULL
+          r.area <- NULL
+          
+        } else {
+          
+          mask1 <- raster::mask(crop1, mask = EOO.poly.crop[x,])
+          tmp  <-
+            raster::getValues(mask1) # much faster than raster::extract
+          
+          #Getting the approximated area of the masked raster (in km2)
+          mask.area <- raster::area(mask1[[1]], na.rm = TRUE)
+          r.area <- raster::cellStats(mask.area, 'sum')
+          
+        }
+        
+        #Removing NA pixels for calculations
+        if (class(tmp) %in% c("numeric", "integer", "logical"))
+          tmp <- tmp[!is.na(tmp)] # excluding pixels outside the EOO
+        
+        if (class(tmp) %in% c("matrix", "data.frame"))
+          tmp  <-
+          tmp[!is.na(tmp[, 1]), , drop = FALSE] # excluding pixels outside the EOO
+        
+        #Getting approximate raster area touching the EOO polygon (very small or elongated EOOs)
+        #This way of getting the area overestimates the real EOO area...
+        if (is.null(r.area) & class(tmp) %in% c("numeric", "integer", "logical"))
+          r.area <- length(tmp) * raster.res.km[1] * raster.res.km[2]
+        
+        if (is.null(r.area) &
+            class(tmp) %in% c("matrix", "data.frame"))
+          r.area <- dim(tmp)[1] * raster.res.km[1] * raster.res.km[2]
+        
+        #Methods if raster contains categorical variables (e.g. land-use classes)
+        if (!is.null(hab.class)) {
+          # Getting habitat quantities (land-use maps)
+          if (r.area == 0) {
             
-            res <- cbind.data.frame(tax = EOO.poly.name[x], 
-                                    res,
-                                    matrix(NA, nrow = 1, ncol=9,
-                                           dimnames = list("habitat", 
-                                                           c("loss", "recover", 
-                                                             "rel.loss", "rel.recover",
-                                                             "rate.loss", "rate.recover",
-                                                             "hab.quality", "hab.quality.lo", "hab.quality.hi"))),
+            res <- matrix(
+              NA,
+              nrow = 1,
+              ncol = 2,
+              dimnames = list("habitat", c("prop.EOO", "area.EOO"))
+            )
+            
+          } else {
+            
+            if (is.logical(hab.class)) {
+              
+              if (!is.logical(tmp)) 
+                stop("hab.class is logical but the provided raster values are not logical")
+              
+              hab.mat <- 
+                data.frame(matrix(ncol = 3, nrow = 2))
+              rownames(hab.mat) <- c("non_habitat", "habitat")
+              colnames(hab.mat) <- c("n.pixs", "prop.EOO", "area.EOO")
+              hab.mat$n.pixs <- table(tmp)
+              hab.mat$prop.EOO <- hab.mat$n.pixs / length(tmp)
+              hab.mat$area.EOO <- (hab.mat$n.pixs * r.area) / 100
+              
+            } else {
+              
+              mask.dim <- dim(tmp)
+              pixs <- mask.dim[1]
+              last <- mask.dim[2]
+              hab.mat <-
+                as.matrix(table(factor(
+                  tmp[, last] %in% hab.class,
+                  levels = c(FALSE, TRUE)
+                )))
+              row.names(hab.mat) <- c("non_habitat", "habitat")
+              hab.mat <- cbind(hab.mat, 100 * hab.mat / pixs)
+              hab.mat <- cbind(hab.mat, (hab.mat[, 2] * r.area) / 100)
+              colnames(hab.mat) <- c("n.pixs", "prop.EOO", "area.EOO")
+              
+            }
+          }
+          
+          # Extra codes if more than one raster is provided
+          if (class(crop1) == "RasterBrick") {
+            if (r.area == 0) {
+              res <- cbind.data.frame(
+                tax = EOO.poly.name[x],
+                res,
+                matrix(
+                  NA,
+                  nrow = 1,
+                  ncol = 9,
+                  dimnames = list(
+                    "habitat",
+                    c(
+                      "loss",
+                      "recover",
+                      "rel.loss",
+                      "rel.recover",
+                      "rate.loss",
+                      "rate.recover",
+                      "hab.quality",
+                      "hab.quality.lo",
+                      "hab.quality.hi"
+                    )
+                  )
+                ),
+                stringsAsFactors = FALSE
+              )
+              
+            } else {
+              # Getting the overal percentage of each transition
+              transit.mat <-
+                100 * as.matrix(table(
+                  factor(tmp[, 1] %in% hab.class, levels = c(FALSE, TRUE)),
+                  factor(tmp[, last] %in% hab.class, levels = c(FALSE, TRUE))
+                )) / pixs
+              colnames(transit.mat) <- c("non_habitat_t1", "habitat_t1")
+              row.names(transit.mat) <-
+                c("non_habitat_t0", "habitat_t0")
+              hab.mat <-
+                cbind(hab.mat, loss = c(transit.mat[1, 2], transit.mat[2, 1]))
+              hab.mat <-
+                cbind(hab.mat, recover = c(transit.mat[2, 1], transit.mat[1, 2]))
+              
+              # % of habitat loss and recovery
+              hab_loss <-
+                100 * transit.mat[2, 1] / sum(transit.mat[2,])
+              non_hab_loss <-
+                100 * transit.mat[1, 2] / sum(transit.mat[1,])
+              hab_rec <- 100 * transit.mat[1, 2] / sum(transit.mat[, 2])
+              non_hab_rec <-
+                100 * transit.mat[2, 1] / sum(transit.mat[, 1])
+              hab.mat <-
+                cbind(hab.mat, rel.loss = c(non_hab_loss, hab_loss))
+              hab.mat <-
+                cbind(hab.mat, rel.recover = c(non_hab_rec, hab_rec))
+              
+              # rate of loss and recovery
+              if (is.null(years)) {
+                years <- dim(hab.map)[3] - 1
+                warning("Time interval not provided and takes as the number of rasters minus one")
+              }
+              
+              non_hab_loss_rate <- non_hab_loss / years
+              hab_loss_rate <- hab_loss / years
+              non_hab_rec_rate <- non_hab_rec / years
+              hab_rec_rate <- hab_rec / years
+              hab.mat <-
+                cbind(hab.mat,
+                      rate.loss = c(non_hab_loss_rate, hab_loss_rate))
+              hab.mat <-
+                cbind(hab.mat,
+                      rate.recover = c(non_hab_rec_rate, hab_rec_rate))
+              
+              # defining habitat quality at time t+1
+              transit <- matrix(NA, ncol = 1, nrow = pixs)
+              transit[tmp[, 1] %in% hab.class &
+                        tmp[, last] %in% hab.class, 1] <- 2
+              transit[tmp[, 1] %in% hab.class &
+                        !tmp[, last] %in% hab.class, 1] <- -2
+              transit[!tmp[, 1] %in% hab.class &
+                        tmp[, last] %in% hab.class, 1] <- 1
+              transit[!tmp[, 1] %in% hab.class &
+                        !tmp[, last] %in% hab.class, 1] <- 0
+              if (dim(transit)[1] > 3) {
+                mod <- stats::lm(base::jitter(transit, factor = 0.1) ~ 1)
+                ci <- round(stats::confint(mod), 4)
+                hab.mat <- cbind(
+                  hab.mat,
+                  hab.quality = round(as.numeric(stats::coef(mod)), 4),
+                  hab.quality.lo = ci[1],
+                  hab.quality.hi = ci[2]
+                )
+                
+              } else {
+                hab.mat <- cbind(
+                  hab.mat,
+                  hab.quality = round(mean(transit), 4),
+                  hab.quality.lo = NA,
+                  hab.quality.hi = NA
+                )
+                
+              }
+              
+              res <-
+                cbind.data.frame(tax = EOO.poly.name[x],
+                                 hab.mat[, -1],
+                                 stringsAsFactors = FALSE)["habitat", ]
+              
+              # location of decline and recover
+              #### CHECK HERE FOR A BETTER SOLUTION FOR SPECIES WIHOUT A MASK1 OBJECT ####
+              #THESE ARE SPECIES WITH VERY SMALL OR ELONGATED EOOs...
+              if (export_shp & !is.null(mask1)) {
+                loc.loss <- data.frame(
+                  cell = 1:length(mask1[[1]]@data@values),
+                  raster::coordinates(mask1[[1]]),
+                  classes = NA_integer_
+                )
+                
+                loc.loss$classes[!is.na(mask1[[1]]@data@values)] <-
+                  transit
+                r <-
+                  raster::rasterFromXYZ(loc.loss[!is.na(loc.loss$classes), 2:4],
+                                        crs = raster::crs(mask1[[1]]))
+                names(r) <- EOO.poly.name[x]
+                
+                if (plot) {
+                  par(
+                    mar = c(3, 3, 2, 2),
+                    las = 1,
+                    tcl = -0.25,
+                    mgp = c(2.5, 0.5, 0)
+                  )
+                  plot(
+                    r,
+                    col = c("red", "grey", "green", "darkgreen"),
+                    main = EOO.poly.name[x]
+                  )
+                  plot(sf::st_geometry(EOO.poly.crop[x, ]),
+                       add = TRUE,
+                       bg = 0)
+                }
+                
+                res <- list(data.frame = res, raster = r)
+                
+              }
+            }
+          }
+          
+          #Methods if raster contains continuous variables (e.g. altitude)
+        } else {
+          
+          #Getting summary stats for the variable in the EOO (quantitative maps)
+          if (class(tmp) %in% c("integer", "numeric", "logical")) {
+            
+            vals <- tmp # excluding pixels outside the EOO
+            pixs <- length(vals)
+            
+          }
+          
+          if (class(tmp) %in% c("matrix", "data.frame")) {
+            
+            last <- dim(tmp)[2]
+            vals <- tmp[, last] # excluding pixels outside the EOO
+            pixs <- length(vals)
+            
+          }
+          
+          sumario <-
+            matrix(
+              unclass(summary(vals)),
+              nrow = 1,
+              ncol = 6,
+              dimnames = list("", c(
+                "Min", "1st_Qu", "Median", "Mean", "3rd_Qu", "Max"
+              ))
+            )
+          
+          ### CONFIDENCE INTERVALS WERE VERY UNINFORMATIVE (CLOSE TO THE MEAN), SO ARE NO LONGER RETURNED
+          # if(class(vals) %in% "integer") {
+          #   mod <- stats::glm(vals ~ 1, family = "poisson" )
+          #   ci <- suppressMessages(round(exp(stats::confint(mod)),4))
+          # }
+          # if(class(tmp) %in% "numeric") {
+          #   mod <- stats::lm(vals ~ 1)
+          #   ci <- suppressMessages(round(stats::confint(mod),4))
+          # }
+          
+          #Getting outputs in the format required by the user
+          if (output_raster %in% "summary") {
+            
+            res <- cbind.data.frame(tax = EOO.poly.name[x],
+                                    sumario, # ci,
                                     stringsAsFactors = FALSE)
             
+            
           } else {
             
-          # Getting the overal percentage of each transition
-          transit.mat <-
-            100 * as.matrix(table(
-              factor(tmp[, 1] %in% hab.class, levels = c(FALSE, TRUE)),
-              factor(tmp[, last] %in% hab.class, levels = c(FALSE, TRUE))
-            )) / pixs
-          colnames(transit.mat) <- c("non_habitat_t1", "habitat_t1")
-          row.names(transit.mat) <- c("non_habitat_t0", "habitat_t0")
-          hab.mat <- cbind(hab.mat, loss = c(transit.mat[1, 2], transit.mat[2, 1]))
-          hab.mat <- cbind(hab.mat, recover = c(transit.mat[2, 1], transit.mat[1, 2]))
-
-          # % of habitat loss and recovery
-          hab_loss <- 100 * transit.mat[2, 1] / sum(transit.mat[2, ])
-          non_hab_loss <- 100 * transit.mat[1, 2] / sum(transit.mat[1, ])
-          hab_rec <- 100 * transit.mat[1, 2] / sum(transit.mat[, 2])
-          non_hab_rec <- 100 * transit.mat[2, 1] / sum(transit.mat[, 1])
-          hab.mat <- cbind(hab.mat, rel.loss = c(non_hab_loss, hab_loss))
-          hab.mat <- cbind(hab.mat, rel.recover = c(non_hab_rec, hab_rec))
-
-          # rate of loss and recovery
-          if(is.null(years)) {
-            years <- dim(hab.map)[3] - 1
-            warning("Time interval not provided and takes as the number of rasters minus one")
-          }  
-
-          non_hab_loss_rate <- non_hab_loss / years
-          hab_loss_rate <- hab_loss / years
-          non_hab_rec_rate <- non_hab_rec / years
-          hab_rec_rate <- hab_rec / years
-          hab.mat <- cbind(hab.mat, rate.loss = c(non_hab_loss_rate, hab_loss_rate))
-          hab.mat <- cbind(hab.mat, rate.recover = c(non_hab_rec_rate, hab_rec_rate))
-
-          # defining habitat quality at time t+1
-          transit <- matrix(NA, ncol = 1, nrow = pixs)
-          transit[tmp[, 1] %in% hab.class &
-                    tmp[, last] %in% hab.class, 1] <- 2
-          transit[tmp[, 1] %in% hab.class &
-                    !tmp[, last] %in% hab.class, 1] <- -2
-          transit[!tmp[, 1] %in% hab.class &
-                    tmp[, last] %in% hab.class, 1] <- 1
-          transit[!tmp[, 1] %in% hab.class &
-                    !tmp[, last] %in% hab.class, 1] <- 0
-          if (dim(transit)[1] > 3) {
-            mod <- stats::lm(base::jitter(transit, factor=0.1) ~ 1)
-            ci <- round(stats::confint(mod),4)
-            hab.mat <- cbind(hab.mat,
-                             hab.quality = round(as.numeric(stats::coef(mod)),4),
-                             hab.quality.lo = ci[1],
-                             hab.quality.hi = ci[2])
-
-          } else {
-            hab.mat <- cbind(hab.mat,
-                             hab.quality = round(mean(transit),4),
-                             hab.quality.lo = NA,
-                             hab.quality.hi = NA)
+            #Tabulating pixels
+            tmp1 <- table(factor(vals, levels = classes))
+            prop <-
+              matrix(
+                round(100 * unclass(tmp1) / pixs, 8),
+                nrow = 1,
+                ncol = length(classes),
+                dimnames = list("", classes)
+              )
             
-          }
-
-          res <- cbind.data.frame(tax = EOO.poly.name[x], hab.mat[,-1],
-                                  stringsAsFactors = FALSE)["habitat",]
-          
-          # location of decline and recover
-          #### CHECK HERE FOR A BETTER SOLUTION FOR SPECIES WIHOUT A MASK1 OBJECT ####
-          #THESE ARE SPECIES WITH VERY SMALL OR ELONGATED EOOs... 
-          if (export_shp & !is.null(mask1)) {
+            if (output_raster == "prop.table")
+              res <- cbind.data.frame(tax = EOO.poly.name[x],
+                                      prop,
+                                      stringsAsFactors = FALSE)
             
-            loc.loss <- data.frame(
-              cell = 1:length(mask1[[1]]@data@values), 
-              raster::coordinates(mask1[[1]]),
-              classes = NA_integer_
-            )
-
-            loc.loss$classes[!is.na(mask1[[1]]@data@values)] <- transit 
-            r <- raster::rasterFromXYZ(loc.loss[!is.na(loc.loss$classes), 2:4],
-                                       crs = raster::crs(mask1[[1]]))
-            names(r) <- EOO.poly.name[x]
-
-            if (plot) {
-              par(mar = c(3,3,2,2), las=1, tcl=-0.25, mgp=c(2.5,0.5,0))
-              plot(r, col = c("red", "grey", "green", "darkgreen"),
-                   main = EOO.poly.name[x])
-              plot(sf::st_geometry(EOO.poly.crop[x,]), add = TRUE, bg = 0)
+            if (output_raster == "area.table") {
+              area <- round((prop * r.area) / 100, 3)
+              res <- cbind.data.frame(tax = EOO.poly.name[x],
+                                      area,
+                                      stringsAsFactors = FALSE)
+              
             }
-
-            res <- list(data.frame = res, raster = r)
-
+            
+            
           }
-         }
         }
-
-      #Methods if raster contains continuous variables (e.g. altitude)
-      } else {
-
-        #Getting summary stats for the variable in the EOO (quantitative maps)
-        if(class(tmp) %in% c("integer","numeric")) {
-          vals <- tmp # excluding pixels outside the EOO
-          pixs <- length(vals)
-        }
-        if(class(tmp) %in% c("matrix","data.frame")) {
-          last <- dim(tmp)[2]
-          vals <- tmp[, last] # excluding pixels outside the EOO
-          pixs <- length(vals)
-        }
-        sumario <- matrix(unclass(summary(vals)), nrow = 1, ncol = 6, 
-                          dimnames = list("", c("Min","1st_Qu","Median","Mean","3rd_Qu","Max")))
-
-        ### CONFIDENCE INTERVALS WERE VERY UNINFORMATIVE (CLOSE TO THE MEAN), SO ARE NO LONGER RETURNED
-        # if(class(vals) %in% "integer") {
-        #   mod <- stats::glm(vals ~ 1, family = "poisson" )
-        #   ci <- suppressMessages(round(exp(stats::confint(mod)),4))
-        # }
-        # if(class(tmp) %in% "numeric") {
-        #   mod <- stats::lm(vals ~ 1)
-        #   ci <- suppressMessages(round(stats::confint(mod),4))
-        # }
-
-        #Getting outputs in the format required by the user
-        if(output_raster %in% "summary") {
-          res <- cbind.data.frame(tax = EOO.poly.name[x],
-                   sumario, # ci,
-                   stringsAsFactors = FALSE)
-
-        } else {
-          
-          #Tabulating pixels
-          tmp1 <- table(factor(vals, levels = classes))
-          prop <-  matrix(round(100*unclass(tmp1)/pixs, 8), nrow = 1, ncol = length(classes),
-                          dimnames = list("", classes))
-          
-        if(output_raster == "prop.table")
-          res <- cbind.data.frame(tax = EOO.poly.name[x],
-                   prop,
-                   stringsAsFactors = FALSE)
-
-        if(output_raster == "area.table") {
-          
-          area <- round((prop * r.area)/100, 3)
-          res <- cbind.data.frame(tax = EOO.poly.name[x],
-                                  area,
-                                  stringsAsFactors = FALSE)
-          
-        }
-
-          
-        } 
       }
-    }
-    res
+      
+      res
   }
   
   if(parallel) snow::stopCluster(cl)

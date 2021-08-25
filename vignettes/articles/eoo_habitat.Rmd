@@ -41,13 +41,28 @@ dim(test_data)
 
 ```{r}
 
-ex_sp1 <- test_data[which(test_data$taxa == "tax1"),]
-eoo <- EOO.comp(XY = ex_sp1)
+XY <- test_data[which(test_data$taxa == "tax1"),]
+eoo <- EOO.comp(XY = XY)
 spatial_eoo <- eoo$spatial.polygon
 
 extract_elevation <- 
-  elevatr::get_elev_raster(locations = as(spatial_eoo, "Spatial"), z = 6)
+  elevatr::get_elev_raster(locations = as(spatial_eoo, "Spatial"), z = 4)
 
+alt_filter <- extract_elevation > 500
+
+alt_filter <- calc(extract_elevation, function(x) ifelse(x > 500, as.factor(1), as.factor(0)))
+
+alt_filter <- ratify(alt_filter)
+plot(alt_filter)
+plot(spatial_eoo, add = T)
+
+EOO.habitat(EOO.poly = spatial_eoo, hab.map = alt_filter)
+
+
+
+land_cover <- raster::stack(paste0("D:/MonDossierR/conr_add_scripts/ESA_Land_Cover_map_1992_2015_AF_1km.tif"))
+
+EOO.habitat(spatial_eoo, hab.map = land_cover, hab.class = 100, years = 20)
 
 
 ```
