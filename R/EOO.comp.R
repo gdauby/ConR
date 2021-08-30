@@ -137,7 +137,7 @@ EOO.comp <-  function(XY,
   
   if (nrow(unique(XY)) > 1)
     if (max(dist(XY[, 2]), na.rm = T) >= 180)
-      warning(
+      message(
         paste(
           "Occurrences spans more than 180 degrees longitude for species",
           as.character(Name_Sp),
@@ -373,15 +373,31 @@ EOO.comp <-  function(XY,
         #     as(st_transform(p1, 4326), "Spatial")
         # }
         
-        EOO <-
-          as.numeric(st_area(p1)) / 1000000
-        
-        if (mode == "planar")
-          p1 <-
-            sf::st_transform(p1, 4326)
-        
-        p1$tax <- 
-          Name_Sp
+        if (!sf::st_is_valid(p1)) {
+          
+          warning(
+            paste(
+              "Failed to build a valid polygon to estimate EOO for ",
+              as.character(Name_Sp),
+              ". This is probably because occurrences spans more than 180 degrees longitude."
+            )
+          )
+          
+          EOO <- NA
+          
+        } else {
+          
+          EOO <-
+            as.numeric(st_area(p1)) / 1000000
+          
+          if (mode == "planar")
+            p1 <-
+              sf::st_transform(p1, 4326)
+          
+          p1$tax <- 
+            Name_Sp
+          
+        }
         
       } else  {
         
