@@ -102,7 +102,7 @@ locations.comp <- function(XY,
     
     x <- NULL
     
-    if(show_progress) {
+    if (show_progress) {
       pb <-
         utils::txtProgressBar(min = 0,
                               max = length(list_data),
@@ -111,7 +111,9 @@ locations.comp <- function(XY,
       progress <- function(n)
         utils::setTxtProgressBar(pb, n)
       opts <- list(progress = progress)
-    }else{opts <- NULL}
+    } else{
+      opts <- NULL
+    }
     
     output <-
       foreach::foreach(
@@ -142,7 +144,7 @@ locations.comp <- function(XY,
     if(show_progress) close(pb)
     
     Locations <- unlist(output[names(output) == "nbe_occ"])
-    r2 <- unlist(output[names(output) == "spatial"])
+    r2 <- output[names(output) == "spatial"]
     names(Locations) <-
       names(r2) <-
       gsub(pattern = " ",
