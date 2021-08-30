@@ -295,17 +295,35 @@ cat_criterion_b <- function(EOO = NULL,
     if (is.null(ranks_B12a_orig))
       return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final))
     if (!is.null(ranks_B12a_orig))
-      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, orig_ranks_B = ranks_B12a_orig))
+      return(
+        list(
+          ranks_B = ranks_B12a_final,
+          cats_code = cat_codes_final,
+          orig_ranks_B = ranks_B12a_orig
+        )
+      )
     
   }
   
-  if(all.cats) {
-    all_cats <- cbind.data.frame(B1a = ranks_B1a, B2a = ranks_B2a, 
+  if (all.cats) {
+    all_cats <- cbind.data.frame(B1a = ranks_B1a,
+                                 B2a = ranks_B2a,
                                  stringsAsFactors = FALSE)
     if (is.null(ranks_B12a_orig))
-      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, all_cats = all_cats))
+      return(list(
+        ranks_B = ranks_B12a_final,
+        cats_code = cat_codes_final,
+        all_cats = all_cats
+      ))
     if (!is.null(ranks_B12a_orig))
-      return(list(ranks_B = ranks_B12a_final, cats_code = cat_codes_final, orig_ranks_B = ranks_B12a_orig, all_cats = all_cats))
+      return(
+        list(
+          ranks_B = ranks_B12a_final,
+          cats_code = cat_codes_final,
+          orig_ranks_B = ranks_B12a_orig,
+          all_cats = all_cats
+        )
+      )
     
   }
 }
