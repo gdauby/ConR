@@ -132,20 +132,31 @@ criterion_B <- function(x,
     
     subpop_stats <-
       subpop.comp(
-        x,
+        XY = x,
         Resol_sub_pop = 10,
         parallel = parallel,
         show_progress = show_progress,
-        NbeCores = NbeCores, 
-        proj_type = proj_type
+        NbeCores = NbeCores,
+        proj_type = proj_type, 
+        export_shp = ifelse(DrawMap, TRUE, FALSE)
       )
     
-    SubPopPoly <- subpop_stats$number_subpop
-    NbeSubPop <- subpop_stats$poly_subpop
+    if (DrawMap) {
+      
+      SubPopPoly <- subpop_stats$poly_subpop
+      NbeSubPop <- subpop_stats$number_subpop
+      
+    } else {
+      
+      NbeSubPop <- subpop_stats
+      
+    }
     
-  }else{
+
     
-    SubPopPoly <- vector(mode = "numeric", length = length(unique(x$tax)))
+  } else {
+    
+    NbeSubPop <- vector(mode = "numeric", length = length(unique(x$tax)))
     
   }
   
@@ -217,9 +228,9 @@ criterion_B <- function(x,
       EOO = EOO,
       AOO = AOO,
       locations = locations_res[[2]],
-      category = categories$ranks_B12a,
-      cat_codes = categories$cat_codes,
-      subpop = SubPopPoly
+      category = categories$ranks_B,
+      cat_codes = categories$cats_code,
+      subpop = NbeSubPop
     )
   
   return(results_full)
