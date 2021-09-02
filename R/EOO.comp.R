@@ -137,11 +137,11 @@ EOO.comp <-  function(XY,
   
   if (nrow(unique(XY)) > 1)
     if (max(dist(XY[, 2]), na.rm = T) >= 180)
-      message(
+      warning(
         paste(
-          "Occurrences spans more than 180 degrees longitude for species",
+          "Occurrences spans more than 180 degrees longitude for species _",
           as.character(Name_Sp),
-          ". EOO unlikely reliable, check the projection for a proper estimation and used a 'planar' (projected) mode"
+          "_ EOO unlikely reliable, check the projection for a proper estimation and use a 'planar' (projected) mode"
         )
       )
   
@@ -157,7 +157,7 @@ EOO.comp <-  function(XY,
       EOO <- NA
       message(
         paste(
-          "\nEOO parameter cannot be estimated for",
+          "EOO parameter cannot be estimated for",
           as.character(Name_Sp),
           "because there is only 1 unique occurrence"
         )
@@ -193,7 +193,7 @@ EOO.comp <-  function(XY,
         ## if there are two unique occurences, EOO is not computed neither
         message(
           paste(
-            "\nEOO parameter cannot be estimated for",
+            "EOO parameter cannot be estimated for",
             as.character(Name_Sp),
             "because there is less than 3 unique occurrences"
           )
@@ -213,7 +213,7 @@ EOO.comp <-  function(XY,
       
       message(
         paste(
-          "\nOccurrences of",
+          "Occurrences of",
           as.character(Name_Sp),
           "follow a straight line, 'noise' to coordinates is added"
         )
@@ -377,9 +377,9 @@ EOO.comp <-  function(XY,
           
           warning(
             paste(
-              "Failed to build a valid polygon to estimate EOO for ",
+              "Failed to build a valid polygon to estimate EOO for _",
               as.character(Name_Sp),
-              ". This is probably because occurrences spans more than 180 degrees longitude."
+              "_ This is probably because occurrences spans more than 180 degrees longitude."
             )
           )
           
