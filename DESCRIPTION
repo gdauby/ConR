@@ -48,3 +48,4 @@ Authors@R: c(
 	email = "renato.lima@naturalis.nl", 
 	comment = c(ORCID = "0000-0002-1048-0138")))
 RdMacros: lifecycle
+Roxygen: list(markdown = TRUE)
