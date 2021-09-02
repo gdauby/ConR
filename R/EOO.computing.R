@@ -61,14 +61,10 @@
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
-#' @param write_results a logical. If TRUE, results will be exported in the
-#' working environment as a csv file. By default it is FALSE
-#' @param file.name a character string. Name file for exported results in csv
-#' file. By default is "EOO.results"
-#' @param parallel a logical. Whether running in parallel. By default, it is
-#' FALSE
-#' @param NbeCores an integer. Register the number of cores for parallel
-#' execution. By default, it is 2
+#' @param write_results a logical. If TRUE, results will be exported in the  working environment as a csv file. By default it is FALSE
+#' @param file.name a character string. Name file for exported results in csv file. By default is "EOO.results"
+#' @param parallel a logical. Whether running in parallel. By default, it is FALSE
+#' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical. Whether a progress bar should displayed. TRUE by default
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'#'
