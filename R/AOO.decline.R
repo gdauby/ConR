@@ -54,8 +54,9 @@
 #'}
 #'
 #' @importFrom raster projectRaster calc stack extent crop extract
+#' @import sf
 #' 
-#' @export
+#' @export AOO.decline
 AOO.decline <- function(XY,
                         Cell_size_AOO = 2,
                         nbe.rep.rast.AOO = 0,
@@ -74,12 +75,23 @@ AOO.decline <- function(XY,
   if (is.null(hab.map) & is.null(threat.map)) 
     stop("Please provide hab.map or threat.map (a sf polygon object or a raster)")
   
-  if (is.null(hab.map)) {
+  if (!is.null(hab.map)) {
     
     
     if (!any(grepl("Raster", class(hab.map))) & !any(grepl("sf", class(hab.map)))) {
       
       stop("hab.map must be class of raster, RasterBrick, RasterStack or sf")
+      
+    }
+    
+  }
+  
+  if (!is.null(threat.map)) {
+    
+    
+    if (!any(grepl("Raster", class(threat.map))) & !any(grepl("sf", class(threat.map)))) {
+      
+      stop("threat.map must be class of raster, RasterBrick, RasterStack or sf")
       
     }
     
@@ -130,7 +142,7 @@ AOO.decline <- function(XY,
       threat.map_proj <- 
         st_transform(threat.map[[i]], proj_type_)
       
-      intersect_treath_map <- st_intersection(XY_sf, threat.map_proj)
+      intersect_treath_map <- suppressWarnings(st_intersection(XY_sf, threat.map_proj))
       
       ids_to_keep[[i]] <- 
         XY_id$id[!XY_id$id %in% st_set_geometry(intersect_treath_map, NULL)[,"id"]]
@@ -253,35 +265,49 @@ AOO.decline <- function(XY,
   }
   
   XY_ok <- 
-    XY_id[which(XY_id$id %in% as.numeric(names(which(table(unlist(ids_to_keep)) == 3)))),]
+    XY_id[which(XY_id$id %in% as.numeric(names(which(table(unlist(ids_to_keep)) == length(ids_to_keep))))),]
+
+  if (nrow(XY_ok) > 0) {
+    
+    AOO_minus_treats <-
+      AOO.computing(
+        XY = XY_ok,
+        Cell_size_AOO = Cell_size_AOO,
+        nbe.rep.rast.AOO = nbe.rep.rast.AOO,
+        export_shp = FALSE,
+        parallel = parallel,
+        show_progress = show_progress,
+        NbeCores = NbeCores,
+        proj_type = proj_type
+      )
+    
+    AOO_treath <- data.frame(AOO_treath = AOO_minus_treats, 
+                             species = names(AOO_minus_treats))
+    # colnames(AOO_treath)[1] <- "AOO_treath"
+    
+  } else {
+    
+    AOO_treath <- data.frame(AOO_treath = NA, 
+                             species = names(AOO))
+    
+  }
   
-  AOO_minus_treats <-
-    AOO.computing(
-      XY = XY_ok,
-      Cell_size_AOO = Cell_size_AOO,
-      nbe.rep.rast.AOO = nbe.rep.rast.AOO,
-      export_shp = FALSE,
-      parallel = parallel,
-      show_progress = show_progress,
-      NbeCores = NbeCores,
-      proj_type = proj_type
-    )
-  
-  AOO_treath <- data.frame(AOO_minus_treats = AOO_minus_treats, 
-                           species = names(AOO_minus_treats))
-  colnames(AOO_treath)[1] <- "AOO_treath"
   all_data <- merge(all_data,
                     AOO_treath,
-                    by = "species", all.x = T)
+                    by = "species", 
+                    all.x = T)
   
   all_data[which(is.na(all_data[,ncol(all_data)])), ncol(all_data)] <- 0
   
+  all_data_decline <- data.frame(species = all_data[,1], aoo_decline = all_data[,3:ncol(all_data)]/all_data$AOO*100)
   
-  all_data_decline <- data.frame(species = all_data[,1], all_data[,3:ncol(all_data)]/all_data$AOO*100)
+  categories <- data.frame(species = all_data[,1], cat_criterion_a(A2_val = all_data_decline$aoo_decline))
   
-  categories <- data.frame(species = all_data[,1], cat_criterion_a(A1_val = all_data_decline$AOO_treath))
-  
-  return(list(AOOs = all_data, AOO_decline = all_data_decline, categories = categories))
+  return(list(
+    AOOs = all_data,
+    AOO_decline = all_data_decline,
+    categories = categories
+  ))
   
 }
 
