@@ -18,38 +18,38 @@ available (i.e. time series).}
 }
 \value{
 A data frame containing the mean change of the population
-  ("Magnitude.fluctuation"), the percentage of intervals presenting
-  population increases followed by decreases ("Alternance.prop"), the result
-  of a test for the presence of directional changes in the population size
-  ("Direct.change"), and the Standard Error Estimate of the linear regression
-  model fitted to the population trend ("Std.Error.Est.").
+("Magnitude.fluctuation"), the percentage of intervals presenting
+population increases followed by decreases ("Alternance.prop"), the result
+of a test for the presence of directional changes in the population size
+("Direct.change"), and the Standard Error Estimate of the linear regression
+model fitted to the population trend ("Std.Error.Est.").
 }
 \description{
-Based on a time series of population sizes, this function try to 
+Based on a time series of population sizes, this function try to
 tell appart extreme fluctuations from directional population changes.
 }
 \details{
 This is a basic function that quantifies the mean fluctuation of
-  population sizes across time, aiming at the detection 'extreme
-  fluctuations' as defined by IUCN (2019). Here we quantify flucutuations as
-  the mean change in population size between consecutive years in the time
-  series (e.g. if t[i]= 9 and t[i+1]= 90, change is 10). As defined in IUCN
-  (2019), extreme fluctuations are generally characterizes by changes higher
-  than 10 or an order of magnitude.
-  
-  (Detailed xxplanation of 'alternance.prop' pending)
-  
-  The evidence of directional changes is evaluated based on a linear
-  regression model fitted to the population size data. The sign of the slope
-  parameter of the regression is used to assess if population declining or
-  increasing. The confidence interval around the slope estimate is used to
-  evaluated if the declining or increasing tendencies are significant
-  (significance level of 0.05). 
-  
-  The same linear regression model is used to obtain the standard error of
-  the estimate (SEE) of the linear regression fitted to the population trend,
-  which can be used as a measure of the temporal variability in population
-  size (Cuervo & Møller 2017).
+population sizes across time, aiming at the detection 'extreme
+fluctuations' as defined by IUCN (2019). Here we quantify flucutuations as
+the mean change in population size between consecutive years in the time
+series (e.g. if t\link{i}= 9 and t\link{i+1}= 90, change is 10). As defined in IUCN
+(2019), extreme fluctuations are generally characterizes by changes higher
+than 10 or an order of magnitude.
+
+(Detailed xxplanation of 'alternance.prop' pending)
+
+The evidence of directional changes is evaluated based on a linear
+regression model fitted to the population size data. The sign of the slope
+parameter of the regression is used to assess if population declining or
+increasing. The confidence interval around the slope estimate is used to
+evaluated if the declining or increasing tendencies are significant
+(significance level of 0.05).
+
+The same linear regression model is used to obtain the standard error of
+the estimate (SEE) of the linear regression fitted to the population trend,
+which can be used as a measure of the temporal variability in population
+size (Cuervo & Møller 2017).
 }
 \examples{
 
@@ -60,12 +60,12 @@ pop.fluctuation(x = example_fluctuation)
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
- Version 14. Standards and Petitions Committee. Downloadable from:
- http://www.iucnredlist.org/documents/RedListGuidelines.pdf. 
- 
- Cuervo, J.J. & Møller, A.P. (2017). Colonial, more widely distributed and
- less abundant bird species undergo wider population fluctuations independent
- of their population trend. PloS one, 12(3): e0173220.
+Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+
+Cuervo, J.J. & Møller, A.P. (2017). Colonial, more widely distributed and
+less abundant bird species undergo wider population fluctuations independent
+of their population trend. PloS one, 12(3): e0173220.
 }
 \author{
 Lima, R.A.F.

@@ -19,10 +19,10 @@ subpop.comp(
 (see Details).}
 
 \item{Resol_sub_pop}{a value defining the radius of the circles around each
-occurrence (in kilometres) or data frame vector containing a column 'tax' 
+occurrence (in kilometres) or data frame vector containing a column 'tax'
 with the taxa names and a column 'radius' with the species-specific radius
 (in kilometre as well). Typically, this data frame is the output of
-```ConR``` function ```subpop.radius```.}
+\code{ConR} function \code{subpop.radius}.}
 
 \item{proj_type}{character string or numeric or object of CRS class, by
 default is "cea"}
@@ -39,12 +39,12 @@ should be shown. TRUE by default.}
 2.}
 }
 \value{
-If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop a `Simple feature collection` with as many MULTIPOLYGON as taxa
-If `export_shp` is FALSE, a vector with estimated number of subpopulation per taxa
+If \code{export_shp} is TRUE, a list with [\link{1}]number_subpop and [\link{2}]poly_subpop a \verb{Simple feature collection} with as many MULTIPOLYGON as taxa
+If \code{export_shp} is FALSE, a vector with estimated number of subpopulation per taxa
 }
 \description{
 Estimate the number of subpopulations following the method
-  **circular buffer method** (overlapping buffered circles form a single subpopulation)
+\strong{circular buffer method} (overlapping buffered circles form a single subpopulation)
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
@@ -52,9 +52,9 @@ Estimate the number of subpopulations following the method
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
 \tabular{ccc}{
-  [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-  [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, taxa names\cr
+\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr
 }
 }
 \examples{
@@ -72,9 +72,9 @@ subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
 }
 \references{
 Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA
-  (2010) Subpopulations, locations and fragmentation: applying IUCN red list
-  criteria to herbarium specimen data. Biodiversity and Conservation 19:
-  2071-2085. doi: 10.1007/s10531-010-9826-9
+(2010) Subpopulations, locations and fragmentation: applying IUCN red list
+criteria to herbarium specimen data. Biodiversity and Conservation 19:
+2071-2085. doi: 10.1007/s10531-010-9826-9
 }
 \author{
 Gilles Dauby & Renato A. Ferreira de Lima

@@ -56,13 +56,13 @@ TRUE)
 
 If \code{export_data} is TRUE
 
-\strong{Output} \tabular{cccccccc}{ [,1] \tab X \tab numeric, x coordinates
-of cell [,2] \tab Y \tab numeric, y coordinates of cell [,3] \tab meanLat
-\tab numeric, mean latitude of occurrences within cell\cr [,4] \tab meanLat
-\tab numeric, mean longitude of occurrences within cell\cr [,5] \tab NbeRec
-\tab numeric, Number of records\cr [,6] \tab NbeEsp \tab numeric, Number of
-species\cr [,7] \tab NbeThreatened \tab numeric, Number of threatened
-species\cr [,8] \tab PropThreatened \tab numeric, Proportion of threatened
+\strong{Output} \tabular{cccccccc}{ \link{,1} \tab X \tab numeric, x coordinates
+of cell \link{,2} \tab Y \tab numeric, y coordinates of cell \link{,3} \tab meanLat
+\tab numeric, mean latitude of occurrences within cell\cr \link{,4} \tab meanLat
+\tab numeric, mean longitude of occurrences within cell\cr \link{,5} \tab NbeRec
+\tab numeric, Number of records\cr \link{,6} \tab NbeEsp \tab numeric, Number of
+species\cr \link{,7} \tab NbeThreatened \tab numeric, Number of threatened
+species\cr \link{,8} \tab PropThreatened \tab numeric, Proportion of threatened
 species\cr }
 }
 \description{
@@ -77,9 +77,9 @@ following structure:
 \strong{It is mandatory to respect field positions, but field names do not
 matter}
 
-\tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
-degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-[,3] \tab tax \tab character or factor, taxa names\cr }
+\tabular{ccc}{ \link{,1} \tab ddlat \tab numeric, latitude (in decimal
+degrees)\cr \link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr }
 }
 \examples{
 

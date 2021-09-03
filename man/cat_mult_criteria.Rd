@@ -13,21 +13,21 @@ and the assessments under each criterion in the subsequent columns.}
 \item{evidence.df}{a data frame (not currently implemented)}
 }
 \value{
-The same data frame as ```assess.df``` with three new columns: the
-  consensus category ('category'), the main criteria that lead to this
-  category ('main.criteria'). It also returns the auxiliary category provided
-  by other criteria ('aux.criteria'), separated by a ';'
+The same data frame as \code{assess.df} with three new columns: the
+consensus category ('category'), the main criteria that lead to this
+category ('main.criteria'). It also returns the auxiliary category provided
+by other criteria ('aux.criteria'), separated by a ';'
 }
 \description{
 Provide the consensus IUCN category based on multiples IUCN sub-criteria.
 }
 \details{
 The definiton of the main category of threat, follows the
-  recommendations of IUCN (2019) that states "Only the criteria for the
-  highest category of threat that the taxon qualifies for should be listed".
-  Therefore, the consensus category is the highest category of threat among
-  the sub-criteria evaluated. Nevertheless, the function also returns the
-  categories and sub-criteria related to lower categories of threat.
+recommendations of IUCN (2019) that states "Only the criteria for the
+highest category of threat that the taxon qualifies for should be listed".
+Therefore, the consensus category is the highest category of threat among
+the sub-criteria evaluated. Nevertheless, the function also returns the
+categories and sub-criteria related to lower categories of threat.
 }
 \examples{
 df <- data.frame(tax = c("sp1","sp2","sp3","sp4"),
@@ -43,8 +43,8 @@ cat_mult_criteria(df)
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F.

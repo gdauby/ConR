@@ -30,7 +30,7 @@ number of taxa.}
 
 \item{n.Locs}{a vector containing the number of locations for each taxon.}
 
-\item{prop.mature}{a value or vector of the proportion of mature individuals in the 
+\item{prop.mature}{a value or vector of the proportion of mature individuals in the
 total population (IUCN 2019). Default to 1.}
 
 \item{subcriteria}{a vector containing the sub-criteria that should be
@@ -51,34 +51,34 @@ and not just the consensus categories?}
 }
 \value{
 A data frame containing the name of each taxon, the population sizes,
-  the AOO and Number of Locations, the IUCN categories associated with each
-  sub-criterion and the consensus category for criterion D.
+the AOO and Number of Locations, the IUCN categories associated with each
+sub-criterion and the consensus category for criterion D.
 }
 \description{
 Preliminary assessment of species conservation status following
- IUCN Criterion D, which is based on very small or restricted populations 
- (Subcriteria D1 and D2).
+IUCN Criterion D, which is based on very small or restricted populations
+(Subcriteria D1 and D2).
 }
 \details{
 This is a simple and fast function to assess IUCN criterion D. The
-  assessment based solely on population sizes is done automatically, if a
-  vector of population sizes is provided. Caution should be taken while
-  assessing sub-criterion D2. IUCN (2019, p.71) emphasizes that there is no
-  strict thresholds for D2 and that this sub-criterion should only be
-  assessed if the "population is prone to the effects of human activities or
-  stochastic events in an uncertain future, and is thus capable of becoming
-  Critically Endangered or even Extinct in a very short time period. (...).
-  So, simply meeting the suggested (or any other) threshold for AOO or number
-  of locations is not sufficient". Therefore, `criterion_D` assumes no default
-  thresholds for D2.
-  
-  The argument `prop.mature` can be used if the population data provided are not 
-  already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
-  By default, the proportion of mature individuals in the total population proportion 
-  is taken as 1, but the user can provide one proportion for all species or species-
-  specific proportions.
+assessment based solely on population sizes is done automatically, if a
+vector of population sizes is provided. Caution should be taken while
+assessing sub-criterion D2. IUCN (2019, p.71) emphasizes that there is no
+strict thresholds for D2 and that this sub-criterion should only be
+assessed if the "population is prone to the effects of human activities or
+stochastic events in an uncertain future, and is thus capable of becoming
+Critically Endangered or even Extinct in a very short time period. (...).
+So, simply meeting the suggested (or any other) threshold for AOO or number
+of locations is not sufficient". Therefore, \code{criterion_D} assumes no default
+thresholds for D2.
 
-  Currenlty, the function does not supports data separated by subpopulation.
+The argument \code{prop.mature} can be used if the population data provided are not
+already the number of mature individuals (i.e. population size sensu IUCN, 2019).
+By default, the proportion of mature individuals in the total population proportion
+is taken as 1, but the user can provide one proportion for all species or species-
+specific proportions.
+
+Currenlty, the function does not supports data separated by subpopulation.
 }
 \examples{
 
@@ -105,8 +105,8 @@ criterion_D(pop.size = NULL,
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F. & Dauby, G.

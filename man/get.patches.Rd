@@ -27,7 +27,7 @@ get.patches(
 around each occurrence}
 
 \item{subpop_poly}{Simple feature collection, output of
-```subpop.estimation``` function}
+\code{subpop.estimation} function}
 
 \item{dist_isolated}{numeric. Distance in kilometres for identifying
 subpopulations considered to be isolated}
@@ -45,14 +45,13 @@ Get Occupied Cells and Patches
 This function evaluates the proportion of the total area of
 occupancy in habitat patches separated from others by a large distance. Based
 on IUCN guidelines page(48): "A taxon can be considered to be severely
-fragmented if most (>50%) of its total area of occupancy is in habitat
+fragmented if most (>50\%) of its total area of occupancy is in habitat
 patches that are (...) (2) separated from other habitat patches by a large
 distance."
 
 This function interpret subpopulations as obtained using
-```subpop.estimation``` function as habitat patches. First, subpopulations
-that are isolated i.e. distant to all others subpopulations by at ```least
-dist_isolated``` kilometres, are identified. Then, the percentage of the AOO
+\code{subpop.estimation} function as habitat patches. First, subpopulations
+that are isolated i.e. distant to all others subpopulations by at \verb{least dist_isolated} kilometres, are identified. Then, the percentage of the AOO
 concerned by those "isolated" subpopulations is calculated.
 }
 \examples{

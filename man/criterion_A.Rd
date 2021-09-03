@@ -26,7 +26,7 @@ criterion_A(
 }
 \arguments{
 \item{x}{a vector (one species) or a data frame (multiple species/
-subpopulations) containing the population size per year, from the oldest 
+subpopulations) containing the population size per year, from the oldest
 to the most recent population estimate.}
 
 \item{years}{a vector containing the years for which the population sizes
@@ -63,57 +63,57 @@ recommended by the IUCN.}
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
 
-\item{parallel}{logical. Should calculations be parallelized? Default to 
+\item{parallel}{logical. Should calculations be parallelized? Default to
 FALSE.}
 
-\item{NbeCores}{integer. Number of cores for parallel computing. Default 
+\item{NbeCores}{integer. Number of cores for parallel computing. Default
 to 2.}
 
 \item{show_progress}{logical. Should the progress bar be displayed? Default
 to TRUE.}
 
-\item{...}{other parameters to be passed as arguments for function `pop.decline.fit`}
+\item{...}{other parameters to be passed as arguments for function \code{pop.decline.fit}}
 }
 \value{
 A data frame containing, for each taxon, the year of assessment, the
-  time interval of the assessment (include past and future estimates, if
-  any), the population size in the interval of assessment, the reduction of
-  the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
-  model used to obtain the projections of population size (if used), the IUCN
-  categories associated with these sub-criteria and the consensus category
-  for criterion A.
+time interval of the assessment (include past and future estimates, if
+any), the population size in the interval of assessment, the reduction of
+the population size using the chosen sub-criteria (A1, A2, A3, and A4), the
+model used to obtain the projections of population size (if used), the IUCN
+categories associated with these sub-criteria and the consensus category
+for criterion A.
 }
 \description{
 Preliminary assessment of species conservation status following
- IUCN Criterion A, which is based on population size reductions (Criteria A1, 
- A2, A3, and A4)
+IUCN Criterion A, which is based on population size reductions (Criteria A1,
+A2, A3, and A4)
 }
 \details{
-As described in IUCN (2019), the choice between criteria A1 or A2 depends on 
-  three conditions: the reduction must be reversible, the causes of the reduction 
-  must be understood, and the threats must have ceased. "If any of the three conditions 
-  (reversible and understood and ceased) are not met (...), then A2 should be used 
-  instead of A1" (IUCN, 2019).
+As described in IUCN (2019), the choice between criteria A1 or A2 depends on
+three conditions: the reduction must be reversible, the causes of the reduction
+must be understood, and the threats must have ceased. "If any of the three conditions
+(reversible and understood and ceased) are not met (...), then A2 should be used
+instead of A1" (IUCN, 2019).
 
-  Some important notes. The function can return the predictions of population
-  estimates for years not in the observed data, based on the fit of a set of different 
-  statistical models. As stated in IUCN (2019), the model used to make the 
-  predictions can result in very different estimates. So, it is preferable that
-  the user choose one or two of the models based on the best available information 
-  on types of threat (i.e. patterns of exploitation or habitat loss), life history 
-  and ecology of the taxon being evaluated or any other processes that may contribute 
-  to population decline. See IUCN (2019) for more details on the assumptions of each model.
-  The selection of models based solely on their fit to population size should only be used 
-  for larger time series (Number of observations > 10). 
-  
-  Some more technical notes. If `years` is a subset of all the years contained in `x`, 
-  then `x` is filtered based on `years`. So, make sure you have selected the right years.
-  If the year of assessment is not given, the most recent year is taken instead. The function 
-  accepts a single generation length for all species or species-specific generation lengths. 
-  In the latter case, it is necessary to provide exactly one value for each species analyzed.
-  Currently, only one assessment year can be assigned for all taxa. Similarly, only
-  one vector of years with population size available. Thus, it is advised not to mix
-  taxa with great differences in generation length.
+Some important notes. The function can return the predictions of population
+estimates for years not in the observed data, based on the fit of a set of different
+statistical models. As stated in IUCN (2019), the model used to make the
+predictions can result in very different estimates. So, it is preferable that
+the user choose one or two of the models based on the best available information
+on types of threat (i.e. patterns of exploitation or habitat loss), life history
+and ecology of the taxon being evaluated or any other processes that may contribute
+to population decline. See IUCN (2019) for more details on the assumptions of each model.
+The selection of models based solely on their fit to population size should only be used
+for larger time series (Number of observations > 10).
+
+Some more technical notes. If \code{years} is a subset of all the years contained in \code{x},
+then \code{x} is filtered based on \code{years}. So, make sure you have selected the right years.
+If the year of assessment is not given, the most recent year is taken instead. The function
+accepts a single generation length for all species or species-specific generation lengths.
+In the latter case, it is necessary to provide exactly one value for each species analyzed.
+Currently, only one assessment year can be assigned for all taxa. Similarly, only
+one vector of years with population size available. Thus, it is advised not to mix
+taxa with great differences in generation length.
 }
 \examples{
 ## Simplest example: one species, two observations in time, one subcriterion
@@ -173,8 +173,8 @@ criterion_A(example_criterionA,
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F. & Dauby, G.

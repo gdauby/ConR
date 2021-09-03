@@ -45,7 +45,7 @@ locations.comp(
 \item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 }
 \value{
-A list with one list for each species containing [[1]]SpatialPolygonDataframe and [[2]]vector of the number of location.
+A list with one list for each species containing [\link{1}]SpatialPolygonDataframe and [\link{2}]vector of the number of location.
 }
 \description{
 Estimate the number of locations for multiple taxa
@@ -56,9 +56,9 @@ Estimate the number of locations for multiple taxa
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
 \tabular{ccc}{
-  [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-  [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, taxa names\cr
+\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr
 }
 
 Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for
@@ -68,10 +68,10 @@ minimize the number of locations (several translation of the grid are
 performed and the one providing the minimum number of occupied cells is
 provided).
 
-If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined 
+If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined
 by the argument \code{Cell_size_locations}.
-If \code{method} is "sliding scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
-and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default. 
+If \code{method} is "sliding scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences
+and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default.
 See Rivers M.C. et al. (2010) for more information on the methods.
 }
 \examples{

@@ -13,7 +13,7 @@ A data frame with seven rows and 28 variables
 data(example_fluctuation)
 }
 \description{
-A dataset containing the population sizes adapted from some of the panels 
+A dataset containing the population sizes adapted from some of the panels
 provided in Figure 4.4. of IUCN (2019) to illustrate different examples
 of how population can fluctuate.
 }

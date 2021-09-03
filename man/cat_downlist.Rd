@@ -20,26 +20,26 @@ category. Default to TRUE.}
 }
 \description{
 Perform the downlisting of threat categories which is often
-  necessary for regional conservation assessmentes (IUCN 2012).
+necessary for regional conservation assessmentes (IUCN 2012).
 }
 \details{
 For regional conservation assessments, the IUCN recommends an
-  additional step, which relates to the possible "effect of populations of
-  the same taxon in neighbouring regions on the regional population", and
-  thus to the possibility of a possible rescue effect (IUCN 2012).
+additional step, which relates to the possible "effect of populations of
+the same taxon in neighbouring regions on the regional population", and
+thus to the possibility of a possible rescue effect (IUCN 2012).
 
-  Although the IUCN (2012) considers the exceptional possibility of
-  uplisting, the function only performs downliting of the categories of
-  threat. Downlisting normally is a one-step change in the category (i.e.
-  from EN to VU), but this can be controlled by the argument ```down.by```
-  (default to 1).
+Although the IUCN (2012) considers the exceptional possibility of
+uplisting, the function only performs downliting of the categories of
+threat. Downlisting normally is a one-step change in the category (i.e.
+from EN to VU), but this can be controlled by the argument \code{down.by}
+(default to 1).
 
-  By default, the Data Deficient category is excluded from the donwlisting.
-  The Least Concern category remains unaltered as well.
+By default, the Data Deficient category is excluded from the donwlisting.
+The Least Concern category remains unaltered as well.
 
-  Note that "if it is unknown whether or not extra-regional populations
-  influence the extinction risk of the regional population, the category
-  (...) should be kept unaltered" (IUCN 2012).
+Note that "if it is unknown whether or not extra-regional populations
+influence the extinction risk of the regional population, the category
+(...) should be kept unaltered" (IUCN 2012).
 }
 \examples{
 cats <- c("EX","CR","EN","VU","NT","DD","LC","NA","NE")
@@ -54,8 +54,8 @@ cat_downlist(cats, down.by = 2, dd = TRUE, sign = FALSE)
 }
 \references{
 IUCN (2012). Guidelines for Application of IUCN Red List Criteria
-  at Regional and National Levels (Version 4.0). IUCN. Gland, Switzerland and
-  Cambridge, UK. 41pp.
+at Regional and National Levels (Version 4.0). IUCN. Gland, Switzerland and
+Cambridge, UK. 41pp.
 }
 \author{
 Lima, R.A.F.

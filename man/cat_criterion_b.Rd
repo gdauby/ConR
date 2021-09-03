@@ -30,7 +30,7 @@ sub-criterion B2)}
 \item{locations}{numeric vector with the number of locations where the
 species occur (i.e. condition 'a' of criterion B)}
 
-\item{sever.frag}{logical. Is the population severely fragmented? If TRUE 
+\item{sever.frag}{logical. Is the population severely fragmented? If TRUE
 the condition 'a' of criterion B will be met.}
 
 \item{protected}{numeric vector providing estimated percentage of species
@@ -72,7 +72,7 @@ list
 }
 \description{
 Provide IUCN threat categories based on B sub-criteria,
-  conditions and thresholds.
+conditions and thresholds.
 }
 \details{
 The function categorizes taxa following criterion B and categories of the IUCN.
@@ -115,8 +115,8 @@ cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Dauby, G. & Lima, R.A.F.

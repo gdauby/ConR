@@ -7,41 +7,41 @@
 pop.decline.test(x, best.name = NULL, assess.year = NULL)
 }
 \arguments{
-\item{x}{the object containing the model fitted to population data. Tipically 
-the result from `ConR` function `pop.decline.fit`}
+\item{x}{the object containing the model fitted to population data. Tipically
+the result from \code{ConR} function \code{pop.decline.fit}}
 
-\item{best.name}{name of the the model fitted to data. Not used if `x` is the
-result from function `pop.decline.fit`}
+\item{best.name}{name of the the model fitted to data. Not used if \code{x} is the
+result from function \code{pop.decline.fit}}
 
 \item{assess.year}{the year for which the assessment should be performed}
 }
 \description{
 Based on statistical models fitted to the population size data,
-  this function assess if the model parameter estimates suggest a continuing
-  decline.
+this function assess if the model parameter estimates suggest a continuing
+decline.
 }
 \details{
 The function extracts the confidence interval of the parameters of
-  the model selected to describe the trend in population size. If the
-  confidence interval of the parameters suggests a significant decline, the
-  trend is classified as 'significantly decreasing'. If there is evidence of
-  a decline, but the evidence is not significant, the trend is classified as
-  'non-significantly decreasing'. For instance, if the inclination parameter
-  of the linear model is negative and its confidence interval does not
-  include zero, the trend is 'significantly decreasing'; if the inclination
-  is negative and the confidence interval include zero, the trend is
-  'non-significantly decreasing'.
-  
-  For the particular case of the piecewise-regression model, the function
-  returns the classification of the population trend for each time interval.
-  
-  If the number of observations is too small (n. obs. <7) to obtain
-  confidence intervals for models with more than two parameters (e.g.
-  genealized logistic model), the assessment is carried out empirically, by
-  assessing if the model predictions provides values that are sucessively
-  declining. In this case, the trend is just classified as 'increasing' or
-  'decreasing', and thus test of 'estimated continuing decline' becomes the same
-  as the test of 'continuing decline at any rate' (sub-criterion B2).
+the model selected to describe the trend in population size. If the
+confidence interval of the parameters suggests a significant decline, the
+trend is classified as 'significantly decreasing'. If there is evidence of
+a decline, but the evidence is not significant, the trend is classified as
+'non-significantly decreasing'. For instance, if the inclination parameter
+of the linear model is negative and its confidence interval does not
+include zero, the trend is 'significantly decreasing'; if the inclination
+is negative and the confidence interval include zero, the trend is
+'non-significantly decreasing'.
+
+For the particular case of the piecewise-regression model, the function
+returns the classification of the population trend for each time interval.
+
+If the number of observations is too small (n. obs. <7) to obtain
+confidence intervals for models with more than two parameters (e.g.
+genealized logistic model), the assessment is carried out empirically, by
+assessing if the model predictions provides values that are sucessively
+declining. In this case, the trend is just classified as 'increasing' or
+'decreasing', and thus test of 'estimated continuing decline' becomes the same
+as the test of 'continuing decline at any rate' (sub-criterion B2).
 }
 \examples{
 ## Creating vectors with the population data and time intervals 

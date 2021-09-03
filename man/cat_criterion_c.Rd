@@ -44,7 +44,7 @@ differences between population minima and maxima to classify populations
 with extreme fluctuations. Default to 10 as recommended by IUCN (2019).}
 
 \item{high.alter}{numerical. Threshold of proportion of changes that are
-followed by a change in the opposite direction. Default to 80%, but
+followed by a change in the opposite direction. Default to 80\%, but
 currently not implemented}
 
 \item{all.cats}{logical. Should the categories from all criteria be returned
@@ -52,32 +52,32 @@ and not just the consensus categories? Default to TRUE.}
 }
 \value{
 A list containing a vector of the consensus category from all
-  sub-criteria evaluated for each taxon (`ranks_C`) and the sub-criteria used
-  to obtain the consensus category (`cat_codes`). If `all.cats  == TRUE` the
-  function also returns a data frame containing the categories classified by
-  each sub-criteria individually (`all.cats`).
+sub-criteria evaluated for each taxon (\code{ranks_C}) and the sub-criteria used
+to obtain the consensus category (\code{cat_codes}). If \code{all.cats  == TRUE} the
+function also returns a data frame containing the categories classified by
+each sub-criteria individually (\code{all.cats}).
 }
 \description{
 Provide the consensus IUCN category based on the sub-criteria of
-  IUCN criterion C (C1, C2ai, C2aii and C2b) and the thresholds recommended
-  by IUCN.
+IUCN criterion C (C1, C2ai, C2aii and C2b) and the thresholds recommended
+by IUCN.
 }
 \details{
 By default, the function provides the consensus category, following
-  the recommendations of IUCN (2019) that states "Only the criteria for the
-  highest category of threat that the taxon qualifies for should be listed".
-  Therefore, the consensus category is the highest category of threat among
-  the sub-criteria evaluated.
+the recommendations of IUCN (2019) that states "Only the criteria for the
+highest category of threat that the taxon qualifies for should be listed".
+Therefore, the consensus category is the highest category of threat among
+the sub-criteria evaluated.
 
-  The function assumes that the order of the values in C1_df and C2_df are
-  from the same taxa (i.e. first element from C1_df and C2_df is always the
-  same species i). Therefore, the order of the estimates of population size
-  and continuing decline for each sub-criterion *must* be the same.
+The function assumes that the order of the values in C1_df and C2_df are
+from the same taxa (i.e. first element from C1_df and C2_df is always the
+same species i). Therefore, the order of the estimates of population size
+and continuing decline for each sub-criterion \emph{must} be the same.
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F. & Dauby, G.

@@ -30,12 +30,12 @@ cat_criterion_a(
 \item{all.cats}{logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.}
 }
 \value{
-A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (`ranks_A`) and
-the sub-criteria used to obtain the consensus category (`cat_codes`). If `all.cats  == TRUE` the function also returns a
-data frame containing the categories classified by each sub-criterion individually (`all.cats`).
+A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (\code{ranks_A}) and
+the sub-criteria used to obtain the consensus category (\code{cat_codes}). If \code{all.cats  == TRUE} the function also returns a
+data frame containing the categories classified by each sub-criterion individually (\code{all.cats}).
 }
 \description{
-Provide the consensus IUCN category based on the sub-criteria of 
+Provide the consensus IUCN category based on the sub-criteria of
 IUCN criterion A (A1, A2, A3 and A4) and the thresholds recommended by IUCN.
 }
 \details{
@@ -43,9 +43,9 @@ By default, the function provides the consensus category, following the recommen
 that states "Only the criteria for the highest category of threat that the taxon qualifies for should be listed".
 Therefore, the consensus category is the highest category of threat among the sub-criteria evaluated.
 
-The function assumes that the order of the values in A1_val, A2_val, A3_val and A4_val are 
-from the same taxa (i.e. first element from A1_val until A4_val is always the same species i). 
-Therefore, the order of the estimates of population decline for each sub-criterion *must* be the same.
+The function assumes that the order of the values in A1_val, A2_val, A3_val and A4_val are
+from the same taxa (i.e. first element from A1_val until A4_val is always the same species i).
+Therefore, the order of the estimates of population decline for each sub-criterion \emph{must} be the same.
 }
 \examples{
 A1_val <- c(40, 90, 75, 10)

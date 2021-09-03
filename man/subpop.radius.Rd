@@ -29,10 +29,10 @@ The estimated radius in kilometres for each taxon.
 }
 \description{
 Calculates the fraction of the maximum distance between
-  species occurrences, which can be used as a proxy of species dispersal
-  ability. This fraction can be used as the radius needed to apply the
-  circular buffer method (Rivers et al 2010) to obtain subpopulations for
-  conservation assessments of extinction risk.
+species occurrences, which can be used as a proxy of species dispersal
+ability. This fraction can be used as the radius needed to apply the
+circular buffer method (Rivers et al 2010) to obtain subpopulations for
+conservation assessments of extinction risk.
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
@@ -40,9 +40,9 @@ Calculates the fraction of the maximum distance between
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
 \tabular{ccc}{
-  [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-  [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, taxa names\cr
+\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr
 }
 }
 \examples{
@@ -59,9 +59,9 @@ subpop.radius(mydf, factor.div = 15)
 }
 \references{
 Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA
-  (2010) Subpopulations, locations and fragmentation: applying IUCN red list
-  criteria to herbarium specimen data. Biodiversity and Conservation 19:
-  2071-2085. doi: 10.1007/s10531-010-9826-9
+(2010) Subpopulations, locations and fragmentation: applying IUCN red list
+criteria to herbarium specimen data. Biodiversity and Conservation 19:
+2071-2085. doi: 10.1007/s10531-010-9826-9
 }
 \author{
 Renato A. Ferreira de Lima & Gilles Dauby

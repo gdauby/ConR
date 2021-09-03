@@ -10,7 +10,7 @@ proj_crs(proj_type = "cea")
 \item{proj_type}{string or numeric}
 }
 \value{
-`CRS` class object
+\code{CRS} class object
 }
 \description{
 get class "CRS" of coordinate reference system

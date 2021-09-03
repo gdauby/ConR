@@ -22,7 +22,6 @@ criterion_B(
   alpha = 1,
   buff.alpha = 0.1,
   exclude.area = FALSE,
-  buff_width = 0.1,
   Cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
   parallel = FALSE,
@@ -79,13 +78,13 @@ protected areas}
 }
 \value{
 A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
-  the IUCN categories associated with the sub-criteria and the consensus category
-  for criterion B.
+the IUCN categories associated with the sub-criteria and the consensus category
+for criterion B.
 }
 \description{
 Preliminary assessment of species conservation status following
- IUCN Criterion B, which is based on species geographic distribution (i.e. extent
- of occurrence - EOO, and area of occupancy, AOO)
+IUCN Criterion B, which is based on species geographic distribution (i.e. extent
+of occurrence - EOO, and area of occupancy, AOO)
 }
 \details{
 The function ...
@@ -96,8 +95,8 @@ To be included
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
-  Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
-  http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Dauby, G. & Lima, R.A.F.

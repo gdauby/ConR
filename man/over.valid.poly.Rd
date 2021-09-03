@@ -32,14 +32,14 @@ the polygon ("flag")?}
 Get Occurrences Distance to a Polygon
 }
 \details{
-The spatial polygon must be a `SpatialPolygonsDataFrame` in which
-  each polygon/feature is one taxon, an the data frame contains a column
-  `tax` with the taxa name. The XY data frame has the same structure as other
-  XY objects within `ConR` with the three first columns being `ddlat`,
-  `ddlon` and `tax`, but also a column `classes` with the classes of
-  conficence level, which is represented by numbers in increasing order of
-  confidence. For instance, if confidence levels are "low" and "high", the
-  corresponding values in columns `classes` should be 1 and 2.
+The spatial polygon must be a \code{SpatialPolygonsDataFrame} in which
+each polygon/feature is one taxon, an the data frame contains a column
+\code{tax} with the taxa name. The XY data frame has the same structure as other
+XY objects within \code{ConR} with the three first columns being \code{ddlat},
+\code{ddlon} and \code{tax}, but also a column \code{classes} with the classes of
+conficence level, which is represented by numbers in increasing order of
+confidence. For instance, if confidence levels are "low" and "high", the
+corresponding values in columns \code{classes} should be 1 and 2.
 }
 \examples{
 
