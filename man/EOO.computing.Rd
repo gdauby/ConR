@@ -16,7 +16,7 @@ EOO.computing(
   method.range = "convex.hull",
   Name_Sp = "species1",
   method.less.than3 = "not comp",
-  write_results = TRUE,
+  write_results = FALSE,
   file.name = "EOO.results",
   parallel = FALSE,
   NbeCores = 2,
@@ -40,7 +40,7 @@ exclude.area is TRUE}
 \item{export_shp}{a logical, whether shapefiles should be exported or not,
 see Value. By default is FALSE}
 
-\item{driver_shp}{a string, define the driver for exporting shapefiles, 
+\item{driver_shp}{a string, define the driver for exporting shapefiles,
 by default "ESRI Shapefile". See \code{\link[sf]{st_write}}}
 
 \item{write_shp}{a logical, if TRUE, export \code{SpatialPolygons} used for
@@ -64,17 +64,13 @@ default is "Species1"}
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
 
-\item{write_results}{a logical. If TRUE, results will be exported in the
-working environment as a csv file. By default is TRUE}
+\item{write_results}{a logical. If TRUE, results will be exported in the  working environment as a csv file. By default it is FALSE}
 
-\item{file.name}{a character string. Name file for exported results in csv
-file. By default is "EOO.results"}
+\item{file.name}{a character string. Name file for exported results in csv file. By default is "EOO.results"}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is
-FALSE}
+\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel
-execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
 
 \item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
 
@@ -101,28 +97,28 @@ and provide polygons used for EOO computation
 \strong{It is mandatory to respect field positions, but field names do not
 matter}
 
-\tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
-degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-[,3] \tab tax \tab character or factor, taxa names\cr }
+\tabular{ccc}{ \link{,1} \tab ddlat \tab numeric, latitude (in decimal
+degrees)\cr \link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr }
 
 \strong{Important notes:}
 
 EOO will only be computed if there is at least three unique occurrences
 unless \code{method.less.than3} is put to "arbitrary". In that specific
 case, EOO for species with two unique occurrences will be equal to
-Dist*Dist*0.1 where Dist is the distance in kilometers separating the two
+Dist\emph{Dist}0.1 where Dist is the distance in kilometers separating the two
 points.
 
 For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null), 
-'noises' are added to coordinates, using the `jitter` function, 
-see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}. 
-There is a warning when this happens. This means that EOO value will not be constant 
+localized on a straight line (in which case EOO would be null),
+'noises' are added to coordinates, using the \code{jitter} function,
+see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}.
+There is a warning when this happens. This means that EOO value will not be constant
 across multiple estimation (although the variation should be small)
 
 \strong{Limitation}\cr
 
-For a species whose occurrences span more than 180 degrees, EOO should not be considered. 
+For a species whose occurrences span more than 180 degrees, EOO should not be considered.
 This is the case for example for species whose distribution span the 180th meridian.
 }
 \examples{

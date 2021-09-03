@@ -109,7 +109,7 @@
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
 #' 
-#' @export
+#' @export EOO.computing
 EOO.computing <- function(XY,
                           exclude.area = FALSE,
                           country_map = NULL,

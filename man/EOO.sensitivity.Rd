@@ -57,17 +57,14 @@ default is "convex.hull"}
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
 
-\item{write_results}{a logical. If TRUE, results will be exported in the
-working environment as a csv file. By default is TRUE}
+\item{write_results}{a logical. If TRUE, results will be exported in the  working environment as a csv file. By default it is FALSE}
 
 \item{file.name}{a character string. Name file for exported results in csv
 file. By default is "EOO.sensitivity.results"}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is
-FALSE}
+\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel
-execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
 
 \item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
 
@@ -77,15 +74,15 @@ execution. By default, it is 2}
 }
 \value{
 A data frame containing, for each taxon, the EOO in square kilometres
-  for each level of confidence or a list containing this same data frame and
-  the input data with a new column for each confidence level with a measure 
-  of influence of the occurrences on the estimation of EOO.
+for each level of confidence or a list containing this same data frame and
+the input data with a new column for each confidence level with a measure
+of influence of the occurrences on the estimation of EOO.
 }
 \description{
 Compute changes in the extent of occurrences (EOO) in square
-  kilometers using occurrence data with different confidence level and
-  quantifies indirectly the most influential occurrences related to EOO
-  estimation.
+kilometers using occurrence data with different confidence level and
+quantifies indirectly the most influential occurrences related to EOO
+estimation.
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
@@ -93,33 +90,32 @@ Compute changes in the extent of occurrences (EOO) in square
 \strong{It is mandatory to respect field positions, but field names do not
 matter}
 
-\tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
-degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-[,3] \tab tax \tab character or factor, taxa names\cr 
-[,4] \tab valid \tab character or factor, classes of confidence level}
+\tabular{ccc}{ \link{,1} \tab ddlat \tab numeric, latitude (in decimal
+degrees)\cr \link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr
+\link{,4} \tab valid \tab character or factor, classes of confidence level}
 
 The function works with a minimum of two classes, that can be, for example, levels of
 confidence in the geographical coordinates, the taxonomic determination or a
 period of collection year. For each confidence level, the EOO is computed for
 a more restricted and reliable set of records. It is essential that the
-classes of confidence level provided using the argument `levels.order`.
-For instance, these classes can simply be `c("low", "high")` or `c(FALSE,
-TRUE)`. But they should match the classes provided in \code{XY}.  
+classes of confidence level provided using the argument \code{levels.order}.
+For instance, these classes can simply be \code{c("low", "high")} or \code{c(FALSE, TRUE)}. But they should match the classes provided in \code{XY}.
 
-If argument `occ.based` is `TRUE` (default), the function calculates and
+If argument \code{occ.based} is \code{TRUE} (default), the function calculates and
 return a measure of influence of each occurrence on the estimation of EOO.
 This measure is simply the distance of each occurrence to the convex hull
 polygon (i.e. EOO) obtained using only with the occurrences in the highest level
-of confidence declared, divided by the 95% quantile of the pair-wise
+of confidence declared, divided by the 95\% quantile of the pair-wise
 distances of the occurrences within the high confidence EOO. Thus, this is
 only an indirect measure of how much the EOO should increase if a given
 occurrence was included, because in practice the difference in EOO is not
 calculated for subsets with and without each occurrence (i.e leave-one-out
-cross validation).   
+cross validation).
 
 The measure is thus a proportion and the highest the value, the more distant
 the occurrence is from the high confidence EOO. Zeros means that the
-occurrence is within the high confidence EOO and `NA` means that the high
+occurrence is within the high confidence EOO and \code{NA} means that the high
 confidence EOO could not be obtained (e.g. less than 2 or 3 high confidence
 occurrences).
 Note that even if the EOO cannot be calculated or if coordinates were
@@ -130,22 +126,22 @@ EOO.
 It is up to the user to define the most appropriate threshold to include or
 exclude occurrences. A preliminary assessment assuming a circular high
 confidence EOO suggest that values of 0.5, 1 and 2 would lead to increases of
-about 25, 50 and 100% in EOO.
+about 25, 50 and 100\% in EOO.
 
 As mentioned above, EOO will only be computed if there is at least three
 unique occurrences in the high confidence level class, unless
 \code{method.less.than3} is put to "arbitrary". In that specific case, EOO
-for species with two unique occurrences will be equal to Dist*Dist*0.1 where
+for species with two unique occurrences will be equal to Dist\emph{Dist}0.1 where
 Dist is the distance in kilometers separating the two points.
 
 For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null), 
+localized on a straight line (in which case EOO would be null),
 'noises' are added to coordinates. There is a warning when this happens.
 
 \strong{Notes on computational time} The processing time depends on several
 factors, including the total number of occurrences, number of confidence
-levels rpovided and user's computer specifications. Using argument `parallel`
-equals `TRUE`, greatly increase the processing time, but the processing of
+levels rpovided and user's computer specifications. Using argument \code{parallel}
+equals \code{TRUE}, greatly increase the processing time, but the processing of
 large data sets (millions of occurrences) may take hours. On a Intel Core i5,
 CPU 1.70GHz, 64-bit OS and 16 GB RAM it took 20 min to process about 800
 thousand records from ~5100 species using 5 cores.

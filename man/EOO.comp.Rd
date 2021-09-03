@@ -39,36 +39,36 @@ EOO.comp(
 \item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 }
 \value{
-A list with one element being a numeric vector [[1]]EOO and the polygon as Simple feature collection [[2]]spatial.polygon
+A list with one element being a numeric vector [\link{1}]EOO and the polygon as Simple feature collection [\link{2}]spatial.polygon
 }
 \description{
 Compute EOO given a data frame of coordinate in decimals degrees
 }
 \details{
-If `exclude.area` is TRUE and country_map is not provided, 
+If \code{exclude.area} is TRUE and country_map is not provided,
 the world country polygons used comes from the package \href{https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries}{rnaturalearth}
 
-By default (`mode = "spheroid"`),the area of the polygon is based 
-on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.  
+By default (\code{mode = "spheroid"}),the area of the polygon is based
+on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.
 
-To make a polygon more accurate, the function use the function `st_segmentize` from the \href{https://CRAN.R-project.org/package=sf}{sf} package.
-This adds vertices on the great circles (in order to make shortest distances between points, see example below) 
-which can make difference for species with large distribution.  
+To make a polygon more accurate, the function use the function \code{st_segmentize} from the \href{https://CRAN.R-project.org/package=sf}{sf} package.
+This adds vertices on the great circles (in order to make shortest distances between points, see example below)
+which can make difference for species with large distribution.
 
-An estimation of EOO based on projected data is also possible (`mode = "planar"`).
+An estimation of EOO based on projected data is also possible (\code{mode = "planar"}).
 This allow the user to use its own projection.
-By default, the projection (`proj_type = "cea"`) is a \href{https://epsg.io/6933}{global cylindrical equal-area projection}.
+By default, the projection (\code{proj_type = "cea"}) is a \href{https://epsg.io/6933}{global cylindrical equal-area projection}.
 It can makes sense to use a planar projection to estimate the EOO. See example.
 
-It is possible to use another projection by providing the EPSG code to `proj_type`. See example.
+It is possible to use another projection by providing the EPSG code to \code{proj_type}. See example.
 Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
-from the `rgdal` packag for getting the EPSG code.
+from the \code{rgdal} packag for getting the EPSG code.
 
 For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null), 
-'noises' are added to coordinates, using the `jitter` function, 
-see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}. 
-There is a warning when this happens. This means that EOO value will not be constant 
+localized on a straight line (in which case EOO would be null),
+'noises' are added to coordinates, using the \code{jitter} function,
+see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}.
+There is a warning when this happens. This means that EOO value will not be constant
 across multiple estimation (although the variation should be small)
 }
 \examples{

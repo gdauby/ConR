@@ -1,4 +1,4 @@
-#' @title  Habitat Metrics for EOO Polygons
+#' @title  Terrestrial Area of Habitat
 #' 
 #' @description The function compute the amount of 'habitat' within the EOO of
 #'   each species, which may represent habitat itself or any other proxy, value or
@@ -93,9 +93,8 @@
 #' @importFrom  raster extent crop crs res extract getValues mask area cellStats rasterFromXYZ coordinates extend brick
 #' @import sf
 #' 
-#' @export EOO.habitat
-#' 
-EOO.habitat <- function(EOO.poly,
+#' @export AOH.estimation
+AOH.estimation <- function(EOO.poly,
                         hab.map = NULL,
                         hab.class = NULL,
                         years = NULL,
@@ -134,7 +133,6 @@ EOO.habitat <- function(EOO.poly,
   # proj_hab <- raster::crs(hab.map)
   
   proj_hab <- sf::st_crs(hab.map)
-  
   
   #### GILLES: EOO.poly is supposed to be the output of EOO.comp and if so should never have empty crs. Useful? 
   if (is.na(sf::st_crs(EOO.poly))) {

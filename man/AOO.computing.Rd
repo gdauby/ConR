@@ -36,8 +36,8 @@ AOO.computing(
 If \code{export_shp} if FALSE a vector of AOO estimates for each taxa
 If \code{export_shp} if TRUE a list with two elements
 \enumerate{
-  \item a vector of AOO estimates for each taxa
-  \item a list of SpatialPolygonsDataFrame for each taxa
+\item a vector of AOO estimates for each taxa
+\item a list of SpatialPolygonsDataFrame for each taxa
 }
 }
 \description{
@@ -49,14 +49,14 @@ Compute areas of occupancy (AOO) for multiple taxa in square kilometers
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
 \tabular{ccc}{
-  [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-  [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-  [,3] \tab tax \tab character or factor, taxa names\cr
+\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+\link{,3} \tab tax \tab character or factor, taxa names\cr
 }
 
-The argument \code{nbe.rep.rast.AOO} should ideally be higher than 20 for increasing 
-the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however 
-also increase the computing time. So this is a trade-off that depends on the importance to 
+The argument \code{nbe.rep.rast.AOO} should ideally be higher than 20 for increasing
+the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however
+also increase the computing time. So this is a trade-off that depends on the importance to
 get the minimal AOO and the size of the dataset.
 }
 \examples{

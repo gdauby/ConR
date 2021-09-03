@@ -13,6 +13,6 @@ A dataframe
 data(land)
 }
 \description{
-A SpatialPolygonDataFrame showing land cover
+A Simple feature collection with 1 feature MULTIPOLYGON showing land border WGS 84 CRS
 }
 \keyword{datasets}
