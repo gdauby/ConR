@@ -267,7 +267,12 @@ EOO.computing <- function(XY,
     }
     
     output_spatial <- 
-      st_as_sf(data.frame(output_spatial[, -which(colnames(output_spatial) == 'a')]))
+      st_as_sf(data.frame(output_spatial)) # 
+    
+    if (any(names(output_spatial) == "a"))
+      output_spatial <-
+      output_spatial[,-which(colnames(output_spatial) == 'a')]
+    
     # , 
     # taxa = names_[id_spatial]
     

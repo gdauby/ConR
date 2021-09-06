@@ -384,6 +384,7 @@ EOO.comp <-  function(XY,
           )
           
           EOO <- NA
+          p1 <- NA
           
         } else {
           
