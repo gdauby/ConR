@@ -77,7 +77,6 @@ AOO.decline <- function(XY,
   
   if (!is.null(hab.map)) {
     
-    
     if (!any(grepl("Raster", class(hab.map))) & !any(grepl("sf", class(hab.map)))) {
       
       stop("hab.map must be class of raster, RasterBrick, RasterStack or sf")
@@ -87,7 +86,6 @@ AOO.decline <- function(XY,
   }
   
   if (!is.null(threat.map)) {
-    
     
     if (!any(grepl("Raster", class(threat.map))) & !any(grepl("sf", class(threat.map)))) {
       
@@ -124,7 +122,7 @@ AOO.decline <- function(XY,
                       id = 1:nrow(XY))
   
   XY_sf <-
-    st_as_sf(XY_id, coords = colnames(XY[, c(2, 1)]), 
+    st_as_sf(XY_id, coords = c("ddlon", "ddlat"), 
              crs = 4326)
   
   XY_sf <- 
