@@ -120,8 +120,10 @@ AOO.computing <- function(XY,
         proj_type = proj_type
       )
       
-      if (export_shp)
+      if (export_shp) {
         names(res) <- c("aoo", "spatial")
+        res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
+      }
       
       res
     }
@@ -140,8 +142,11 @@ AOO.computing <- function(XY,
     
     res <- unlist(output[names(output) == "aoo"])
     names(res) <- names(list_data)
-    shapes <-  output[names(output) == "spatial"]
-    names(shapes) <- names(list_data)
+    
+    shapes <- output[names(output) == "spatial"]
+    shapes <- do.call('rbind', shapes)
+    
+    # names(shapes) <- names(list_data)
     
   }
   
