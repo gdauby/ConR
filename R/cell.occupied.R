@@ -34,6 +34,7 @@ cell.occupied <-
     if (nbe_rep == 0) {
 
       Occupied_cells <- vector(mode = "numeric", length = 4)
+      rasts <- vector(mode = "list", length = 4)
       decal <- c(0, 1, 2, 3)
 
       # if (abs(Corners[1, 1] - Corners[1, 2]) > abs(Corners[2, 1] - Corners[2, 2])) {
@@ -43,8 +44,7 @@ cell.occupied <-
       #   longer <-
       #     abs(Corners[2, 1] - Corners[2, 2])
       # }
-
-
+      
       for (h in decal) {
 
         # bbox_sp <-
@@ -91,7 +91,6 @@ cell.occupied <-
         #                  resolution = size * 1000,
         #                  crs = crs_proj)
 
-
         r <-
           raster::raster(ext,
                          resolution = size * 1000,
@@ -99,6 +98,9 @@ cell.occupied <-
 
         r2_ <-
           raster::rasterize(coord[, 1:2], r)
+        
+        rasts[[h + 1]] <- 
+          r2_
 
         OCC <-
           length(which(!is.na(raster::values(r2_))))
@@ -115,7 +117,8 @@ cell.occupied <-
 
     if (nbe_rep > 0) {
       Occupied_cells <- vector(mode = "numeric", length = nbe_rep)
-
+      rasts <- vector(mode = "list", length = 4)
+      
       for (h in 1:nbe_rep) {
         rd.1 <- runif(1) * size * 1000
         rd.2 <- runif(1) * size * 1000
@@ -131,6 +134,10 @@ cell.occupied <-
         r2_ <- raster::rasterize(coord[, 1:2], r)
         OCC <- length(which(!is.na(raster::values(r2_))))
         Occupied_cells[h] <- OCC
+        
+        rasts[[h]] <- 
+          r2_
+        
         # rd.1.vec <- c(rd.1.vec, rd.1)
         # rd.2.vec <- c(rd.2.vec, rd.2)
         if (OCC == 1)
@@ -139,8 +146,10 @@ cell.occupied <-
 
     }
 
+    which_raster <- which.min(Occupied_cells[Occupied_cells>0])
     Occupied_cells <- Occupied_cells[Occupied_cells > 0]
     Occupied_cells <- min(Occupied_cells)
+    
 
     ## CRS object has comment, which is lost in output warning
     # if (export_shp)
@@ -151,7 +160,7 @@ cell.occupied <-
     if (export_shp) {
       r2_pol <-
         raster::rasterToPolygons(
-          r2_,
+          rasts[[which_raster]],
           fun = NULL,
           n = 4,
           na.rm = TRUE,
@@ -160,7 +169,7 @@ cell.occupied <-
         )
       
       r2_pol <-
-        as(r2_pol, "sf")      
+        as(r2_pol, "sf")
     }
 
 
