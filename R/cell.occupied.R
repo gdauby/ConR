@@ -146,7 +146,11 @@ cell.occupied <-
 
     }
 
+<<<<<<< HEAD
     which_raster <- which.min(Occupied_cells[Occupied_cells>0])
+=======
+    which_raster <- which.min(Occupied_cells)
+>>>>>>> c28698169a3e84b523c0cb296654c175b3022166
     Occupied_cells <- Occupied_cells[Occupied_cells > 0]
     Occupied_cells <- min(Occupied_cells)
     
