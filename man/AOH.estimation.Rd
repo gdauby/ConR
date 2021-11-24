@@ -8,14 +8,17 @@ AOH.estimation(
   XY,
   show_progress = TRUE,
   proj_type = "cea",
-  mode = "spheroid",
+  mode = "planar",
   hab.map = NULL,
+  hab.map.type = NULL,
   hab.class = NULL,
   years = NULL,
   country_map = NULL,
   exclude.area = T,
-  ID_shape = NULL,
-  output_raster = NULL,
+  parallel = FALSE,
+  NbeCores = 2,
+  simplifiy_poly = TRUE,
+  buffer = NULL,
   ...
 )
 }
@@ -32,6 +35,8 @@ should be shown. Default to TRUE.}
 \item{hab.map}{raster, raster layer/stack or spatial polygons containing the
 habitat spatial information}
 
+\item{hab.map.type}{logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable}
+
 \item{hab.class}{classes of values in \code{hab.map} to be considered as 'habitat'.}
 
 \item{years}{numeric. Time interval between the first and last \code{hab.map}
@@ -46,15 +51,15 @@ exclude.area is TRUE}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
 is FALSE}
 
-\item{ID_shape}{string. Indicate the field name in \code{hab.map} data frame
-containing the ID or name of each polygon.}
+\item{parallel}{logical. Should computing run in parallel? Default to FALSE.}
+
+\item{NbeCores}{integer. The number of cores for parallel execution. Default to 2.}
 
 \item{output_raster}{the output format in the case raster are continuous
 variables and not categories. Default to "summary".}
 
-\item{parallel}{logical. Should computing run in parallel? Default to FALSE.}
-
-\item{NbeCores}{integer. The number of cores for parallel execution. Default to 2.}
+\item{ID_shape}{string. Indicate the field name in \code{hab.map} data frame
+containing the ID or name of each polygon.}
 }
 \value{
 If \code{hab.map} is a *Raster object with categorical variables, the

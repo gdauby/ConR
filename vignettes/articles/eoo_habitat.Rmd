@@ -24,7 +24,7 @@ Generate an artificial example dataset
 ```{r}
 
 set.seed(3)
-nbe_occ <- sample(seq(3, 100, 1), 500, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+nbe_occ <- sample(seq(3, 100, 1), 30, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
 ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
 ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
 names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))

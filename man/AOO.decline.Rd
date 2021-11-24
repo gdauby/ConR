@@ -14,7 +14,6 @@ AOO.decline(
   proj_type = "cea",
   hab.map = NULL,
   hab.class = NULL,
-  threat.map = NULL,
   all_individual_layers = FALSE
 )
 }
@@ -38,9 +37,9 @@ habitat spatial information}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as suitable}
 
-\item{threat.map}{raster, raster layer/stack or spatial polygons (simple feature) indicating land cover unsuitable to taxa}
-
 \item{all_individual_layers}{logical, by default FALSE, if TRUE compute AOO decline for each individual hab.map and threat.map provided}
+
+\item{hab.map.type}{logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable}
 }
 \value{
 \enumerate{
