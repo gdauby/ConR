@@ -6,9 +6,10 @@
 #'   habitat spatial information
 #' @param hab.map.type logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
 #' 
-#' @importFrom  terra rast
+#' @keyword Internal
 #' 
-.check_hab_map <- function(hab.map, hab.map.type = NULL) {
+#' @importFrom terra rast nlyr
+check_hab_map <- function(hab.map, hab.map.type = NULL) {
   
   if (!any(class(hab.map) == "list"))
     hab.map <- list(hab.map)

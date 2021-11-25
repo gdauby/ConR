@@ -74,7 +74,7 @@ AOO.decline <- function(XY,
   if (is.null(hab.map)) 
     stop("Please provide hab.map or threat.map (a sf polygon object or a raster)")
   
-  hab.map.checked <- .check_hab_map(hab.map = hab.map, hab.map.type = hab.map.type)
+  hab.map.checked <- check_hab_map(hab.map = hab.map, hab.map.type = hab.map.type)
   
   # if (!is.null(hab.map) & !is.null(hab.class)) {
   #   

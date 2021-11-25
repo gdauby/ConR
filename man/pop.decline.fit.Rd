@@ -80,7 +80,10 @@ projection (see example). Fitting piece-wise models can be unstable (model
 fitting is quite sensitive to the start parameters) and may take a while to
 converge; so, it should preferably be used when  many years of population
 data are available. For simplicity, only piece-wise models with up to 3
-breaks and linear functions between breaks are provided. For time intervals80, the best model among the candidate models is chosen based on AkaikeInformation Criterion, or AIC; the corrected AIC or the AICc (Burnham andAnderson, 2004) is used for time intervals < 80.
+breaks and linear functions between breaks are provided. For time intervals > 80,
+the best model among the candidate models is chosen based on Akaike
+Information Criterion, or AIC; the corrected AIC or the AICc (Burnham and
+Anderson, 2004) is used for time intervals < 80.
 }
 \examples{
 ## Creating vectors with the population data and time intervals 

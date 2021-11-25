@@ -18,50 +18,52 @@
 #'   the population data?
 #' @param max.count numerical. Maximum number of attempts to fit piece-wise
 #'   models. Default to 50.
-#' @param ... other parameters to be passed as arguments for function `ICtab.mod.select`
+#' @param ... other parameters to be passed as arguments for function ```ICtab.mod.select```
 #'
-#' @details By default, the function compares the fit of six statistical models
-#'   to the population trends, namely: linear, quadratic, exponential, logistic,
-#'   generalized logistic and piece-wise. But, as stated in IUCN (2019), the
-#'   model used to do the predictions makes an important difference. So, model
-#'   fit to data should not be the only or most important criteria to choose
-#'   among models. Users should preferably choose one or two of the models based
-#'   on the best available information of types of threat (i.e. patterns of
-#'   exploitation or habitat loss), life history and ecology of the taxon being
-#'   evaluated or any other processes that may contribute to population decline.
-#'   See IUCN (2019) for more details on the assumptions of each model.
-#'
-#'   The linear and exponential patterns of decline are fully described in IUCN
-#'   (2019) and are easy to be described statistically through a model (see
-#'   Figure 4.2, pg. 33 of IUCN 2019). But IUCN (2019) also recognizes the
-#'   existence of more "complex patterns of decline". To describe more complex
-#'   patterns, `pop.decline.fit` provides fits to logistic and piece-wise
-#'   patterns of decline. Despite the options of models provided by
-#'   `pop.decline.fit`, depending on the numbers of observations or the patterns
-#'   of decline, many or none of the models may provide a good fit to data. This
-#'   reinforces the role of the user in choosing the more appropriate pattern
-#'   for the area or taxon considered.
-#'
-#'   For simplicity, the population size data provided is transformed into
-#'   proportions using the maximum population estimate provided. Therefore,
-#'   models are fit to proportional data, but the projections are provided in
-#'   proportions and in the original scale. As suggested in IUCN (2019), no
-#'   model fit is performed if only two estimates of population size are
-#'   provided.
-#'
-#'   Some more technical notes on model fitting and selection. Here, we use a
-#'   quadratic model as an equivalent to the accelerating model described in
-#'   IUCN (2019), but note that the quadratic model can generate non-realistic
-#'   projections depending on the population data or on the years chosen for the
-#'   projection (see example). Fitting piece-wise models can be unstable (model
-#'   fitting is quite sensitive to the start parameters) and may take a while to
-#'   converge; so, it should preferably be used when  many years of population
-#'   data are available. For simplicity, only piece-wise models with up to 3
-#'   breaks and linear functions between breaks are provided. For time intervals
-#'   > 80, the best model among the candidate models is chosen based on Akaike
-#'   Information Criterion, or AIC; the corrected AIC or the AICc (Burnham and
-#'   Anderson, 2004) is used for time intervals < 80.
-#'
+#' @details
+#' By default, the function compares the fit of six statistical models
+#' to the population trends, namely: linear, quadratic, exponential, logistic,
+#' generalized logistic and piece-wise. But, as stated in IUCN (2019), the
+#' model used to do the predictions makes an important difference. So, model
+#' fit to data should not be the only or most important criteria to choose
+#' among models. Users should preferably choose one or two of the models based
+#' on the best available information of types of threat (i.e. patterns of
+#' exploitation or habitat loss), life history and ecology of the taxon being
+#' evaluated or any other processes that may contribute to population decline.
+#' See IUCN (2019) for more details on the assumptions of each model.
+#' 
+#' The linear and exponential patterns of decline are fully described in IUCN
+#' (2019) and are easy to be described statistically through a model (see
+#' Figure 4.2, pg. 33 of IUCN 2019). But IUCN (2019) also recognizes the
+#' existence of more "complex patterns of decline". To describe more complex
+#' patterns, ```pop.decline.fit``` provides fits to logistic and piece-wise
+#' patterns of decline. Despite the options of models provided by
+#' ```pop.decline.fit```, depending on the numbers of observations or the patterns
+#' of decline, many or none of the models may provide a good fit to data. This
+#' reinforces the role of the user in choosing the more appropriate pattern
+#' for the area or taxon considered.
+#' 
+#' For simplicity, the population size data provided is transformed into
+#' proportions using the maximum population estimate provided. Therefore,
+#' models are fit to proportional data, but the projections are provided in
+#' proportions and in the original scale. As suggested in IUCN (2019), no
+#' model fit is performed if only two estimates of population size are
+#' provided.
+#' 
+#' Some more technical notes on model fitting and selection. Here, we use a
+#' quadratic model as an equivalent to the accelerating model described in 
+#' IUCN (2019), but note that the quadratic model can generate non-realistic 
+#' projections depending on the population data or on the years chosen for the 
+#' projection (see example). Fitting piece-wise models can be unstable (model 
+#' fitting is quite sensitive to the start parameters) and may take a while to 
+#' converge; so, it should preferably be used when  many years of population 
+#' data are available. For simplicity, only piece-wise models with up to 3 
+#' breaks and linear functions between breaks are provided. For time intervals > 80, 
+#' the best model among the candidate models is chosen based on Akaike 
+#' Information Criterion, or AIC; the corrected AIC or the AICc (Burnham and 
+#' Anderson, 2004) is used for time intervals < 80.
+#' 
+#' 
 #' @author Lima, R.A.F. & Dauby, G.
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
