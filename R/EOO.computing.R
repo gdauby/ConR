@@ -103,7 +103,6 @@
 #' @import sf
 #' 
 #' @importFrom rnaturalearth ne_countries
-#' @importFrom rgeos gBuffer
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
@@ -143,15 +142,15 @@ EOO.computing <- function(XY,
       
     } else {
       
-      if(any(grepl('sf', class(country_map))))
-        country_map <- 
-          as(country_map, "Spatial")
+      # if(any(grepl('sf', class(country_map))))
+      #   country_map <- 
+      #     as(country_map, "Spatial")
       
       country_map <-
-        suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
+        suppressWarnings(sf::st_buffer(country_map, dist = 0))
       
-      country_map <- 
-        as(country_map, "sf")
+      # country_map <- 
+      #   as(country_map, "sf")
     }
     
   }

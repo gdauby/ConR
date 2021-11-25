@@ -57,7 +57,6 @@
 #'locations <- locations.comp(dataset.ex, nbe_rep = 100)
 #'}
 #'
-#' @importFrom rgdal project
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW

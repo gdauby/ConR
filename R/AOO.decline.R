@@ -53,7 +53,7 @@
 #' AOOs <- AOO.decline(XY = dataset.ex, hab.map = land_cover_ex, hab.class = c(40, 40))
 #'}
 #'
-#' @importFrom raster projectRaster calc stack extent crop extract
+#' @importFrom terra project crop app vect extract
 #' @import sf
 #' 
 #' @export AOO.decline
@@ -66,6 +66,7 @@ AOO.decline <- function(XY,
                         proj_type = "cea",
                         hab.map = NULL,
                         hab.class = NULL,
+                        hab.map.type = NULL,
                         all_individual_layers = FALSE
 ) {
   

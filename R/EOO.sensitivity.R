@@ -112,7 +112,7 @@
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
-#' @importFrom  data.table setDT data.table
+#' @importFrom data.table setDT data.table
 #' 
 #' @export EOO.sensitivity
 #' 

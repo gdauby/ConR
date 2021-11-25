@@ -53,8 +53,6 @@
 #' 
 #' @importFrom tibble is_tibble
 #' @importFrom rnaturalearth ne_countries
-#' @importFrom rgeos gBuffer
-#' @importFrom sp identicalCRS proj4string CRS
 #' 
 #' @export criterion_B
 criterion_B <- function(x, 
@@ -100,26 +98,35 @@ criterion_B <- function(x,
     
   } else {
     
-    if(any(grepl('sf', class(country_map))))
-      country_map <- 
-        as(country_map, "Spatial")
+    # if(any(grepl('sf', class(country_map))))
+    #   country_map <- 
+    #     as(country_map, "Spatial")
     
     country_map <-
-      suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
+      suppressWarnings(sf::st_buffer(country_map, dist = 0))
     
-    country_map <- 
-      as(country_map, "sf")
+    # country_map <- 
+    #   as(country_map, "sf")
   }
   
   if (!is.null(protec.areas)) {
-    if (!sp::identicalCRS(protec.areas, country_map)) {
+    # if (!sp::identicalCRS(protec.areas, country_map)) {
+    #   
+    #   sp::proj4string(protec.areas) <- 
+    #     sp::CRS(SRS_string = 'EPSG:4326')
+    #   sp::proj4string(country_map) <-
+    #     sp::CRS(SRS_string = 'EPSG:4326')
+    #   
+    # }
+    
+    if (st_crs(protec.areas) != st_crs(country_map)) {
       
-      sp::proj4string(protec.areas) <- 
-        sp::CRS(SRS_string = 'EPSG:4326')
-      sp::proj4string(country_map) <-
-        sp::CRS(SRS_string = 'EPSG:4326')
+      st_crs(protec.areas) <- 4326
+      st_crs(country_map) <- 4326
       
     }
+    
+    
   }
   
   

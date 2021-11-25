@@ -94,7 +94,7 @@
 #'   
 #' @examples No examples available yet.
 #' 
-#' @importFrom  terra project crop vect rast app
+#' @importFrom  terra project crop vect rast app crs
 #' @importFrom stars st_as_stars
 #' @importFrom rmapshaper ms_simplify
 #' @import sf
@@ -136,15 +136,16 @@ AOH.estimation <- function(XY,
     
   } else {
     
-    if(any(grepl('sf', class(country_map))))
-      country_map <- 
-        suppressWarnings(as(country_map, "Spatial"))
+    # if(any(grepl('sf', class(country_map))))
+    #   country_map <- 
+    #     suppressWarnings(as(country_map, "Spatial"))
+    
     
     country_map <-
-      suppressWarnings(rgeos::gBuffer(country_map, byid = TRUE, width = 0))
+      suppressWarnings(sf::st_buffer(country_map, dist = 0))
     
-    country_map <- 
-      as(country_map, "sf")
+    # country_map <- 
+    #   as(country_map, "sf")
   }
   
   proj_type_ <- proj_crs(proj_type = proj_type)
@@ -243,7 +244,7 @@ AOH.estimation <- function(XY,
     
     if (any(grepl("Raster", class(hab.map.selected)))) {
       
-      if (as.character(crs(hab.map.selected)) != proj_type_@projargs) {
+      if (as.character(terra::crs(hab.map.selected)) != proj_type_@projargs) {
         
         # hab.map.selected <- raster::projectRaster(hab.map.selected, crs = proj_type_)
         

@@ -54,7 +54,6 @@
 #'AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
 #'}
 #'
-#' @importFrom rgdal project
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
