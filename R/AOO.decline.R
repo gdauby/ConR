@@ -182,14 +182,16 @@ AOO.decline <- function(XY,
           
         }
         
-        hab.map.selected_lay <-
-          terra::crop(hab.map.selected_lay, terra::vect(XY_sf))
         
         if (as.character(crs(hab.map.selected_lay)) != proj_type_@projargs) {
           
           hab.map.selected_lay <- terra::project(hab.map.selected_lay, as.character(proj_type_))
           
         }
+        
+        
+        hab.map.selected_lay <-
+          terra::crop(hab.map.selected_lay, terra::vect(XY_sf))
         
         intersect_rast_points <-
           terra::extract(hab.map.selected_lay, terra::vect(XY_sf))
@@ -204,9 +206,7 @@ AOO.decline <- function(XY,
           paste0("hab.map.", i + j -1)
         
       }
-      
     }
-    
   }
   
   # if (!is.null(threat.map)) {
