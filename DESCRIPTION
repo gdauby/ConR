@@ -8,7 +8,7 @@ Description: Multi-species estimation of biological indicators of populations us
     C and D of the International Union for Conservation of Nature (IUCN, 
     see <http://www.iucnredlist.org>).
 Depends:
-    R (>= 3.3)
+    R (>= 4.0)
 License: GPL-2
 Imports: 
     fields,
@@ -33,7 +33,8 @@ Imports:
     graphics,
     stats,
     utils,
-    data.table
+    data.table,
+    terra
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
