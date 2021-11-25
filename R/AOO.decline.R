@@ -142,23 +142,21 @@ AOO.decline <- function(XY,
       
       hab.map.selected <- hab.map.checked$hab.map[[i]]
       
-      if (as.character(crs(hab.map.selected)) != proj_type_@projargs) {
-        
-        hab.map.selected <- terra::project(hab.map.selected, as.character(proj_type_))
-        
-      }
-      
-      hab.map.selected <-
-        terra::crop(hab.map.selected, terra::vect(XY_sf))
-      
       for (j in 1:hab.map.checked$classes.hab.map[i,"nbe.layers"]) {
         
         hab.map.selected_lay <- hab.map.selected[[j]]
         
         if (is.character(hab.class) | is.factor(hab.class)) {
           
-          if (!is.factor(hab.map.selected_lay))
-            levels(hab.map.selected_lay) <- as.character(unique(terra::values(hab.map.selected_lay)[,1]))
+          if (!is.factor(hab.map.selected_lay)) {
+            
+            val_rast <- terra::values(hab.map.selected_lay)[,1]
+            val_rast <- unique(val_rast[which(!is.na(val_rast))])
+            
+            levels(hab.map.selected_lay) <- as.character(val_rast)
+            
+          }
+            
           
           if (hab.map.checked$hab.map.type[i]) {
             ## if suitable
@@ -181,6 +179,15 @@ AOO.decline <- function(XY,
         } else {
           
           stop("implement for hab.class numeric")
+          
+        }
+        
+        hab.map.selected_lay <-
+          terra::crop(hab.map.selected_lay, terra::vect(XY_sf))
+        
+        if (as.character(crs(hab.map.selected_lay)) != proj_type_@projargs) {
+          
+          hab.map.selected_lay <- terra::project(hab.map.selected_lay, as.character(proj_type_))
           
         }
         
