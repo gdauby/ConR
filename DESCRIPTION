@@ -34,7 +34,8 @@ Imports:
     stats,
     utils,
     data.table,
-    terra
+    terra,
+    rmapshaper
 LazyData: true
 Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
