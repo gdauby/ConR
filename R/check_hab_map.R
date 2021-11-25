@@ -1,14 +1,5 @@
-#' @title  Internal function
-#' 
-#' @description Internal function to verify and process hab.map used in AOH.estimation and AOO.decline
-#' 
-#' @param hab.map raster, raster layer/stack or spatial polygons containing the
-#'   habitat spatial information
-#' @param hab.map.type logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
-#' 
-#' @keyword Internal
-#' 
-#' @importFrom terra rast nlyr
+#' Internal function
+#' @noRd
 check_hab_map <- function(hab.map, hab.map.type = NULL) {
   
   if (!any(class(hab.map) == "list"))
