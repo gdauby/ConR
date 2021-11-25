@@ -34,6 +34,13 @@ check_hab_map <- function(hab.map, hab.map.type = NULL) {
   classes.hab.map[which(!classes.hab.map$rast), "nbe.layers"] <- 
     1
   
+  if (is.null(hab.map.type)) {
+    
+    message("hab.map.type not provided, all hab.map provided are considered as suitable")
+    hab.map.type <- rep(TRUE, length(hab.map))
+    
+  }
+  
   if (length(hab.map.type) != length(hab.map)) {
     
     stop("hab.map.type should be of equal size of the number of hab.map provided")
@@ -41,12 +48,7 @@ check_hab_map <- function(hab.map, hab.map.type = NULL) {
   }
   
   
-  if (is.null(hab.map.type)) {
-    
-    message("hab.map.type not provided, all hab.map provided are considered as suitable")
-    hab.map.type <- rep(TRUE, length(hab.map))
-    
-  }
+
   
   return(
     list(
