@@ -5,7 +5,6 @@
 #' @param XY data.frame
 #' @param exclude.area logical. Default if FALSE
 #' @param country_map SpatialPolygonDataframe. Default if NULL
-#' @param Name_Sp string
 #' @param method.range string, by default "convex.hull", can also take "alpha.hull"
 #' @param alpha integer
 #' @param buff.alpha numeric
@@ -93,7 +92,7 @@
 EOO.comp <-  function(XY,
                       exclude.area = FALSE,
                       country_map = NULL,
-                      Name_Sp = "tax",
+                      # Name_Sp = "tax",
                       method.range = "convex.hull",
                       alpha = 1,
                       buff.alpha = 0.1,
@@ -105,6 +104,8 @@ EOO.comp <-  function(XY,
   
   XY <- 
     coord.check(XY = XY, listing = FALSE)
+  
+  Name_Sp <- XY[1,3]
   
   if (exclude.area) {
     ### Getting by default land map if poly_borders is not provided
