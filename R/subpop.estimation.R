@@ -6,6 +6,7 @@
 #' @param Resol_sub_pop numeric. Defines the radius of the circles
 #'   around each occurrence, in kilometres.
 #' @param export_shp logical
+#' @param proj_type
 #'
 #' @importFrom utils packageVersion
 #' @import sf
@@ -51,7 +52,7 @@ subpop.estimation <- function(XY,
   # buff_sf_multipoly <- sf::st_cast(buff_sf, "MULTIPOLYGON")
   buff_sf <- sf::st_cast(buff_sf, "POLYGON")
   SubPopPoly <-
-    sf::st_as_sf(data.frame(buff_sf, tax = ifelse(any(colnames(XY) == "tax"), unique(XY$tax), "taxa1")))
+    sf::st_as_sf(data.frame(buff_sf))
   # SubPopPoly_multipoly <-
   #   sf::st_as_sf(data.frame(buff_sf_multipoly, tax = ifelse(any(colnames(XY) == "tax"), unique(XY$tax), "taxa1")))
   
