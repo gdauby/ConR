@@ -55,9 +55,6 @@
 #' the buffer in decimal degree added to alpha hull. By default is 0.1
 #' @param method.range a character string, "convex.hull" or "alpha.hull". By
 #' default is "convex.hull"
-#' @param Name_Sp a character string, if \code{XY} is for one taxon and field
-#' containing taxon names is not provided, this item provide taxon name. By
-#' default is "Species1"
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
@@ -67,7 +64,7 @@
 #' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical. Whether a progress bar should displayed. TRUE by default
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'#'
+#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #'
 #' @return If \code{export_shp} is FALSE, a \code{dataframe} with one field
 #' containing EOO in square kilometers.  \code{NA} is given when EOO could not
@@ -118,7 +115,7 @@ EOO.computing <- function(XY,
                           alpha = 1,
                           buff.alpha = 0.1,
                           method.range = "convex.hull",
-                          Name_Sp = "species1",
+                          # Name_Sp = "species1",
                           method.less.than3 = "not comp",
                           write_results = FALSE,
                           file.name = "EOO.results",
@@ -173,12 +170,12 @@ EOO.computing <- function(XY,
   }
   
   
-  if (is.null(names(list_data))) {
-    names_ <-
-      rep(Name_Sp, length(list_data))
-  } else {
-    names_ <- names(list_data)
-  }
+  # if (is.null(names(list_data))) {
+  #   names_ <-
+  #     rep(Name_Sp, length(list_data))
+  # } else {
+  #   names_ <- names(list_data)
+  # }
   
   x <- NULL
   if (show_progress) {
@@ -216,7 +213,7 @@ EOO.computing <- function(XY,
           XY = list_data[[x]],
           exclude.area = exclude.area,
           country_map = country_map,
-          Name_Sp = names_[x],
+          # Name_Sp = names_[x],
           method.range = method.range,
           alpha = alpha,
           buff.alpha = buff.alpha,
@@ -225,11 +222,14 @@ EOO.computing <- function(XY,
           proj_type = proj_type
         )
       
-      names(res)[1] <-
-        paste0(names(res)[1], "_" , x)
-      if (length(res) > 1)
-        names(res)[2] <-
-        paste0(names(res)[2], "_" , x)
+      names(res) <- c("eoo", "spatial")
+      names(res)[1] <- list_data[[x]]$tax[1]
+      
+      # names(res)[1] <-
+      #   paste0(names(res)[1], "_" , x)
+      # if (length(res) > 1)
+      #   names(res)[2] <-
+      #   paste0(names(res)[2], "_" , x)
       
       res
       
@@ -239,38 +239,42 @@ EOO.computing <- function(XY,
   if(show_progress) close(pb)
   
   Results_short <-
-    data.frame(EOO = unlist(output[grep("EOO", names(output))]))
-  row.names(Results_short) <- names_
+    data.frame(eoo =  unlist(output[names(output) != "spatial"]))
   
-  if (length(output) == 1)
-    names(output) <- Name_Sp
+  # Results_short <-
+  #   data.frame(EOO = unlist(output[grep("EOO", names(output))]))
+  # row.names(Results_short) <- names_
   
+  # if (length(output) == 1)
+  #   names(output) <- Name_Sp
   
   if(export_shp) {
     
-    output_spatial <- output[grep("spatial", names(output))]
+    output_spatial <- output[names(output) == "spatial"]
     output_spatial <- output_spatial[!is.na(output_spatial)]
     
-    id_spatial <-
-      as.numeric(unlist(lapply(strsplit(
-        names(output_spatial), "_"
-      ), function(x)
-        x[[2]])))
+    # id_spatial <-
+    #   as.numeric(unlist(lapply(strsplit(
+    #     names(output_spatial), "_"
+    #   ), function(x)
+    #     x[[2]])))
     
-    if(length(output_spatial) > 1) {
+    # if(length(output_spatial) > 1) {
       output_spatial <- 
         do.call("rbind", output_spatial)
-    } else {
-      output_spatial <- 
-        output_spatial[[1]]
-    }
+      
+    row.names(output_spatial) <- 1:nrow(output_spatial)
+    # } else {
+    #   output_spatial <- 
+    #     output_spatial[[1]]
+    # }
     
-    output_spatial <- 
-      st_as_sf(data.frame(output_spatial)) # 
+    # output_spatial <- 
+    #   st_as_sf(data.frame(output_spatial)) # 
     
-    if (any(names(output_spatial) == "a"))
-      output_spatial <-
-      output_spatial[,-which(colnames(output_spatial) == 'a')]
+    # if (any(names(output_spatial) == "a"))
+    #   output_spatial <-
+    #   output_spatial[,-which(colnames(output_spatial) == 'a')]
     
     # , 
     # taxa = names_[id_spatial]
