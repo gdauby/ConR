@@ -121,7 +121,11 @@ AOO.computing <- function(XY,
       
       if (export_shp) {
         names(res) <- c("aoo", "spatial")
+        names(res)[1] <- list_data[[x]]$tax[1]
         res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
+        res$spatial <- res$spatial[,-which(colnames(res$spatial) == "lyr.1")]
+      } else {
+        names(res)[1] <- list_data[[x]]$tax[1]
       }
       
       res
@@ -132,26 +136,32 @@ AOO.computing <- function(XY,
   
   if(!export_shp) {
     
-    res <- unlist(output)
-    names(res) <- names(list_data)
+    res_df <-
+      data.frame(aoo =  unlist(output[names(output) != "spatial"]))
     
   }
   
   if(export_shp) {
     
-    res <- unlist(output[names(output) == "aoo"])
-    names(res) <- names(list_data)
+    res_df <-
+      data.frame(aoo =  unlist(output[names(output) != "spatial"]))
+    
+    # res <- unlist(output[names(output) == "aoo"])
+    # names(res) <- names(list_data)
     
     shapes <- output[names(output) == "spatial"]
     shapes <- do.call('rbind', shapes)
+    row.names(shapes) <- 1:nrow(shapes)
     
     # names(shapes) <- names(list_data)
     
   }
   
   if(!export_shp) 
-    return(res)
+    return(res_df)
+  
   if(export_shp) 
-    return(list(AOO = res, AOO_poly = shapes))
+    return(list(AOO = res_df, 
+                AOO_poly = shapes))
   
 }
