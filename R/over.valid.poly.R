@@ -5,11 +5,15 @@
 #' @param poly Spatial polygon
 #' @param points XY data frame
 #' @param proj_user projected coordinate system (in meters)
+#' @param names_poly character string
+#' @param names_taxa character string
+#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'#'
+#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' @param min.dist minimum tolerated distance between polygons and points.
 #'   Default to 0.1 m.
 #' @param value output value: proportional distance ("dist") or inside/outside
 #'   the polygon ("flag")?
-#' 
+
 #' @details The spatial polygon must be a `SpatialPolygonsDataFrame` in which
 #'   each polygon/feature is one taxon, an the data frame contains a column
 #'   `tax` with the taxa name. The XY data frame has the same structure as other
