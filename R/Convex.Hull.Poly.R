@@ -53,7 +53,8 @@ Convex.Hull.Poly <-
       
       POLY <- st_polygon(x = list(coord))
 
-      p1 <- sf::st_sf(a = 1, geometry = list(POLY))
+      p1 <- sf::st_sf(tax = "tax", geometry = list(POLY))
+      
       
       # p1 <- sf::st_as_sf(data.frame(a = 1, geometry = POLY), wkt = "geometry")
       sf::st_crs(p1) <-
