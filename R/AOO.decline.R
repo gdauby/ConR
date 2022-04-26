@@ -44,7 +44,7 @@
 #' \enumerate{
 #'   \item AOOs a data.frame of AOO estimates for each taxa and for each layer/spatial polygons if all_individual_layers is TRUE
 #'   \item AOO_decline a data.frame of AOO.decline in percentages
-#'   \item categories categories based on the sub-criteria of IUCN criterion A
+#'   \item categories based on the sub-criteria of IUCN criterion A
 #' }
 #'   
 #' @examples 
