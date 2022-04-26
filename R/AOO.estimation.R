@@ -7,6 +7,7 @@
 #' @param cell_size integer
 #' @param nbe_rep integer
 #' @param export_shp logical
+#' @param proj_type character string
 #' 
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
@@ -24,7 +25,6 @@ AOO.estimation <- function(coordEAC,
       export_shp = export_shp,
       proj_type = proj_type
     )
-  
   
   # mbm <- microbenchmark("1" = { res <-
   #   cell.occupied(
