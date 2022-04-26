@@ -13,7 +13,7 @@ context("Test that EOO.computing outputs are correct length and objects")
 
 test_that("EOO.computing", {
 
-  EOO <- EOO.computing(dummy_ex, show_progress = FALSE, write_shp = FALSE, write_results = FALSE)
+  EOO <- EOO.computing(XY = dummy_ex)
   
   expect_output(str(EOO), "data.frame")
   expect_equal(dim(EOO), c(1,1))

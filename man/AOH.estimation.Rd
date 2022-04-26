@@ -42,10 +42,7 @@ habitat spatial information}
 \item{years}{numeric. Time interval between the first and last \code{hab.map}
 if more than one raster is provided (e.g. if \code{hab.map} is a RasterStack object).}
 
-\item{country_map}{a \code{SpatialPolygonsDataFrame} or
-\code{SpatialPolygons} showing for example countries or continent borders.
-This shapefile will be used for cropping the \code{SpatialPolygons}l if
-exclude.area is TRUE}
+\item{country_map}{a \code{SpatialPolygonsDataFrame} or}
 
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
@@ -55,11 +52,12 @@ is FALSE}
 
 \item{NbeCores}{integer. The number of cores for parallel execution. Default to 2.}
 
-\item{output_raster}{the output format in the case raster are continuous
-variables and not categories. Default to "summary".}
+\item{simplifiy_poly}{logical whether the resulting polygon should be simplified using ms_simplify function of rmapshaper package}
 
-\item{ID_shape}{string. Indicate the field name in \code{hab.map} data frame
-containing the ID or name of each polygon.}
+\item{buffer}{logical
+\code{SpatialPolygons} showing for example countries or continent borders.
+This shapefile will be used for cropping the \code{SpatialPolygons}l if
+exclude.area is TRUE}
 }
 \value{
 If \code{hab.map} is a *Raster object with categorical variables, the

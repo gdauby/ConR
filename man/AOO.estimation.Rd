@@ -20,6 +20,8 @@ AOO.estimation(
 \item{nbe_rep}{integer}
 
 \item{export_shp}{logical}
+
+\item{proj_type}{character string}
 }
 \description{
 AOO estimation

@@ -8,7 +8,6 @@ EOO.comp(
   XY,
   exclude.area = FALSE,
   country_map = NULL,
-  Name_Sp = "tax",
   method.range = "convex.hull",
   alpha = 1,
   buff.alpha = 0.1,
@@ -23,8 +22,6 @@ EOO.comp(
 \item{exclude.area}{logical. Default if FALSE}
 
 \item{country_map}{SpatialPolygonDataframe. Default if NULL}
-
-\item{Name_Sp}{string}
 
 \item{method.range}{string, by default "convex.hull", can also take "alpha.hull"}
 

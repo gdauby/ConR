@@ -20,6 +20,14 @@ over.valid.poly(
 
 \item{points}{XY data frame}
 
+\item{names_poly}{character string}
+
+\item{names_taxa}{character string}
+
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'#'}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+
 \item{min.dist}{minimum tolerated distance between polygons and points.
 Default to 0.1 m.}
 

@@ -42,11 +42,11 @@ size (i.e. condition 'b'). If different of 'Decreasing', the condition 'b'
 of criterion B will not be met.}
 
 \item{ext.fluct}{numeric vector with the mean order of magnitude of the
-differences between population minima and maxima (Currently not
+differences between population minima and maxima (currently not
 implemented).}
 
 \item{EOO.threshold}{numeric vector with the EOO thresholds to convert
-estimates into threat categories. Default is the thresholds recommended by
+estimates into threat categories. Default is the threshold recommended by
 IUCN.}
 
 \item{AOO.threshold}{numeric vector with the AOO thresholds to convert

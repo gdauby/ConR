@@ -20,6 +20,8 @@ cell.occupied(
 \item{coord}{data.frame}
 
 \item{export_shp}{logical}
+
+\item{proj_type}{character string}
 }
 \description{
 Count number of occupied cells given resolution, projection

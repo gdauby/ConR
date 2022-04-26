@@ -14,7 +14,6 @@ EOO.computing(
   alpha = 1,
   buff.alpha = 0.1,
   method.range = "convex.hull",
-  Name_Sp = "species1",
   method.less.than3 = "not comp",
   write_results = FALSE,
   file.name = "EOO.results",
@@ -55,10 +54,6 @@ the buffer in decimal degree added to alpha hull. By default is 0.1}
 
 \item{method.range}{a character string, "convex.hull" or "alpha.hull". By
 default is "convex.hull"}
-
-\item{Name_Sp}{a character string, if \code{XY} is for one taxon and field
-containing taxon names is not provided, this item provide taxon name. By
-default is "Species1"}
 
 \item{method.less.than3}{a character string. If equal to "arbitrary", will
 give a value to species with two unique occurrences, see Details. By default

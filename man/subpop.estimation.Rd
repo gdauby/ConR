@@ -13,6 +13,8 @@ subpop.estimation(XY, Resol_sub_pop, export_shp = FALSE, proj_type)
 around each occurrence, in kilometres.}
 
 \item{export_shp}{logical}
+
+\item{proj_type}{}
 }
 \description{
 Subpopulations estimation
