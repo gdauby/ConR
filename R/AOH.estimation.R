@@ -9,27 +9,28 @@
 #'   addition, habitat change is only computed for rasters (e.g. RasterStack
 #'   object).
 #' 
+#' 
 #' @param XY \code{"dataframe"} see Details
+#' @param show_progress logical. whether a bar showing progress in computation
+#'   should be shown. Default to TRUE.
+#' @param proj_type character string, numeric or object of CRS class. Default to "cea".
+#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #' @param hab.map raster, raster layer/stack or spatial polygons containing the
 #'   habitat spatial information
 #' @param hab.map.type logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
 #' @param hab.class classes of values in ```hab.map``` to be considered as 'habitat'.
 #' @param years numeric. Time interval between the first and last ```hab.map```
 #'   if more than one raster is provided (e.g. if ```hab.map``` is a RasterStack object).
-#' @param output_raster the output format in the case raster are continuous
-#'   variables and not categories. Default to "summary".
-#' @param ID_shape string. Indicate the field name in ```hab.map``` data frame
-#'   containing the ID or name of each polygon.
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param proj_type character string, numeric or object of CRS class. Default to "cea".
-#' @param parallel logical. Should computing run in parallel? Default to FALSE.
-#' @param NbeCores integer. The number of cores for parallel execution. Default to 2.
-#' @param show_progress logical. whether a bar showing progress in computation
-#'   should be shown. Default to TRUE.
+#' @param country_map a \code{SpatialPolygonsDataFrame} or
 #' @param exclude.area a logical, if TRUE, areas outside of \code{country_map}
 #' are cropped of \code{SpatialPolygons} used for calculating EOO. By default
 #' is FALSE
-#' @param country_map a \code{SpatialPolygonsDataFrame} or
+#' @param parallel logical. Should computing run in parallel? Default to FALSE.
+#' @param NbeCores integer. The number of cores for parallel execution. Default to 2.
+#' @param simplifiy_poly logical whether the resulting polygon should be simplified using ms_simplify function of rmapshaper package
+#' @param buffer logical
+
+
 #' \code{SpatialPolygons} showing for example countries or continent borders.
 #' This shapefile will be used for cropping the \code{SpatialPolygons}l if
 #' exclude.area is TRUE
