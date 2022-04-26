@@ -76,7 +76,6 @@ locations.comp <- function(XY,
                            show_progress = TRUE,
                            proj_type = "cea") {
   
-  
   proj_type <- proj_crs(proj_type = proj_type)
   
   list_data <- 
@@ -86,69 +85,17 @@ locations.comp <- function(XY,
   
   if (is.null(protec.areas)) {
     
-    if (parallel) {
-      cl <- snow::makeSOCKcluster(NbeCores)
-      doSNOW::registerDoSNOW(cl)
-      
-      # registerDoParallel(NbeCores)
-      message('Parallel running with ',
-              NbeCores, ' cores')
-      
-      `%d%` <- foreach::`%dopar%`
-    } else{
-      `%d%` <- foreach::`%do%`
-    }
     
-    x <- NULL
+    res_list <- .generate_loc(dataset = list_data,
+                  method = method,
+                  nbe_rep = nbe_rep,
+                  Cell_size_locations = Cell_size_locations,
+                  Rel_cell_size = Rel_cell_size,
+                  parallel = parallel,
+                  NbeCores = NbeCores,
+                  show_progress = show_progress,
+                  proj_type = proj_type)
     
-    if (show_progress) {
-      pb <-
-        utils::txtProgressBar(min = 0,
-                              max = length(list_data),
-                              style = 3)
-      
-      progress <- function(n)
-        utils::setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-    } else{
-      opts <- NULL
-    }
-    
-    output <-
-      foreach::foreach(
-        x = 1:length(list_data),
-        .combine = 'c',
-        .options.snow = opts
-      ) %d% {
-        
-        if (!parallel & show_progress)
-          utils::setTxtProgressBar(pb, x)
-        
-        res <- 
-          Locations.estimation(
-          coordEAC = list_data[[x]], 
-          cell_size = Cell_size_locations, 
-          export_shp = TRUE, 
-          proj_type = proj_type, 
-          method = method,
-          nbe_rep = nbe_rep,
-          Rel_cell_size = Rel_cell_size
-        )
-        
-        names(res) <- c("nbe_occ", "spatial")
-        res
-      }
-    
-    if(parallel) snow::stopCluster(cl)
-    if(show_progress) close(pb)
-    
-    Locations <- unlist(output[names(output) == "nbe_occ"])
-    r2 <- output[names(output) == "spatial"]
-    names(Locations) <-
-      names(r2) <-
-      gsub(pattern = " ",
-           replacement = "_",
-           names(list_data))
     
   }
   
@@ -172,9 +119,6 @@ locations.comp <- function(XY,
     
     Links_NatParks <- st_set_geometry(Links_NatParks, NULL)
     
-    # LocNatParks <-
-    #   vector(mode = "numeric", length = length(list_data))
-
     XY_all <-
       data.frame(
         st_coordinates(DATA_SF)[,c(2, 1)],
@@ -188,8 +132,9 @@ locations.comp <- function(XY,
     XY_NOT_PA <- 
       XY_all[which(!XY_all$ID_prov_data %in% Links_NatParks$ID_prov_data),]
     
-    locations_pa <- vector(mode = "numeric", length = length(list_data))
-    names(locations_pa) <- names(list_data)
+    # locations_pa <- vector(mode = "numeric", length = length(list_data))
+    locations_pa <- data.frame(locations_pa = vector(mode = "numeric", length = length(list_data)))
+    row.names(locations_pa) <- names(list_data)
     if (nrow(XY_PA) > 0) {
       if (method_protected_area == "no_more_than_one") {
         ## if method is 'no_more_than_one' the number of location is the number of occupied protected areas
@@ -199,7 +144,7 @@ locations.comp <- function(XY,
         
         loc_pa <- apply(count_protec, 1, function(x) sum(x > 0))
         
-        locations_pa[which(names(locations_pa) %in% names(loc_pa))] <- loc_pa
+        locations_pa[which(row.names(locations_pa) %in% names(loc_pa)),1] <- loc_pa
         
         r2_PA <- NA
         
@@ -207,166 +152,177 @@ locations.comp <- function(XY,
         
         list_data_pa <- split(XY_PA, f = XY_PA$tax)
         
-        if (parallel) {
-          cl <- snow::makeSOCKcluster(NbeCores)
-          doSNOW::registerDoSNOW(cl)
-          
-          # registerDoParallel(NbeCores)
-          message('Parallel running with ',
-                  NbeCores, ' cores')
-          
-          `%d%` <- foreach::`%dopar%`
-        } else{
-          `%d%` <- foreach::`%do%`
-        }
+        res_list_pa <- .generate_loc(dataset = list_data_pa,
+                                  method = method,
+                                  nbe_rep = nbe_rep,
+                                  Cell_size_locations = Cell_size_locations,
+                                  Rel_cell_size = Rel_cell_size,
+                                  parallel = parallel,
+                                  NbeCores = NbeCores,
+                                  show_progress = show_progress,
+                                  proj_type = proj_type)
         
-        x <- NULL
-        if(show_progress) {
-          pb <-
-            utils::txtProgressBar(min = 0,
-                                  max = length(list_data_pa),
-                                  style = 3)
-          
-          progress <- function(n)
-            utils::setTxtProgressBar(pb, n)
-          opts <- list(progress = progress)
-        }else{opts <- NULL}
+        locations_pa[which(row.names(locations_pa) %in% row.names(res_list_pa$res_df)),1] <- 
+          res_list_pa$res_df[,1]
         
-        output <-
-          foreach::foreach(
-            x = 1:length(list_data_pa),
-            .combine = 'c',
-            .options.snow = opts
-          ) %d% {
-            
-            if (!parallel & show_progress)
-              utils::setTxtProgressBar(pb, x)
-            
-            res <- 
-              Locations.estimation(
-              coordEAC = list_data_pa[[x]], 
-              cell_size = Cell_size_locations, 
-              export_shp = TRUE, 
-              proj_type = proj_type, 
-              method = method,
-              nbe_rep = nbe_rep
-            )
-            
-            names(res) <- c("nbe_occ", "spatial")
-            res
-          }
+        r2_PA <- res_list_pa$shapes
         
-        if(parallel) snow::stopCluster(cl)
-        if(show_progress) close(pb)
-        
-        loc_pa <- unlist(output[names(output) == "nbe_occ"])
-        r2_PA <- unlist(output[names(output) == "spatial"])
-        names(loc_pa) <-
-          names(r2_PA) <-
-          names(list_data_pa)
-        
-        locations_pa[which(names(locations_pa) %in% names(loc_pa))] <- loc_pa
-        
-        # loc_pa <- unlist(output[names(output) == "nbe_occ"])
-        # r2_PA <- unlist(output[names(output) == "spatial"])
-        # names(loc_pa) <-
-        #   names(r2_PA) <-
-        #   gsub(pattern = " ",
-        #        replacement = "_",
-        #        names(list_data_pa))
-        # LocNatParks[names(LocNatParks) %in% names(loc_pa)] <-
-        #   loc_pa
       }
     } else{
       r2_PA <- NA
     }
     
-    names(locations_pa) <-
+    row.names(locations_pa) <-
       gsub(pattern = " ",
            replacement = "_",
-           names(locations_pa))
+           row.names(locations_pa))
     
-    locations_not_pa <- vector(mode = "numeric", length = length(list_data))
-    names(locations_not_pa) <- names(list_data)
+    locations_not_pa <- data.frame(locations_pa = vector(mode = "numeric", length = length(list_data)))
+    row.names(locations_not_pa) <- names(list_data)
     if(nrow(XY_NOT_PA) > 0) {
       
       list_data_not_pa <- split(XY_NOT_PA, f = XY_NOT_PA$tax)
       
-      if (parallel) {
-        cl <- snow::makeSOCKcluster(NbeCores)
-        doSNOW::registerDoSNOW(cl)
-        
-        # registerDoParallel(NbeCores)
-        message('Parallel running with ',
-                NbeCores, ' cores')
-        
-        `%d%` <- foreach::`%dopar%`
-      } else{
-        `%d%` <- foreach::`%do%`
-      }
+      res_list_not_pa <- .generate_loc(dataset = list_data_not_pa,
+                                   method = method,
+                                   nbe_rep = nbe_rep,
+                                   Cell_size_locations = Cell_size_locations,
+                                   Rel_cell_size = Rel_cell_size,
+                                   parallel = parallel,
+                                   NbeCores = NbeCores,
+                                   show_progress = show_progress,
+                                   proj_type = proj_type)
       
-      x <- NULL
-      if(show_progress) {
-        pb <-
-          utils::txtProgressBar(min = 0,
-                                max = length(list_data_not_pa),
-                                style = 3)
-        
-        progress <- function(n)
-          utils::setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
-      }else{opts <- NULL}
+      locations_not_pa[which(row.names(locations_not_pa) %in% row.names(res_list_not_pa$res_df)),1] <- 
+        res_list_not_pa$res_df[,1]
       
-      output <-
-        foreach::foreach(
-          x = 1:length(list_data_not_pa),
-          .combine = 'c',
-          .options.snow = opts
-        ) %d% {
-          
-          if (!parallel & show_progress)
-            utils::setTxtProgressBar(pb, x)
-          
-          res <- 
-            Locations.estimation(
-              coordEAC = list_data_not_pa[[x]], 
-              cell_size = Cell_size_locations, 
-              export_shp = TRUE, 
-              proj_type = proj_type, 
-              method = method,
-              nbe_rep = nbe_rep
-            )
-          
-          names(res) <- c("nbe_occ", "spatial")
-          res
-        }
+      r2 <- res_list_not_pa$shapes
       
-      if(parallel) snow::stopCluster(cl)
-      if(show_progress) close(pb)
-      
-      loc_not_pa <- unlist(output[names(output) == "nbe_occ"])
-      r2 <- unlist(output[names(output) == "spatial"])
-      names(loc_not_pa) <-
-        names(r2) <-
-        names(list_data_not_pa)
-      
-      locations_not_pa[which(names(locations_not_pa) %in% names(loc_not_pa))] <- loc_not_pa
+      # locations_not_pa[which(names(locations_not_pa) %in% names(loc_not_pa))] <- loc_not_pa
       
     } else{
       r2 <- NA
     }
     
-    names(locations_not_pa) <-
+    row.names(locations_not_pa) <-
       gsub(pattern = " ",
            replacement = "_",
-           names(locations_not_pa))
+           row.names(locations_not_pa))
   }
   
   if (!is.null(protec.areas))
-    return(list(r2, r2_PA, locations_pa, locations_not_pa))
+    return(list(locations_pa = locations_pa,
+                locations_not_pa = locations_not_pa,
+                locations_poly_pa = r2_PA,
+                locations_poly_not_pa = r2))
+  
   if (is.null(protec.areas))
-    return(list(r2, Locations))
+    return(list(locations = res_list$res_df,
+                locations_poly = res_list$shapes))
   
 }
 
+
+
+
+#' @title Internal function
+#'
+#' 
+#' @param dataset list
+#' 
+#' @author Gilles Dauby, \email{gildauby@gmail.com}
+#'
+#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @importFrom snow makeSOCKcluster stopCluster
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom foreach %dopar% %do% foreach
+#' 
+.generate_loc <- function(dataset,
+                          method = "fixed_grid",
+                          nbe_rep = 0,
+                          Cell_size_locations = 10,
+                          Rel_cell_size = 0.05,
+                          parallel = FALSE,
+                          NbeCores = 2,
+                          show_progress = TRUE,
+                          proj_type = "cea") {
+  
+  if (parallel) {
+    cl <- snow::makeSOCKcluster(NbeCores)
+    doSNOW::registerDoSNOW(cl)
+    
+    # registerDoParallel(NbeCores)
+    message('Parallel running with ',
+            NbeCores, ' cores')
+    
+    `%d%` <- foreach::`%dopar%`
+  } else{
+    `%d%` <- foreach::`%do%`
+  }
+  
+  x <- NULL
+  
+  if (show_progress) {
+    pb <-
+      utils::txtProgressBar(min = 0,
+                            max = length(dataset),
+                            style = 3)
+    
+    progress <- function(n)
+      utils::setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
+  } else {
+    opts <- NULL
+  }
+  
+  output <-
+    foreach::foreach(
+      x = 1:length(dataset),
+      .combine = 'c',
+      .options.snow = opts
+    ) %d% {
+      
+      if (!parallel & show_progress)
+        utils::setTxtProgressBar(pb, x)
+      
+      res <- 
+        Locations.estimation(
+          coordEAC = dataset[[x]], 
+          cell_size = Cell_size_locations, 
+          export_shp = TRUE, 
+          proj_type = proj_type, 
+          method = method,
+          nbe_rep = nbe_rep,
+          Rel_cell_size = Rel_cell_size
+        )
+      
+      names(res) <- c("nbe_occ", "spatial")
+      names(res)[1] <- dataset[[x]]$tax[1]
+      res$spatial <- cbind(res$spatial[, "geometry"], tax = dataset[[x]]$tax[1])
+      
+      res
+    }
+  
+  if(parallel) snow::stopCluster(cl)
+  if(show_progress) close(pb)
+  
+  # Locations <- unlist(output[names(output) != "spatial"])
+  
+  res_df <-
+    data.frame(locations =  unlist(output[names(output) != "spatial"]))
+  
+  shapes <- output[names(output) == "spatial"]
+  shapes <- do.call('rbind', shapes)
+  row.names(shapes) <- 1:nrow(shapes)
+  
+  # r2 <- output[names(output) == "spatial"]
+  # names(Locations) <-
+  #   names(r2) <-
+  #   gsub(pattern = " ",
+  #        replacement = "_",
+  #        names(list_data))
+  
+  return(list(res_df = res_df,
+               shapes = shapes))
+}
 
