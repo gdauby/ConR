@@ -37,19 +37,19 @@ ahull_to_SPLDF <- function(x)
     y <- cc[2] + r * sin(seqang)
     
     # convert to line segment
-    l.list[[i]] <- Line(cbind(x, y))
+    l.list[[i]] <- sp::Line(cbind(x, y))
   }
   
   # promote to Lines class, then to SpatialLines class
-  l <- Lines(l.list, ID = 1)
+  l <- sp::Lines(l.list, ID = 1)
   
   # copy over CRS data from original point data
   l.spl <-
-    SpatialLines(list(l), proj4string = CRS(as.character(NA), doCheckCRSArgs=TRUE))
+    sp::SpatialLines(list(l), proj4string = CRS(as.character(NA), doCheckCRSArgs=TRUE))
   
   # promote to SpatialLinesDataFrame, required for export to GRASS / OGR
   l.spldf <-
-    SpatialLinesDataFrame(l.spl, data = data.frame(id = 1), match.ID =
+    sp::SpatialLinesDataFrame(l.spl, data = data.frame(id = 1), match.ID =
                                 FALSE)
   
   return(l.spldf)
