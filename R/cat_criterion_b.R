@@ -18,10 +18,10 @@
 #'   size (i.e. condition 'b'). If different of 'Decreasing', the condition 'b'
 #'   of criterion B will not be met.
 #' @param ext.fluct numeric vector with the mean order of magnitude of the
-#'   differences between population minima and maxima (Currently not
+#'   differences between population minima and maxima (currently not
 #'   implemented).
 #' @param EOO.threshold numeric vector with the EOO thresholds to convert
-#'   estimates into threat categories. Default is the thresholds recommended by
+#'   estimates into threat categories. Default is the threshold recommended by
 #'   IUCN.
 #' @param AOO.threshold numeric vector with the AOO thresholds to convert
 #'   estimates into threat categories. Default is the thresholds recommended by
@@ -130,12 +130,14 @@ cat_criterion_b <- function(EOO = NULL,
     rank_sev.frag <- rep("", length(EOO))
   }
   
-  all_ranks <-  cbind.data.frame(B1a = rank_eoo,
-                                   B2a = rank_aoo,
-                                   Baii = rank_loc,
-                                   Bai = rank_sev.frag,
-                                   deparse.level = 0, 
-                                   stringsAsFactors = FALSE)    
+  all_ranks <-  cbind.data.frame(
+    B1a = rank_eoo,
+    B2a = rank_aoo,
+    Baii = rank_loc,
+    Bai = rank_sev.frag,
+    deparse.level = 0,
+    stringsAsFactors = FALSE
+  )
 
   if(!is.null(decline)) {
     
