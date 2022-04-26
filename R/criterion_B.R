@@ -82,7 +82,6 @@ criterion_B <- function(x,
                        mode = "spheroid",
                        DrawMap = FALSE) {
   
-  
   if(class(x)[1] == "spgeoIN") {
     x <- cbind(x$species_coordinates, x$identifier)
     x <- x[,c(2,1,3)]
@@ -159,11 +158,10 @@ criterion_B <- function(x,
       
     }
     
-
-    
   } else {
     
-    NbeSubPop <- vector(mode = "numeric", length = length(unique(x$tax)))
+    NbeSubPop <- 
+      data.frame(subpop = rep(NA, length(unique(x$tax))))
     
   }
   
@@ -223,21 +221,20 @@ criterion_B <- function(x,
       proj_type = proj_type
     )
   
-  
-  EOO <- EOO$EOO
-  
   categories <- 
-    cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations_res[[2]])
+    cat_criterion_b(EOO = EOO$eoo, 
+                    AOO = AOO$aoo, 
+                    locations = locations_res$locations$locations)
   
   results_full <-
     data.frame(
-      taxa = names(AOO),
-      EOO = EOO,
-      AOO = AOO,
-      locations = locations_res[[2]],
+      taxa = row.names(AOO),
+      EOO = EOO$eoo,
+      AOO = AOO$aoo,
+      locations = locations_res$locations$locations,
       category = categories$ranks_B,
       cat_codes = categories$cats_code,
-      subpop = NbeSubPop
+      subpop = NbeSubPop$subpop
     )
   
   return(results_full)
