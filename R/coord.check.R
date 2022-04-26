@@ -16,6 +16,8 @@ coord.check <-
     
     XY <- as.data.frame(XY)
     
+    if (ncol(XY) < 3) stop("At least three columns are expected in the following order : latitude, longitude and species names")
+    
     if (any(is.na(XY[, c(1:2)]))) {
       print(
         paste(
@@ -56,7 +58,7 @@ coord.check <-
     
     
     if (listing) {
-      if (ncol(XY) > 2) {
+      
         colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
         XY$tax <- as.character(XY$tax)
         
@@ -141,11 +143,7 @@ coord.check <-
           
         }
         
-      } else{
-        colnames(XY)[1:2] <- c("ddlat", "ddlon")
-        list_data <- list(XY)
-        
-      }
+      
       
     } else{
       list_data <-
