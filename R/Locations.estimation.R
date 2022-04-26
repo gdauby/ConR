@@ -6,6 +6,7 @@
 #' @param cell_size integer
 #' @param nbe_rep integer
 #' @param export_shp logical
+#' @param proj_type character string
 #' @param Rel_cell_size numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05
 #' 
 Locations.estimation <- function(coordEAC,
