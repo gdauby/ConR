@@ -4,7 +4,14 @@
 \alias{coord.check}
 \title{Internal function}
 \usage{
-coord.check(XY, listing = TRUE, proj_type = NULL, listing_by_valid = FALSE)
+coord.check(
+  XY,
+  listing = TRUE,
+  proj_type = NULL,
+  listing_by_valid = FALSE,
+  cell_size = NULL,
+  check_eoo = TRUE
+)
 }
 \arguments{
 \item{XY}{data.frame, of at least two columns (coordinates), third is taxa}

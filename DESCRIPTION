@@ -1,7 +1,7 @@
 Package: ConR
 Type: Package
 Title: Computation of Parameters Used in Preliminary Assessment of Conservation Status
-Version: 2.0.1
+Version: 2.0.2
 Maintainer: Gilles Dauby <gildauby@gmail.com>
 Description: Multi-species estimation of biological indicators of populations used
     for the preliminary assessment of conservation status following Criterion A, B, 
@@ -41,7 +41,7 @@ Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
-RoxygenNote: 7.1.1.9000
+RoxygenNote: 7.1.2
 Authors@R: c(
 	person("Gilles", "Dauby", role = c("cre", "aut"),
 	email = "gildauby@gmail.com", 
