@@ -70,7 +70,7 @@ file. By default is "EOO.sensitivity.results"}
 
 \item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'#'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 }
 \value{
 A data frame containing, for each taxon, the EOO in square kilometres

@@ -126,10 +126,11 @@ EOO.computing <- function(XY,
                           mode = "spheroid"
 ) {
   
+  list_data <- coord.check(XY = XY, check_eoo = TRUE)
+  issue_long_span <- list_data$issue_long_span
+  issue_nrow <- list_data$issue_nrow
+  list_data <- list_data$list_data
   
-  list_data <- coord.check(XY = XY)
-  
-
   if (exclude.area) {
     ### Getting by default land map if poly_borders is not provided
     if (is.null(country_map)) {
@@ -151,12 +152,15 @@ EOO.computing <- function(XY,
     }
     
   }
-
   
   # if (buff_width > 80)
   #   stop("buff_width has unrealistic value")
   
-
+  res_df <-
+    data.frame(eoo =  rep(NA, length(list_data)), 
+               issue_eoo = rep(NA, length(list_data)))
+  row.names(res_df) <- names(list_data)
+  
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
     doSNOW::registerDoSNOW(cl)
@@ -169,7 +173,6 @@ EOO.computing <- function(XY,
     `%d%` <- foreach::`%do%`
   }
   
-  
   # if (is.null(names(list_data))) {
   #   names_ <-
   #     rep(Name_Sp, length(list_data))
@@ -181,8 +184,8 @@ EOO.computing <- function(XY,
   if (show_progress) {
     pb <-
       txtProgressBar(min = 0,
-                            max = length(list_data),
-                            style = 3)
+                     max = length(list_data),
+                     style = 3)
     
     progress <- function(n)
       setTxtProgressBar(pb, n)
@@ -238,9 +241,19 @@ EOO.computing <- function(XY,
   if(parallel) snow::stopCluster(cl)
   if(show_progress) close(pb)
   
-  Results_short <-
-    data.frame(eoo =  unlist(output[names(output) != "spatial"]))
+  res <- unlist(output[names(output) != "spatial"])
   
+  res_df[which(row.names(res_df) %in% names(res)), 1] <-
+    res
+  
+  if (length(issue_long_span) > 0)
+    res_df[issue_long_span, 2] <-
+    "Occurrences spans more than 180 degrees longitude, EOO unlikely reliable"
+  
+  if (length(issue_nrow) > 0)
+    res_df[issue_nrow, 2] <-
+    paste(res_df[issue_nrow, 2], "EOO cannot be estimated because less than 3 unique occurrences", sep = "|")
+    
   # Results_short <-
   #   data.frame(EOO = unlist(output[grep("EOO", names(output))]))
   # row.names(Results_short) <- names_
@@ -326,13 +339,13 @@ EOO.computing <- function(XY,
   }
   
   if (write_results)
-    write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
+    write.csv(res_df, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (!export_shp)
-    output <- Results_short
+    output <- res_df
 
   if (export_shp)
-    output <- list(results = Results_short,
+    output <- list(results = res_df,
                    spatial = output_spatial)
   
   output

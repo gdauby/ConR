@@ -95,7 +95,7 @@
 #'   
 #' @examples No examples available yet.
 #' 
-#' @importFrom  terra project crop vect rast app crs
+#' @importFrom terra project crop vect rast app crs
 #' @importFrom stars st_as_stars
 #' @importFrom rmapshaper ms_simplify
 #' @import sf
@@ -149,7 +149,7 @@ AOH.estimation <- function(XY,
     #   as(country_map, "sf")
   }
   
-  proj_type_ <- proj_crs(proj_type = proj_type)
+  proj_type_ <- proj_crs(proj_type = proj_type, wkt = T)
   
   EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE) # , ...
   
@@ -234,8 +234,7 @@ AOH.estimation <- function(XY,
     
   }
   
-  EOO.res.all <- data.frame(species = row.names(EOO.res$results),
-                            EOO = EOO.res$results$EOO)
+  EOO.res.all <- EOO.res$results
   
   # loop across hab.map provided
   AOH.poly <- vector('list', length(hab.map) + 1)
@@ -245,12 +244,11 @@ AOH.estimation <- function(XY,
     
     if (any(grepl("Raster", class(hab.map.selected)))) {
       
-      if (as.character(terra::crs(hab.map.selected)) != proj_type_@projargs) {
+      if (as.character(terra::crs(hab.map.selected, describe = TRUE)$code) != unlist(strsplit(proj_type_, ":"))[2]) {
         
         # hab.map.selected <- raster::projectRaster(hab.map.selected, crs = proj_type_)
         
-        hab.map.selected <- terra::project(hab.map.selected, as.character(proj_type_))
-        
+        hab.map.selected <- terra::project(hab.map.selected, proj_type_)
         
         # hab.map.selected.terra <- terra::rast(hab.map.selected)
         # 
@@ -362,6 +360,15 @@ AOH.estimation <- function(XY,
           
           # test <- terra::as.polygons(cropped.hab.map, trunc = TRUE, values = TRUE)
           
+          # r2_pol <-
+          #   terra::as.polygons(
+          #     cropped.hab.map)
+          # 
+          # r2_pol_sf <- sf::st_as_sf(r2_pol)
+          # 
+          # r2_pol_sf <- suppressWarnings(sf::st_cast(r2_pol_sf, "POLYGON"))
+          # row.names(r2_pol_sf) <- 1:nrow(r2_pol_sf)
+          
           hab.map_poly <- st_as_sf(stars::st_as_stars(cropped.hab.map), merge = TRUE)
           
           if (simplifiy_poly) {
@@ -373,7 +380,7 @@ AOH.estimation <- function(XY,
           
           message("converting to valid polygons")
           hab.map_masked <- st_make_valid(hab.map_poly)
-          message("combining subseted pollygons to multipolygon")
+          # message("combining subseted polygons to multipolygon")
           
           # hab.map_masked <- 
           #   st_as_sf(raster::rasterToPolygons(cropped.hab.map, dissolve = TRUE))
@@ -410,7 +417,7 @@ AOH.estimation <- function(XY,
       } else {
         
         cropped.hab.map <-
-          raster::calc(hab.map.selected, function(x) ifelse(!is.na(x), 1, NA))
+          terra::app(hab.map.selected, function(x) ifelse(!is.na(x), 1, NA))
         
         hab.map_masked <- st_make_valid(st_as_sf(stars::st_as_stars(cropped.hab.map), merge = TRUE))
         
@@ -462,7 +469,8 @@ AOH.estimation <- function(XY,
                 hab.map_masked[which(hab.map_masked$lyr.1 > as.numeric(hab.class[x,2]) & hab.map_masked$lyr.1 < as.numeric(hab.class[x,3])),]
               
               test <- 
-                st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[x,1]),], hab.map_poly))
+                st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[x,1]),], 
+                                         hab.map_poly))
               
             test
               

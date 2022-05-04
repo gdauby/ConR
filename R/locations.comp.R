@@ -76,15 +76,28 @@ locations.comp <- function(XY,
                            show_progress = TRUE,
                            proj_type = "cea") {
   
-  proj_type <- proj_crs(proj_type = proj_type)
+  proj_type <- proj_crs(proj_type = proj_type, wkt = T)
   
   list_data <- 
-    coord.check(XY = XY, proj_type = proj_type)
+    coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_locations, check_eoo = FALSE)
+  
+  issue_close_to_anti <- list_data$issue_close_to_anti
+  list_data <- list_data$list_data
+  
+  res_df <-
+    data.frame(locations =  rep(NA, length(list_data)), 
+               issue_locations = rep(NA, length(list_data)))
+  row.names(res_df) <- names(list_data)
   
   ## geographical distances for all pairs of occurrences
   
   if (is.null(protec.areas)) {
     
+    if (length(issue_close_to_anti) > 0) {
+      
+      list_data <- list_data[-issue_close_to_anti]
+      
+    }
     
     res_list <- .generate_loc(dataset = list_data,
                   method = method,
@@ -96,6 +109,10 @@ locations.comp <- function(XY,
                   show_progress = show_progress,
                   proj_type = proj_type)
     
+    res_df[which(row.names(res_df) %in% names(res_list$res_df)), 1] <-
+      res_list$res_df
+    
+    shapes_loc <- res_list$shapes
     
   }
   
@@ -104,7 +121,7 @@ locations.comp <- function(XY,
     XY_ID <- 
       data.frame(XY, ID_prov_data = seq(1, nrow(XY), 1))
     
-    DATA_SF <- st_as_sf(coord.check(XY = XY_ID, listing = F, proj_type = proj_type), 
+    DATA_SF <- st_as_sf(coord.check(XY = XY_ID, listing = F, proj_type = proj_type, check_eoo = FALSE)$list_data, 
                         coords = c(2, 1), crs = proj_type)
     
     if(!any(class(protec.areas) == "sf"))
@@ -135,6 +152,7 @@ locations.comp <- function(XY,
     # locations_pa <- vector(mode = "numeric", length = length(list_data))
     locations_pa <- data.frame(locations_pa = vector(mode = "numeric", length = length(list_data)))
     row.names(locations_pa) <- names(list_data)
+    
     if (nrow(XY_PA) > 0) {
       if (method_protected_area == "no_more_than_one") {
         ## if method is 'no_more_than_one' the number of location is the number of occupied protected areas
@@ -162,20 +180,22 @@ locations.comp <- function(XY,
                                   show_progress = show_progress,
                                   proj_type = proj_type)
         
-        locations_pa[which(row.names(locations_pa) %in% row.names(res_list_pa$res_df)),1] <- 
-          res_list_pa$res_df[,1]
+        locations_pa[which(row.names(locations_pa) %in% names(res_list_pa$res_df)),1] <- 
+          res_list_pa$res_df
         
         r2_PA <- res_list_pa$shapes
+        
+        r2_PA <- do.call("cbind", list(res_list_pa$shapes, pa = TRUE))
         
       }
     } else{
       r2_PA <- NA
     }
     
-    row.names(locations_pa) <-
-      gsub(pattern = " ",
-           replacement = "_",
-           row.names(locations_pa))
+    # row.names(locations_pa) <-
+    #   gsub(pattern = " ",
+    #        replacement = "_",
+    #        row.names(locations_pa))
     
     locations_not_pa <- data.frame(locations_pa = vector(mode = "numeric", length = length(list_data)))
     row.names(locations_not_pa) <- names(list_data)
@@ -193,10 +213,10 @@ locations.comp <- function(XY,
                                    show_progress = show_progress,
                                    proj_type = proj_type)
       
-      locations_not_pa[which(row.names(locations_not_pa) %in% row.names(res_list_not_pa$res_df)),1] <- 
-        res_list_not_pa$res_df[,1]
+      locations_not_pa[which(row.names(locations_not_pa) %in% names(res_list_not_pa$res_df)),1] <- 
+        res_list_not_pa$res_df
       
-      r2 <- res_list_not_pa$shapes
+      r2 <- do.call("cbind", list(res_list_not_pa$shapes, pa = FALSE))
       
       # locations_not_pa[which(names(locations_not_pa) %in% names(loc_not_pa))] <- loc_not_pa
       
@@ -204,21 +224,46 @@ locations.comp <- function(XY,
       r2 <- NA
     }
     
-    row.names(locations_not_pa) <-
-      gsub(pattern = " ",
-           replacement = "_",
-           row.names(locations_not_pa))
+    # row.names(locations_not_pa) <-
+    #   gsub(pattern = " ",
+    #        replacement = "_",
+    #        row.names(locations_not_pa))
+    
+    res_loc <- 
+      locations_pa + locations_not_pa
+    
+    res_df[which(row.names(res_df) %in% row.names(res_loc)), 1] <-
+      res_loc$locations_pa
+    
+    if (length(r2_PA) > 1 & length(r2) > 1) {
+      shapes_loc <- do.call("rbind", list(r2, r2_PA))
+      shapes_loc[order(shapes_loc$tax),]
+    }
+    
+    if (length(r2_PA) > 1 & length(r2) == 1) 
+      shapes_loc <- r2_PA
+    
+    if (length(r2_PA) == 1 & length(r2) > 1) 
+      shapes_loc <- r2
+    
+    if (length(r2_PA) == 1 & length(r2) == 1) 
+      shapes_loc <- NA
+    
   }
   
-  if (!is.null(protec.areas))
-    return(list(locations_pa = locations_pa,
-                locations_not_pa = locations_not_pa,
-                locations_poly_pa = r2_PA,
-                locations_poly_not_pa = r2))
+  if (length(issue_close_to_anti) > 0)
+    res_df[issue_close_to_anti, 2] <-
+    "AOO could not computed because grid cells would overlap with antimeridian"
   
-  if (is.null(protec.areas))
-    return(list(locations = res_list$res_df,
-                locations_poly = res_list$shapes))
+  # if (!is.null(protec.areas))
+  #   return(list(locations_pa = locations_pa,
+  #               locations_not_pa = locations_not_pa,
+  #               locations_poly_pa = r2_PA,
+  #               locations_poly_not_pa = r2))
+  
+  # if (is.null(protec.areas))
+    return(list(locations = res_df,
+                locations_poly = shapes_loc))
   
 }
 
@@ -309,7 +354,7 @@ locations.comp <- function(XY,
   # Locations <- unlist(output[names(output) != "spatial"])
   
   res_df <-
-    data.frame(locations =  unlist(output[names(output) != "spatial"]))
+    unlist(output[names(output) != "spatial"])
   
   shapes <- output[names(output) == "spatial"]
   shapes <- do.call('rbind', shapes)

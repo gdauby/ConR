@@ -6,6 +6,7 @@
 #' @author Gilles Dauby & Renato A. Ferreira de Lima
 #' 
 #' @param proj_type string or numeric
+#' @param wkt logical whether the output should be as character string indicating EPSG
 #' 
 #' @importFrom sp CRS
 #' @importFrom rgdal rgdal_extSoftVersion make_EPSG
@@ -33,7 +34,7 @@
 #' 
 #' 
 #' @export
-proj_crs <- function(proj_type = "cea") {
+proj_crs <- function(proj_type = "cea", wkt = FALSE) {
   
   ## https://epsg.io/54032
   # World Azimuthal Equidistant
@@ -122,7 +123,8 @@ proj_crs <- function(proj_type = "cea") {
     
     crs_proj <- 
       sp::CRS(projargs = proj, 
-              SRS_string = wkt_crs, doCheckCRSArgs = TRUE)
+              SRS_string = wkt_crs, 
+              doCheckCRSArgs = TRUE)
     
     # crs_proj <- 
     #   sp::CRS(projargs = proj, 
@@ -133,5 +135,22 @@ proj_crs <- function(proj_type = "cea") {
     crs_proj <-
       sp::CRS(projargs = proj, doCheckCRSArgs = FALSE)
   
-  return(crs_proj)
+  if (wkt) {
+    
+    if (rgdal::rgdal_extSoftVersion()[1] >="3.0.0") {
+      
+      return(wkt_crs)
+    } else {
+      
+      stop("Rgdal version >= 3.0.0 needed")
+      
+    }
+    
+  } else {
+    
+    return(crs_proj)
+    
+  }
+  
+  
 }

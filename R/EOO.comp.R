@@ -103,7 +103,9 @@ EOO.comp <-  function(XY,
   # , verbose=TRUE
   
   XY <- 
-    coord.check(XY = XY, listing = FALSE)
+    coord.check(XY = XY, listing = FALSE, check_eoo = FALSE)
+  
+  XY <- XY$list_data
   
   Name_Sp <- XY[1,3]
   
@@ -134,15 +136,15 @@ EOO.comp <-  function(XY,
   # if (!convex.hull & !alpha.hull)
   #   stop("alpha.hull and convex.hull are both FALSE, one should TRUE")
   
-  if (nrow(unique(XY)) > 1)
-    if (max(dist(XY[, 2]), na.rm = T) >= 180)
-      warning(
-        paste(
-          "Occurrences spans more than 180 degrees longitude for species _",
-          as.character(Name_Sp),
-          "_ EOO unlikely reliable, check the projection for a proper estimation and use a 'planar' (projected) mode"
-        )
-      )
+  # if (nrow(unique(XY)) > 1)
+  #   if (max(dist(XY[, 2]), na.rm = T) >= 180)
+  #     warning(
+  #       paste(
+  #         "Occurrences spans more than 180 degrees longitude for species _",
+  #         as.character(Name_Sp),
+  #         "_ EOO unlikely reliable, check the projection for a proper estimation and use a 'planar' (projected) mode"
+  #       )
+  #     )
   
   # if(alpha.hull) {
   #   convex.hull <- FALSE
@@ -154,13 +156,13 @@ EOO.comp <-  function(XY,
     if (nrow(XY) < 2) {
       
       EOO <- NA
-      message(
-        paste(
-          "EOO parameter cannot be estimated for",
-          as.character(Name_Sp),
-          "because there is only 1 unique occurrence"
-        )
-      )
+      # message(
+      #   paste(
+      #     "EOO parameter cannot be estimated for",
+      #     as.character(Name_Sp),
+      #     "because there is only 1 unique occurrence"
+      #   )
+      # )
       
     } else {
       if (method.less.than3 == "arbitrary") {
@@ -190,13 +192,13 @@ EOO.comp <-  function(XY,
       
       if (method.less.than3 == "not comp") {
         ## if there are two unique occurences, EOO is not computed neither
-        message(
-          paste(
-            "EOO parameter cannot be estimated for",
-            as.character(Name_Sp),
-            "because there is less than 3 unique occurrences"
-          )
-        )
+        # message(
+        #   paste(
+        #     "EOO parameter cannot be estimated for",
+        #     as.character(Name_Sp),
+        #     "because there is less than 3 unique occurrences"
+        #   )
+        # )
         EOO <- NA
       }
     }
@@ -206,8 +208,8 @@ EOO.comp <-  function(XY,
   } else {
     
     ### Checking if all occurrences are on a straight line
-    if (length(unique(XY[, 1])) == 1 ||
-        length(unique(XY[, 2])) == 1 ||
+    if (length(XY[, 1]) == 1 ||
+        length(XY[, 2]) == 1 ||
         round(abs(cor(XY[, 1], XY[, 2])), 6) == 1) {
       
       message(
@@ -228,53 +230,6 @@ EOO.comp <-  function(XY,
           check_line <- FALSE
         
       }
-      
-      # hpts <- unique(XY[, c(2, 1)])
-      # POLY <- "LINESTRING("
-      # for (Z in 1:dim(hpts)[1]) {
-      #   POLY <- paste(POLY, hpts[Z, 1], " ", hpts[Z, 2], sep = "")
-      #   if (Z != dim(hpts)[1])
-      #     POLY <- paste(POLY, ", ", sep = "")
-      #   if (Z == dim(hpts)[1])
-      #     POLY <- paste(POLY, ")", sep = "")
-      # }
-      # p1 <- rgeos::readWKT(POLY)
-      # 
-      # p1 <- rgeos::readWKT(POLY)
-      # sp::proj4string(p1) <- CRS(SRS_string='EPSG:4326')
-      # 
-      # # crs <- CRS("+proj=longlat +datum=WGS84")
-      # # crs(p1) <- crs
-      # 
-      # p1 <-
-      #   suppressWarnings(geosphere::makeLine(p1)) ### Add vertices to line
-      # 
-      # p1 <-
-      #   suppressWarnings(rgeos::gBuffer(p1, width = buff_width)) ### Add buffer to line
-      # 
-      # ## If exclude.area is TRUE
-      # if (exclude.area) {
-      #   
-      #   p1_sf <- as(p1, "sf")
-      # 
-      #   p1 <-
-      #     suppressWarnings(suppressMessages(st_union(
-      #       st_intersection(p1_sf, country_map)
-      #     )))
-      # 
-      #   sf::st_crs(p1) <-
-      #     "+proj=longlat +datum=WGS84"
-      # 
-      #   p1 <- as(p1, "Spatial")
-      # 
-      #   EOO <- 
-      #     suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-      # 
-      # } else {
-      #   
-      #   EOO <- suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-      #   
-      # }
       
     }
     # else {
@@ -354,23 +309,6 @@ EOO.comp <-  function(XY,
       # }
       
       if(any(class(p1) == "SpatialPolygons") | any(class(p1) == "sfc") | any(class(p1) == "sf")) {
-        # if (mode == "spheroid") {
-        #   
-        #   EOO <-
-        #     as.numeric(st_area(p1)) / 1000000
-        #   
-        #   # EOO <-
-        #   #   suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-        # }
-        # 
-        # if (mode == "planar") {
-        #   
-        #   EOO <-
-        #     as.numeric(st_area(p1)) / 1000000
-        #   
-        #   p1 <- 
-        #     as(st_transform(p1, 4326), "Spatial")
-        # }
         
         if (!sf::st_is_valid(p1)) {
           

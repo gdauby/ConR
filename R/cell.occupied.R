@@ -53,7 +53,9 @@ cell.occupied <-
         r <-
           terra::rast(ext,
                       resolution = size * 1000,
-                      crs = as.character(crs_proj))
+                      crs = crs_proj)
+        
+        r_proj <- project(rast(r), "epsg:4326")
         
         # ext <-
         #   raster::extent(
@@ -75,8 +77,11 @@ cell.occupied <-
         colnames(coord_vec) <- c("x", "y")
         coord_vec <- terra::vect(coord_vec, 
                                  crs = as.character(crs_proj), geom=c("x", "y"))
+        coord_vec_proj <- 
+          project(coord_vec, "epsg:4326")
+        
         r2_ <-
-          terra::rasterize(x = coord_vec, y = r)
+          terra::rasterize(x = coord_vec_proj, y = r_proj)
         
         OCC <-
           length(which(!is.na(terra::values(r2_))))
@@ -131,7 +136,7 @@ cell.occupied <-
                       resolution = size * 1000,
                       crs = as.character(crs_proj))
         
-        
+        r_proj <- project(rast(r), "epsg:4326")
         
         # ext = raster::extent(
         #   floor(Corners[1, 1]) - rd.1 - 2 * size * 1000,
@@ -146,8 +151,18 @@ cell.occupied <-
         colnames(coord_vec) <- c("x", "y")
         coord_vec <- terra::vect(coord_vec, 
                                  crs = as.character(crs_proj), geom=c("x", "y"))
+        coord_vec_proj <- 
+          project(coord_vec, "epsg:4326")
+        
         r2_ <-
-          terra::rasterize(x = coord_vec, y = r)
+          terra::rasterize(x = coord_vec_proj, y = r_proj)
+        
+        # coord_vec <- coord[, 1:2]
+        # colnames(coord_vec) <- c("x", "y")
+        # coord_vec <- terra::vect(coord_vec, 
+        #                          crs = as.character(crs_proj), geom=c("x", "y"))
+        # r2_ <-
+        #   terra::rasterize(x = coord_vec, y = r)
         
         OCC <-
           length(which(!is.na(terra::values(r2_))))
@@ -185,9 +200,15 @@ cell.occupied <-
 
     if (export_shp) {
       
-      r2_ <-
-        suppressWarnings(terra::project(x = rasts[[which_raster]],
-                                        y = "epsg:4326"))
+      # r2_ <-
+      #   suppressWarnings(terra::project(x = rasts[[which_raster]],
+      #                                   y = "epsg:4326", 
+      #                                   gdal = FALSE))
+      
+      r2_ <- 
+        rasts[[which_raster]]
+      
+      # 
       
       r2_pol <-
         terra::as.polygons(
@@ -195,6 +216,16 @@ cell.occupied <-
       
       r2_pol_sf <- sf::st_as_sf(r2_pol)
       
+      r2_pol_sf <- suppressWarnings(sf::st_cast(r2_pol_sf, "POLYGON"))
+      row.names(r2_pol_sf) <- 1:nrow(r2_pol_sf)
+      
+      # st_as_sf(stars::st_as_stars(r2_), merge = TRUE)
+      # 
+      # microbenchmark::microbenchmark({r2_pol_sf <- sf::st_as_sf(r2_pol); sf::st_as_sf(r2_pol);  r2_pol_sf <- sf::st_cast(r2_pol_sf, "POLYGON")},
+      #                                st_as_sf(stars::st_as_stars(r2_), merge = TRUE), times = 10)
+      
+    } else {
+      r2_pol_sf <- NA
     }
     
     # if (export_shp) {
@@ -212,11 +243,8 @@ cell.occupied <-
     #     as(r2_pol, "sf")
     # }
 
-    if (export_shp)
-      return(list(r2_pol_sf, Occupied_cells))
-    if (!export_shp)
-      return(list(NA, Occupied_cells))
-
+    return(list(r2_pol_sf, Occupied_cells))
+    
   }
 
 

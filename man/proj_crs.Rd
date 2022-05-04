@@ -4,10 +4,12 @@
 \alias{proj_crs}
 \title{Get the projection system}
 \usage{
-proj_crs(proj_type = "cea")
+proj_crs(proj_type = "cea", wkt = FALSE)
 }
 \arguments{
 \item{proj_type}{string or numeric}
+
+\item{wkt}{logical whether the output should be as character string indicating EPSG}
 }
 \value{
 \code{CRS} class object

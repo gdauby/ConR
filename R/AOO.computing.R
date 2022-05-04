@@ -70,90 +70,115 @@ AOO.computing <- function(XY,
                           proj_type = "cea"
 ) {
   
-  proj_type <- proj_crs(proj_type = proj_type)
+  proj_type <- proj_crs(proj_type = proj_type, wkt = T)
   
   list_data <- 
-    coord.check(XY = XY, proj_type = proj_type)
+    coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_AOO, check_eoo = FALSE)
   
-  if(parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
+  issue_close_to_anti <- list_data$issue_close_to_anti
+  list_data <- list_data$list_data
+  
+  res_df <-
+    data.frame(aoo =  rep(NA, length(list_data)), 
+               issue_aoo = rep(NA, length(list_data)))
+  row.names(res_df) <- names(list_data)
+  
+  if (length(issue_close_to_anti) > 0) {
     
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    `%d%` <- foreach::`%dopar%`
-  }else{
-    `%d%` <- foreach::`%do%`
+    list_data <- list_data[-issue_close_to_anti]
+    
   }
   
-  
-  x <- NULL
-  if(show_progress) {
-    pb <-
-      txtProgressBar(min = 0,
-                            max = length(list_data),
-                            style = 3)
+  if (length(list_data) > 0) {
     
-    progress <- function(n)
-      setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else {opts <- NULL}
-  
-  
-  # print(proj_type)
-  
-  output <-
-    foreach::foreach(
-      x = 1:length(list_data),
-      .combine = 'c', .options.snow = opts
-    ) %d% {
-      if (!parallel & show_progress)
-        setTxtProgressBar(pb, x)
-      # source("./R/IUCNeval.functionv11.R")
+    if (parallel) {
+      cl <- snow::makeSOCKcluster(NbeCores)
+      doSNOW::registerDoSNOW(cl)
       
-      res <- AOO.estimation(
-        coordEAC = list_data[[x]],
-        cell_size = Cell_size_AOO,
-        nbe_rep = nbe.rep.rast.AOO,
-        export_shp = export_shp,
-        proj_type = proj_type
-      )
-      
-      if (export_shp) {
-        names(res) <- c("aoo", "spatial")
-        names(res)[1] <- list_data[[x]]$tax[1]
-        res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
-        res$spatial <- res$spatial[,-which(colnames(res$spatial) == "lyr.1")]
-      } else {
-        names(res)[1] <- list_data[[x]]$tax[1]
-      }
-      
-      res
+      message('Parallel running with ',
+              NbeCores, ' cores')
+      `%d%` <- foreach::`%dopar%`
+    } else{
+      `%d%` <- foreach::`%do%`
     }
-  
-  if(parallel) snow::stopCluster(cl)
-  if(show_progress) close(pb)
-  
-  if(!export_shp) {
     
-    res_df <-
-      data.frame(aoo =  unlist(output[names(output) != "spatial"]))
     
-  }
-  
-  if(export_shp) {
+    x <- NULL
+    if(show_progress) {
+      pb <-
+        txtProgressBar(min = 0,
+                       max = length(list_data),
+                       style = 3)
+      
+      progress <- function(n)
+        setTxtProgressBar(pb, n)
+      opts <- list(progress = progress)
+    } else {opts <- NULL}
     
-    res_df <-
-      data.frame(aoo =  unlist(output[names(output) != "spatial"]))
+    # print(proj_type)
     
-    # res <- unlist(output[names(output) == "aoo"])
-    # names(res) <- names(list_data)
+    output <-
+      foreach::foreach(
+        x = 1:length(list_data),
+        .combine = 'c', .options.snow = opts
+      ) %d% {
+        if (!parallel & show_progress)
+          setTxtProgressBar(pb, x)
+        
+        # for (x in 1:length(list_data)) {
+        # print(x)
+        res <- AOO.estimation(
+          coordEAC = list_data[[x]],
+          cell_size = Cell_size_AOO,
+          nbe_rep = nbe.rep.rast.AOO,
+          export_shp = export_shp,
+          proj_type = proj_type
+        )
+        
+        if (export_shp) {
+          names(res) <- c("aoo", "spatial")
+          names(res)[1] <- list_data[[x]]$tax[1]
+          res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
+          res$spatial <- res$spatial[,-which(colnames(res$spatial) == "lyr.1")]
+        } else {
+          names(res)[1] <- list_data[[x]]$tax[1]
+        }
+        
+        res
+      }
     
-    shapes <- output[names(output) == "spatial"]
-    shapes <- do.call('rbind', shapes)
-    row.names(shapes) <- 1:nrow(shapes)
+    if(parallel) snow::stopCluster(cl)
+    if(show_progress) close(pb)
+
+    res <- unlist(output[names(output) != "spatial"])
     
-    # names(shapes) <- names(list_data)
+    res_df[which(row.names(res_df) %in% names(res)), 1] <-
+      res
+    
+    if (length(issue_close_to_anti) > 0)
+      res_df[issue_close_to_anti, 2] <-
+      "AOO could not computed because grid cells would overlap with antimeridian"
+    
+    
+    
+    if(export_shp) {
+      
+      
+      # res <- unlist(output[names(output) == "aoo"])
+      # names(res) <- names(list_data)
+      
+      shapes <- output[names(output) == "spatial"]
+      shapes <- do.call('rbind', shapes)
+      row.names(shapes) <- 1:nrow(shapes)
+      
+      # names(shapes) <- names(list_data)
+      
+    }
+    
+  } else {
+    
+    if (export_shp)
+      shapes <- NA
     
   }
   

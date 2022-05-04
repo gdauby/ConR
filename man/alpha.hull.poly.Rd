@@ -23,7 +23,11 @@ alpha.hull.poly(
 
 \item{exclude.area}{logical}
 
-\item{poly_exclude}{}
+\item{poly_exclude}{sf polygon}
+
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 }
 \description{
 Alpha hull process

@@ -71,7 +71,7 @@ is "not comp"}
 
 \item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'#'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field

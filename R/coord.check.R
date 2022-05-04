@@ -12,7 +12,9 @@ coord.check <-
   function(XY,
            listing = TRUE,
            proj_type = NULL,
-           listing_by_valid = FALSE) {
+           listing_by_valid = FALSE,
+           cell_size = NULL,
+           check_eoo = TRUE) {
     
     XY <- as.data.frame(XY)
     
@@ -42,6 +44,68 @@ coord.check <-
         any(XY[, 1] > 180))
       stop("coordinates are outside of expected range")
     
+    colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
+    XY$tax <- as.character(XY$tax)
+    list_data <- split(XY, f = XY$tax)
+    
+    ### check distances to antimeredian
+    if (!is.null(cell_size)) {
+      
+      check_dist_antimeridian <-  function(x, siz) {
+        
+        kk <- x
+        
+        if (any(x > 0))
+          kk[kk > 0] <- 180 - x[x > 0]
+        
+        if (any(x <= 0))
+          kk[kk <= 0] <- 180 - (-x[x <= 0])
+        
+        kk <- kk*40000/360
+        
+        return(any(kk <= siz*2))
+      }
+      
+      issue_close_to_anti <- lapply(list_data, FUN = function(x) check_dist_antimeridian(x = x[,2], siz = cell_size))
+      issue_close_to_anti <- unlist(issue_close_to_anti)
+      issue_close_to_anti <- which(issue_close_to_anti)
+      
+    } else {
+      
+      issue_close_to_anti <- NA
+      
+    }
+    
+    if (check_eoo) {
+      
+      check_max_long_dist <- function(x) {
+        
+        if (nrow(x) > 1) {
+          if (max(dist(x[, 2]), na.rm = T) >= 180) {
+            ver <- TRUE
+          } else {
+            ver <- FALSE
+          }        
+        } else {
+          ver <- FALSE
+        }
+        
+        return(ver)      
+      }
+      
+      check_dist <- lapply(list_data, FUN = function(x) check_max_long_dist(x = x))
+      check_dist <- unlist(check_dist)
+      issue_long_span <- which(check_dist)
+      
+      check_nrow <- lapply(list_data, FUN = function(x) {nrow(unique(x)) < 3})
+      check_nrow <- unlist(check_nrow)
+      issue_nrow <- which(check_nrow)
+      
+      
+    } else {
+      issue_long_span <- issue_nrow <- NA
+    }
+    
     if (!is.null(proj_type)) {
       XY_proj <-
         sf::sf_project(
@@ -49,19 +113,19 @@ coord.check <-
           to =
             sf::st_crs(proj_type),
           pts = XY[, c(2, 1)]
-        )[, c(2, 1)]
+        )
+      
+      XY_proj <- as.data.frame(XY_proj)
+      
+      XY_proj <-  XY_proj[, c(2, 1)]
       
       XY[, c(1, 2)] <-
         XY_proj[, c(1, 2)]
       
     }
     
-    
     if (listing) {
       
-        colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
-        XY$tax <- as.character(XY$tax)
-        
         if (length(grep("[?]", XY[, 3])) > 0)
           XY[, 3] <- gsub("[?]", "_", XY[, 3])
         if (length(grep("[/]", XY[, 3])) > 0)
@@ -139,17 +203,20 @@ coord.check <-
           list_data <- list_data[!unlist(lapply(list_data, is.null))]
           
         } else {
-          list_data <- split(XY, f = XY$tax)
+          
+          list_data <- split(unique(XY), f = unique(XY)$tax)
           
         }
         
-      
-      
     } else{
+      
       list_data <-
         XY
       
     }
     
-    return(list_data)
+    return(list(list_data = list_data, 
+                issue_close_to_anti = issue_close_to_anti,
+                issue_long_span = issue_long_span,
+                issue_nrow = issue_nrow))
   }

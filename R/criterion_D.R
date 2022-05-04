@@ -102,7 +102,7 @@ criterion_D = function(pop.size = NULL,
     if(is.null(pop.size))
       stop("Please provide at least one estimate of population size")
     
-  }  
+  }
   
   if("D2" %in% subcriteria & (!is.null(AOO) | !is.null(n.Locs))) {
     
