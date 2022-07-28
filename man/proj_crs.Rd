@@ -12,7 +12,7 @@ proj_crs(proj_type = "cea", wkt = FALSE)
 \item{wkt}{logical whether the output should be as character string indicating EPSG}
 }
 \value{
-\code{CRS} class object
+\code{CRS} class object or a character vector if \code{wkt} is TRUE
 }
 \description{
 get class "CRS" of coordinate reference system

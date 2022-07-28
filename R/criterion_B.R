@@ -4,37 +4,16 @@
 #'  IUCN Criterion B, which is based on species geographic distribution (i.e. extent
 #'  of occurrence - EOO, and area of occupancy, AOO)
 #'
-#' @param x a \code{dataframe} or an object of class \code{spgeoIN} see
-#' \url{https://github.com/azizka/speciesgeocodeR}. See Details
-#' @param protec.areas a \code{SpatialPolygonsDataFrame}, shapefile with
-#' protected areas.  If provided, this will be taken into account for
-#' calculating number of location (see Details and
-#' \code{method_protected_area}).  By default, no shapefile is provided
+#' @param x a `dataframe` or an object of class `spgeoIN` see
+#' <https://github.com/azizka/speciesgeocodeR>. See Details
 #' @param EOO.threshold numeric vector indicating the thresholds used to categorize EOO in IUCN categories
 #' @param AOO.threshold numeric vector indicating the thresholds used to categorize AOO in IUCN categories
 #' @param Loc.threshold numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories
 #' @param SubPop logical if the number of sub-populations should be computed. By default is TRUE
-#' @param Resol_sub_pop a numeric, value indicating the radius size in
-#' kilometers used for estimating the number of sub-population. By default,
-#' equal to 5
-#' @param Cell_size_locations a numeric, value indicating the grid size in
-#' kilometers used for estimating the number of location. By default, equal to
-#' 10
-#' @param method_locations a character string, indicating the method used for
-#' estimating the number of locations.  "fixed_grid" or "sliding scale". See
-#' details. By default, it is "fixed_grid"
-#' @param Rel_cell_size a numeric, if \code{method_locations="sliding scale"},
-#' \code{Cell_size_locations} is ignored and the resolution is given by the
-#' maximum distance separating two occurrences multiplied by
-#' \code{Rel_cell_size}. By default, it is 0.05
-#' @param method_protected_area a character string. By default is
-#' "no_more_than_one"", which means occurrences within protected areas (if
-#' provided) will not be taken into account for estimating the number of
-#' locations following the grid system, see Details. By default, it is
-#' "no_more_than_one"
-#' @param ID_shape_PA a character string, indicating the field name of
-#' \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of
-#' protected areas
+#' @inheritParams locations.comp
+#' @inheritParams EOO.computing
+#' @inheritParams AOO.computing
+#' 
 #' 
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
 #'   the IUCN categories associated with the sub-criteria and the consensus category
@@ -56,7 +35,6 @@
 #' 
 #' @export criterion_B
 criterion_B <- function(x, 
-                       protec.areas = NULL,
                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
                        EOO.threshold = c(20000, 5000, 100), 
                        AOO.threshold = c(2000, 500, 10), 
@@ -65,9 +43,11 @@ criterion_B <- function(x,
                        Resol_sub_pop = 5,
                        Cell_size_locations = 10,
                        method_locations = "fixed_grid",
+                       method_polygons = "no_more_than_one",
                        Rel_cell_size = 0.05,
-                       method_protected_area = "no_more_than_one",
-                       ID_shape_PA = "WDPA_PID",
+                       polygon_list = NULL,
+                       names_polygons = NULL,
+                       id_shape = "WDPA_PID",
                        country_map = NULL,
                        method.range = "convex.hull",
                        alpha = 1,
@@ -173,11 +153,12 @@ criterion_B <- function(x,
   locations_res <-
     locations.comp(
       XY = x,
-      method = method_locations,
-      protec.areas = protec.areas,
-      method_protected_area = method_protected_area,
-      Cell_size_locations = Cell_size_locations,
-      ID_shape_PA = ID_shape_PA,
+      method = method_locations, 
+      polygon_list = polygon_list, 
+      names_polygons = names_polygons,
+      Cell_size_locations = Cell_size_locations, 
+      method_polygons = method_polygons, 
+      id_shape = id_shape,
       show_progress = show_progress,
       Rel_cell_size = Rel_cell_size,
       parallel = parallel,

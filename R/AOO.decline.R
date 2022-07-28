@@ -6,7 +6,7 @@
 #' 
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
-#' @param XY \code{"dataframe"} see Details
+#' @param XY `"dataframe"` see Details
 #' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)
 #' @param nbe.rep.rast.AOO numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done
 #' @param parallel logical, whether running in parallel. By default, it is FALSE
@@ -21,9 +21,9 @@
 #'   
 #'   
 #' @details 
-#' \strong{Input} as a \code{dataframe} should have the following structure:
+#' **Input** as a `dataframe` should have the following structure:
 #' 
-#' \strong{It is mandatory to respect field positions, but field names do not matter}
+#' **It is mandatory to respect field positions, but field names do not matter**
 #' 
 #' \tabular{ccc}{
 #'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
@@ -31,8 +31,8 @@
 #'   [,3] \tab tax \tab character or factor, taxa names\cr
 #' }
 #' 
-#' The argument \code{nbe.rep.rast.AOO} should ideally be higher than 20 for increasing 
-#' the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however 
+#' The argument `nbe.rep.rast.AOO` should ideally be higher than 20 for increasing 
+#' the chance to get the minimal number of occupied cell. Increasing `nbe.rep.rast.AOO` however 
 #' also increase the computing time. So this is a trade-off that depends on the importance to 
 #' get the minimal AOO and the size of the dataset.
 #' 

@@ -13,7 +13,6 @@
 #' 
 #' @import sf
 #' @importFrom grDevices chull
-#' @importFrom rgeos readWKT
 #' 
 Convex.Hull.Poly <-
   function(XY,
@@ -38,18 +37,6 @@ Convex.Hull.Poly <-
       coord[,1] <- XY[hpts, 1]
       coord[,2] <- XY[hpts, 2]
       
-      # POLY <- "POLYGON(("
-      # for (i in 1:length(hpts)) {
-      #   # POLY <- paste(POLY, XY[hpts[i], 1], " ", XY[hpts[i], 2], sep = "")
-      #   # if (i != length(hpts))
-      #   #   POLY <- paste(POLY, ", ", sep = "")
-      #   # if (i == length(hpts))
-      #   #   POLY <- paste(POLY, "))", sep = "")
-      # 
-      #   coord[i, 1] <- XY[hpts[i], 2]
-      #   coord[i, 2] <- XY[hpts[i], 1]
-      # 
-      # }
       
       POLY <- st_polygon(x = list(coord))
 
@@ -65,6 +52,7 @@ Convex.Hull.Poly <-
       p1 <- sf::st_cast(p1_lines_seg, "POLYGON")
       p1 <- sf::st_make_valid(p1)
       
+
       # p1_sp <- rgeos::readWKT(POLY) 
       # p1_sp <- suppressWarnings(geosphere::makePoly(p1_sp)) 
       

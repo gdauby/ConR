@@ -3,40 +3,47 @@
 #'
 #' @description Compute areas of occupancy (AOO) for multiple taxa in square kilometers
 #'
-#' @author Gilles Dauby, \email{gildauby@gmail.com}
+#' @author Gilles Dauby \email{gilles.dauby@@ird.fr}
 #'
-#' @param XY \code{"dataframe"} see Details
-#' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)
-#' @param nbe.rep.rast.AOO numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done
-#' @param parallel logical, whether running in parallel. By default, it is FALSE
-#' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
-#' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
-#' @param export_shp logical, whether a shapefile of occupied cells should be exported. By default, it is FALSE
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' @param XY [data.frame][base::data.frame()] see Details.
+#' @param Cell_size_AOO numeric, by default is 2. Value indicating the grid size in kilometres used for estimating Area of Occupancy.
+#' @param nbe.rep.rast.AOO numeric, by default is 0. Indicate the number of raster with random starting position used for estimating the AOO. If 0 but some translation of the raster are still done.
+#' @param parallel logical, by default is FALSE. Whether running in parallel.
+#' @param NbeCores integer, by default is 2. Register the number of cores for parallel execution. Only used if parallel is TRUE.
+#' @param show_progress logical, by default is TRUE. Whether a progress bar during computation is shown.
+#' @param export_shp logical, by default is FALSE. Whether a shapefile of occupied cells should be exported.
+#' @param proj_type character or numeric, by default is "cea", see Details.
 #' 
 #' @details 
-#' \strong{Input} as a \code{dataframe} should have the following structure:
+#' # Input data
+#' **XY** as a [data.frame][base::data.frame()] should have the following structure:
 #' 
-#' \strong{It is mandatory to respect field positions, but field names do not matter}
+#' **It is mandatory to respect field positions, but column names do not matter**
 #' 
-#' \tabular{ccc}{
-#'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-#'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, taxa names\cr
+#' \enumerate{
+#'   \item The first column is contains numeric value i.e. latitude in decimal degrees
+#'   \item The second column is contains numeric value i.e. longitude in decimal degrees
+#'   \item The third column is contains character value i.e. the names of the species
 #' }
 #' 
-#' The argument \code{nbe.rep.rast.AOO} should ideally be higher than 20 for increasing 
-#' the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however 
-#' also increase the computing time. So this is a trade-off that depends on the importance to 
-#' get the minimal AOO and the size of the dataset.
+#' See Examples.
 #' 
+#' # Iteration to get the minimal AOO
+#' The argument `nbe.rep.rast.AOO` should ideally be higher than 10 for increasing 
+#' the chance to get the minimal number of occupied cell. However, increasing `nbe.rep.rast.AOO`  
+#' also increases the computing time.
+#' Note that if `nbe.rep.rast.AOO = 0`, several translations of the grid overlaying occurrences are still conducted
+#' 
+#' # proj_type
+#' 
+#' See [proj_type()]
 #' 
 #' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
 #'
 #' @return 
-#' If \code{export_shp} if FALSE a vector of AOO estimates for each taxa
-#' If \code{export_shp} if TRUE a list with two elements
+#' If `export_shp` if FALSE a vector of AOO estimates for each taxa
+#' If `export_shp` if TRUE a list with two elements
 #' \enumerate{
 #'   \item a vector of AOO estimates for each taxa
 #'   \item a list of SpatialPolygonsDataFrame for each taxa
@@ -51,7 +58,7 @@
 #'# This would estimate AOO for all taxa by overlaying randomly a 
 #'# grid 100 times. For each taxa, the minimum value is kept
 #' \dontrun{
-#'AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 100)
+#'AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
 #'}
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar

@@ -45,7 +45,7 @@ This shapefile will be used for cropping the \code{SpatialPolygons}l if
 exclude.area is TRUE}
 
 \item{alpha}{a numeric, if \code{method.range} is "alpha.hull", value of
-alpha of the alpha hull, see \code{\link[alphahull]{ahull}}. By default is 1}
+alpha of the alpha hull, see \code{\link[alphahull:ahull]{alphahull::ahull()}}. By default is 1}
 
 \item{buff.alpha}{a numeric, if \code{method.range} is "alpha.hull", define
 the buffer in decimal degree added to alpha hull. By default is 0.1}

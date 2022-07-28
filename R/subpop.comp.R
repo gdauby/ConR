@@ -24,9 +24,9 @@
 #'   default is "cea"
 #' 
 #' @details 
-#' \strong{Input} as a \code{dataframe} should have the following structure:
+#' **Input** as a `dataframe` should have the following structure:
 #' 
-#' \strong{It is mandatory to respect field positions, but field names do not matter}
+#' **It is mandatory to respect field positions, but field names do not matter**
 #' 
 #' \tabular{ccc}{
 #'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr

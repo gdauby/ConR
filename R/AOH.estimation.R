@@ -10,7 +10,7 @@
 #'   object).
 #' 
 #' 
-#' @param XY \code{"dataframe"} see Details
+#' @param XY `"dataframe"` see Details
 #' @param show_progress logical. whether a bar showing progress in computation
 #'   should be shown. Default to TRUE.
 #' @param proj_type character string, numeric or object of CRS class. Default to "cea".
@@ -21,9 +21,9 @@
 #' @param hab.class classes of values in ```hab.map``` to be considered as 'habitat'.
 #' @param years numeric. Time interval between the first and last ```hab.map```
 #'   if more than one raster is provided (e.g. if ```hab.map``` is a RasterStack object).
-#' @param country_map a \code{SpatialPolygonsDataFrame} or
-#' @param exclude.area a logical, if TRUE, areas outside of \code{country_map}
-#' are cropped of \code{SpatialPolygons} used for calculating EOO. By default
+#' @param country_map a `SpatialPolygonsDataFrame` or
+#' @param exclude.area a logical, if TRUE, areas outside of `country_map`
+#' are cropped of `SpatialPolygons` used for calculating EOO. By default
 #' is FALSE
 #' @param parallel logical. Should computing run in parallel? Default to FALSE.
 #' @param NbeCores integer. The number of cores for parallel execution. Default to 2.
@@ -31,8 +31,8 @@
 #' @param buffer logical
 
 
-#' \code{SpatialPolygons} showing for example countries or continent borders.
-#' This shapefile will be used for cropping the \code{SpatialPolygons}l if
+#' `SpatialPolygons` showing for example countries or continent borders.
+#' This shapefile will be used for cropping the `SpatialPolygons`l if
 #' exclude.area is TRUE
 #' 
 #' @details If multiple rasters are provided, the last raster is taken as the
@@ -110,7 +110,7 @@ AOH.estimation <- function(XY,
                      hab.class = NULL,
                      years = NULL,
                      country_map = NULL,
-                     exclude.area = T,
+                     exclude.area = TRUE,
                      parallel = FALSE,
                      NbeCores = 2,
                      simplifiy_poly = TRUE,
@@ -235,6 +235,7 @@ AOH.estimation <- function(XY,
   }
   
   EOO.res.all <- EOO.res$results
+
   
   # loop across hab.map provided
   AOH.poly <- vector('list', length(hab.map) + 1)
@@ -277,7 +278,7 @@ AOH.estimation <- function(XY,
           for (j in 1:length(hab.class)) {
             
             cropped.hab.map <- 
-              raster::calc(
+              terra::app(
                 hab.map.selected,
                 fun = function(x) {
                   x[x >=  as.numeric(hab.class[j])] <- NA
@@ -286,7 +287,7 @@ AOH.estimation <- function(XY,
               )
             
             cropped.hab.map <- 
-              calc(cropped.hab.map, function(x) {
+              terra::app(cropped.hab.map, function(x) {
               x[!is.na(x)] <- 1
               return(x)
             })
@@ -466,7 +467,7 @@ AOH.estimation <- function(XY,
                 setTxtProgressBar(pb, x)
               
               hab.map_poly <- 
-                hab.map_masked[which(hab.map_masked$lyr.1 > as.numeric(hab.class[x,2]) & hab.map_masked$lyr.1 < as.numeric(hab.class[x,3])),]
+                hab.map_masked[which(hab.map_masked$values > as.numeric(hab.class[x,2]) & hab.map_masked$values < as.numeric(hab.class[x,3])),]
               
               test <- 
                 st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[x,1]),], 
@@ -475,7 +476,6 @@ AOH.estimation <- function(XY,
             test
               
             }
-          
           
           EOO.shp.proj.hab.map <- 
             do.call('rbind', lapply(output, function(x) st_as_sf(x)))
@@ -583,7 +583,7 @@ AOH.estimation <- function(XY,
       AOH.poly[[i]] <- 
         EOO.shp.proj.hab.map
       
-      if (class(EOO.shp.proj.hab.map) == "list") {
+      if (any(class(EOO.shp.proj.hab.map) == "list")) {
         
         
          for (j in 1:length(EOO.shp.proj.hab.map)) {
@@ -594,10 +594,12 @@ AOH.estimation <- function(XY,
            colnames(res.)[2] <-
              paste0("hab.map_", hab.class[j],"_", ifelse(is.null(years), i, names(hab.map)[i]))
            
+           colnames(EOO.res.all)[1] <- "species"
+           
            EOO.res.all <- 
              merge(EOO.res.all, res.,
-                   by = "species", all.x = T)
-           
+                   by = "species", 
+                   all.x = T)
          }
         
       } else {
@@ -607,6 +609,8 @@ AOH.estimation <- function(XY,
         
         colnames(res.)[2] <-
           paste0("hab.map_", ifelse(is.null(years), i, names(hab.map)[i]))
+        
+        colnames(EOO.res.all)[1] <- "species"
         
         EOO.res.all <- 
           merge(EOO.res.all, res.,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/locations.comp.R
 \name{.generate_loc}
 \alias{.generate_loc}
-\title{Internal function}
+\title{Internal function.}
 \usage{
 .generate_loc(
   dataset,
@@ -17,10 +17,10 @@
 )
 }
 \arguments{
-\item{dataset}{list}
+\item{dataset}{list.}
 }
 \description{
-Internal function
+Internal function.
 }
 \author{
 Gilles Dauby, \email{gildauby@gmail.com}

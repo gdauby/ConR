@@ -14,7 +14,7 @@ AOH.estimation(
   hab.class = NULL,
   years = NULL,
   country_map = NULL,
-  exclude.area = T,
+  exclude.area = TRUE,
   parallel = FALSE,
   NbeCores = 2,
   simplifiy_poly = TRUE,

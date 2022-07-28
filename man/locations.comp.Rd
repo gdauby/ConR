@@ -2,16 +2,17 @@
 % Please edit documentation in R/locations.comp.R
 \name{locations.comp}
 \alias{locations.comp}
-\title{Number of locations}
+\title{Estimate the number of locations}
 \usage{
 locations.comp(
   XY,
   method = "fixed_grid",
   nbe_rep = 0,
-  protec.areas = NULL,
+  threat_list = NULL,
+  names_threat = NULL,
   Cell_size_locations = 10,
-  method_protected_area = "no_more_than_one",
-  ID_shape_PA = "WDPA_PID",
+  method_polygons = c("no_more_than_one"),
+  id_shape = "id_orig",
   Rel_cell_size = 0.05,
   parallel = FALSE,
   NbeCores = 2,
@@ -20,38 +21,49 @@ locations.comp(
 )
 }
 \arguments{
-\item{XY}{data.frame, see details}
+\item{XY}{\link[base:data.frame]{data.frame}, see details}
 
 \item{method}{string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"}
 
 \item{nbe_rep}{numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done}
 
-\item{protec.areas}{\code{SpatialPolygonsDataFrame}, shapefile with protected areas. If provided, this will be taken into account for calculating number of location (see Details and \code{method_protected_area}). By default, no shapefile is provided}
+\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
-\item{Cell_size_locations}{numeric, value indicating the grid size in kilometers used for estimating the number of location. By default, equal to 10}
+\item{names_threat}{string vector, should be of same length of threat_list. If not provided, names are given.}
 
-\item{method_protected_area}{string, by default is "no_more_than_one"", which means occurrences within protected areas (if provided) will not be taken into account for estimating the number of locations following the grid system, see Details. By default, it is "no_more_than_one"}
+\item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
-\item{ID_shape_PA}{string, indicating the field name of \code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of protected areas}
+\item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
+\itemize{
+\item \code{"no_more_than_one"} (the default): each single POLYGON will be considered as a single location
+\item \code{"grid"}: a grid of \code{Cell_size_locations} size will be used to estimate the number of location within polygons
+}}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{id_shape}{string}
+
+\item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored
+and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
 
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
-\item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
 
 \item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{character string or numeric or object of CRS class, by default is \code{"cea"}}
 }
 \value{
-A list with one list for each species containing [\link{1}]SpatialPolygonDataframe and [\link{2}]vector of the number of location.
+A list with one list for each species containing [\link{1}]data.frame with the number of locations and
+potential issue for each species and [\link{2}]sf with representing the squared polygons. If threat_list is not null, then [\link{2}] is a list for each threat
 }
 \description{
-Estimate the number of locations for multiple taxa
+Estimate the number of locations (sensu IUCN) for multiple taxa,
+taking into account spatial threats if provided.
 }
 \details{
-\strong{Input} as a \code{dataframe} should have the following structure:
+\subsection{}{
+
+\code{XY} as a \code{dataframe} should have the following structure:
 
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
@@ -62,17 +74,22 @@ Estimate the number of locations for multiple taxa
 }
 
 Locations are estimated by overlaying a grid of a given resolution (see \code{Cell_size_locations} for
-specifying the resolution). The number of locations is simply the number of
+specifying the resolution). The number of locations is  the number of
 occupied locations. Note that the grid position is overlaid in order to
 minimize the number of locations (several translation of the grid are
 performed and the one providing the minimum number of occupied cells is
 provided).
+
+If \code{threat_list} is provided,
+
+which means occurrences within polygon documenting threats (if provided) will not be taken into account for estimating the number of locations following the grid system,
 
 If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined
 by the argument \code{Cell_size_locations}.
 If \code{method} is "sliding scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences
 and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default.
 See Rivers M.C. et al. (2010) for more information on the methods.
+}
 }
 \examples{
 data(dataset.ex)

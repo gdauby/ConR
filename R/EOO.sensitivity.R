@@ -7,10 +7,10 @@
 #' 
 #' @details 
 #'
-#' \strong{Input} as a \code{dataframe} should have the following structure:
+#' **Input** as a `dataframe` should have the following structure:
 #' 
-#' \strong{It is mandatory to respect field positions, but field names do not
-#' matter}
+#' **It is mandatory to respect field positions, but field names do not
+#' matter**
 #' 
 #' \tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
 #' degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
@@ -23,7 +23,7 @@
 #' a more restricted and reliable set of records. It is essential that the
 #' classes of confidence level provided using the argument `levels.order`.
 #' For instance, these classes can simply be `c("low", "high")` or `c(FALSE,
-#' TRUE)`. But they should match the classes provided in \code{XY}.  
+#' TRUE)`. But they should match the classes provided in `XY`.  
 #' 
 #' If argument `occ.based` is `TRUE` (default), the function calculates and
 #' return a measure of influence of each occurrence on the estimation of EOO.
@@ -53,7 +53,7 @@
 #' 
 #' As mentioned above, EOO will only be computed if there is at least three
 #' unique occurrences in the high confidence level class, unless
-#' \code{method.less.than3} is put to "arbitrary". In that specific case, EOO
+#' `method.less.than3` is put to "arbitrary". In that specific case, EOO
 #' for species with two unique occurrences will be equal to Dist*Dist*0.1 where
 #' Dist is the distance in kilometers separating the two points.
 #' 
@@ -61,7 +61,7 @@
 #' localized on a straight line (in which case EOO would be null), 
 #' 'noises' are added to coordinates. There is a warning when this happens.
 #' 
-#' \strong{Notes on computational time} The processing time depends on several
+#' **Notes on computational time** The processing time depends on several
 #' factors, including the total number of occurrences, number of confidence
 #' levels rpovided and user's computer specifications. Using argument `parallel`
 #' equals `TRUE`, greatly increase the processing time, but the processing of
@@ -74,7 +74,7 @@
 #'   the input data with a new column for each confidence level with a measure 
 #'   of influence of the occurrences on the estimation of EOO.
 #' 
-#' @param XY \code{dataframe} see Details
+#' @param XY `dataframe` see Details
 #' @param file.name a character string. Name file for exported results in csv
 #' file. By default is "EOO.sensitivity.results"
 #' @param levels.order a character vector with at least two classes ordered from

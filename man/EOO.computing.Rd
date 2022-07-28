@@ -40,14 +40,14 @@ exclude.area is TRUE}
 see Value. By default is FALSE}
 
 \item{driver_shp}{a string, define the driver for exporting shapefiles,
-by default "ESRI Shapefile". See \code{\link[sf]{st_write}}}
+by default "ESRI Shapefile". See \code{\link[sf:st_write]{sf::st_write()}}}
 
 \item{write_shp}{a logical, if TRUE, export \code{SpatialPolygons} used for
 EOO computation as ESRI shapefiles in the working directory. By default is
 FALSE}
 
 \item{alpha}{a numeric, if \code{method.range} is "alpha.hull", value of
-alpha of the alpha hull, see \code{\link[alphahull]{ahull}}. By default is 1}
+alpha of the alpha hull, see \code{\link[alphahull:ahull]{alphahull::ahull()}}. By default is 1}
 
 \item{buff.alpha}{a numeric, if \code{method.range} is "alpha.hull", define
 the buffer in decimal degree added to alpha hull. By default is 0.1}
@@ -134,7 +134,7 @@ Gaston & Fuller 2009 The sizes of species'geographic ranges,
 Journal of Applied Ecology, 49 1-9
 }
 \seealso{
-\code{\link[alphahull]{ahull}}
+\code{\link[alphahull:ahull]{alphahull::ahull()}}
 
 \url{https://github.com/azizka/speciesgeocodeR}
 }

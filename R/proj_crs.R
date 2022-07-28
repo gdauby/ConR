@@ -11,7 +11,7 @@
 #' @importFrom sp CRS
 #' @importFrom rgdal rgdal_extSoftVersion make_EPSG
 #' 
-#' @return `CRS` class object
+#' @return `CRS` class object or a character vector if `wkt` is TRUE 
 #' 
 #' 
 #' @examples 
@@ -36,6 +36,9 @@
 #' @export
 proj_crs <- function(proj_type = "cea", wkt = FALSE) {
   
+  if (length(proj_type) > 1)
+    stop("proj_type should be of length 1")
+  
   ## https://epsg.io/54032
   # World Azimuthal Equidistant
   # proj <-
@@ -46,8 +49,9 @@ proj_crs <- function(proj_type = "cea", wkt = FALSE) {
   # proj <-
   #   "+proj=eqc +lat_ts=60 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   
-
-  if(!is.numeric(proj_type)) {
+  if(is.character(proj_type)) {
+    
+    match.arg(proj_type, choices = c("cea", "Antarctic", "Africa_eac"))
     
     # https://epsg.io/6933
     if(proj_type == "cea")
@@ -64,8 +68,9 @@ proj_crs <- function(proj_type = "cea", wkt = FALSE) {
       proj <-
         "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
     
-        
-  } else {
+  } 
+  
+  if (is.numeric(proj_type)) {
       
     all_epsg <-
         rgdal::make_EPSG()
@@ -142,7 +147,7 @@ proj_crs <- function(proj_type = "cea", wkt = FALSE) {
       return(wkt_crs)
     } else {
       
-      stop("Rgdal version >= 3.0.0 needed")
+      stop("Rgdal version >= 3.0.0 mandatory, please update your version")
       
     }
     

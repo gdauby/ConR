@@ -17,22 +17,22 @@
 #' @return A list with one element being a numeric vector [[1]]EOO and the polygon as Simple feature collection [[2]]spatial.polygon
 #'  
 #' @details If `exclude.area` is TRUE and country_map is not provided, 
-#' the world country polygons used comes from the package \href{https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries}{rnaturalearth}
+#' the world country polygons used comes from the package [rnaturalearth](https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries)
 #' 
 #' By default (`mode = "spheroid"`),the area of the polygon is based 
 #' on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.  
 #' 
-#' To make a polygon more accurate, the function use the function `st_segmentize` from the \href{https://CRAN.R-project.org/package=sf}{sf} package.
+#' To make a polygon more accurate, the function use the function `st_segmentize` from the [sf](https://CRAN.R-project.org/package=sf) package.
 #' This adds vertices on the great circles (in order to make shortest distances between points, see example below) 
 #' which can make difference for species with large distribution.  
 #' 
 #' An estimation of EOO based on projected data is also possible (`mode = "planar"`).
 #' This allow the user to use its own projection.
-#' By default, the projection (`proj_type = "cea"`) is a \href{https://epsg.io/6933}{global cylindrical equal-area projection}.
+#' By default, the projection (`proj_type = "cea"`) is a [global cylindrical equal-area projection](https://epsg.io/6933).
 #' It can makes sense to use a planar projection to estimate the EOO. See example.
 #' 
 #' It is possible to use another projection by providing the EPSG code to `proj_type`. See example.
-#' Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
+#' Check [make_EPSG](https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG)
 #' from the `rgdal` packag for getting the EPSG code.
 #' 
 #' For the very specific (and infrequent) case where all occurrences are

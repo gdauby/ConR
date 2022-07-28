@@ -19,7 +19,7 @@ NULL
 #' @name example_criterionA
 #' @usage data(example_criterionA)
 #' @format A data frame with six rows and 33 variables
-#' @source \url{https://www.iucnredlist.org/resources/criterion-a}
+#' @source <https://www.iucnredlist.org/resources/criterion-a>
 NULL
 
 #' Dataset to illustrate the assessment of IUCN criterion C
@@ -55,5 +55,5 @@ NULL
 #' @name example_fluctuation
 #' @usage data(example_fluctuation)
 #' @format A data frame with seven rows and 28 variables
-#' @source \url{http://www.iucnredlist.org/documents/RedListGuidelines.pdf}
+#' @source <http://www.iucnredlist.org/documents/RedListGuidelines.pdf>
 NULL

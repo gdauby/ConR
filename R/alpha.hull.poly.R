@@ -15,11 +15,9 @@
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
 #' @import sf
-#' @importFrom rgeos gBuffer
 #' @importFrom sp SpatialPolygons Polygons CRS proj4string
 #' @importFrom stats median quantile dist
 #' @importFrom methods slot
-#' @importFrom utils installed.packages
 #' 
 alpha.hull.poly <-
   function(XY,
@@ -31,7 +29,15 @@ alpha.hull.poly <-
            proj_type = "cea")
   {
     
+    if (!try(requireNamespace("alphahull", quietly = F), silent = TRUE))
+      stop("The package alphahull is required for this procedure, please install it")
     
+    if (!try(requireNamespace("rgeos", quietly = F), silent = TRUE))
+      stop("The package rgeos is required for this procedure, please install it")
+    
+    requireNamespace("alphahull")
+    requireNamespace("rgeos")
+
     if (mode == "planar") {
       
       if(class(proj_type) != "CRS") {
@@ -70,12 +76,10 @@ alpha.hull.poly <-
         alpha*1000
 
     }
-
     
-    Used_data <- unique(XY)
-    if (any(rownames(installed.packages()) == "alphahull")) {
-      
-      loadNamespace("alphahull")
+    Used_data <- XY
+    
+
       
       run_alpha <- TRUE
       while(run_alpha) {
@@ -145,9 +149,6 @@ alpha.hull.poly <-
           #     cont_try <- FALSE
           # }
 
-
-          # NZfill <-
-          #   st_union(st_intersection(st_make_valid(NZfill), poly_exclude_proj))
 
           NZfill <-
             suppressWarnings(suppressMessages(st_union(
@@ -236,12 +237,6 @@ alpha.hull.poly <-
       # raster::crs(NZfill) <- "+proj=longlat +datum=WGS84"
       
       NZfill <- st_sf(geom = NZfill)
-      
-    } else{
-      
-      stop("The package alphahull is required for this procedure, please install it")
-      
-    }
-    
+
     return(NZfill)
 }

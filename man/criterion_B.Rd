@@ -6,7 +6,6 @@
 \usage{
 criterion_B(
   x,
-  protec.areas = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
@@ -14,9 +13,11 @@ criterion_B(
   Resol_sub_pop = 5,
   Cell_size_locations = 10,
   method_locations = "fixed_grid",
+  method_polygons = "no_more_than_one",
   Rel_cell_size = 0.05,
-  method_protected_area = "no_more_than_one",
-  ID_shape_PA = "WDPA_PID",
+  polygon_list = NULL,
+  names_polygons = NULL,
+  id_shape = "WDPA_PID",
   country_map = NULL,
   method.range = "convex.hull",
   alpha = 1,
@@ -36,11 +37,6 @@ criterion_B(
 \item{x}{a \code{dataframe} or an object of class \code{spgeoIN} see
 \url{https://github.com/azizka/speciesgeocodeR}. See Details}
 
-\item{protec.areas}{a \code{SpatialPolygonsDataFrame}, shapefile with
-protected areas.  If provided, this will be taken into account for
-calculating number of location (see Details and
-\code{method_protected_area}).  By default, no shapefile is provided}
-
 \item{EOO.threshold}{numeric vector indicating the thresholds used to categorize EOO in IUCN categories}
 
 \item{AOO.threshold}{numeric vector indicating the thresholds used to categorize AOO in IUCN categories}
@@ -49,32 +45,50 @@ calculating number of location (see Details and
 
 \item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
 
-\item{Resol_sub_pop}{a numeric, value indicating the radius size in
-kilometers used for estimating the number of sub-population. By default,
-equal to 5}
+\item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
-\item{Cell_size_locations}{a numeric, value indicating the grid size in
-kilometers used for estimating the number of location. By default, equal to
-10}
+\item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
+\itemize{
+\item \code{"no_more_than_one"} (the default): each single POLYGON will be considered as a single location
+\item \code{"grid"}: a grid of \code{Cell_size_locations} size will be used to estimate the number of location within polygons
+}}
 
-\item{method_locations}{a character string, indicating the method used for
-estimating the number of locations.  "fixed_grid" or "sliding scale". See
-details. By default, it is "fixed_grid"}
+\item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored
+and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
 
-\item{Rel_cell_size}{a numeric, if \code{method_locations="sliding scale"},
-\code{Cell_size_locations} is ignored and the resolution is given by the
-maximum distance separating two occurrences multiplied by
-\code{Rel_cell_size}. By default, it is 0.05}
+\item{id_shape}{string}
 
-\item{method_protected_area}{a character string. By default is
-"no_more_than_one"", which means occurrences within protected areas (if
-provided) will not be taken into account for estimating the number of
-locations following the grid system, see Details. By default, it is
-"no_more_than_one"}
+\item{country_map}{a \code{SpatialPolygonsDataFrame} or
+\code{SpatialPolygons} showing for example countries or continent borders.
+This shapefile will be used for cropping the \code{SpatialPolygons}l if
+exclude.area is TRUE}
 
-\item{ID_shape_PA}{a character string, indicating the field name of
-\code{protec.areas} with ID of the \code{SpatialPolygonsDataFrame} of
-protected areas}
+\item{method.range}{a character string, "convex.hull" or "alpha.hull". By
+default is "convex.hull"}
+
+\item{alpha}{a numeric, if \code{method.range} is "alpha.hull", value of
+alpha of the alpha hull, see \code{\link[alphahull:ahull]{alphahull::ahull()}}. By default is 1}
+
+\item{buff.alpha}{a numeric, if \code{method.range} is "alpha.hull", define
+the buffer in decimal degree added to alpha hull. By default is 0.1}
+
+\item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
+are cropped of \code{SpatialPolygons} used for calculating EOO. By default
+is FALSE}
+
+\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size in kilometres used for estimating Area of Occupancy.}
+
+\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of raster with random starting position used for estimating the AOO. If 0 but some translation of the raster are still done.}
+
+\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
+
+\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+
+\item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
+
+\item{proj_type}{character string or numeric or object of CRS class, by default is \code{"cea"}}
+
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 }
 \value{
 A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),

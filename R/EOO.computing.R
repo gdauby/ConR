@@ -5,19 +5,19 @@
 #' 
 #' 
 #' @details 
-#' \strong{Input} as a \code{dataframe} should have the following structure:
+#' **Input** as a `dataframe` should have the following structure:
 #' 
-#' \strong{It is mandatory to respect field positions, but field names do not
-#' matter}
+#' **It is mandatory to respect field positions, but field names do not
+#' matter**
 #' 
 #' \tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
 #' degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
 #' [,3] \tab tax \tab character or factor, taxa names\cr }
 #' 
-#' \strong{Important notes:}
+#' **Important notes:**
 #' 
 #' EOO will only be computed if there is at least three unique occurrences
-#' unless \code{method.less.than3} is put to "arbitrary". In that specific
+#' unless `method.less.than3` is put to "arbitrary". In that specific
 #' case, EOO for species with two unique occurrences will be equal to
 #' Dist*Dist*0.1 where Dist is the distance in kilometers separating the two
 #' points.
@@ -29,29 +29,29 @@
 #' There is a warning when this happens. This means that EOO value will not be constant 
 #' across multiple estimation (although the variation should be small)
 #' 
-#' \strong{Limitation}\cr
+#' **Limitation**\cr
 #' 
 #' For a species whose occurrences span more than 180 degrees, EOO should not be considered. 
 #' This is the case for example for species whose distribution span the 180th meridian.
 #' 
-#' @param XY \code{dataframe} see Details
-#' @param exclude.area a logical, if TRUE, areas outside of \code{country_map}
-#' are cropped of \code{SpatialPolygons} used for calculating EOO. By default
+#' @param XY `dataframe` see Details
+#' @param exclude.area a logical, if TRUE, areas outside of `country_map`
+#' are cropped of `SpatialPolygons` used for calculating EOO. By default
 #' is FALSE
-#' @param country_map a \code{SpatialPolygonsDataFrame} or
-#' \code{SpatialPolygons} showing for example countries or continent borders.
-#' This shapefile will be used for cropping the \code{SpatialPolygons}l if
+#' @param country_map a `SpatialPolygonsDataFrame` or
+#' `SpatialPolygons` showing for example countries or continent borders.
+#' This shapefile will be used for cropping the `SpatialPolygons`l if
 #' exclude.area is TRUE
 #' @param export_shp a logical, whether shapefiles should be exported or not,
 #' see Value. By default is FALSE
 #' @param driver_shp a string, define the driver for exporting shapefiles, 
-#' by default "ESRI Shapefile". See \code{\link[sf]{st_write}}
-#' @param write_shp a logical, if TRUE, export \code{SpatialPolygons} used for
+#' by default "ESRI Shapefile". See [sf::st_write()]
+#' @param write_shp a logical, if TRUE, export `SpatialPolygons` used for
 #' EOO computation as ESRI shapefiles in the working directory. By default is
 #' FALSE
-#' @param alpha a numeric, if \code{method.range} is "alpha.hull", value of
-#' alpha of the alpha hull, see \code{\link[alphahull]{ahull}}. By default is 1
-#' @param buff.alpha a numeric, if \code{method.range} is "alpha.hull", define
+#' @param alpha a numeric, if `method.range` is "alpha.hull", value of
+#' alpha of the alpha hull, see [alphahull::ahull()]. By default is 1
+#' @param buff.alpha a numeric, if `method.range` is "alpha.hull", define
 #' the buffer in decimal degree added to alpha hull. By default is 0.1
 #' @param method.range a character string, "convex.hull" or "alpha.hull". By
 #' default is "convex.hull"
@@ -66,21 +66,21 @@
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #'
-#' @return If \code{export_shp} is FALSE, a \code{dataframe} with one field
-#' containing EOO in square kilometers.  \code{NA} is given when EOO could not
+#' @return If `export_shp` is FALSE, a `dataframe` with one field
+#' containing EOO in square kilometers.  `NA` is given when EOO could not
 #' be computed because there is less than three unique occurrences (or two if
-#' \code{method.less.than3} is put to "arbitrary").
+#' `method.less.than3` is put to "arbitrary").
 #' 
-#' If \code{export_shp} is TRUE, a \code{list} with: \enumerate{ \item EOO in
-#' square kilometers \item \code{SpatialPolygons} used for EOO computation}
+#' If `export_shp` is TRUE, a `list` with: \enumerate{ \item EOO in
+#' square kilometers \item `SpatialPolygons` used for EOO computation}
 #' 
 #' @author Gilles Dauby
 #' 
 #' \email{gildauby@@gmail.com}
 #' 
-#' @seealso \code{\link[alphahull]{ahull}}
+#' @seealso [alphahull::ahull()]
 #' 
-#' \url{https://github.com/azizka/speciesgeocodeR}
+#' <https://github.com/azizka/speciesgeocodeR>
 #' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges,
 #' Journal of Applied Ecology, 49 1-9
