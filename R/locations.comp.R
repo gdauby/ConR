@@ -10,7 +10,7 @@
 #' @param method string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
 #' @param nbe_rep numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done
 #' @param threat_list list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and `method_polygons`). By default, no shapefile is provided
-#' @param names_threat string vector, should be of same length of threat_list. If not provided, names are given.
+#' @param names_threat vector of string character indicatig the name of threats provided as threat_list
 #' @param Cell_size_locations numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10
 #' @param method_polygons string. Used if `threat_list` is provided. See Details.
 #'   * `"no_more_than_one"` (the default): each single POLYGON will be considered as a single location
@@ -221,26 +221,33 @@ locations.comp <- function(XY,
           suppressWarnings(st_set_geometry(st_intersection(DATA_SF, x), NULL)))
         
       }
-      
-      XY_all <-
-        data.frame(
-          st_coordinates(DATA_SF)[,c(2, 1)],
-          tax = as.character(DATA_SF$tax),
-          ID_prov_data = DATA_SF$ID_prov_data, 
-          stringsAsFactors = F
-        )
-      
-      rank_locations <- data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data)
-      for (i in 1:length(threat_list_inter)) {
         
-        rank_locations[which(rank_locations$rank == 0 & 
-                               rank_locations$ID_prov_data %in% threat_list_inter[[i]]$ID_prov_data),"rank"] <- i
+        XY_all <-
+          data.frame(
+            st_coordinates(DATA_SF)[,c(2, 1)],
+            tax = as.character(DATA_SF$tax),
+            ID_prov_data = DATA_SF$ID_prov_data, 
+            stringsAsFactors = F
+          )
+        rank_locations <- data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data)
         
-      }
-      unique_ranks <- sort(unique(rank_locations$rank))
-      names(unique_ranks)[unique_ranks == 0] <- "not_threatened"
-      names(unique_ranks)[unique_ranks != 0] <- names(threat_list_inter)[unique_ranks[unique_ranks != 0]]
-      
+        
+        if (any(intersects_poly)) {
+          for (i in 1:length(threat_list_inter)) {
+            
+            rank_locations[which(rank_locations$rank == 0 & 
+                                   rank_locations$ID_prov_data %in% threat_list_inter[[i]]$ID_prov_data),"rank"] <- i
+            
+          }
+          unique_ranks <- sort(unique(rank_locations$rank))
+          names(unique_ranks)[unique_ranks == 0] <- "not_threatened"
+          names(unique_ranks)[unique_ranks != 0] <- names(threat_list_inter)[unique_ranks[unique_ranks != 0]]
+          
+        } else {
+          
+          unique_ranks <- setNames(0, "not_threatened")
+          
+        }
     }
     
     res_df <-
@@ -267,20 +274,20 @@ locations.comp <- function(XY,
       if (method_polygons == "no_more_than_one" & unique_ranks[i] > 0) {
         
         count_protec <- 
-          table(threat_list_inter[[i]]$tax, 
-                as.vector(threat_list_inter[[i]][, colnames(threat_list_inter[[i]]) == id_shape]))
+          table(threat_list_inter[[i - 1]]$tax, 
+                as.vector(threat_list_inter[[i  - 1]][, colnames(threat_list_inter[[i - 1]]) == id_shape]))
         
         locations_shp[[i]] <- apply(count_protec, 1, function(x) sum(x > 0))
         
         # locations_pa[which(row.names(locations_pa) %in% names(loc_pa)),1] <- loc_pa
         
         occ_poly <-
-          threat_list[[i]][which(threat_list[[i]]$id_orig %in% as.numeric(colnames(count_protec))), ][, c("id_orig")]
+          threat_list[[i - 1]][which(threat_list[[i - 1]]$id_orig %in% as.numeric(colnames(count_protec))), ][, c("id_orig")]
         
         occ_poly <-
           cbind(occ_poly,
-                threat = names(threat_list_inter)[i],
-                tax = threat_list_inter[[i]]$tax[1])
+                threat = names(threat_list_inter)[i - 1],
+                tax = threat_list_inter[[i - 1]]$tax[1])
         
         occ_poly <- st_transform(occ_poly, crs = 4326)
         
@@ -357,17 +364,6 @@ locations.comp <- function(XY,
 
 
 
-
-#' @title Internal function.
-#' 
-#' @param dataset list.
-#' 
-#' @author Gilles Dauby, \email{gildauby@gmail.com}
-#'
-#' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
 .generate_loc <- function(dataset,
                           method = "fixed_grid",
                           nbe_rep = 0,
