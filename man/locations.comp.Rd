@@ -29,7 +29,7 @@ locations.comp(
 
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
-\item{names_threat}{string vector, should be of same length of threat_list. If not provided, names are given.}
+\item{names_threat}{vector of string character indicatig the name of threats provided as threat_list}
 
 \item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
