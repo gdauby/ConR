@@ -15,7 +15,7 @@
 #' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' @param hab.map raster, raster layer/stack or spatial polygons containing the
 #'   habitat spatial information
-#' @param hab.map.type logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
+#' @param hab.map.type logical, vector of same length of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
 #' @param hab.class classes of values in ```hab.map``` to be considered as suitable
 #' @param all_individual_layers logical, by default FALSE, if TRUE compute AOO decline for each individual hab.map and threat.map provided
 #'   
@@ -74,25 +74,9 @@ AOO.decline <- function(XY,
   if (is.null(hab.map)) 
     stop("Please provide hab.map or threat.map (a sf polygon object or a raster)")
   
-  hab.map.checked <- check_hab_map(hab.map = hab.map, hab.map.type = hab.map.type)
+  hab.map.checked <- check_hab_map(hab.map = hab.map, 
+                                   hab.map.type = hab.map.type)
   
-  # if (!is.null(hab.map) & !is.null(hab.class)) {
-  #   
-  #   if (any(grepl("Raster", class(hab.map)))) {
-  #     
-  #     if (dim(hab.map)[3] != length(hab.class)) {
-  #       
-  #       stop ("The number of layers of hab.map is different to the number hab.class values. It should be identical")
-  #       
-  #     }
-  #     
-  #     if (any(hab.map@data@isfactor) & is.factor(hab.class)) {
-  #       
-  #       stop ("hab.map values are factors while hab.class are not. They must be of same types")
-  #       
-  #     }
-  #   }
-  # }
   
   ### converting XY inputs data
   proj_type_ <- proj_crs(proj_type = proj_type)
@@ -179,6 +163,28 @@ AOO.decline <- function(XY,
         } else {
           
           stop("implement for hab.class numeric")
+          
+          val_rast <- terra::values(hab.map.selected_lay)[,1]
+          val_rast <- unique(val_rast[which(!is.na(val_rast))])
+          
+          if (hab.map.checked$hab.map.type[i]) {
+            ## if suitable
+            hab.map.selected_lay <- terra::app(hab.map.selected_lay,
+                                               fun = function(x) {
+                                                 x[which(!x %in% hab.class)] <- NA
+                                                 return(x)
+                                               })
+            
+          } else {
+            ## if unsuitable
+            hab.map.selected_lay <- terra::app(hab.map.selected_lay,
+                                               fun = function(x) {
+                                                 x[which(x %in% hab.class)] <- NA
+                                                 return(x)
+                                               })
+            
+          }
+          
           
         }
         
@@ -295,13 +301,17 @@ AOO.decline <- function(XY,
       proj_type = proj_type
     )
   
-  all_data <- 
-    data.frame(AOO = AOO, species = names(AOO))
+  all_data <-
+    data.frame(
+      AOO = AOO$aoo,
+      AOO_issue = AOO$issue_aoo,
+      species = rownames(AOO)
+    )
   
   ### whether the AOO should be estimated for all layers individually
   if (all_individual_layers & length(ids_to_keep) > 1) {
     
-    message("Area of occupancy minus threatened areas for each individual layers")
+    message("Area of occupancy minus threatened areas for each layers individually")
     
     AOO_res_list <- vector('list', length(ids_to_keep))
     for (i in 1:length(ids_to_keep)) {
@@ -329,14 +339,14 @@ AOO.decline <- function(XY,
     }
     
     for (i in 1:length(AOO_res_list)) {
-      AOO_treath <- data.frame(AOO_treatened = AOO_res_list[[i]], 
-                               species = names(AOO_res_list[[i]]))
+      AOO_treath <- data.frame(AOO_treatened = AOO_res_list[[i]]$aoo, 
+                               species = rownames(AOO_res_list[[i]]))
       colnames(AOO_treath)[1] <- names(ids_to_keep)[i]
       all_data <- merge(all_data,
                         AOO_treath,
                         by = "species", all.x = T)
       
-      all_data[which(is.na(all_data[,i + 2])), i + 2] <- 0
+      all_data[which(is.na(all_data[,i + 3])), i + 3] <- 0
     }
   }
   
@@ -361,8 +371,9 @@ AOO.decline <- function(XY,
         proj_type = proj_type
       )
     
-    AOO_treath <- data.frame(AOO_treath = AOO_treatened, 
-                             species = names(AOO_treatened))
+    AOO_treath <- data.frame(AOO_threat = AOO_treatened$aoo, 
+                             AOO_issue_threat = AOO_treatened$issue_aoo,
+                             species = rownames(AOO_treatened))
     # colnames(AOO_treath)[1] <- "AOO_treath"
     
   } else {
@@ -377,10 +388,11 @@ AOO.decline <- function(XY,
                     by = "species", 
                     all.x = T)
   
-  all_data[which(is.na(all_data[,ncol(all_data)])), ncol(all_data)] <- 0
+  all_data[which(is.na(all_data[,which(grepl("AOO_threat", colnames(all_data)))])), 
+           which(grepl("AOO_threat", colnames(all_data)))] <- 0
   
   all_data_decline <- data.frame(species = all_data[,1], 
-                                 aoo_decline = 100 - all_data[,3:ncol(all_data)]/all_data$AOO*100)
+                                 aoo_decline = 100 - all_data[ ,which(grepl("AOO_threat", colnames(all_data)))]/all_data$AOO*100)
   
   if (ncol(all_data_decline) > 3) {
     categories <- apply(all_data_decline[,2:ncol(all_data_decline)], MARGIN = 2, FUN = function(x) cat_criterion_a(A2_val = x))
