@@ -15,8 +15,8 @@ criterion_B(
   method_locations = "fixed_grid",
   method_polygons = "no_more_than_one",
   Rel_cell_size = 0.05,
-  polygon_list = NULL,
-  names_polygons = NULL,
+  threat_list = NULL,
+  names_threat = NULL,
   id_shape = "WDPA_PID",
   country_map = NULL,
   method.range = "convex.hull",
@@ -55,6 +55,10 @@ criterion_B(
 
 \item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored
 and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+
+\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
+
+\item{names_threat}{character vector, indicating names of threats, optional}
 
 \item{id_shape}{string}
 
