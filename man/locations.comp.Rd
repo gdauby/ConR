@@ -2,7 +2,7 @@
 % Please edit documentation in R/locations.comp.R
 \name{locations.comp}
 \alias{locations.comp}
-\title{Estimate the number of locations}
+\title{Estimate the number of locations.}
 \usage{
 locations.comp(
   XY,
@@ -29,7 +29,7 @@ locations.comp(
 
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
-\item{names_threat}{vector of string character indicatig the name of threats provided as threat_list}
+\item{names_threat}{character vector, indicating names of threats, optional}
 
 \item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
