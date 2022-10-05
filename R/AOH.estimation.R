@@ -245,6 +245,10 @@ AOH.estimation <- function(XY,
     
     if (any(grepl("Raster", class(hab.map.selected)))) {
       
+      hab.map.selected <-
+        terra::crop(hab.map.selected, terra::vect(EOO.shp.proj))
+      # raster::crop(hab.map.selected, st_bbox(EOO.shp.proj)) # cropping raster to the extent of the polygon
+      
       if (as.character(terra::crs(hab.map.selected, describe = TRUE)$code) != unlist(strsplit(proj_type_, ":"))[2]) {
         
         # hab.map.selected <- raster::projectRaster(hab.map.selected, crs = proj_type_)
@@ -258,12 +262,7 @@ AOH.estimation <- function(XY,
         #                                terra = terra::project(hab.map.selected.terra, as.character(proj_type_)), 
         #                                times = 5)
         
-        
       }
-      
-      hab.map.selected <-
-        terra::crop(hab.map.selected, terra::vect(EOO.shp.proj))
-        # raster::crop(hab.map.selected, st_bbox(EOO.shp.proj)) # cropping raster to the extent of the polygon
       
       ## masking input raster given hab.class
       if (!is.null(hab.class)) {
