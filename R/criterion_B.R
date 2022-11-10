@@ -88,25 +88,25 @@ criterion_B <- function(x,
     #   as(country_map, "sf")
   }
   
-  if (!is.null(protec.areas)) {
-    # if (!sp::identicalCRS(protec.areas, country_map)) {
-    #   
-    #   sp::proj4string(protec.areas) <- 
-    #     sp::CRS(SRS_string = 'EPSG:4326')
-    #   sp::proj4string(country_map) <-
-    #     sp::CRS(SRS_string = 'EPSG:4326')
-    #   
-    # }
-    
-    if (st_crs(protec.areas) != st_crs(country_map)) {
-      
-      st_crs(protec.areas) <- 4326
-      st_crs(country_map) <- 4326
-      
-    }
-    
-    
-  }
+  # if (!is.null(threat_list)) {
+  #   # if (!sp::identicalCRS(protec.areas, country_map)) {
+  #   #   
+  #   #   sp::proj4string(protec.areas) <- 
+  #   #     sp::CRS(SRS_string = 'EPSG:4326')
+  #   #   sp::proj4string(country_map) <-
+  #   #     sp::CRS(SRS_string = 'EPSG:4326')
+  #   #   
+  #   # }
+  #   
+  #   if (st_crs(protec.areas) != st_crs(country_map)) {
+  #     
+  #     st_crs(protec.areas) <- 4326
+  #     st_crs(country_map) <- 4326
+  #     
+  #   }
+  #   
+  #   
+  # }
   
   
   ##########################################################################################
@@ -203,15 +203,15 @@ criterion_B <- function(x,
     )
   
   categories <- 
-    cat_criterion_b(EOO = EOO$eoo, 
-                    AOO = AOO$aoo, 
+    cat_criterion_b(EOO = EOO$results$eoo, 
+                    AOO = AOO$AOO$aoo, 
                     locations = locations_res$locations$locations)
   
   results_full <-
     data.frame(
-      taxa = row.names(AOO),
-      EOO = EOO$eoo,
-      AOO = AOO$aoo,
+      taxa = row.names(AOO$AOO),
+      EOO = EOO$results$eoo,
+      AOO = AOO$AOO$aoo,
       locations = locations_res$locations$locations,
       category = categories$ranks_B,
       cat_codes = categories$cats_code,
