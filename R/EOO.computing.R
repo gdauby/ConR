@@ -208,6 +208,7 @@ EOO.computing <- function(XY,
       # library(sf)
       # library(sp)
       
+      
       if (!parallel & show_progress)
         setTxtProgressBar(pb, x)
       

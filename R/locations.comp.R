@@ -229,6 +229,13 @@ locations.comp <- function(XY,
         unlist(lapply(intersects_poly, function(x)
           x > 0))
       
+      XY_all <-
+        data.frame(
+          st_coordinates(DATA_SF)[, c(2, 1)],
+          tax = as.character(DATA_SF$tax),
+          ID_prov_data = DATA_SF$ID_prov_data,
+          stringsAsFactors = F
+        )
       
       ### find for each threats spatial data which id intersect with occurrences
       if (any(intersects_poly)) {
@@ -266,14 +273,6 @@ locations.comp <- function(XY,
         
         for (i in 1:length(scores_threats)) scores_threats[[i]] <- 
           scores_threats[[i]] + threat_weight[which(names(threat_weight) == names(scores_threats)[i])]
-        
-        XY_all <-
-          data.frame(
-            st_coordinates(DATA_SF)[, c(2, 1)],
-            tax = as.character(DATA_SF$tax),
-            ID_prov_data = DATA_SF$ID_prov_data,
-            stringsAsFactors = F
-          )
         
         tax_list_scor <- vector('list', length(unique(DATA_SF$tax)))
         for (i in 1:length(unique(DATA_SF$tax)))
@@ -318,13 +317,14 @@ locations.comp <- function(XY,
         
       }
       
-      rank_locations <-
-        data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data, tax = DATA_SF$tax)
-      
-      rank_threats <- data.frame(id = 1:length(threat_list_inter), 
-                                 threat = names(threat_list_inter))
-      
+
       if (any(intersects_poly)) {
+        
+        rank_locations <-
+          data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data, tax = DATA_SF$tax)
+        
+        rank_threats <- data.frame(id = 1:length(threat_list_inter), 
+                                   threat = names(threat_list_inter))
         
           for (j in 1:length(unique(tax_df_scor$rank[!is.na(tax_df_scor$rank)]))) {
           

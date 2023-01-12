@@ -210,7 +210,8 @@ EOO.comp <-  function(XY,
     ### Checking if all occurrences are on a straight line
     if (length(XY[, 1]) == 1 ||
         length(XY[, 2]) == 1 ||
-        round(abs(cor(XY[, 1], XY[, 2])), 6) == 1) {
+        round(abs(suppressWarnings(cor(XY[, 1], XY[, 2]))), 6) == 1 ||
+        is.na(round(abs(suppressWarnings(cor(XY[, 1], XY[, 2]))), 6))) {
       
       message(
         paste(
