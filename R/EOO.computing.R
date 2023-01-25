@@ -138,11 +138,16 @@ EOO.computing <- function(XY,
       country_map <-
         rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
       
+      country_map <- sf::st_make_valid(country_map)
+      country_map <-
+        suppressWarnings(sf::st_buffer(country_map, dist = 0))
+      
     } else {
       
       # if(any(grepl('sf', class(country_map))))
       #   country_map <- 
       #     as(country_map, "Spatial")
+      country_map <- sf::st_make_valid(country_map)
       
       country_map <-
         suppressWarnings(sf::st_buffer(country_map, dist = 0))

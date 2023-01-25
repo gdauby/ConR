@@ -83,9 +83,9 @@ Convex.Hull.Poly <-
           p1 <- NA 
         }
         
-        
-        
         p1 <- st_sf(geom = p1)
+        
+        p1 <- sf::st_make_valid(p1)
         
         # else {
         #   

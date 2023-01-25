@@ -116,18 +116,21 @@ EOO.comp <-  function(XY,
       country_map <-
         rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
       
-    } else {
-      
-      # if(any(grepl('sf', class(country_map))))
-      #   country_map <- 
-      #     suppressWarnings(as(country_map, "Spatial"))
-      
-      country_map <-
-        suppressWarnings(sf::st_buffer(country_map, dist = 0))
-      
-      # country_map <- 
-      #   as(country_map, "sf")
-    }
+    } 
+    # else {
+    #   
+    #   stop("Provide country_map")
+    #   
+    #   # if(any(grepl('sf', class(country_map))))
+    #   #   country_map <- 
+    #   #     suppressWarnings(as(country_map, "Spatial"))
+    #   
+    #   # country_map <-
+    #   #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
+    #   
+    #   # country_map <- 
+    #   #   as(country_map, "sf")
+    # }
   }
   
   
@@ -257,7 +260,6 @@ EOO.comp <-  function(XY,
         
       }
         
-      
       if (method.range == "convex.hull")
         p1 <-
           Convex.Hull.Poly(XY = XY[, c(2, 1)],
@@ -312,6 +314,8 @@ EOO.comp <-  function(XY,
       if(any(class(p1) == "SpatialPolygons") | any(class(p1) == "sfc") | any(class(p1) == "sf")) {
         
         if (!sf::st_is_valid(p1)) {
+          
+          p1 <- sf::st_make_valid(p1)
           
           warning(
             paste(
