@@ -17,6 +17,7 @@ criterion_B(
   Rel_cell_size = 0.05,
   threat_list = NULL,
   names_threat = NULL,
+  threat_weight = NULL,
   id_shape = "WDPA_PID",
   country_map = NULL,
   method.range = "convex.hull",
@@ -59,6 +60,8 @@ and the resolution is given by the maximum distance separating two occurrences m
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
 \item{names_threat}{character vector, indicating names of threats, optional}
+
+\item{threat_weight}{numeric vector, indicating weight given to each threat}
 
 \item{id_shape}{string}
 

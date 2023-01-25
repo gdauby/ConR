@@ -108,7 +108,11 @@ locations.comp <- function(XY,
   
   if (!is.null(threat_list)) {
     
-    if (is.null(threat_weight)) stop("Provide a threat_weight vector of same length of threat_list with score comprised of integers 1, 2 or 3")
+    if (is.null(threat_weight) & length(threat_list) > 1) 
+      stop("Provide a threat_weight vector of same length of threat_list with score comprised of integers 1, 2 or 3")
+
+    if (is.null(threat_weight) & length(threat_list) == 1) 
+      threat_weight <- 0
     
     if (!is.null(threat_weight)) {
       if (length(threat_weight) != length(threat_list))
