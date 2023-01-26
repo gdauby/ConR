@@ -48,7 +48,7 @@ criterion_B <- function(x,
                        threat_list = NULL,
                        names_threat = NULL,
                        threat_weight = NULL,
-                       id_shape = "WDPA_PID",
+                       id_shape = "id_orig",
                        country_map = NULL,
                        method.range = "convex.hull",
                        alpha = 1,
@@ -82,8 +82,11 @@ criterion_B <- function(x,
     #   country_map <- 
     #     as(country_map, "Spatial")
     
-    country_map <-
-      suppressWarnings(sf::st_buffer(country_map, dist = 0))
+    if (any(!st_is_valid(country_map)))
+      country_map <- sf::st_make_valid(country_map)
+    
+    # country_map <-
+    #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
     
     # country_map <- 
     #   as(country_map, "sf")
@@ -204,19 +207,24 @@ criterion_B <- function(x,
     )
   
   categories <- 
-    cat_criterion_b(EOO = EOO$results$eoo, 
-                    AOO = AOO$AOO$aoo, 
+    cat_criterion_b(EOO = EOO$eoo, 
+                    AOO = AOO$aoo, 
                     locations = locations_res$locations$locations)
   
   results_full <-
     data.frame(
-      taxa = row.names(AOO$AOO),
-      EOO = EOO$results$eoo,
-      AOO = AOO$AOO$aoo,
+      taxa = row.names(AOO),
+      EOO = EOO$eoo,
+      AOO = AOO$aoo,
       locations = locations_res$locations$locations,
       category = categories$ranks_B,
       cat_codes = categories$cats_code,
-      subpop = NbeSubPop$subpop
+      subpop = NbeSubPop$subpop,
+      issue_aoo = aoo_res$AOO$issue_aoo,
+      issue_eoo = eoo_res$results$issue_eoo,
+      issue_locations = locations$locations$issue_locations,
+      main_threat = if (any(colnames(locations$locations) == "main_threat")) locations$locations$main_threat else NA,
+      locations$locations[colnames(locations$locations) %in% names(threat_list)]
     )
   
   return(results_full)

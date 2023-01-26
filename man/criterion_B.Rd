@@ -18,7 +18,7 @@ criterion_B(
   threat_list = NULL,
   names_threat = NULL,
   threat_weight = NULL,
-  id_shape = "WDPA_PID",
+  id_shape = "id_orig",
   country_map = NULL,
   method.range = "convex.hull",
   alpha = 1,

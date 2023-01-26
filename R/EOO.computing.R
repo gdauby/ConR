@@ -147,10 +147,11 @@ EOO.computing <- function(XY,
       # if(any(grepl('sf', class(country_map))))
       #   country_map <- 
       #     as(country_map, "Spatial")
-      country_map <- sf::st_make_valid(country_map)
+      if (any(!st_is_valid(country_map)))
+        country_map <- sf::st_make_valid(country_map)
       
-      country_map <-
-        suppressWarnings(sf::st_buffer(country_map, dist = 0))
+      # country_map <-
+      #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
       
       # country_map <- 
       #   as(country_map, "sf")

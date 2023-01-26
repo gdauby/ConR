@@ -108,22 +108,24 @@ locations.comp <- function(XY,
   
   if (!is.null(threat_list)) {
     
-    if (is.null(threat_weight) & length(threat_list) > 1) 
-      stop("Provide a threat_weight vector of same length of threat_list with score comprised of integers 1, 2 or 3")
-
+    if (!any(class(threat_list) == "list"))
+      threat_list <- list(threat_list)
+    
     if (is.null(threat_weight) & length(threat_list) == 1) 
       threat_weight <- 0
+    
+    if (is.null(threat_weight) & length(threat_list) > 1) 
+      stop("Provide a threat_weight vector of same length of threat_list with score comprised of integers 1, 2 or 3")
     
     if (!is.null(threat_weight)) {
       if (length(threat_weight) != length(threat_list))
         stop("threat_weight should be of same length of threat_list")
 
-      if (any(threat_weight < 1))
-        stop("threat_weight must be integers > 1")
+      if (any(threat_weight < 0))
+        stop("threat_weight must be integers > 0")
     }
     
-    if (!is.list(threat_list))
-      threat_list <- list(threat_list)
+
     
     which_rast <- unlist(lapply(threat_list, function(x) inherits(x, "SpatRaster")))
     which_sf <- unlist(lapply(threat_list, function(x) inherits(x, "sf")))
@@ -158,7 +160,7 @@ locations.comp <- function(XY,
     } else {
       
       if (is.null(names(threat_list)))
-        names(threat_list) <- paste0("threat_layer.", seq(1, length(threat_list), 1))
+        names(threat_list) <- paste0("threat_layer_", seq(1, length(threat_list), 1))
       
       names(threat_weight) <- names(threat_list)
     }
@@ -287,7 +289,8 @@ locations.comp <- function(XY,
         
         for (i in 1:length(tax_list_scor)) {
           
-          test <- unlist(scores_threats)[unlist(lapply(scores_threats, function(x) names(x) == names(tax_list_scor)[i]))]
+          test <- 
+            unlist(scores_threats)[unlist(lapply(scores_threats, function(x) names(x) == names(tax_list_scor)[i]))]
           
           if (length(test) > 0) {
             
@@ -330,41 +333,41 @@ locations.comp <- function(XY,
         rank_threats <- data.frame(id = 1:length(threat_list_inter), 
                                    threat = names(threat_list_inter))
         
-          for (j in 1:length(unique(tax_df_scor$rank[!is.na(tax_df_scor$rank)]))) {
-          
-            rank_selected <- unique(tax_df_scor$rank[!is.na(tax_df_scor$rank)])[j]
-            cor_id_threat <- merge(rank_threats, tax_df_scor[which(tax_df_scor$rank == rank_selected),], 
+        for (j in 1:length(unique(tax_df_scor$rank[!is.na(tax_df_scor$rank)]))) {
+          rank_selected <-
+            unique(tax_df_scor$rank[!is.na(tax_df_scor$rank)])[j]
+          cor_id_threat <-
+            merge(rank_threats, tax_df_scor[which(tax_df_scor$rank == rank_selected), ],
                   by = "threat")
+          
+          for (i in 1:length(unique(cor_id_threat$id))) {
+            threat_id <- unique(cor_id_threat$id)[i]
             
-            for (i in 1:length(unique(cor_id_threat$id))) {
-              
-              threat_id <- unique(cor_id_threat$id)[i]
-              
-              rank_locations[which(
-                rank_locations$rank == 0 &
-                  rank_locations$tax %in% cor_id_threat$tax &
-                  rank_locations$ID_prov_data %in% threat_list_inter[[threat_id]]$ID_prov_data
-              ), "rank"] <- threat_id
-              
-            }
-            # which_tax <- tax_df_scor[which(tax_df_scor$rank == j),]
-            # which_tax <- which_tax[which(which_tax$threat == names(threat_list_inter)[i]),]
-            # which_tax
+            rank_locations[which(
+              rank_locations$rank == 0 &
+                rank_locations$tax %in% cor_id_threat$tax &
+                rank_locations$ID_prov_data %in% threat_list_inter[[threat_id]]$ID_prov_data
+            ), "rank"] <- threat_id
             
-            # if (length(which_tax) > 0)
-            #   rank_locations[which(
-            #     rank_locations$rank == 0 &
-            #       rank_locations$tax %in% which_tax$tax &
-            #       rank_locations$ID_prov_data %in% threat_list_inter[[i]]$ID_prov_data
-            #   ), "rank"] <- i
-            
-            # rank_locations %>% filter(tax == "tax11", rank > 0)
-            
-            # which_tax <- tax_df_scor[which(tax_df_scor$threat == names(threat_list_inter)[i]),]
-            # which_tax <- which_tax[which(!is.na(which_tax$rank)),]
-            # which_tax <- which_tax[which(!is.na(which_tax$rank)),]
-           
           }
+          # which_tax <- tax_df_scor[which(tax_df_scor$rank == j),]
+          # which_tax <- which_tax[which(which_tax$threat == names(threat_list_inter)[i]),]
+          # which_tax
+          
+          # if (length(which_tax) > 0)
+          #   rank_locations[which(
+          #     rank_locations$rank == 0 &
+          #       rank_locations$tax %in% which_tax$tax &
+          #       rank_locations$ID_prov_data %in% threat_list_inter[[i]]$ID_prov_data
+          #   ), "rank"] <- i
+          
+          # rank_locations %>% filter(tax == "tax11", rank > 0)
+          
+          # which_tax <- tax_df_scor[which(tax_df_scor$threat == names(threat_list_inter)[i]),]
+          # which_tax <- which_tax[which(!is.na(which_tax$rank)),]
+          # which_tax <- which_tax[which(!is.na(which_tax$rank)),]
+          
+        }
         
         unique_ranks <- sort(unique(rank_locations$rank))
         names(unique_ranks)[unique_ranks == 0] <- "not_threatened"
@@ -419,6 +422,9 @@ locations.comp <- function(XY,
         ## get rid of duplicated occurrences when polygons overlap
         threat_list_inter_selected_ <- threat_list_inter_selected[!duplicated(threat_list_inter_selected$combined),]
 
+        if (!id_shape %in% colnames(threat_list_inter_selected_))
+          stop("The parameter id_shape must contain a column name of the threat data provided")
+        
         count_protec <- 
           table(threat_list_inter_selected_$tax, 
                 as.vector(threat_list_inter_selected_[, colnames(threat_list_inter_selected_) == id_shape]))

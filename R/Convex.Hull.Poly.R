@@ -85,6 +85,8 @@ Convex.Hull.Poly <-
         
         p1 <- st_sf(geom = p1)
         
+        p1 <- p1[sf::st_is(p1, c("MULTIPOLYGON", "POLYGON")),]
+        
         p1 <- sf::st_make_valid(p1)
         
         # else {
@@ -149,6 +151,10 @@ Convex.Hull.Poly <-
       }
       
       p1 <- st_sf(geom = p1)
+      
+      p1 <- p1[sf::st_is(p1, c("MULTIPOLYGON", "POLYGON")),]
+      
+      p1 <- sf::st_make_valid(p1)
       
       # p1 <- suppressWarnings(geosphere::makePoly(as(p1, "Spatial")))
       
