@@ -132,7 +132,7 @@ EOO.computing <- function(XY,
   list_data <- list_data$list_data
   
   if (exclude.area) {
-    ### Getting by default land map if poly_borders is not provided
+    ### Getting by default land map if country_map is not provided
     if (is.null(country_map)) {
       
       country_map <-
@@ -144,23 +144,12 @@ EOO.computing <- function(XY,
       
     } else {
       
-      # if(any(grepl('sf', class(country_map))))
-      #   country_map <- 
-      #     as(country_map, "Spatial")
       if (any(!st_is_valid(country_map)))
         country_map <- sf::st_make_valid(country_map)
       
-      # country_map <-
-      #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
-      
-      # country_map <- 
-      #   as(country_map, "sf")
     }
     
   }
-  
-  # if (buff_width > 80)
-  #   stop("buff_width has unrealistic value")
   
   res_df <-
     data.frame(eoo =  rep(NA, length(list_data)), 
@@ -261,44 +250,16 @@ EOO.computing <- function(XY,
     res_df[issue_nrow, 2] <-
     paste(res_df[issue_nrow, 2], "EOO cannot be estimated because less than 3 unique occurrences", sep = "|")
     
-  # Results_short <-
-  #   data.frame(EOO = unlist(output[grep("EOO", names(output))]))
-  # row.names(Results_short) <- names_
-  
-  # if (length(output) == 1)
-  #   names(output) <- Name_Sp
-  
   if(export_shp) {
     
     output_spatial <- output[names(output) == "spatial"]
     output_spatial <- output_spatial[!is.na(output_spatial)]
     
-    # id_spatial <-
-    #   as.numeric(unlist(lapply(strsplit(
-    #     names(output_spatial), "_"
-    #   ), function(x)
-    #     x[[2]])))
-    
-    # if(length(output_spatial) > 1) {
-      output_spatial <- 
+    output_spatial <- 
         do.call("rbind", output_spatial)
       
     row.names(output_spatial) <- 1:nrow(output_spatial)
-    # } else {
-    #   output_spatial <- 
-    #     output_spatial[[1]]
-    # }
-    
-    # output_spatial <- 
-    #   st_as_sf(data.frame(output_spatial)) # 
-    
-    # if (any(names(output_spatial) == "a"))
-    #   output_spatial <-
-    #   output_spatial[,-which(colnames(output_spatial) == 'a')]
-    
-    # , 
-    # taxa = names_[id_spatial]
-    
+  
   }
   
   if(write_shp) {

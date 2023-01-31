@@ -142,11 +142,6 @@ criterion_B <- function(x,
       
     }
     
-  } else {
-    
-    NbeSubPop <- 
-      data.frame(subpop = rep(NA, length(unique(x$tax))))
-    
   }
   
   ##########################################################################################
@@ -159,6 +154,7 @@ criterion_B <- function(x,
       XY = x,
       method = method_locations, 
       threat_list = threat_list, 
+      threat_weight = threat_weight,
       names_threat = names_threat,
       Cell_size_locations = Cell_size_locations, 
       method_polygons = method_polygons, 
@@ -219,12 +215,12 @@ criterion_B <- function(x,
       locations = locations_res$locations$locations,
       category = categories$ranks_B,
       cat_codes = categories$cats_code,
-      subpop = NbeSubPop$subpop,
-      issue_aoo = aoo_res$AOO$issue_aoo,
-      issue_eoo = eoo_res$results$issue_eoo,
-      issue_locations = locations$locations$issue_locations,
-      main_threat = if (any(colnames(locations$locations) == "main_threat")) locations$locations$main_threat else NA,
-      locations$locations[colnames(locations$locations) %in% names(threat_list)]
+      subpop = if (SubPop) NbeSubPop$subpop else NA,
+      issue_aoo = AOO$issue_aoo,
+      issue_eoo = EOO$issue_eoo,
+      issue_locations = locations_res$locations$issue_locations,
+      main_threat = if (any(colnames(locations_res$locations) == "main_threat")) locations_res$locations$main_threat else NA,
+      locations_res$locations[colnames(locations_res$locations) %in% names(threat_list)]
     )
   
   return(results_full)
