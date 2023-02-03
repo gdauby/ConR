@@ -258,7 +258,8 @@ EOO.computing <- function(XY,
     output_spatial <- 
         do.call("rbind", output_spatial)
       
-    row.names(output_spatial) <- 1:nrow(output_spatial)
+    if (!is.null(output_spatial))
+      row.names(output_spatial) <- 1:nrow(output_spatial)
   
   }
   
