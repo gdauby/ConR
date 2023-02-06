@@ -324,11 +324,10 @@ locations.comp <- function(XY,
         
       }
       
+      rank_locations <-
+        data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data, tax = DATA_SF$tax)
 
       if (any(intersects_poly)) {
-        
-        rank_locations <-
-          data.frame(rank = 0, ID_prov_data = DATA_SF$ID_prov_data, tax = DATA_SF$tax)
         
         rank_threats <- data.frame(id = 1:length(threat_list_inter), 
                                    threat = names(threat_list_inter))
