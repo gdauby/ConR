@@ -167,8 +167,6 @@ locations.comp <- function(XY,
     
   }
   
-  ## geographical distances for all pairs of occurrences
-  
   if (is.null(threat_list)) {
     
     res_df <-
@@ -420,13 +418,27 @@ locations.comp <- function(XY,
         
         ## get rid of duplicated occurrences when polygons overlap
         threat_list_inter_selected_ <- threat_list_inter_selected[!duplicated(threat_list_inter_selected$combined),]
-
-        if (!id_shape %in% colnames(threat_list_inter_selected_))
-          stop("The parameter id_shape must contain a column name of the threat data provided")
+        
+        if (length(id_shape) > 1) {
+          id_shape_sel <- id_shape[unique_ranks[i]]          
+        } else {
+          id_shape_sel <- id_shape
+        }
+        
+        if (!id_shape_sel %in% colnames(threat_list_inter_selected_))
+          stop("The argument 'id_shape' must contain a column name of the threat data provided")
+        
+        if (any(is.na(threat_list_inter_selected_[, id_shape_sel]))) {
+          warning("Some row of the threat layer provided is NA for the column selected by 'id_shape'")
+          warning("Beware that rows with NA values are excluded")
+          
+          threat_list_inter_selected_ <- 
+            threat_list_inter_selected_[!is.na(threat_list_inter_selected_[,id_shape_sel]),]
+        }
         
         count_protec <- 
           table(threat_list_inter_selected_$tax, 
-                as.vector(threat_list_inter_selected_[, colnames(threat_list_inter_selected_) == id_shape]))
+                as.vector(threat_list_inter_selected_[, colnames(threat_list_inter_selected_) == id_shape_sel]))
         
         # count_protec <- 
         #   table(threat_list_inter[[unique_ranks[i]]]$tax, 
@@ -438,13 +450,18 @@ locations.comp <- function(XY,
         # locations_pa[which(row.names(locations_pa) %in% names(loc_pa)),1] <- loc_pa
         
         ### selecting polygons intersecting with occurrences
-        occ_poly <-
-          threat_list[[unique_ranks[i]]][which(threat_list[[unique_ranks[i]]]$id_orig %in% unique(threat_list_inter_selected$id_orig)), ][, c("id_orig")]
+        # occ_poly <-
+        #   threat_list[[unique_ranks[i]]][which(threat_list[[unique_ranks[i]]][, id_shape] %in% 
+        #                                          unique(threat_list_inter_selected[, id_shape])), ][, c(id_shape)]
         
-        all_un <- unique(threat_list_inter_selected[,c("tax", "id_orig")])
+        occ_poly <-
+          threat_list[[unique_ranks[i]]][which(unlist(st_drop_geometry(threat_list[[unique_ranks[i]]][, id_shape_sel])) %in% 
+                                                 unique(threat_list_inter_selected_[, id_shape_sel])), ][, c(id_shape_sel)]
+        
+        all_un <- unique(threat_list_inter_selected_[ ,c("tax", id_shape_sel)])
         all_un <- data.frame(all_un, threat = names(threat_list_inter)[unique_ranks[i]])
         
-        occ_poly <- st_sf(merge(x = all_un, occ_poly, by = "id_orig"))
+        occ_poly <- st_sf(merge(x = all_un, occ_poly, by = id_shape_sel))
         
         # occ_poly <-
         #   cbind(occ_poly,
@@ -452,6 +469,8 @@ locations.comp <- function(XY,
         #         tax = threat_list_inter[[unique_ranks[i]]]$tax)
         
         occ_poly <- st_transform(occ_poly, crs = 4326)
+        
+        colnames(occ_poly)[which(colnames(occ_poly) == id_shape_sel)] <- "id_orig"
         
         shapes_loc[[i]] <- occ_poly
           
@@ -506,7 +525,7 @@ locations.comp <- function(XY,
     shapes_loc <- do.call('rbind', shapes_loc)
     
     if (method_polygons != "no_more_than_one")
-      shapes_loc <- shapes_loc[ ,-which(colnames(shapes_loc) == "id_orig")]
+      shapes_loc <- shapes_loc[ ,-which(colnames(shapes_loc) == id_shape_sel)]
     
   }
   
@@ -522,7 +541,8 @@ locations.comp <- function(XY,
   
   # if (is.null(protec.areas))
   return(list(locations = res_df,
-              locations_poly = shapes_loc))
+              locations_poly = shapes_loc,
+              threat_list = if (!is.null(threat_list)) threat_list else NA))
   
 }
 
