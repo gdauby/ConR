@@ -408,6 +408,11 @@ locations.comp <- function(XY,
     for (i in 1:length(unique_ranks)) {
       
       # XY_shp_s <- XY_shp[[i]]
+      if (length(id_shape) > 1) {
+        id_shape_sel <- id_shape[unique_ranks[i]]          
+      } else {
+        id_shape_sel <- id_shape
+      }
       
       if (method_polygons == "no_more_than_one" & unique_ranks[i] > 0) {
         
@@ -418,12 +423,6 @@ locations.comp <- function(XY,
         
         ## get rid of duplicated occurrences when polygons overlap
         threat_list_inter_selected_ <- threat_list_inter_selected[!duplicated(threat_list_inter_selected$combined),]
-        
-        if (length(id_shape) > 1) {
-          id_shape_sel <- id_shape[unique_ranks[i]]          
-        } else {
-          id_shape_sel <- id_shape
-        }
         
         if (!id_shape_sel %in% colnames(threat_list_inter_selected_))
           stop("The argument 'id_shape' must contain a column name of the threat data provided")
