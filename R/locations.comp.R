@@ -233,9 +233,12 @@ locations.comp <- function(XY,
         unlist(lapply(intersects_poly, function(x)
           x > 0))
       
+      coords_ <- st_coordinates(DATA_SF)
+      
       XY_all <-
         data.frame(
-          st_coordinates(DATA_SF)[, c(2, 1)],
+          Y = coords_[,2],
+          X = coords_[,1],
           tax = as.character(DATA_SF$tax),
           ID_prov_data = DATA_SF$ID_prov_data,
           stringsAsFactors = F
