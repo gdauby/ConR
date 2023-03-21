@@ -84,7 +84,7 @@ pop.decline.test <- function(x,
           try(stats::confint(x$best.model), TRUE)
             )
 
-  if(class(CI) == "try-error") {
+  if(class(CI)[1] == "try-error") {
     
     seq.ys = seq(min(ys),  max(ys), by = 1)
     preds = predict(x$best.model, newdata = data.frame(ys = seq.ys))
@@ -161,19 +161,6 @@ pop.decline.test <- function(x,
       test <- paste0(
                 paste0(do.call(c, tests), do.call(c, periods)), 
                      collapse = "|")
-
-      # if(params.CI[,1][1] < 0)
-      #   test1 <- if(params.CI[,4][1]<0 & params.CI[,5][1]<0) "signif.decline" else "non.signif.decline"
-      # if(params.CI[,1][2] < 0)
-      #   test2 <- if(params.CI[,4][2]<0 & params.CI[,5][2]<0) "signif.decline" else "non.signif.decline"
-      # 
-      # if(params.CI[,1][1] > 0)
-      #   test1 <- if(params.CI[,4][1]>0 & params.CI[,5][1]>0) "signif.increase" else "non.signif.increase"
-      # if(params.CI[,1][2] > 0)
-      #   test2 <- if(params.CI[,4][2]>0 & params.CI[,5][2]>0) "signif.increase" else "non.signif.increase"
-      # 
-      # test = paste(unique(c(test1, test2)), collapse = "|", sep="")
-      
     }
   }
   
