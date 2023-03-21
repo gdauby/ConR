@@ -522,7 +522,7 @@ criterion_C = function(x,
                           })
   
   ## Estimated continuing decline
-  if("C1" %in% subcriteria) {
+  if ("C1" %in% subcriteria) {
   
     if(length(x) < 3) 
       stop("Too few year intervals to fit a model to population trends")
@@ -606,7 +606,7 @@ criterion_C = function(x,
   
   best.models <- NULL
   
-  if(any(sapply(miss.years, any))) {   # Predictions based on the best model fit to population trends
+  if (any(sapply(miss.years, any))) {   # Predictions based on the best model fit to population trends
     
     best.models = as.list(rep(NA, length(pop_data)))
     which.pred = which(sapply(miss.years, any))
@@ -642,14 +642,7 @@ criterion_C = function(x,
                                 assess.year,
                                 max(names(pop_data1[[i]])))
                             )), collapse = "-"))
-  # assess.period <- lapply(1:length(pop_data),
-  #                         function(i)
-  #                           paste(unique(sort(
-  #                             c(prev.year3[i],
-  #                               assess.year,
-  #                               proj.year3[i])
-  #                           )), collapse = "-"))
-  
+
   ## Small population size and continuing decline using IUCN criteria
   Results <- data.frame(
     species = names(pop_data),
@@ -679,28 +672,29 @@ criterion_C = function(x,
                                  )
   
   ## Estimated continuing decline?
-  Results$cont.decline <- sapply(1:length(cont.decline), 
-                                  function(y)
-                                    if (grepl("\\|", cont.decline[y])) {
-                                      cont.decline[y] <- gsub("non.signif.increase|non.signif.decline", "Stable", cont.decline[y])
-                                      cont.decline[y] <- gsub("signif.decline", "Decreasing", cont.decline[y])
-                                      cont.decline[y] <- gsub("signif.increase", "Increasing", cont.decline[y])
-                                      cont.decline[y]
-                                    } else {
-                                      if (cont.decline[y] %in% c("signif.decline")) 
-                                        return("Decreasing")
-                                      if (cont.decline[y] %in% c("signif.increase")) 
-                                        return("Increasing")
-                                      if (cont.decline[y] %in% c("non.signif.decline", "non.signif.increase")) 
-                                        return("Stable")
-                                      if (cont.decline[y] %in% c("decrease", "not.increasing")) 
-                                        return("Probably.Decreasing")
-                                      if (cont.decline[y] %in% c("increase", "not.decreasing")) 
-                                        return("Probably.Increasing")
-                                    }
-                                  )  
+  if("C1" %in% subcriteria) {
+    Results$cont.decline <- sapply(1:length(cont.decline), 
+                                   function(y)
+                                     if (grepl("\\|", cont.decline[y])) {
+                                       cont.decline[y] <- gsub("non.signif.increase|non.signif.decline", "Stable", cont.decline[y])
+                                       cont.decline[y] <- gsub("signif.decline", "Decreasing", cont.decline[y])
+                                       cont.decline[y] <- gsub("signif.increase", "Increasing", cont.decline[y])
+                                       cont.decline[y]
+                                     } else {
+                                       if (cont.decline[y] %in% c("signif.decline")) 
+                                         return("Decreasing")
+                                       if (cont.decline[y] %in% c("signif.increase")) 
+                                         return("Increasing")
+                                       if (cont.decline[y] %in% c("non.signif.decline", "non.signif.increase")) 
+                                         return("Stable")
+                                       if (cont.decline[y] %in% c("decrease", "not.increasing")) 
+                                         return("Probably.Decreasing")
+                                       if (cont.decline[y] %in% c("increase", "not.decreasing")) 
+                                         return("Probably.Increasing")
+                                     }
+    )  
+  }  
 
-  
   ## Criteria C1: under criterion C1, the decline must be observed or estimated (thus removing projections of future decline)
   if("C1" %in% subcriteria) {
     
@@ -713,16 +707,6 @@ criterion_C = function(x,
     Results$reduction_1gen <- 100 * sapply(1:length(pop_data), function(y) 
         1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)]) /
                as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% prev.year1[y])])))
-    # Results$reduction_gen1 <- 100 * sapply(1:length(pop_data), function(y) 
-    #     1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year1[y])]) /
-    #            as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)])))
-    # Results$reduction_gen2 <- 100 * sapply(1:length(pop_data), function(y) 
-    #     1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year2[y])]) /
-    #            as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)])))
-    # Results$reduction_gen3 <- 100 * sapply(1:length(pop_data), function(y) 
-    #     1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year3[y])]) /
-    #            as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)])))
-      
   }  
   
   ## Criteria C2: Under criteria B1b, B2b, and C2, continuing declines can be observed, estimated, inferred or projected
