@@ -270,11 +270,11 @@ pop.decline.fit <- function(pop.size,
   
   if(any("piecewise" %in% models) | all(models == "all")) { # piece-wise model (Figure 4.2 panel a)
     
-    ys = stats::na.omit(DATA)$ys
+    ys <- stats::na.omit(DATA)$ys
     breaks <- ys[which(ys >= min(ys)+1 & ys <= max(ys)-1)]
     mse <- numeric(length(breaks))
     
-    for(j in 1:length(breaks)) {
+    for(j in seq_along(breaks)) {
       
       piecewise1 <- stats::lm(ps ~ ys*(ys < breaks[j]) + ys*(ys >= breaks[j]),
                               data = stats::na.omit(DATA))
@@ -282,7 +282,7 @@ pop.decline.fit <- function(pop.size,
       
     }
     
-    quebras = breaks[order(mse)]
+    quebras <- breaks[order(mse)]
     md <- stats::lm(ps ~ ys, data = stats::na.omit(DATA)) 
     
     # 1 breakpoint
@@ -291,15 +291,16 @@ pop.decline.fit <- function(pop.size,
     # 2 breakpoints
     piece2 <- try(segmented::segmented(md, seg.Z = ~ys, psi = c(quebras[1]/2, quebras[1]), 
                                        control = segmented::seg.control(display = FALSE), it.max = 100, n.boot = 50), TRUE)
-    warn = warnings(piece2)
+    warn <- warnings(piece2)
     
-    if(class(piece2)[1] == "try-error" & !any(grepl("no residual degrees of freedom", attributes(warn)$names))) {
+    warn.patt <- "no residual degrees of freedom"
+    if(class(piece2)[1] == "try-error" & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
       
       counter <- 0
       
       while(class(piece2)[1] == "try-error" & counter < max.count){
         
-        try(piece2 <- segmented::segmented(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/2, 1), jitter(quebras[1], 1)),
+        try(piece2 <- segmented::segmented.default(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/2, 1), jitter(quebras[1], 1)),
                                            control = segmented::seg.control(display = FALSE, it.max = 100, n.boot = 50)), TRUE)
         counter <- sum(counter, 1)
         
@@ -309,9 +310,9 @@ pop.decline.fit <- function(pop.size,
     # 3 breakpoints
     piece3 <- try(segmented::segmented(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/3, 1), jitter(quebras[1]/2, 1), jitter(quebras[1], 1)), 
                                        control = segmented::seg.control(display = FALSE), it.max = 100,  n.boot = 50), TRUE)
-    warn = warnings(piece3)
+    warn <- warnings(piece3)
     
-    if(class(piece3)[1] == "try-error" & !any(grepl("no residual degrees of freedom", attributes(warn)$names))) {
+    if(class(piece3)[1] == "try-error" & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
       
       counter <- 0
       
@@ -324,9 +325,11 @@ pop.decline.fit <- function(pop.size,
       }
     }
     
-    # Chosing the best piece-wise model
+    # Chosing the best piece-wise model (without errors and with break-point estimates)
     piece.mds <- list(piece1, piece2, piece3)
     piece.mds <- piece.mds[!sapply(piece.mds, function(x) class(x)[1] %in% "try-error")]
+    piece.mds <- piece.mds[!sapply(piece.mds, function(x) is.null(x$psi))]
+    
     
     if(length(piece.mds) > 0) {
       
@@ -365,9 +368,10 @@ pop.decline.fit <- function(pop.size,
     
     ylim <- range(DATA[grepl("ps|est.prop", names(DATA))], na.rm=TRUE)
     xlim <- range(DATA$ys, na.rm=TRUE)
-    preds = predict(best, data.frame(ys = seq(range(DATA$ys)[1], range(DATA$ys)[2], by = 1)))
+    preds <- predict(best, data.frame(ys = seq(range(DATA$ys)[1], range(DATA$ys)[2], by = 1)))
     
-    if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) ylim = range(c(ylim, preds), na.rm=TRUE)     
+    if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) 
+      ylim <- range(c(ylim, preds), na.rm=TRUE)     
     
     par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
     graphics::plot(DATA$ps ~ DATA$ys, pch=19, cex=1.2, #data = DATA, 
@@ -375,10 +379,11 @@ pop.decline.fit <- function(pop.size,
          xlab = "Years", ylab = "Population size (%)",
          xaxt = "n", yaxt= "n", cex.lab = 1.2)
     axis(1, at = DATA$ys, labels = DATA$years, tcl = -0.3)
-    ats = pretty(seq(min(ylim), max(ylim), 0.1))
+    ats <- pretty(seq(min(ylim), max(ylim), 0.1))
     axis(2, at = ats, labels = ats*100, las = 1, tcl = -0.3)
     
-    if(!is.null(project.years)) points(est.prop ~ ys, cex=1.2, data = subset(DATA, is.na(DATA$ps)))
+    if(!is.null(project.years)) 
+      points(est.prop ~ ys, cex=1.2, data = subset(DATA, is.na(DATA$ps)))
     
     range1 <- (range(stats::na.omit(DATA)$ys)[1] - 1)
     range2 <- (range(stats::na.omit(DATA)$ys)[2] + 1)
@@ -452,9 +457,7 @@ pop.decline.fit <- function(pop.size,
       plot(mod, lwd=2, col= "#CC79A7", add=TRUE, dens.rug=FALSE, rug=FALSE)
       graphics::abline(v=mod$psi[,2], lty=3, col= "#CC79A7")
       legend(leg.pos, c("Piecewise model", "Estim. break(s)"), lwd= 2, lty = c(1,3), col= "#CC79A7", bty = "n")
-      #graphics::curve((stats::coef(tmp4)[1] + stats::coef(tmp4)[3]) + (stats::coef(tmp4)[2]+stats::coef(tmp4)[5])*x, add=T, from=min(ys), to=quebras[1], lwd=2, col=4)
-      #graphics::curve((stats::coef(tmp4)[1] + stats::coef(tmp4)[4]) + stats::coef(tmp4)[2]*x, add=T, from=quebras[1], to=max(ys), lwd=2, col=4)
-      
+
     }
   }
   
