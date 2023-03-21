@@ -144,7 +144,7 @@ pop.decline.test <- function(x,
     
     if(best.name == "piecewise") { 
       
-      ys.groups <- findInterval(ys, CI$ys[,1])
+      ys.groups <- findInterval(ys, CI[,1])
       params.CI <- segmented::slope(x$best.model)[[1]]
       tests <- vector("list", length(unique(ys.groups)))
       periods <- vector("list", length(unique(ys.groups)))

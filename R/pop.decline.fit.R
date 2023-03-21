@@ -287,11 +287,13 @@ pop.decline.fit <- function(pop.size,
     
     # 1 breakpoint
     piece1 <- try(segmented::segmented(md, seg.Z = ~ys, psi = quebras[1], 
-                                       control = segmented::seg.control(display = FALSE), it.max = 100, n.boot = 50), TRUE)
+                                       control = segmented::seg.control(display = FALSE, it.max = 100, n.boot = 50)), TRUE)
     # 2 breakpoints
-    piece2 <- try(segmented::segmented(md, seg.Z = ~ys, psi = c(quebras[1]/2, quebras[1]), 
-                                       control = segmented::seg.control(display = FALSE), it.max = 100, n.boot = 50), TRUE)
+    piece2 <- suppressWarnings(
+      try(segmented::segmented(md, seg.Z = ~ys, psi = c(quebras[1], quebras[1]/2), 
+                               control = segmented::seg.control(display = FALSE, it.max = 100, n.boot = 50)), TRUE))
     warn <- warnings(piece2)
+    error <- errorCondition(piece2)
     
     warn.patt <- "no residual degrees of freedom"
     if(class(piece2)[1] == "try-error" & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
@@ -308,8 +310,9 @@ pop.decline.fit <- function(pop.size,
     }
     
     # 3 breakpoints
-    piece3 <- try(segmented::segmented(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/3, 1), jitter(quebras[1]/2, 1), jitter(quebras[1], 1)), 
-                                       control = segmented::seg.control(display = FALSE), it.max = 100,  n.boot = 50), TRUE)
+    piece3 <- suppressWarnings(
+      try(segmented::segmented(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/3, 1), jitter(quebras[1]/2, 1), jitter(quebras[1], 1)), 
+                                       control = segmented::seg.control(display = FALSE, it.max = 100,  n.boot = 50)), TRUE))
     warn <- warnings(piece3)
     
     if(class(piece3)[1] == "try-error" & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
@@ -335,7 +338,7 @@ pop.decline.fit <- function(pop.size,
       
       if(length(piece.mds) == 1) {
         
-        piece = piece.mds[[1]]
+        piece <- piece.mds[[1]]
         
       } else {
         
