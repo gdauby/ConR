@@ -10,6 +10,7 @@ locations.comp(
   nbe_rep = 0,
   threat_list = NULL,
   names_threat = NULL,
+  threat_weight = NULL,
   Cell_size_locations = 10,
   method_polygons = c("no_more_than_one"),
   id_shape = "id_orig",
@@ -30,6 +31,8 @@ locations.comp(
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
 \item{names_threat}{character vector, indicating names of threats, optional}
+
+\item{threat_weight}{numeric vector, indicating weight given to each threat}
 
 \item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 

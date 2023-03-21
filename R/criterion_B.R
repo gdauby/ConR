@@ -47,7 +47,8 @@ criterion_B <- function(x,
                        Rel_cell_size = 0.05,
                        threat_list = NULL,
                        names_threat = NULL,
-                       id_shape = "WDPA_PID",
+                       threat_weight = NULL,
+                       id_shape = "id_orig",
                        country_map = NULL,
                        method.range = "convex.hull",
                        alpha = 1,
@@ -81,32 +82,35 @@ criterion_B <- function(x,
     #   country_map <- 
     #     as(country_map, "Spatial")
     
-    country_map <-
-      suppressWarnings(sf::st_buffer(country_map, dist = 0))
+    if (any(!st_is_valid(country_map)))
+      country_map <- sf::st_make_valid(country_map)
+    
+    # country_map <-
+    #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
     
     # country_map <- 
     #   as(country_map, "sf")
   }
   
-  if (!is.null(protec.areas)) {
-    # if (!sp::identicalCRS(protec.areas, country_map)) {
-    #   
-    #   sp::proj4string(protec.areas) <- 
-    #     sp::CRS(SRS_string = 'EPSG:4326')
-    #   sp::proj4string(country_map) <-
-    #     sp::CRS(SRS_string = 'EPSG:4326')
-    #   
-    # }
-    
-    if (st_crs(protec.areas) != st_crs(country_map)) {
-      
-      st_crs(protec.areas) <- 4326
-      st_crs(country_map) <- 4326
-      
-    }
-    
-    
-  }
+  # if (!is.null(threat_list)) {
+  #   # if (!sp::identicalCRS(protec.areas, country_map)) {
+  #   #   
+  #   #   sp::proj4string(protec.areas) <- 
+  #   #     sp::CRS(SRS_string = 'EPSG:4326')
+  #   #   sp::proj4string(country_map) <-
+  #   #     sp::CRS(SRS_string = 'EPSG:4326')
+  #   #   
+  #   # }
+  #   
+  #   if (st_crs(protec.areas) != st_crs(country_map)) {
+  #     
+  #     st_crs(protec.areas) <- 4326
+  #     st_crs(country_map) <- 4326
+  #     
+  #   }
+  #   
+  #   
+  # }
   
   
   ##########################################################################################
@@ -138,11 +142,6 @@ criterion_B <- function(x,
       
     }
     
-  } else {
-    
-    NbeSubPop <- 
-      data.frame(subpop = rep(NA, length(unique(x$tax))))
-    
   }
   
   ##########################################################################################
@@ -155,6 +154,7 @@ criterion_B <- function(x,
       XY = x,
       method = method_locations, 
       threat_list = threat_list, 
+      threat_weight = threat_weight,
       names_threat = names_threat,
       Cell_size_locations = Cell_size_locations, 
       method_polygons = method_polygons, 
@@ -215,7 +215,12 @@ criterion_B <- function(x,
       locations = locations_res$locations$locations,
       category = categories$ranks_B,
       cat_codes = categories$cats_code,
-      subpop = NbeSubPop$subpop
+      subpop = if (SubPop) NbeSubPop$subpop else NA,
+      issue_aoo = AOO$issue_aoo,
+      issue_eoo = EOO$issue_eoo,
+      issue_locations = locations_res$locations$issue_locations,
+      main_threat = if (any(colnames(locations_res$locations) == "main_threat")) locations_res$locations$main_threat else NA,
+      locations_res$locations[colnames(locations_res$locations) %in% names(threat_list)]
     )
   
   return(results_full)

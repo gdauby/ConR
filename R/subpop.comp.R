@@ -108,7 +108,7 @@ subpop.comp <- function(XY,
   if (show_progress) {
     pb <-
       utils::txtProgressBar(min = 0,
-                            max = length(list_data),
+                            max = length(list_data[[1]]),
                             style = 3)
     
     progress <- function(n)
@@ -120,7 +120,7 @@ subpop.comp <- function(XY,
   
   output <-
     foreach::foreach(
-      x = 1:length(list_data),
+      x = 1:length(list_data[[1]]),
       .combine = 'c',
       .options.snow = opts
     ) %d% {
@@ -130,20 +130,20 @@ subpop.comp <- function(XY,
       
       res <- 
         subpop.estimation(
-          XY = list_data[[x]], 
-          Resol_sub_pop = unique(list_data[[x]]$radius), #### PART EDITED BY RENATO #### 
+          XY = list_data[[1]][[x]], 
+          Resol_sub_pop = unique(list_data[[1]][[x]]$radius), #### PART EDITED BY RENATO #### 
           proj_type = proj_type,
           export_shp = export_shp #### NEW RGUMENT ADDED BY RENATO ####
         )
       
       if (export_shp) {
         names(res) <- c("subpop", "spatial")
-        names(res)[1] <- list_data[[x]]$tax[1]
-        res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
+        names(res)[1] <- list_data[[1]][[x]]$tax[1]
+        res$spatial <- cbind(res$spatial, tax = list_data[[1]][[x]]$tax[1])
         
       } else {
         
-        names(res)[1] <- list_data[[x]]$tax[1]
+        names(res)[1] <- list_data[[1]][[x]]$tax[1]
         
       }
       
