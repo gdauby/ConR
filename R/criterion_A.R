@@ -7,9 +7,11 @@
 #' @param x a vector (one species) or a data frame (multiple species/
 #'   subpopulations) containing the population size per year, from the oldest 
 #'   to the most recent population estimate.
-#' @param years a vector containing the years for which the population sizes
-#'   are available (i.e. time series). It can be NULL if x contains the years as names.
-#' @param assess.year numeric. The year for which the assessment should be performed.
+#' @param years a vector containing the years for which the population sizes are
+#'   available (i.e. time series). It can be NULL if x contains the years as
+#'   names.
+#' @param assess.year numeric. The year for which the assessment should be
+#'   performed.
 #' @param project.years a vector containing the years for which population sizes
 #'   were or should be projected.
 #' @param generation.time a value or vector of generation lengths, i.e. the
@@ -18,13 +20,18 @@
 #'   species population size to perform projections.
 #' @param subcriteria a vector containing the sub-criteria that should be
 #'   included in the assessment (i.e. A1, A2, A3 and/or A4).
+#' @param exploitation a value or vector of levels of exploitation, that should
+#'   be provided as the reduction in population size caused by the exploitation
+#'   (in %).
 #' @param data.type a character corresponding to the type of data (IUCN 2019):
 #'   "observation", "index" or "AOO_EOO" (only these types are currently
 #'   implemented)
-#' @param nature.evidence a character corresponding to the nature of evidence (IUCN
-#'   2019): "observed", "estimated", "projected", "inferred" or "suspected"
+#' @param nature.evidence a character corresponding to the nature of evidence
+#'   (IUCN 2019): "observed", "estimated", "projected", "inferred" or
+#'   "suspected"
 #' @param A1.threshold numeric vector with the A1 thresholds to convert decline
-#'   estimates into categories. Default values are the thresholds recommended by the IUCN.
+#'   estimates into categories. Default values are the thresholds recommended by
+#'   the IUCN.
 #' @param A234.threshold numeric vector with the A2, A3, and A4 thresholds to
 #'   convert decline estimate into categories. Default values are the thresholds
 #'   recommended by the IUCN.
@@ -36,7 +43,8 @@
 #'   to 2.
 #' @param show_progress logical. Should the progress bar be displayed? Default
 #'  to TRUE.
-#' @param ... other parameters to be passed as arguments for function `pop.decline.fit`    
+#' @param ... other parameters to be passed as arguments for function
+#'   `pop.decline.fit`
 #'
 #' @return A data frame containing, for each taxon, the year of assessment, the
 #'   time interval of the assessment (include past and future estimates, if
@@ -46,31 +54,47 @@
 #'   categories associated with these sub-criteria and the consensus category
 #'   for criterion A.
 #'
-#' @details As described in IUCN (2019), the choice between criteria A1 or A2 depends on 
-#'   three conditions: the reduction must be reversible, the causes of the reduction 
-#'   must be understood, and the threats must have ceased. "If any of the three conditions 
-#'   (reversible and understood and ceased) are not met (...), then A2 should be used 
-#'   instead of A1" (IUCN, 2019).
+#' @details 
+#'   As described in IUCN (2019), the choice between criteria A1 or A2 depends
+#'   on three conditions: the reduction must be reversible, the causes of the
+#'   reduction must be understood, and the threats must have ceased. "If any of
+#'   the three conditions (reversible and understood and ceased) are not met
+#'   (...), then A2 should be used instead of A1" (IUCN, 2019).
 #'
 #'   Some important notes. The function can return the predictions of population
-#'   estimates for years not in the observed data, based on the fit of a set of different 
-#'   statistical models. As stated in IUCN (2019), the model used to make the 
-#'   predictions can result in very different estimates. So, it is preferable that
-#'   the user choose one or two of the models based on the best available information 
-#'   on types of threat (i.e. patterns of exploitation or habitat loss), life history 
-#'   and ecology of the taxon being evaluated or any other processes that may contribute 
-#'   to population decline. See IUCN (2019) for more details on the assumptions of each model.
-#'   The selection of models based solely on their fit to population size should only be used 
-#'   for larger time series (Number of observations > 10). 
+#'   estimates for years not in the observed data, based on the fit of a set of
+#'   different statistical models. As stated in IUCN (2019), the model used to
+#'   make the predictions can result in very different estimates. So, it is
+#'   preferable that the user choose one or two of the models based on the best
+#'   available information on types of threat (i.e. patterns of exploitation or
+#'   habitat loss), life history and ecology of the taxon being evaluated or any
+#'   other processes that may contribute to population decline. See IUCN (2019)
+#'   for more details on the assumptions of each model. The selection of models
+#'   based solely on their fit to population size should only be used for larger
+#'   time series (Number of observations > 10).
 #'   
-#'   Some more technical notes. If `years` is a subset of all the years contained in `x`, 
-#'   then `x` is filtered based on `years`. So, make sure you have selected the right years.
-#'   If the year of assessment is not given, the most recent year is taken instead. The function 
-#'   accepts a single generation length for all species or species-specific generation lengths. 
-#'   In the latter case, it is necessary to provide exactly one value for each species analyzed.
-#'   Currently, only one assessment year can be assigned for all taxa. Similarly, only
-#'   one vector of years with population size available. Thus, it is advised not to mix
-#'   taxa with great differences in generation length. 
+#'   Some more technical notes. If `years` is a subset of all the years
+#'   contained in `x`, then `x` is filtered based on `years`. So, make sure you
+#'   have selected the right years. If the year of assessment is not given, the
+#'   most recent year is taken instead. The function accepts a single generation
+#'   length for all species or species-specific generation lengths. In the
+#'   latter case, it is necessary to provide exactly one value for each species
+#'   analyzed. Currently, only one assessment year can be assigned for all taxa.
+#'   Similarly, only one vector of years with population size available. Thus,
+#'   it is advised not to mix taxa with great differences in generation length.
+#'   
+#'   As for generation lengths, the function accepts single and species-specific
+#'   reductions of population size due to actual or potential exploitation of
+#'   the species (see IUCN subcriterion A2d), via the argument `exploitation`.
+#'   Here, this reduction is applied on top of the reduction obtained from the
+#'   vector of population sizes per year provided in `x`, and only for the
+#'   subcriterion A2. Thus, this argument should be used when users want
+#'   to account for an extra reduction due to other causes, such as
+#'   harvesting-related or habitat quality-related reductions on top the ones
+#'   obtained from habitat loss-population size relationships. If `exploitation`
+#'   is not empty, a new column is added to the output ('basis_d') in which a
+#'   short report of the impact of the added reduction is provided. If one
+#'   or more species have no evidence of exploitation just enter the value zero.
 #'   
 #' @author Lima, R.A.F. & Dauby, G.
 #' 
@@ -147,8 +171,9 @@ criterion_A = function(x,
                        generation.time = NULL,
                        models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
                        subcriteria = c("A1", "A2", "A3", "A4"),
+                       exploitation = NULL,
                        data.type = NULL,
-                       nature.evidence = NULL,   
+                       nature.evidence = NULL,
                        A1.threshold = c(50, 70, 90),
                        A234.threshold = c(30, 50, 80),
                        all.cats = TRUE,
@@ -250,7 +275,7 @@ criterion_A = function(x,
       if(length(unique(generation.time)) == 1) {
         
         generation.time <- rep(generation.time, dim(x)[1])
-        warning("Only one generation length provided for two or more taxa: assuming the same generation length for all taxa")
+        warning("Only one generation length provided for two or more taxa: assuming the same value for all taxa")
         
       }
     }
@@ -273,10 +298,32 @@ criterion_A = function(x,
       
     }
   }
-
-  if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) proj.year = rep(assess.year, length(proj.year))
   
-  if(!any(subcriteria %in% c("A1", "A2")) & any(subcriteria %in% c("A3", "A4"))) prev.year = rep(assess.year, length(prev.year))
+  if(!is.null(exploitation)) {
+    
+    if(dim(x)[1] != length(exploitation)) {
+      
+      if(length(exploitation) > 1)
+        stop("Number of exploitation level values is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      
+      if(length(exploitation) == 1) {
+        
+        exploitation <- rep(exploitation, dim(x)[1])
+        warning("Only one value of exploitation level provided for two or more taxa: assuming the same value for all taxa")
+        
+      }
+    }
+    
+    exploitation <- as.numeric(exploitation)
+    exploitation[is.na(exploitation)] <- 0
+    
+  }
+
+  if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) 
+    proj.year <- rep(assess.year, length(proj.year))
+  
+  if(!any(subcriteria %in% c("A1", "A2")) & any(subcriteria %in% c("A3", "A4"))) 
+    prev.year <- rep(assess.year, length(prev.year))
   
   if(is.null(project.years)) {
     
@@ -305,13 +352,6 @@ criterion_A = function(x,
       yrs[miss.proj] <- 
       lapply(1:length(yrs[miss.proj]), 
              function(i) unique(c(yrs[miss.proj][[i]], seq(max(yrs[miss.proj][[i]]), proj.year[miss.proj][i], by= int))))
-    
-    #all.yrs <- prev.year:proj.year
-    #yrs <- all.yrs[all.yrs %in% years]
-    # if (!prev.year %in% yrs)
-    #   yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
-    # if (!proj.year %in% yrs)
-    #   yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
     
   } else {
     
@@ -361,17 +401,6 @@ criterion_A = function(x,
                           function(i) unique(c(yrs[[ids2[i]]], 
                                                seq(max(yrs[[ids2[i]]]), proj.year[ids2[i]], by= int), 
                                                proj.year[ids2[i]]))) 
-      #yrs <- unique(c(years, project.years))
-      # if (prev.year < min(yrs))
-      #   yrs <- unique(c(seq(prev.year, min(yrs), by= int), yrs))
-      # if (proj.year > max(yrs))
-      #   yrs <- unique(c(yrs, seq(max(yrs), proj.year, by= int)))
-      # 
-      # if(length(project.years) == 1 & (max(project.years) - max(years[!years %in% project.years]) >= int))
-      #   yrs = c(yrs[1:which.max(years[!years %in% project.years])],
-      #           seq(max(years[!years %in% project.years]) + int, project.years - int, by = int),
-      #           project.years)
-      
     }  
   }
   
@@ -401,9 +430,6 @@ criterion_A = function(x,
     best.models <- as.list(rep(NA, length(pop_data)))
     
     which.pred <- which(sapply(miss.years, any))
-    
-    ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
-    ## Renato: Done in 14 Aug 2020
     
     cat("Computing the predictions based on population trends...", sep= "\n")
     
@@ -465,23 +491,6 @@ criterion_A = function(x,
       pop_data[[which.pred[i]]] <- models.fit[[i]][[1]]
       best.models[[which.pred[i]]] <- models.fit[[i]][[2]]
     }  
-    
-    # for (i in 1:length(which.pred)) {
-    #   
-    #   pred.sp <- pop.decline.fit(pop.size = pop_data[[which.pred[i]]], 
-    #                              years = years, 
-    #                              models = models,
-    #                              project.years = yrs[[which.pred[i]]],
-    #                              plot.fit = FALSE,
-    #                              ...)
-    #   pred.pop.size <- pred.sp$data$Observed
-    #   pred.pop.size[is.na(pred.sp$data$Observed)] <- 
-    #     pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
-    #   names(pred.pop.size) <- pred.sp$data$Year
-    #   pop_data[[which.pred[i]]] <- pred.pop.size
-    #   best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
-    #   
-    # }
   }
   
   assess.period <- lapply(1:length(pop_data), 
@@ -493,7 +502,6 @@ criterion_A = function(x,
              as.character(pop_data1[[i]][which(yrs[[i]] %in% proj.year[i])]))), collapse = "-"))
   
   ## Population reduction using IUCN criteria
-  ## Gilles: I always read it is better to pre allocate space in data frame instead of appending it, for memory and speed
   Results = data.frame(
     species = names(pop_data),
     assessment.year = assess.year,
@@ -507,38 +515,23 @@ criterion_A = function(x,
     category_A_code = NA,
     stringsAsFactors = FALSE
   )
-  row.names(Results) = NULL
+  row.names(Results) <- NULL
   
   if(!is.null(best.models))
-    Results$predictive.model = as.character(unlist(best.models))
+    Results$predictive.model <- as.character(unlist(best.models))
   
   # criteria A1/A2
   if("A1" %in% subcriteria | "A2" %in% subcriteria) {
-    
-    # if(length(pop_data) == 1 ) {
-    #   
-    #   Results$reduction_A12 <-
-    #     100 *(1 - (tail(as.numeric(pop_data[[1]]), 1) /        
-    #            head(as.numeric(pop_data[[1]]), 1)))
-    # 
-    # } else {
     
       Results$reduction_A12 <-
         100 * sapply(1:length(pop_data), function(y) 
           1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)]) /
                  as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% prev.year[y])])))
-      
-          
-    # }
   }
   
   # criteria A3
   if("A3" %in% subcriteria) {
     
-    # Results$reduction_A3 <-
-    #   100 * sapply(pop_data, function(y)
-    #     1 - (as.numeric(y[which(names(y) %in% max(yrs))]) /
-    #            as.numeric(y[which(names(y) == assess.year)])))
     Results$reduction_A3 <-
       100 * sapply(1:length(pop_data), function(y)
         1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year[y])]) /
@@ -549,11 +542,6 @@ criterion_A = function(x,
   # criteria A4
   if("A4" %in% subcriteria) {
     
-    ### Gilles: cannot be computed if no generation.time provided : any assumed value?
-    ### Renato: I think now it should be alright now
-    #anos1 <- years[(1 + which(years == min(yrs))):(which(years == assess.year) - 1)]
-    #anos1 <- yrs[(1 + which(yrs == min(yrs))):(which(yrs == assess.year) - 1)]
-    #anos1 <- lapply(yrs, function(x) x[(1 + which(x == min(x))):(which(x == assess.year) - 1)])
     anos1 <- lapply(1:length(yrs),
                     function(y)
                       yrs[[y]][(1 + which(yrs[[y]] == min(prev.year[y]))):(which(yrs[[y]] == assess.year) - 1)])
@@ -561,9 +549,7 @@ criterion_A = function(x,
     if(is.null(generation.time)) {
       
       ids <- lapply(1:length(yrs), function(y) which(yrs[[y]] %in% (anos1[[y]] + 10)))
-      #ids <- which(yrs %in% (anos1 + 10))
-      #anos2 <- yrs[which(yrs %in% (anos1 + 10))]
-      
+
     } else {
       
       ids <- lapply(1:length(yrs), 
@@ -572,30 +558,13 @@ criterion_A = function(x,
                             sapply(1:length(try.yrs), 
                                    function(j) which.min(abs(yrs[[y]] - try.yrs[j])))
                           })
-      #ids <- lapply(1:length(yrs), 
-      #              function(y) which(yrs[[y]] %in% (anos1[[y]] + 3 * generation.time[y])))
-      #ids <- which(yrs %in% (anos1 + 3 * generation.time))
-      #anos2 <- yrs[which(yrs %in% (anos1 + 3 * generation.time))]
-      
+
       if(any((3 * generation.time) < 10)) {
         
         ids1 = which((3 * generation.time) < 10) 
         ids[ids1] <- lapply(1:length(yrs[ids1]), 
                     function(y) which(yrs[ids1][[y]] %in% (anos1[ids1][[y]] + 10)))
-      
       }
-        
-    #   if(any(sapply(ids, length) == 0))  {
-    #     
-    #     ids1 = which(sapply(ids, length) == 0) 
-    #     ids[ids1] <- lapply(1:length(yrs[ids1]), 
-    #                         function(y) {
-    #                             try.yrs = 0.5 + anos1[ids1][[y]] + 3 * generation.time[ids1][y]
-    #                             sapply(1:length(try.yrs), 
-    #                                             function(j) which.min(abs(yrs[ids1][[y]] - try.yrs[j])))
-    #                             })
-    #     
-    #   }
     }
     
     if(any(sapply(ids, length)) > 0) {
@@ -607,15 +576,8 @@ criterion_A = function(x,
         100 * sapply(1:length(pop_data), function(y)
           max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])][!dup.yrs[[y]]]) /
                      as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos1[[y]])][!dup.yrs[[y]]])), na.rm = TRUE))
-
-      #anos2 <- yrs[ids]
-      # Results$reduction_A4 <-
-      #   100 * sapply(pop_data, function(y)
-      #     max(1 - (as.numeric(y[names(y) %in% as.character(anos2)]) /
-      #                as.numeric(y[names(y) %in% as.character(anos1)])), na.rm = TRUE))
-      
     }
-  }  
+  }
   
   ## specific function to categorize taxa based on reductions values
   all_ranks <- cat_criterion_a(
@@ -628,8 +590,36 @@ criterion_A = function(x,
     all.cats = all.cats
   )
   
+  ## Adding reduction from levels of exploitation (subcriterion A2d)
+  if(!is.null(exploitation)) {
+    Results$reduction_A12 <- Results$reduction_A12 + exploitation
+    Results$basis_d <- NA
+    
+    all_ranks_extra <- suppressWarnings(
+      cat_criterion_a(
+      A2_val = if("A2" %in% subcriteria) Results$reduction_A12 else NULL,
+      A1.threshold = A1.threshold, 
+      A234.threshold = A234.threshold,
+      all.cats = all.cats
+    ))
+    
+    replace_these <- exploitation == 0
+    Results$basis_d[replace_these] <- "No extra reduction"
+    Results$basis_d[!replace_these] <- 
+      paste("Extra reduction: ", exploitation[!replace_these], "%", sep = "")
+    
+    add_these <- all_ranks$ranks_A == all_ranks_extra$ranks_A
+    Results$basis_d[add_these & !replace_these] <- 
+      paste(Results$basis_d[add_these & !replace_these], "; no change in ranking", sep = "")
+    Results$basis_d[!add_these & !replace_these] <- 
+      paste(Results$basis_d[!add_these & !replace_these], "; different ranking", sep = "")
+    
+    all_ranks$ranks_A[!add_these & !replace_these] <- 
+      all_ranks_extra$ranks_A[!add_these & !replace_these]
+  }
+
   if(all.cats & !is.null(all_ranks$all_cats))
-    Results = cbind.data.frame(Results, all_ranks$all_cats,
+    Results <- cbind.data.frame(Results, all_ranks$all_cats,
                                deparse.level = 0,
                                stringsAsFactors = FALSE)
   
