@@ -40,8 +40,14 @@ confidence intervals for models with more than two parameters (e.g.
 genealized logistic model), the assessment is carried out empirically, by
 assessing if the model predictions provides values that are sucessively
 declining. In this case, the trend is just classified as 'increasing' or
-'decreasing', and thus test of 'estimated continuing decline' becomes the same
-as the test of 'continuing decline at any rate' (sub-criterion B2).
+'decreasing', and thus test of 'estimated continuing decline' becomes the
+same as the test of 'continuing decline at any rate' (sub-criterion B2).
+
+All significance tests of population trends assume a confidence level of
+0.95 (the default of \code{stats} function \code{confint()}). In the particular case
+of singular gradients of model fit, the function progressively decreases
+the confidence level from 0.95 until 0.75 until it gets estimates lower and
+upper confidence intervals.
 }
 \examples{
 ## Creating vectors with the population data and time intervals 
@@ -65,7 +71,9 @@ pop.decline.test(x = best.model, assess.year = 1990)
 
 }
 \references{
-IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
+Version 14. Standards and Petitions Committee. Downloadable from:
+http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
 Lima, R.A.F.

@@ -29,12 +29,21 @@
 #'   genealized logistic model), the assessment is carried out empirically, by
 #'   assessing if the model predictions provides values that are sucessively
 #'   declining. In this case, the trend is just classified as 'increasing' or
-#'   'decreasing', and thus test of 'estimated continuing decline' becomes the same
-#'   as the test of 'continuing decline at any rate' (sub-criterion B2).   
+#'   'decreasing', and thus test of 'estimated continuing decline' becomes the
+#'   same as the test of 'continuing decline at any rate' (sub-criterion B2).
+#'   
+#'   All significance tests of population trends assume a confidence level of
+#'   0.95 (the default of `stats` function `confint()`). In the particular case
+#'   of singular gradients of model fit, the function progressively decreases
+#'   the confidence level from 0.95 until 0.75 until it gets estimates lower and
+#'   upper confidence intervals.
 #' 
 #' @author Lima, R.A.F.
 #'
-#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+#' @references 
+#' IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
+#' Version 14. Standards and Petitions Committee. Downloadable from:
+#' http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
 #' @importFrom FuzzyNumbers.Ext.2 is.decreasing
 #' @importFrom FuzzyNumbers.Ext.2 is.increasing
@@ -68,7 +77,7 @@ pop.decline.test <- function(x,
   
   if(is.null(best.name)) {
     
-    best.name <- attributes(x$best.model)$best.model.name
+    best.name <- attributes(x$best.model)$best.model.name[1]
     
     if(is.null(best.name)) {
       
@@ -81,15 +90,24 @@ pop.decline.test <- function(x,
   ys <- x$data$Year[1:which.min(assess.year - x$data$Year)] - 
           min(x$data$Year[1:which.min(assess.year - x$data$Year)], na.rm = TRUE) 
   CI <- suppressMessages(
-          try(stats::confint(x$best.model), TRUE)
-            )
-
+          try(stats::confint(x$best.model), TRUE))
+  
+  if(class(CI)[1] == "try-error") {
+    CI <- suppressMessages(
+      # try(stats::confint(x$best.model), TRUE))
+      try(stats::confint(x$best.model, "b"), TRUE))
+    
+    if(class(CI)[1] != "try-error")
+      CI <- t(as.matrix(CI))
+      rownames(CI) <- "b"
+  }    
+  
   if(class(CI)[1] == "try-error") {
     
-    seq.ys = seq(min(ys),  max(ys), by = 1)
-    preds = predict(x$best.model, newdata = data.frame(ys = seq.ys))
-    mod = stats::lm(I(diff(preds) / head(preds, 1)) ~ 1)
-    ci.diff = suppressMessages(stats::confint(mod))
+    seq.ys <- seq(min(ys),  max(ys), by = 1)
+    preds <- predict(x$best.model, newdata = data.frame(ys = seq.ys))
+    mod <- stats::lm(I(diff(preds) / head(preds, 1)) ~ 1)
+    ci.diff <- suppressMessages(stats::confint(mod))
     
     if(stats::coef(mod) < 0)
       test <- if(ci.diff[1]<0 & ci.diff[2]<0) "decrease" else "not.decreasing"
@@ -108,11 +126,22 @@ pop.decline.test <- function(x,
         i = 1
         CI1 <- CI
         while(any(is.na(CI1["b",]))) {
-          CI1 <- stats::confint(x$best.model, level = p.values[i])
+          # CI1 <- stats::confint(x$best.model, level = p.values[i])
+          CI1 <- 
+            try(stats::confint(x$best.model, "b", level = p.values[i]), TRUE)
+          
+          if(class(CI1)[1] != "try-error") {
+            CI1 <- t(as.matrix(CI1))
+            rownames(CI1) <- "b"
+          }
           i = i + 1
-        }    
-        if(is.na(CI["b",][1])) CI["b",][1] <- CI1["b",][1]
-        if(is.na(CI["b",][2])) CI["b",][2] <- CI1["b",][2]
+        }
+        
+        if(is.na(CI["b",][1])) 
+          CI["b",][1] <- CI1["b",][1]
+        
+        if(is.na(CI["b",][2])) 
+          CI["b",][2] <- CI1["b",][2]
         
       }
       
@@ -127,8 +156,8 @@ pop.decline.test <- function(x,
     if(best.name == "quadratic") { 
       
       f <- function(x) params["a"] + params["b"]*x + x*I(params["c"]^2)
-      decrease = FuzzyNumbers.Ext.2::is.decreasing(fun = f, x.bound = range(ys), step = 1)
-      increase = FuzzyNumbers.Ext.2::is.increasing(fun = f, x.bound = range(ys), step = 1)
+      decrease <- FuzzyNumbers.Ext.2::is.decreasing(fun = f, x.bound = range(ys), step = 1)
+      increase <- FuzzyNumbers.Ext.2::is.increasing(fun = f, x.bound = range(ys), step = 1)
       
       if(params["b"] < 0 & decrease)
         test <- if(CI["b",][1]<0 & CI["b",][2]<0) "signif.decline" else "non.signif.decline"
@@ -149,13 +178,32 @@ pop.decline.test <- function(x,
       tests <- vector("list", length(unique(ys.groups)))
       periods <- vector("list", length(unique(ys.groups)))
       
-      for(i in 1:length(unique(ys.groups))) {
-        grp <- unique(ys.groups)[i]
-        periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
-        if(params.CI[,1][i] < 0)
-          tests[[i]] <- if(params.CI[,4][i]<0 & params.CI[,5][i]<0) "signif.decline" else "non.signif.decline"
-        if(params.CI[,1][i] > 0)
-          tests[[i]] <- if(params.CI[,4][i]>0 & params.CI[,5][i]>0) "signif.increase" else "non.signif.increase"
+      if (any(is.na(params.CI[,4])) | any(is.nan(params.CI[,4]))) {
+        
+        for(i in 1:length(unique(ys.groups))) {
+          grp <- unique(ys.groups)[i]
+          periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
+          
+          if(params.CI[,1][i] < 0)
+            tests[[i]] <- "decrease"
+          
+          if(params.CI[,1][i] > 0)
+            tests[[i]] <- "increase"
+        }
+      } else {
+        
+        for(i in 1:length(unique(ys.groups))) {
+          grp <- unique(ys.groups)[i]
+          periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
+          
+          if(params.CI[,1][i] < 0)
+            tests[[i]] <- 
+              if(params.CI[,4][i]<0 & params.CI[,5][i]<0) "signif.decline" else "non.signif.decline"
+          
+          if(params.CI[,1][i] > 0)
+            tests[[i]] <- 
+              if(params.CI[,4][i]>0 & params.CI[,5][i]>0) "signif.increase" else "non.signif.increase"
+        }
       }
       
       test <- paste0(
