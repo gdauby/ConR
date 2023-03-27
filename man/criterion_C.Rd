@@ -18,6 +18,7 @@ criterion_C(
   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic",
     "piecewise"),
   subcriteria = c("C1", "C2"),
+  correction = NULL,
   C.threshold = c(10000, 2500, 250),
   C1.threshold = c(10, 20, 25),
   C2ai.threshold = c(1000, 250, 50),
@@ -44,11 +45,11 @@ available (i.e. time series). Can be NULL if x contain years as names.}
 \item{project.years}{a vector containing the years for which population sizes
 were or should be projected.}
 
-\item{project}{logical. Should population sizes be projected into the future? Default to
-TRUE.}
+\item{project}{logical. Should population sizes be projected into the future?
+Default to TRUE.}
 
-\item{ignore.years}{any year(s) that should be ignored for calculating continuing
-decline of populations?}
+\item{ignore.years}{any year(s) that should be ignored for calculating
+continuing decline of populations?}
 
 \item{recent.year}{the year to be used as a the starting year used to assess
 recent continuing decline (see details).}
@@ -56,8 +57,8 @@ recent continuing decline (see details).}
 \item{generation.time}{a value or vector of generation lengths, i.e. the
 average age of parents of the current cohort (IUCN 2019).}
 
-\item{prop.mature}{a value or vector of the proportion of mature individuals in the
-total population (IUCN 2019). Default to 1.}
+\item{prop.mature}{a value or vector of the proportion of mature individuals
+in the total population (IUCN 2019). Default to 1.}
 
 \item{subpop.size}{a named list containing the vector of number of mature
 individuals per subpopulation. The length of the list must match the length
@@ -68,6 +69,9 @@ species population data to perform projections.}
 
 \item{subcriteria}{a vector containing the sub-criteria that should be
 included in the assessment (i.e. C1 and/or C2).}
+
+\item{correction}{a value or vector of correction values, that should
+applyed to the reduction in population size estimated from 'x'.}
 
 \item{C.threshold}{numeric vector with the criterion C thresholds to define
 small population sizes (e.g. number of mature individuals). Default values
@@ -127,13 +131,13 @@ differences between criteria A and C as described by IUCN (2019, p.70):
 the decline is measured is shorter (...) and the decline rate thresholds
 are lower, because the populations are already small".
 
-Two basic tests are performed for each taxon for the assessment of criterion
-C. First, we test if the population is small. By default, we use the
-maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
-individuals. If the taxon is not below this threshold, the assessment is
-not performed. IUCN (2019) does not specify at what time the population
-size should be below the threshold. Here, we consider the year of the
-assessment.
+Two basic tests are performed for each taxon for the assessment of
+criterion C. First, we test if the population is small. By default, we use
+the maximum value of the thresholds recommended by IUCN (2019): 10,000
+mature individuals. If the taxon is not below this threshold, the
+assessment is not performed. IUCN (2019) does not specify at what time the
+population size should be below the threshold. Here, we consider the year
+of the assessment.
 
 Next, we test if population size is actually declining. IUCN (2019, p.43)
 defines: "A continuing decline is a recent, current or projected future
@@ -143,8 +147,8 @@ under criteria B or C2. Estimated continuing decline (under criterion C1)
 has quantitative thresholds, and requires a quantitative estimate, which
 can be calculated using the same methods as for population reduction" (i.e.
 criterion A). Therefore, function \code{criterion_C} consider two types of
-decline: (i) continuing decline at any rate (sub-criteria C2) and (ii)
-estimated continuing decline (sub-criteria C1).
+decline: (i) continuing decline at any rate (sub-criterion C2) and (ii)
+estimated continuing decline (sub-criterion C1).
 
 The first type of decline is defined based on the mean change of population
 size between observations (no statistical fit); if the mean change from the
@@ -160,8 +164,8 @@ Moreover, although (IUCN 2019, p.43) states that under criteria C2,
 here we consider only observed, estimated, inferred before the years of
 assessment.
 
-The second type of decline is defined on the statistical models
-fitted to the observed and/or projected population data. Once the best model is
+The second type of decline is defined on the statistical models fitted to
+the observed and/or projected population data. Once the best model is
 selected, the confidence interval of the parameters is computed. If the
 parameter estimates indicate a declining trend, then the population is
 classified as declining (e.g. the slope parameter of the linear model is
@@ -175,8 +179,8 @@ list with a vector of population sizes of each species at the year of
 assessment. The other is to provide population sizes for each subpopulation
 in \code{x}, and repeat the name of the taxon in the first column of \code{x}. In the
 case of subpopulations, the overall reduction in population size is
-obtained as recommended by IUCN (2019, p.38) which is average reduction across
-all subpopulation, weighted by their initial sizes.
+obtained as recommended by IUCN (2019, p.38) which is average reduction
+across all subpopulation, weighted by their initial sizes.
 
 As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
 population size or area typically greater than one order of magnitude. In
@@ -184,11 +188,23 @@ addition, "Fluctuations must be inferred only where there is reasonable
 certainty that a population change will be followed by a change in the
 reverse direction within a generation or two" IUCN (2019).
 
-The argument \code{prop.mature} can be used if the population data provided are not
-already the number of mature individuals (i.e. population size sensu IUCN, 2019).
-By default, the proportion of mature individuals in the total population proportion
-is taken as 1, but the user can provide one proportion for all species or species-
-specific proportions.
+The argument \code{prop.mature} can be used if the population data provided are
+not already the number of mature individuals (i.e. population size sensu
+IUCN, 2019). By default, the proportion of mature individuals in the total
+population proportion is taken as 1, but the user can provide one
+proportion for all species or species- specific proportions.
+
+The argument \code{correction} applies any correction desired to the reduction
+obtained from the vector(s) of population sizes per year provided in \code{x}
+for 1, 2 and 3 generation times, related to the assessment of sub-criterion
+C1 (the correction currently does not apply to the input population size
+vector and consequently to the population size at the time of assessment or
+the maximum size of subpopulations - see the help of function
+\code{criterion_A()} for an example on when one should apply this correction).
+Here, values should be positive and if one or more species do not need for
+correction just enter the value one. Values between zero and one will
+reduced the value of population size reduction and values above one will
+increase them.
 }
 \examples{
   
@@ -206,7 +222,7 @@ specific proportions.
   )
   
   ## Same example, but using the argument `prop.mature` 
-  criterion_C(x = example_criterionC,
+  criterion_C(x = example_criterionC_subpops,
   years = NULL, 
   assess.year = 2000,
   project.years = NULL,

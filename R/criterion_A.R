@@ -23,6 +23,8 @@
 #' @param exploitation a value or vector of levels of exploitation, that should
 #'   be provided as the reduction in population size caused by the exploitation
 #'   (in %).
+#' @param correction a value or vector of correction values, that should
+#'   applyed to the reduction in population size estimated from 'x'.    
 #' @param data.type a character corresponding to the type of data (IUCN 2019):
 #'   "observation", "index" or "AOO_EOO" (only these types are currently
 #'   implemented)
@@ -88,13 +90,27 @@
 #'   the species (see IUCN subcriterion A2d), via the argument `exploitation`.
 #'   Here, this reduction is applied on top of the reduction obtained from the
 #'   vector of population sizes per year provided in `x`, and only for the
-#'   subcriterion A2. Thus, this argument should be used when users want
-#'   to account for an extra reduction due to other causes, such as
-#'   harvesting-related or habitat quality-related reductions on top the ones
+#'   subcriterion A2. Thus, this argument should be used when users want to
+#'   account for an extra reduction due to other causes, such as
+#'   harvesting-related or habitat quality-related reductions on top of the ones
 #'   obtained from habitat loss-population size relationships. If `exploitation`
 #'   is not empty, a new column is added to the output ('basis_d') in which a
-#'   short report of the impact of the added reduction is provided. If one
-#'   or more species have no evidence of exploitation just enter the value zero.
+#'   short report of the impact of the added reduction is provided. If one or
+#'   more species have no evidence of exploitation just enter the value zero.
+#'   Values can range between 0 and 100%.
+#'
+#'   Differently than the argument `exploitation` explained above, the
+#'   argument `correction` applies any correction desired to the reduction
+#'   obtained from the vector of population sizes per year provided in `x` and
+#'   this correction is applied for the subcriteria A1 and A2. Here, values
+#'   should be positive (and generally below 100) and if one or more species do
+#'   not need for correction just enter the value one. Values between zero and
+#'   one will reduced the value of population size reduction and values above
+#'   one will increase them. 
+#'   
+#'   Population size reduction can be negative (i.e. population size increase).
+#'   But final reduction values above 100% will be reduced to 100% for any
+#'   subcriterion (A1, A2, A3 and A4) with a warning.
 #'   
 #' @author Lima, R.A.F. & Dauby, G.
 #' 
@@ -123,14 +139,15 @@
 #'   subcriteria = c("A1", "A2", "A3", "A4"),
 #'   generation.time = 10)
 #'   
-#' ## Another example...
+#' ## Another example: subcriterion A2 and exploitation (A2d)
 #'  pop = c("1980" = 9000, "1985" = 7500, "1990" = 6000)
 #'  criterion_A(x = pop,
 #'   years = c(1980, 1985, 1990), 
 #'   assess.year = 2000,
 #'   project.years = NULL,
 #'   subcriteria = c("A2"),
-#'   generation.time = 10)
+#'   generation.time = 10,
+#'   exploitation = 5)
 #'
 #' ## The data and criterion A assessment as described in IUCN (2019)
 #' #available at: https://www.iucnredlist.org/resources/criterion-a
@@ -172,6 +189,7 @@ criterion_A = function(x,
                        models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
                        subcriteria = c("A1", "A2", "A3", "A4"),
                        exploitation = NULL,
+                       correction = NULL,
                        data.type = NULL,
                        nature.evidence = NULL,
                        A1.threshold = c(50, 70, 90),
@@ -301,24 +319,45 @@ criterion_A = function(x,
   
   if(!is.null(exploitation)) {
     
+    exploitation <- as.numeric(exploitation)
+    exploitation[is.na(exploitation)] <- 0
+    
+    if(any(exploitation < 0) | any(exploitation > 100) )
+      stop("Exploitation level values must be between 0 and 100%")
+    
     if(dim(x)[1] != length(exploitation)) {
       
       if(length(exploitation) > 1)
         stop("Number of exploitation level values is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
       
       if(length(exploitation) == 1) {
-        
         exploitation <- rep(exploitation, dim(x)[1])
         warning("Only one value of exploitation level provided for two or more taxa: assuming the same value for all taxa")
-        
       }
     }
-    
-    exploitation <- as.numeric(exploitation)
-    exploitation[is.na(exploitation)] <- 0
-    
   }
 
+  if(!is.null(correction)) {
+    
+    correction <- as.numeric(correction)
+    correction[is.na(correction)] <- 1
+    
+    if(any(correction < 0))
+      stop("Correction values must be between 0 and 100%")
+
+    if(dim(x)[1] != length(correction)) {
+      
+      if(length(correction) > 1)
+        stop("Number of correction values is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      
+      if(length(correction) == 1) {
+        correction <- rep(correction, dim(x)[1])
+        warning("Only one value of correction level provided for two or more taxa: assuming the same value for all taxa")
+      }
+    }
+  }
+  
+  
   if(any(subcriteria %in% c("A1", "A2")) & !any(subcriteria %in% c("A3", "A4"))) 
     proj.year <- rep(assess.year, length(proj.year))
   
@@ -527,6 +566,22 @@ criterion_A = function(x,
         100 * sapply(1:length(pop_data), function(y) 
           1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)]) /
                  as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% prev.year[y])])))
+      
+      # applying the correction to the values of pop. reduction
+      if(!is.null(correction)) {
+        Results$reduction_A12 <- Results$reduction_A12 * correction
+        Results$reduction_A12_obs <- NA
+        
+        replace_these <- correction != 1
+        Results$reduction_A12_obs[!replace_these] <- "No correction applied"
+        Results$reduction_A12_obs[replace_these] <- 
+          paste("Correction of ", correction[replace_these], sep = "")
+      }
+      
+      if (any(Results$reduction_A12 > 100)) {
+        Results$reduction_A12[Results$reduction_A12 > 100] <- 100
+        warning("One or more values of pop. size reduction were above 100% for subcriterion A1 and/or A2")
+      }
   }
   
   # criteria A3
@@ -537,6 +592,10 @@ criterion_A = function(x,
         1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% proj.year[y])]) /
                as.numeric(pop_data[[y]][which(names(pop_data[[y]]) == assess.year)])))
     
+    if (any(Results$reduction_A3 > 100)) {
+      Results$reduction_A3[Results$reduction_A3 > 100] <- 100
+      warning("One or more values of pop. size reduction were above 100% for subcriterion A3")
+    }
   }
   
   # criteria A4
@@ -576,6 +635,11 @@ criterion_A = function(x,
         100 * sapply(1:length(pop_data), function(y)
           max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])][!dup.yrs[[y]]]) /
                      as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos1[[y]])][!dup.yrs[[y]]])), na.rm = TRUE))
+      
+      if (any(Results$reduction_A4 > 100)) {
+        Results$reduction_A4[Results$reduction_A4 > 100] <- 100
+        warning("One or more values of pop. size reduction were above 100% for subcriterion A4")
+      }
     }
   }
   
@@ -589,7 +653,7 @@ criterion_A = function(x,
     A234.threshold = A234.threshold,
     all.cats = all.cats
   )
-  
+
   ## Adding reduction from levels of exploitation (subcriterion A2d)
   if(!is.null(exploitation)) {
     Results$reduction_A12 <- Results$reduction_A12 + exploitation

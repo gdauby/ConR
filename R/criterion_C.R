@@ -13,16 +13,16 @@
 #' @param assess.year the year for which the assessment should be performed.
 #' @param project.years a vector containing the years for which population sizes
 #'   were or should be projected.
-#' @param project logical. Should population sizes be projected into the future? Default to 
-#'   TRUE.   
-#' @param ignore.years any year(s) that should be ignored for calculating continuing 
-#'   decline of populations?    
+#' @param project logical. Should population sizes be projected into the future?
+#'   Default to TRUE.
+#' @param ignore.years any year(s) that should be ignored for calculating
+#'   continuing decline of populations?
 #' @param recent.year the year to be used as a the starting year used to assess
 #'   recent continuing decline (see details).
 #' @param generation.time a value or vector of generation lengths, i.e. the
 #'   average age of parents of the current cohort (IUCN 2019).
-#' @param prop.mature a value or vector of the proportion of mature individuals in the 
-#'   total population (IUCN 2019). Default to 1.
+#' @param prop.mature a value or vector of the proportion of mature individuals
+#'   in the total population (IUCN 2019). Default to 1.
 #' @param subpop.size a named list containing the vector of number of mature
 #'   individuals per subpopulation. The length of the list must match the length
 #'   and order of the taxa being assessed.
@@ -30,6 +30,8 @@
 #'   species population data to perform projections.
 #' @param subcriteria a vector containing the sub-criteria that should be
 #'   included in the assessment (i.e. C1 and/or C2).
+#' @param correction a value or vector of correction values, that should
+#'   applyed to the reduction in population size estimated from 'x'.    
 #' @param C.threshold numeric vector with the criterion C thresholds to define
 #'   small population sizes (e.g. number of mature individuals). Default values
 #'   are the thresholds recommended by the IUCN.
@@ -71,13 +73,13 @@
 #'   the decline is measured is shorter (...) and the decline rate thresholds
 #'   are lower, because the populations are already small".
 #'   
-#'   Two basic tests are performed for each taxon for the assessment of criterion
-#'   C. First, we test if the population is small. By default, we use the
-#'   maximum value of the thresholds recommended by IUCN (2019): 10,000 mature
-#'   individuals. If the taxon is not below this threshold, the assessment is
-#'   not performed. IUCN (2019) does not specify at what time the population
-#'   size should be below the threshold. Here, we consider the year of the
-#'   assessment.
+#'   Two basic tests are performed for each taxon for the assessment of
+#'   criterion C. First, we test if the population is small. By default, we use
+#'   the maximum value of the thresholds recommended by IUCN (2019): 10,000
+#'   mature individuals. If the taxon is not below this threshold, the
+#'   assessment is not performed. IUCN (2019) does not specify at what time the
+#'   population size should be below the threshold. Here, we consider the year
+#'   of the assessment.
 #'   
 #'   Next, we test if population size is actually declining. IUCN (2019, p.43)
 #'   defines: "A continuing decline is a recent, current or projected future
@@ -87,8 +89,8 @@
 #'   has quantitative thresholds, and requires a quantitative estimate, which
 #'   can be calculated using the same methods as for population reduction" (i.e.
 #'   criterion A). Therefore, function `criterion_C` consider two types of
-#'   decline: (i) continuing decline at any rate (sub-criteria C2) and (ii)
-#'   estimated continuing decline (sub-criteria C1).
+#'   decline: (i) continuing decline at any rate (sub-criterion C2) and (ii)
+#'   estimated continuing decline (sub-criterion C1).
 #'   
 #'   The first type of decline is defined based on the mean change of population
 #'   size between observations (no statistical fit); if the mean change from the
@@ -104,8 +106,8 @@
 #'   here we consider only observed, estimated, inferred before the years of
 #'   assessment.
 #'   
-#'   The second type of decline is defined on the statistical models
-#'   fitted to the observed and/or projected population data. Once the best model is
+#'   The second type of decline is defined on the statistical models fitted to
+#'   the observed and/or projected population data. Once the best model is
 #'   selected, the confidence interval of the parameters is computed. If the
 #'   parameter estimates indicate a declining trend, then the population is
 #'   classified as declining (e.g. the slope parameter of the linear model is
@@ -119,8 +121,8 @@
 #'   assessment. The other is to provide population sizes for each subpopulation
 #'   in `x`, and repeat the name of the taxon in the first column of `x`. In the
 #'   case of subpopulations, the overall reduction in population size is
-#'   obtained as recommended by IUCN (2019, p.38) which is average reduction across
-#'   all subpopulation, weighted by their initial sizes.
+#'   obtained as recommended by IUCN (2019, p.38) which is average reduction
+#'   across all subpopulation, weighted by their initial sizes.
 #'   
 #'   As defined by IUCN (2019, p. 44), extreme fluctuations are variations in
 #'   population size or area typically greater than one order of magnitude. In
@@ -128,11 +130,23 @@
 #'   certainty that a population change will be followed by a change in the
 #'   reverse direction within a generation or two" IUCN (2019).
 #'   
-#'   The argument `prop.mature` can be used if the population data provided are not 
-#'   already the number of mature individuals (i.e. population size sensu IUCN, 2019). 
-#'   By default, the proportion of mature individuals in the total population proportion 
-#'   is taken as 1, but the user can provide one proportion for all species or species-
-#'   specific proportions.
+#'   The argument `prop.mature` can be used if the population data provided are
+#'   not already the number of mature individuals (i.e. population size sensu
+#'   IUCN, 2019). By default, the proportion of mature individuals in the total
+#'   population proportion is taken as 1, but the user can provide one
+#'   proportion for all species or species- specific proportions.
+#'   
+#'   The argument `correction` applies any correction desired to the reduction
+#'   obtained from the vector(s) of population sizes per year provided in `x`
+#'   for 1, 2 and 3 generation times, related to the assessment of sub-criterion
+#'   C1 (the correction currently does not apply to the input population size
+#'   vector and consequently to the population size at the time of assessment or
+#'   the maximum size of subpopulations - see the help of function
+#'   `criterion_A()` for an example on when one should apply this correction).
+#'   Here, values should be positive and if one or more species do not need for
+#'   correction just enter the value one. Values between zero and one will
+#'   reduced the value of population size reduction and values above one will
+#'   increase them.
 #'   
 #' @author Lima, R.A.F. & Dauby, G.
 #'   
@@ -157,7 +171,7 @@
 #'   )
 #'   
 #'   ## Same example, but using the argument `prop.mature` 
-#'   criterion_C(x = example_criterionC,
+#'   criterion_C(x = example_criterionC_subpops,
 #'   years = NULL, 
 #'   assess.year = 2000,
 #'   project.years = NULL,
@@ -199,6 +213,7 @@ criterion_C = function(x,
                        subpop.size = NULL,
                        models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
                        subcriteria = c("C1", "C2"),
+                       correction = NULL,
                        #data.type = NULL,
                        #nature.evidence = NULL,   
                        C.threshold = c(10000, 2500, 250),
@@ -284,10 +299,20 @@ criterion_C = function(x,
     
     assess.year <- years[which.min(abs(years - assess.year))]
     
-    warning(paste0("Year of assessment not in the provided time series: assuming the closest year: ",
+    warning(paste0("Year of assessment not in the provided time series. Assuming the closest year: ",
                    assess.year))
     
   }
+  
+  if(is.null(recent.year)) {
+    
+    recent.year <- years[ceiling(length(years)/2 + 0.5)]
+    
+    warning(paste0("Starting year to define recent continuing decline not in the provided. Assuming the middle of the time series: ",
+                   recent.year))
+    
+  }
+  
   
   if("C2" %in% subcriteria) {
     
@@ -436,6 +461,26 @@ criterion_C = function(x,
     }
   } 
   
+  if(!is.null(correction)) {
+    
+    correction <- as.numeric(correction)
+    correction[is.na(correction)] <- 1
+    
+    if(any(correction < 0))
+      stop("Correction values must be between 0 and 100%")
+    
+    if(dim(x)[1] != length(correction)) {
+      
+      if(length(correction) > 1)
+        stop("Number of correction values is different from the number of taxa in the assessment. Please provide one value for all taxa or one value for each taxa")
+      
+      if(length(correction) == 1) {
+        correction <- rep(correction, dim(x)[1])
+        warning("Only one value of correction level provided for two or more taxa: assuming the same value for all taxa")
+      }
+    }
+  }
+  
   
   if ("C1" %in% subcriteria) {
     
@@ -476,7 +521,7 @@ criterion_C = function(x,
   pop_data <- lapply(1:length(pop_data), function(i) {
     df <- pop_data[[i]]
     nomes <- names(df)
-    new.df <- as.data.frame(t(as.double(df) * prop.mature[i]), row.names = 1)
+    new.df <- as.data.frame(t(as.numeric(df) * prop.mature[i]), row.names = 1)
     names(new.df) <- nomes
     pop_data[[i]] <- new.df
   })
@@ -496,13 +541,13 @@ criterion_C = function(x,
   any.decline <- sapply(1:length(pop_data), ## new version -> recent decline between assess.year and recent.year
                         function(i) {
                           y <- pop_data[[i]]
-                          if (!is.null(ignore.years)) 
-                            y = y[,!names(y) %in% ignore.years]
+                          if(!is.null(ignore.years)) 
+                            y <- y[,!names(y) %in% ignore.years]
                           
                           # pv.yr <- prev.year1[i]
                           pv.yr <- recent.year
                           
-                          if (pv.yr %in% names(y)) {
+                          if(pv.yr %in% names(y)) {
                             
                             y1 <- as.numeric(y[which(names(y) == pv.yr):which(names(y) == assess.year)])
                             
@@ -528,10 +573,6 @@ criterion_C = function(x,
       stop("Too few year intervals to fit a model to population trends")
     
     #models.fit <- as.list(rep(NA, length(pop_data)))
-    
-    ## Renato: Gilles, il faut peut-etre mettre ici la boucle en dplyr et/ou en paralell
-    ## Je propose d'utiliser foreach et parallel comme dans criterion_b.
-    ## Renato: Done in 14 Aug 2020
     
     cat("Computing the estimated continuing decline (subcriteria C1)...", sep= "\n")
     
@@ -597,7 +638,8 @@ criterion_C = function(x,
     if(parallel) snow::stopCluster(cl)
     if(show_progress) close(pb)
     
-    cont.decline <- sapply(models.fit, pop.decline.test, assess.year = assess.year)
+    cont.decline <- sapply(models.fit, pop.decline.test, 
+                           assess.year = assess.year)
   
   }
   
@@ -626,6 +668,7 @@ criterion_C = function(x,
 
   pop_data1 <- lapply(1:length(pop_data), function(i)
     pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+  
   ps.interval <- sapply(1:length(pop_data1), function(i)
     paste(unique(
       c(
@@ -657,7 +700,7 @@ criterion_C = function(x,
   if(!is.null(best.models))
     Results$predictive.model[which.pred] <- as.character(unlist(best.models))[which.pred]
 
-  ## Population size at the assessmente
+  ## Population size at the assessment
   Results$assess.pop.size <- sapply(1:length(pop_data), 
                                     function(i) as.numeric(pop_data[[i]][which(names(pop_data[[i]]) %in% assess.year)]))
   
@@ -695,7 +738,8 @@ criterion_C = function(x,
     )  
   }  
 
-  ## Criteria C1: under criterion C1, the decline must be observed or estimated (thus removing projections of future decline)
+  ## Criteria C1: under criterion C1, the decline must be observed or estimated
+  ## (thus removing projections of future decline)
   if("C1" %in% subcriteria) {
     
     Results$reduction_3gen <- 100 * sapply(1:length(pop_data), function(y) 
@@ -707,9 +751,23 @@ criterion_C = function(x,
     Results$reduction_1gen <- 100 * sapply(1:length(pop_data), function(y) 
         1 - (as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% assess.year)]) /
                as.numeric(pop_data[[y]][which(names(pop_data[[y]]) %in% prev.year1[y])])))
+    
+    if(!is.null(correction)) {
+      Results$reduction_3gen <- Results$reduction_3gen * correction
+      Results$reduction_2gen <- Results$reduction_2gen * correction
+      Results$reduction_1gen <- Results$reduction_1gen * correction
+      
+      Results$reduction_obs <- NA
+      replace_these <- correction != 1
+      Results$reduction_obs[!replace_these] <- "No correction applied"
+      Results$reduction_obs[replace_these] <- 
+        paste("Correction of ", correction[replace_these], sep = "")
+      
+    }
   }  
   
-  ## Criteria C2: Under criteria B1b, B2b, and C2, continuing declines can be observed, estimated, inferred or projected
+  ## Criteria C2: Under criteria B1b, B2b, and C2, continuing declines can be
+  ## observed, estimated, inferred or projected
   if("C2" %in% subcriteria) {
    
     Results$max.subpop.size <- sapply(subpop.size, max, na.rm = TRUE)

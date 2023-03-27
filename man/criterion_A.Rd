@@ -13,6 +13,8 @@ criterion_A(
   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic",
     "piecewise"),
   subcriteria = c("A1", "A2", "A3", "A4"),
+  exploitation = NULL,
+  correction = NULL,
   data.type = NULL,
   nature.evidence = NULL,
   A1.threshold = c(50, 70, 90),
@@ -29,10 +31,12 @@ criterion_A(
 subpopulations) containing the population size per year, from the oldest
 to the most recent population estimate.}
 
-\item{years}{a vector containing the years for which the population sizes
-are available (i.e. time series). It can be NULL if x contains the years as names.}
+\item{years}{a vector containing the years for which the population sizes are
+available (i.e. time series). It can be NULL if x contains the years as
+names.}
 
-\item{assess.year}{numeric. The year for which the assessment should be performed.}
+\item{assess.year}{numeric. The year for which the assessment should be
+performed.}
 
 \item{project.years}{a vector containing the years for which population sizes
 were or should be projected.}
@@ -46,15 +50,24 @@ species population size to perform projections.}
 \item{subcriteria}{a vector containing the sub-criteria that should be
 included in the assessment (i.e. A1, A2, A3 and/or A4).}
 
+\item{exploitation}{a value or vector of levels of exploitation, that should
+be provided as the reduction in population size caused by the exploitation
+(in \%).}
+
+\item{correction}{a value or vector of correction values, that should
+applyed to the reduction in population size estimated from 'x'.}
+
 \item{data.type}{a character corresponding to the type of data (IUCN 2019):
 "observation", "index" or "AOO_EOO" (only these types are currently
 implemented)}
 
-\item{nature.evidence}{a character corresponding to the nature of evidence (IUCN
-2019): "observed", "estimated", "projected", "inferred" or "suspected"}
+\item{nature.evidence}{a character corresponding to the nature of evidence
+(IUCN 2019): "observed", "estimated", "projected", "inferred" or
+"suspected"}
 
 \item{A1.threshold}{numeric vector with the A1 thresholds to convert decline
-estimates into categories. Default values are the thresholds recommended by the IUCN.}
+estimates into categories. Default values are the thresholds recommended by
+the IUCN.}
 
 \item{A234.threshold}{numeric vector with the A2, A3, and A4 thresholds to
 convert decline estimate into categories. Default values are the thresholds
@@ -72,7 +85,8 @@ to 2.}
 \item{show_progress}{logical. Should the progress bar be displayed? Default
 to TRUE.}
 
-\item{...}{other parameters to be passed as arguments for function \code{pop.decline.fit}}
+\item{...}{other parameters to be passed as arguments for function
+\code{pop.decline.fit}}
 }
 \value{
 A data frame containing, for each taxon, the year of assessment, the
@@ -89,31 +103,60 @@ IUCN Criterion A, which is based on population size reductions (Criteria A1,
 A2, A3, and A4)
 }
 \details{
-As described in IUCN (2019), the choice between criteria A1 or A2 depends on
-three conditions: the reduction must be reversible, the causes of the reduction
-must be understood, and the threats must have ceased. "If any of the three conditions
-(reversible and understood and ceased) are not met (...), then A2 should be used
-instead of A1" (IUCN, 2019).
+As described in IUCN (2019), the choice between criteria A1 or A2 depends
+on three conditions: the reduction must be reversible, the causes of the
+reduction must be understood, and the threats must have ceased. "If any of
+the three conditions (reversible and understood and ceased) are not met
+(...), then A2 should be used instead of A1" (IUCN, 2019).
 
 Some important notes. The function can return the predictions of population
-estimates for years not in the observed data, based on the fit of a set of different
-statistical models. As stated in IUCN (2019), the model used to make the
-predictions can result in very different estimates. So, it is preferable that
-the user choose one or two of the models based on the best available information
-on types of threat (i.e. patterns of exploitation or habitat loss), life history
-and ecology of the taxon being evaluated or any other processes that may contribute
-to population decline. See IUCN (2019) for more details on the assumptions of each model.
-The selection of models based solely on their fit to population size should only be used
-for larger time series (Number of observations > 10).
+estimates for years not in the observed data, based on the fit of a set of
+different statistical models. As stated in IUCN (2019), the model used to
+make the predictions can result in very different estimates. So, it is
+preferable that the user choose one or two of the models based on the best
+available information on types of threat (i.e. patterns of exploitation or
+habitat loss), life history and ecology of the taxon being evaluated or any
+other processes that may contribute to population decline. See IUCN (2019)
+for more details on the assumptions of each model. The selection of models
+based solely on their fit to population size should only be used for larger
+time series (Number of observations > 10).
 
-Some more technical notes. If \code{years} is a subset of all the years contained in \code{x},
-then \code{x} is filtered based on \code{years}. So, make sure you have selected the right years.
-If the year of assessment is not given, the most recent year is taken instead. The function
-accepts a single generation length for all species or species-specific generation lengths.
-In the latter case, it is necessary to provide exactly one value for each species analyzed.
-Currently, only one assessment year can be assigned for all taxa. Similarly, only
-one vector of years with population size available. Thus, it is advised not to mix
-taxa with great differences in generation length.
+Some more technical notes. If \code{years} is a subset of all the years
+contained in \code{x}, then \code{x} is filtered based on \code{years}. So, make sure you
+have selected the right years. If the year of assessment is not given, the
+most recent year is taken instead. The function accepts a single generation
+length for all species or species-specific generation lengths. In the
+latter case, it is necessary to provide exactly one value for each species
+analyzed. Currently, only one assessment year can be assigned for all taxa.
+Similarly, only one vector of years with population size available. Thus,
+it is advised not to mix taxa with great differences in generation length.
+
+As for generation lengths, the function accepts single and species-specific
+reductions of population size due to actual or potential exploitation of
+the species (see IUCN subcriterion A2d), via the argument \code{exploitation}.
+Here, this reduction is applied on top of the reduction obtained from the
+vector of population sizes per year provided in \code{x}, and only for the
+subcriterion A2. Thus, this argument should be used when users want to
+account for an extra reduction due to other causes, such as
+harvesting-related or habitat quality-related reductions on top of the ones
+obtained from habitat loss-population size relationships. If \code{exploitation}
+is not empty, a new column is added to the output ('basis_d') in which a
+short report of the impact of the added reduction is provided. If one or
+more species have no evidence of exploitation just enter the value zero.
+Values can range between 0 and 100\%.
+
+Differently than the argument \code{exploitation} explained above, the
+argument \code{correction} applies any correction desired to the reduction
+obtained from the vector of population sizes per year provided in \code{x} and
+this correction is applied for the subcriteria A1 and A2. Here, values
+should be positive (and generally below 100) and if one or more species do
+not need for correction just enter the value one. Values between zero and
+one will reduced the value of population size reduction and values above
+one will increase them.
+
+Population size reduction can be negative (i.e. population size increase).
+But final reduction values above 100\% will be reduced to 100\% for any
+subcriterion (A1, A2, A3 and A4) with a warning.
 }
 \examples{
 ## Simplest example: one species, two observations in time, one subcriterion
@@ -135,14 +178,15 @@ criterion_A(x = pop,
   subcriteria = c("A1", "A2", "A3", "A4"),
   generation.time = 10)
   
-## Another example...
+## Another example: subcriterion A2 and exploitation (A2d)
  pop = c("1980" = 9000, "1985" = 7500, "1990" = 6000)
  criterion_A(x = pop,
   years = c(1980, 1985, 1990), 
   assess.year = 2000,
   project.years = NULL,
   subcriteria = c("A2"),
-  generation.time = 10)
+  generation.time = 10,
+  exploitation = 5)
 
 ## The data and criterion A assessment as described in IUCN (2019)
 #available at: https://www.iucnredlist.org/resources/criterion-a
