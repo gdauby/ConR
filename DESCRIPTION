@@ -39,7 +39,7 @@ Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Authors@R: c(
 	person("Gilles", "Dauby", role = c("cre", "aut"),
 	email = "gildauby@gmail.com", 
