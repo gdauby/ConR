@@ -266,17 +266,20 @@ locations.comp <- function(XY,
           freq <- res$Freq/res$tot
           names(freq) <- res$Var1
           
-          freq_score <- freq
-          
-          freq_score[freq < 0.5] <- 1
-          freq_score[freq >= 0.5] <- 2
-          freq_score[freq >= 0.9] <- 3
-          
-          return(freq_score)
+          return(freq)
         }
         
-        scores_threats <- lapply(threat_list_inter, 
+        freq_threat <- lapply(threat_list_inter, 
                                  function(x) .freq_threats(x = x, y = nbe_occ_tax))
+        
+        scores_threats <- lapply(freq_threat,
+               function(x) {
+                 ifelse(x < 0.5, 1, 
+                        ifelse(x >= 0.5 &
+                                             x < 0.9, 2, 
+                               ifelse(x >= 0.9, 3, x)))
+               })
+        
         
         for (i in 1:length(scores_threats)) scores_threats[[i]] <- 
           scores_threats[[i]] + threat_weight[which(names(threat_weight) == names(scores_threats)[i])]
@@ -288,22 +291,83 @@ locations.comp <- function(XY,
         names(tax_list_scor) <- unique(DATA_SF$tax)
         
         
+        freq_threat <- unlist(freq_threat)
+        
         for (i in 1:length(tax_list_scor)) {
           
           test <- 
             unlist(scores_threats)[unlist(lapply(scores_threats, function(x) names(x) == names(tax_list_scor)[i]))]
           
+          freq_threat_sp <- 
+            freq_threat[grepl(names(tax_list_scor)[i], names(freq_threat))]
+          
           if (length(test) > 0) {
             
-            names(test) <- gsub("\\..*", "", names(test))
+            rank_layers <- data.frame(threat = names(threat_list),
+                       rank_layer = 1:length(names(threat_list)))
+        
             
+            names(test) <- gsub("\\..*", "", names(test))
             test <- sort(test, decreasing = T)
-            test[1:length(test)] <- 1:length(test)
+            
+            names(freq_threat_sp) <- gsub("\\..*", "", names(freq_threat_sp))
+            freq_threat_sp <- sort(freq_threat_sp, decreasing = T)
+            
+            ranks_df <- merge(
+              rank_layers,
+              data.frame(threat = names(freq_threat_sp), rank_freq = 1:length(freq_threat_sp)),
+              by = "threat",
+              all.x = T
+            )
+            
+            max_score <- max(test)
+            score_impact <- test
+            test[1:length(test)] <-
+              max(test):(length(test) + max(test) - 1)
+            test[which(score_impact == max_score)] <- 1
+            
+            ranks_df <- 
+              merge(
+                ranks_df,
+                data.frame(threat = names(test), rank = test),
+                by = "threat",
+                all.x = T
+              )
+            
+            if (sum(ranks_df$rank == 1, na.rm = T) > 1) {
+              
+              rank_freq <- 
+                ranks_df[which(ranks_df$rank == 1), "rank_freq"]
+              names(rank_freq) <- ranks_df[which(ranks_df$rank == 1), "threat"]
+              
+              
+              # rank_freq <- c(3, 5)
+              # names(rank_freq) <- c("cities", "cropland")
+              
+              rank_freq <- data.frame(rank_new = 1:length(rank_freq),
+                                      threat = names(sort(rank_freq)))
+              
+              # threat_equal <- c("cities", "cropland")
+              
+              threat_equal <- ranks_df[which(ranks_df$rank == 1), "threat"]
+              
+              threat_equal <- merge(rank_freq, data.frame(threat = threat_equal))
+              
+              threat_equal <- threat_equal[order(threat_equal$rank),]
+            
+              ranks_df <- merge(ranks_df, threat_equal,
+                    by = "threat",
+                    all.x = T)
+              
+              ranks_df$rank[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1] <-
+                ranks_df$rank_new[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1]
+              
+            }
             
             tax_list_scor[[i]] <-
               merge(
                 tax_list_scor[[i]],
-                data.frame(threat = names(test), rank = test),
+                ranks_df,
                 by = "threat",
                 all.x = T
               )
@@ -319,7 +383,8 @@ locations.comp <- function(XY,
           }
         }
         
-        main_threat <- unlist(lapply(tax_list_scor, function(x) {ee = x$threat[x$rank == 1]; ee[!is.na(ee)]}))
+        main_threat <- unlist(lapply(tax_list_scor, 
+                                     function(x) {ee = x$threat[x$rank == 1]; paste(ee[!is.na(ee)], collapse = ", ")}))
         
         tax_df_scor <- do.call('rbind', tax_list_scor)
         
