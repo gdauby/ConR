@@ -248,8 +248,10 @@ EOO.computing <- function(XY,
   
   if (length(issue_nrow) > 0)
     res_df[issue_nrow, 2] <-
-    paste(res_df[issue_nrow, 2], "EOO cannot be estimated because less than 3 unique occurrences", sep = "|")
+    paste(res_df[issue_nrow, 2], "EOO cannot be estimated because less than 3 unique pair of coordinates", sep = "|")
     
+  res_df$issue_eoo <- gsub("NA|", "", res_df$issue_eoo)
+  
   if(export_shp) {
     
     output_spatial <- output[names(output) == "spatial"]

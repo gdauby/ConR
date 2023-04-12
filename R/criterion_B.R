@@ -202,6 +202,27 @@ criterion_B <- function(x,
       proj_type = proj_type
     )
   
+  
+  if (any(EOO$eoo - AOO$aoo < 0) || any(is.na(EOO$eoo))) {
+    message("Some EOO values are lower than AOO OR null and are thus set equal to AOO")
+    
+    EOO$issue_eoo[which(EOO$eoo - AOO$aoo < 0)] <-
+      paste(EOO$issue_eoo[which(EOO$eoo - AOO$aoo < 0)], "EOO is set equal to AOO because it is lower than AOO", sep = "|")
+    
+    EOO$eoo[which(EOO$eoo - AOO$aoo < 0)] <- 
+      AOO$aoo[which(EOO$eoo - AOO$aoo < 0)]
+    
+    EOO$issue_eoo[which(is.na(EOO$eoo))] <-
+      paste(EOO$issue_eoo[which(is.na(EOO$eoo))], "EOO is set equal to AOO because it is null", sep = "|")
+    
+    EOO$eoo[which(is.na(EOO$eoo))] <- 
+      AOO$aoo[which(is.na(EOO$eoo))]
+    
+    EOO$issue_eoo <- gsub("NA|", "", EOO$issue_eoo)
+    
+  }
+  
+  
   categories <- 
     cat_criterion_b(EOO = EOO$eoo, 
                     AOO = AOO$aoo, 
