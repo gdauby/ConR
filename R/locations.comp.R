@@ -362,6 +362,8 @@ locations.comp <- function(XY,
               ranks_df$rank[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1] <-
                 ranks_df$rank_new[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1]
               
+            } else {
+              ranks_df <- cbind(ranks_df, rank_new = NA)
             }
             
             tax_list_scor[[i]] <-
@@ -447,14 +449,16 @@ locations.comp <- function(XY,
     }
     
     res_df <-
-      data.frame(matrix(NA,  
-                        nrow = length(list_data),
-                        ncol = 3 + length(unique_ranks)))
+      data.frame(matrix(
+        NA,
+        nrow = length(list_data),
+        ncol = 3 + length(unique_ranks)
+      ))
     colnames(res_df) <- c("tax",
-      "locations", 
-                          "issue_locations", 
+                          "locations",
+                          "issue_locations",
                           names(unique_ranks))
-    res_df[,c(1, 4:(ncol(res_df)))] <- rep(0, nrow(res_df))
+    res_df[, c(1, 4:(ncol(res_df)))] <- rep(0, nrow(res_df))
     res_df$tax <- names(list_data)
     
     if (any(intersects_poly))
