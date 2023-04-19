@@ -378,7 +378,7 @@ locations.comp <- function(XY,
             
             tax_list_scor[[i]] <-
               merge(tax_list_scor[[i]],
-                    data.frame(threat = NA, rank = NA),
+                    data.frame(threat = NA, rank_layer = NA, rank_freq = NA, rank = NA, rank_new = NA),
                     by = "threat",
                     all.x = T)
             
