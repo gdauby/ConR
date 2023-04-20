@@ -442,13 +442,13 @@ locations.comp <- function(XY,
         }
         
         unique_ranks <- sort(unique(rank_locations$rank))
-        names(unique_ranks)[unique_ranks == 0] <- "not_threatened"
+        names(unique_ranks)[unique_ranks == 0] <- "unidentified_threat"
         names(unique_ranks)[unique_ranks != 0] <-
           names(threat_list_inter)[unique_ranks[unique_ranks != 0]]
         
       } else {
         
-        unique_ranks <- setNames(0, "not_threatened")
+        unique_ranks <- setNames(0, "unidentified_threat")
         
       }
     }
