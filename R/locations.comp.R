@@ -201,7 +201,8 @@ locations.comp <- function(XY,
     
     ### Taking into account polygon threats if provided
     XY_ID <- 
-      data.frame(XY, ID_prov_data = seq(1, nrow(XY), 1))
+      data.frame(XY, 
+                 ID_prov_data = seq(1, nrow(XY), 1))
     
     DATA_SF <- st_as_sf(coord.check(XY = XY_ID, 
                                     listing = F, 
@@ -233,6 +234,10 @@ locations.comp <- function(XY,
         unlist(lapply(intersects_poly, function(x)
           x > 0))
       
+      crop_poly <- lapply(threat_list[which_sf][intersects_poly],
+                          function(x)
+                            suppressWarnings(st_crop(x = x, y = st_bbox(st_buffer(DATA_SF, 10000)))))
+      
       coords_ <- st_coordinates(DATA_SF)
       
       XY_all <-
@@ -247,10 +252,10 @@ locations.comp <- function(XY,
       ### find for each threats spatial data which id intersect with occurrences
       if (any(intersects_poly)) {
         
-        threat_list_sf <- threat_list[which_sf][intersects_poly]
+        # threat_list_sf <- threat_list[which_sf][intersects_poly]
         
         threat_list_inter <-
-          lapply(threat_list[which_sf], function(x)
+          lapply(crop_poly, function(x)
             suppressWarnings(st_set_geometry(st_intersection(DATA_SF, x), NULL)))
         
         threat_list_inter <- 
@@ -613,7 +618,7 @@ locations.comp <- function(XY,
   # if (is.null(protec.areas))
   return(list(locations = res_df,
               locations_poly = shapes_loc,
-              threat_list = if (!is.null(threat_list)) threat_list else NA))
+              threat_list = if (!is.null(threat_list)) crop_poly else NA))
   
 }
 
