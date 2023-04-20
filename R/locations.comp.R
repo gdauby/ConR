@@ -531,7 +531,7 @@ locations.comp <- function(XY,
         #                                          unique(threat_list_inter_selected[, id_shape])), ][, c(id_shape)]
         
         occ_poly <-
-          threat_list[[unique_ranks[i]]][which(unlist(st_drop_geometry(threat_list[[unique_ranks[i]]][, id_shape_sel])) %in% 
+          threat_list[[names(unique_ranks)[i]]][which(unlist(st_drop_geometry(threat_list[[names(unique_ranks)[i]]][, id_shape_sel])) %in% 
                                                  unique(threat_list_inter_selected_[, id_shape_sel])), ][, c(id_shape_sel)]
         
         all_un <- unique(threat_list_inter_selected_[ ,c("tax", id_shape_sel)])
