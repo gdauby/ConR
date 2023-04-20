@@ -1,19 +1,22 @@
-#' @title Categorize taxa according to IUCN criterion A
-#' 
-#' @description Provide the consensus IUCN category based on the sub-criteria of 
+#' Categorize taxa according to IUCN criterion A
+#'
+#' Provide the consensus IUCN category based on the sub-criteria of 
 #' IUCN criterion A (A1, A2, A3 and A4) and the thresholds recommended by IUCN.
 #'
-#' @param A1_val numeric vector of the estimates of population decline based on IUCN sub-criterion A1.
-#' @param A2_val numeric vector of the estimates of population decline based on IUCN sub-criterion A2.
-#' @param A3_val numeric vector of the estimates of population decline based on IUCN sub-criterion A3.
-#' @param A4_val numeric vector of the estimates of population decline based on IUCN sub-criterion A4.
-#' @param A1.threshold numeric vector with the A1 thresholds to convert decline estimates into categories. Default is the thresholds recommended by IUCN.
-#' @param A234.threshold numeric vector with the A2, A3 and A4 thresholds to convert decline estimate into categories. Default is the thresholds recommended by IUCN.
-#' @param all.cats logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.
+#' @param A1_val a numeric vector of the estimates of population decline based on IUCN sub-criterion A1
+#' @param A2_val a numeric vector of the estimates of population decline based on IUCN sub-criterion A2
+#' @param A3_val a numeric vector of the estimates of population decline based on IUCN sub-criterion A3
+#' @param A4_val a numeric vector of the estimates of population decline based on IUCN sub-criterion A4
+#' @param A1.threshold a numeric vector of threshold values for sub-criterion A1, default is c(50, 70, 90) following IUCN guidelines
+#' @param A234.threshold a numeric vector of A2, A3 and A4 threshold values for sub-criteria A2, A3 and A4, default is c(30, 50, 80) following IUCN guidelines
+#' @param all.cats a logical value indicating whether to return all categories or only the consensus, default is TRUE
 #' 
-#' @return A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (`ranks_A`) and
-#' the sub-criteria used to obtain the consensus category (`cat_codes`). If `all.cats  == TRUE` the function also returns a
-#' data frame containing the categories classified by each sub-criterion individually (`all.cats`).
+#' @return A list of two or three elements:
+#' \itemize{
+#' \item \code{ranks_A}: a character vector with the consensus category of each taxon based on subcriteria A1-A4
+#' \item \code{cats_code}: a character vector with the final IUCN category for each taxon
+#' \item \code{all_cats}: a data frame with the categorization of each taxon based on all sub criteria, only returned if \code{all.cats=TRUE}
+#' }
 #' 
 #' @details By default, the function provides the consensus category, following the recommendations of IUCN (2019)
 #' that states "Only the criteria for the highest category of threat that the taxon qualifies for should be listed".
@@ -23,13 +26,6 @@
 #' from the same taxa (i.e. first element from A1_val until A4_val is always the same species i). 
 #' Therefore, the order of the estimates of population decline for each sub-criterion *must* be the same.
 #' 
-#' @author Dauby, G. & Lima, R.A.F.
-#'
-#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
-#'
-#' 
-#'
-#'
 #' @examples
 #' A1_val <- c(40, 90, 75, 10)
 #' A2_val <- c(90, 95, 30, 10)
@@ -75,9 +71,11 @@
 #'   A3_val = NULL,
 #'   A4_val = NULL
 #' )
-#'
-#' @importFrom stringr str_replace_all
 #' 
+#' @author Dauby, G. & Lima, R.A.F.
+#'
+#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+#' @importFrom stringr str_replace_all
 #' 
 #' @export cat_criterion_a
 cat_criterion_a <- function(A1_val = NULL,
