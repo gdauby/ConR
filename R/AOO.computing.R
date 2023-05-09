@@ -148,9 +148,11 @@ AOO.computing <- function(XY,
           # names(res)[1] <- list_data[[x]]$tax[1]
           # res$spatial <- cbind(res$spatial, tax = list_data[[x]]$tax[1])
           # res$spatial <- res$spatial[,-which(colnames(res$spatial) == "lyr.1")]
-        } else {
-          names(res)[1] <- list_data[[x]]$tax[1]
-        }
+        } 
+        # else {
+        #   names(res)[1] <- list_data[[x]]$tax[1]
+        # }
+        names(res)[1] <- list_data[[x]]$tax[1]
         
         res
       }
