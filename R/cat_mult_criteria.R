@@ -61,11 +61,13 @@ cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   
   ## Getting the main (highest) criteria for each species
   tmp[,2:n.crits] <- apply(tmp[,2:n.crits], 2, as.double)
-  tmp$category <- as.character(apply(tmp[,2:n.crits], 1, max, na.rm=TRUE))
+  tmp$category <- suppressWarnings(as.character(apply(tmp[,2:n.crits], 1, max, na.rm=TRUE)))
+  tmp$category[tmp$category %in% c("Inf", "-Inf")] <- ""
   
   tmp$main.criteria <- 
     apply(tmp[,2:n.crits], 1, 
-          function(x) paste(names(x)[which(x == max(x, na.rm = TRUE))], collapse="+"))
+          function(x) paste(names(x)[which(x == suppressWarnings(max(x, na.rm = TRUE)))], 
+                            collapse = "+"))
   rpl.cds <- c("EW","EX","RE","CR", "EN", "VU", "NT", "DD","LC", "LC or NT")
   names(rpl.cds) <- c("5", "5", "5", "4", "3", "2", "1", "0.5", "0", "0")
   
@@ -91,8 +93,8 @@ cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   tmp$aux.criteria <- gsub("\\+$", "", tmp$aux.criteria)
   tmp$aux.criteria <- gsub("\\+;", ";", tmp$aux.criteria)
   
-  tmp$main.criteria[is.infinite(as.double(tmp$category))] <- NA
-  tmp$category[is.infinite(as.double(tmp$category))] <- NA
+  tmp$main.criteria[is.infinite(as.double(tmp$category))] <- ""
+  tmp$category[is.infinite(as.double(tmp$category))] <- ""
   tmp$category <- stringr::str_replace_all(tmp$category,  rpl.cds)
   
   #Merging with the entry data.frame
