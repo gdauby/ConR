@@ -15,24 +15,27 @@ cat_criterion_a(
 )
 }
 \arguments{
-\item{A1_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A1.}
+\item{A1_val}{a numeric vector of the estimates of population decline based on IUCN sub-criterion A1}
 
-\item{A2_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A2.}
+\item{A2_val}{a numeric vector of the estimates of population decline based on IUCN sub-criterion A2}
 
-\item{A3_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A3.}
+\item{A3_val}{a numeric vector of the estimates of population decline based on IUCN sub-criterion A3}
 
-\item{A4_val}{numeric vector of the estimates of population decline based on IUCN sub-criterion A4.}
+\item{A4_val}{a numeric vector of the estimates of population decline based on IUCN sub-criterion A4}
 
-\item{A1.threshold}{numeric vector with the A1 thresholds to convert decline estimates into categories. Default is the thresholds recommended by IUCN.}
+\item{A1.threshold}{a numeric vector of threshold values for sub-criterion A1, default is c(50, 70, 90) following IUCN guidelines}
 
-\item{A234.threshold}{numeric vector with the A2, A3 and A4 thresholds to convert decline estimate into categories. Default is the thresholds recommended by IUCN.}
+\item{A234.threshold}{a numeric vector of A2, A3 and A4 threshold values for sub-criteria A2, A3 and A4, default is c(30, 50, 80) following IUCN guidelines}
 
-\item{all.cats}{logical. Should the categories from all criteria be returned and not just the consensus categories? Default to TRUE.}
+\item{all.cats}{a logical value indicating whether to return all categories or only the consensus, default is TRUE}
 }
 \value{
-A list containing a vector of the consensus category from all sub-criteria evaluated for each taxon (\code{ranks_A}) and
-the sub-criteria used to obtain the consensus category (\code{cat_codes}). If \code{all.cats  == TRUE} the function also returns a
-data frame containing the categories classified by each sub-criterion individually (\code{all.cats}).
+A list of two or three elements:
+\itemize{
+\item \code{ranks_A}: a character vector with the consensus category of each taxon based on subcriteria A1-A4
+\item \code{cats_code}: a character vector with the final IUCN category for each taxon
+\item \code{all_cats}: a data frame with the categorization of each taxon based on all sub criteria, only returned if \code{all.cats=TRUE}
+}
 }
 \description{
 Provide the consensus IUCN category based on the sub-criteria of

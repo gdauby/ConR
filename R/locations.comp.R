@@ -201,7 +201,8 @@ locations.comp <- function(XY,
     
     ### Taking into account polygon threats if provided
     XY_ID <- 
-      data.frame(XY, ID_prov_data = seq(1, nrow(XY), 1))
+      data.frame(XY, 
+                 ID_prov_data = seq(1, nrow(XY), 1))
     
     DATA_SF <- st_as_sf(coord.check(XY = XY_ID, 
                                     listing = F, 
@@ -233,6 +234,10 @@ locations.comp <- function(XY,
         unlist(lapply(intersects_poly, function(x)
           x > 0))
       
+      crop_poly <- lapply(threat_list[which_sf][intersects_poly],
+                          function(x)
+                            suppressWarnings(st_crop(x = x, y = st_bbox(st_buffer(DATA_SF, 10000)))))
+      
       coords_ <- st_coordinates(DATA_SF)
       
       XY_all <-
@@ -247,10 +252,10 @@ locations.comp <- function(XY,
       ### find for each threats spatial data which id intersect with occurrences
       if (any(intersects_poly)) {
         
-        threat_list_sf <- threat_list[which_sf][intersects_poly]
+        # threat_list_sf <- threat_list[which_sf][intersects_poly]
         
         threat_list_inter <-
-          lapply(threat_list[which_sf], function(x)
+          lapply(crop_poly, function(x)
             suppressWarnings(st_set_geometry(st_intersection(DATA_SF, x), NULL)))
         
         threat_list_inter <- 
@@ -266,17 +271,20 @@ locations.comp <- function(XY,
           freq <- res$Freq/res$tot
           names(freq) <- res$Var1
           
-          freq_score <- freq
-          
-          freq_score[freq < 0.5] <- 1
-          freq_score[freq >= 0.5] <- 2
-          freq_score[freq >= 0.9] <- 3
-          
-          return(freq_score)
+          return(freq)
         }
         
-        scores_threats <- lapply(threat_list_inter, 
+        freq_threat <- lapply(threat_list_inter, 
                                  function(x) .freq_threats(x = x, y = nbe_occ_tax))
+        
+        scores_threats <- lapply(freq_threat,
+               function(x) {
+                 ifelse(x < 0.5, 1, 
+                        ifelse(x >= 0.5 &
+                                             x < 0.9, 2, 
+                               ifelse(x >= 0.9, 3, x)))
+               })
+        
         
         for (i in 1:length(scores_threats)) scores_threats[[i]] <- 
           scores_threats[[i]] + threat_weight[which(names(threat_weight) == names(scores_threats)[i])]
@@ -288,22 +296,85 @@ locations.comp <- function(XY,
         names(tax_list_scor) <- unique(DATA_SF$tax)
         
         
+        freq_threat <- unlist(freq_threat)
+        
         for (i in 1:length(tax_list_scor)) {
           
           test <- 
             unlist(scores_threats)[unlist(lapply(scores_threats, function(x) names(x) == names(tax_list_scor)[i]))]
           
+          freq_threat_sp <- 
+            freq_threat[grepl(names(tax_list_scor)[i], names(freq_threat))]
+          
           if (length(test) > 0) {
             
-            names(test) <- gsub("\\..*", "", names(test))
+            rank_layers <- data.frame(threat = names(threat_list),
+                       rank_layer = 1:length(names(threat_list)))
+        
             
+            names(test) <- gsub("\\..*", "", names(test))
             test <- sort(test, decreasing = T)
-            test[1:length(test)] <- 1:length(test)
+            
+            names(freq_threat_sp) <- gsub("\\..*", "", names(freq_threat_sp))
+            freq_threat_sp <- sort(freq_threat_sp, decreasing = T)
+            
+            ranks_df <- merge(
+              rank_layers,
+              data.frame(threat = names(freq_threat_sp), rank_freq = 1:length(freq_threat_sp)),
+              by = "threat",
+              all.x = T
+            )
+            
+            max_score <- max(test)
+            score_impact <- test
+            test[1:length(test)] <-
+              max(test):(length(test) + max(test) - 1)
+            test[which(score_impact == max_score)] <- 1
+            
+            ranks_df <- 
+              merge(
+                ranks_df,
+                data.frame(threat = names(test), rank = test),
+                by = "threat",
+                all.x = T
+              )
+            
+            if (sum(ranks_df$rank == 1, na.rm = T) > 1) {
+              
+              rank_freq <- 
+                ranks_df[which(ranks_df$rank == 1), "rank_freq"]
+              names(rank_freq) <- ranks_df[which(ranks_df$rank == 1), "threat"]
+              
+              
+              # rank_freq <- c(3, 5)
+              # names(rank_freq) <- c("cities", "cropland")
+              
+              rank_freq <- data.frame(rank_new = 1:length(rank_freq),
+                                      threat = names(sort(rank_freq)))
+              
+              # threat_equal <- c("cities", "cropland")
+              
+              threat_equal <- ranks_df[which(ranks_df$rank == 1), "threat"]
+              
+              threat_equal <- merge(rank_freq, data.frame(threat = threat_equal))
+              
+              threat_equal <- threat_equal[order(threat_equal$rank),]
+            
+              ranks_df <- merge(ranks_df, threat_equal,
+                    by = "threat",
+                    all.x = T)
+              
+              ranks_df$rank[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1] <-
+                ranks_df$rank_new[!is.na(ranks_df$rank_new) & ranks_df$rank_new != 1]
+              
+            } else {
+              ranks_df <- cbind(ranks_df, rank_new = NA)
+            }
             
             tax_list_scor[[i]] <-
               merge(
                 tax_list_scor[[i]],
-                data.frame(threat = names(test), rank = test),
+                ranks_df,
                 by = "threat",
                 all.x = T
               )
@@ -312,14 +383,15 @@ locations.comp <- function(XY,
             
             tax_list_scor[[i]] <-
               merge(tax_list_scor[[i]],
-                    data.frame(threat = NA, rank = NA),
+                    data.frame(threat = NA, rank_layer = NA, rank_freq = NA, rank = NA, rank_new = NA),
                     by = "threat",
                     all.x = T)
             
           }
         }
         
-        main_threat <- unlist(lapply(tax_list_scor, function(x) {ee = x$threat[x$rank == 1]; ee[!is.na(ee)]}))
+        main_threat <- unlist(lapply(tax_list_scor, 
+                                     function(x) {ee = x$threat[x$rank == 1]; paste(ee[!is.na(ee)], collapse = ", ")}))
         
         tax_df_scor <- do.call('rbind', tax_list_scor)
         
@@ -370,26 +442,28 @@ locations.comp <- function(XY,
         }
         
         unique_ranks <- sort(unique(rank_locations$rank))
-        names(unique_ranks)[unique_ranks == 0] <- "not_threatened"
+        names(unique_ranks)[unique_ranks == 0] <- "unidentified_threat"
         names(unique_ranks)[unique_ranks != 0] <-
           names(threat_list_inter)[unique_ranks[unique_ranks != 0]]
         
       } else {
         
-        unique_ranks <- setNames(0, "not_threatened")
+        unique_ranks <- setNames(0, "unidentified_threat")
         
       }
     }
     
     res_df <-
-      data.frame(matrix(NA,  
-                        nrow = length(list_data),
-                        ncol = 3 + length(unique_ranks)))
+      data.frame(matrix(
+        NA,
+        nrow = length(list_data),
+        ncol = 3 + length(unique_ranks)
+      ))
     colnames(res_df) <- c("tax",
-      "locations", 
-                          "issue_locations", 
+                          "locations",
+                          "issue_locations",
                           names(unique_ranks))
-    res_df[,c(1, 4:(ncol(res_df)))] <- rep(0, nrow(res_df))
+    res_df[, c(1, 4:(ncol(res_df)))] <- rep(0, nrow(res_df))
     res_df$tax <- names(list_data)
     
     if (any(intersects_poly))
@@ -457,7 +531,7 @@ locations.comp <- function(XY,
         #                                          unique(threat_list_inter_selected[, id_shape])), ][, c(id_shape)]
         
         occ_poly <-
-          threat_list[[unique_ranks[i]]][which(unlist(st_drop_geometry(threat_list[[unique_ranks[i]]][, id_shape_sel])) %in% 
+          threat_list[[names(unique_ranks)[i]]][which(unlist(st_drop_geometry(threat_list[[names(unique_ranks)[i]]][, id_shape_sel])) %in% 
                                                  unique(threat_list_inter_selected_[, id_shape_sel])), ][, c(id_shape_sel)]
         
         all_un <- unique(threat_list_inter_selected_[ ,c("tax", id_shape_sel)])
@@ -544,7 +618,7 @@ locations.comp <- function(XY,
   # if (is.null(protec.areas))
   return(list(locations = res_df,
               locations_poly = shapes_loc,
-              threat_list = if (!is.null(threat_list)) threat_list else NA))
+              threat_list = if (!is.null(threat_list)) crop_poly else NA))
   
 }
 
