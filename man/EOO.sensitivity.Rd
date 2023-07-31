@@ -157,8 +157,7 @@ plot(mydf[,2:1], col = as.factor(mydf$tax),
            pch = as.double(as.factor(mydf$tax)))
 points(mydf[mydf$valid,2:1], col = as.factor(mydf$tax)[mydf$valid], 
            pch = 15 + as.double(as.factor(mydf$tax))[mydf$valid])                                 
-EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE), 
-           proj_user = 5641)
+EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE))
                    
 }
 \references{
