@@ -350,13 +350,15 @@ criterion_C = function(x,
       if (any(round(x[, which(names(x) == assess.year)], 0) != round(sapply(subpop.size, sum), 0)))
         stop("The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data")
       
-      if (is.null(names(subpop.size)) & class(x[, 1]) %in% c("factor", "character"))
+      if (is.null(names(subpop.size)) & class(x[, 1]) %in% c("factor", "character")) {
         names(subpop.size) = unique(x$species)
         warning("Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data")
+      }
       
-      if (is.null(names(subpop.size)) & !class(x[, 1]) %in% c("factor", "character"))
+      if (is.null(names(subpop.size)) & !class(x[, 1]) %in% c("factor", "character")) {
         names(subpop.size) = paste("species", 1:dim(x)[1])
         warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
+      }
       
     }  
   }
@@ -602,19 +604,18 @@ criterion_C = function(x,
       opts <- NULL
     }
     
-    x <- NULL
+    w <- NULL
     models.fit <- foreach::foreach(
-        x = 1:length(pop_data),
+        w = 1:length(pop_data),
         .options.snow = opts
       ) %d% {
-        #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//pop.decline.fit.R")
-        
+
         if (!parallel & show_progress)
-          setTxtProgressBar(pb, x)
+          setTxtProgressBar(pb, w)
         
-        pop.size.i <- pop_data[[x]]
+        pop.size.i <- pop_data[[w]]
         years.i <- years
-        project.years.i <- yrs[[x]]
+        project.years.i <- yrs[[w]]
         
         if(!is.null(ignore.years)) {
           pop.size.i <- pop.size.i[,!names(pop.size.i) %in% ignore.years]
@@ -630,7 +631,6 @@ criterion_C = function(x,
                                models = models,
                                project.years = project.years.i,
                                plot.fit = FALSE
-                               #)
                                ,...)
         res
       }

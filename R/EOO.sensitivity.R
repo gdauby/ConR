@@ -105,8 +105,7 @@
 #'            pch = as.double(as.factor(mydf$tax)))
 #' points(mydf[mydf$valid,2:1], col = as.factor(mydf$tax)[mydf$valid], 
 #'            pch = 15 + as.double(as.factor(mydf$tax))[mydf$valid])                                 
-#' EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE), 
-#'            proj_user = 5641)
+#' EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE))
 #'                    
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster
@@ -138,10 +137,6 @@ EOO.sensitivity <- function(XY,
   
   XY$recordID <- 1:dim(XY)[1]
   
-  # if(is_tibble(XY))
-  #   XY <- 
-  #     as.data.frame(XY)
-  
   if(length(unique(as.data.frame(XY)[,4])) < 2)
     stop("there is only one class of confidence level")
   
@@ -158,7 +153,8 @@ EOO.sensitivity <- function(XY,
   }
   
   
-  levels.order_in_data <- levels.order[levels.order %in% unique(XY$valid)]
+  # levels.order_in_data <- levels.order[levels.order %in% unique(XY$valid)]
+  levels.order_in_data <- unique(XY$valid)[unique(XY$valid) %in% levels.order]
   
   if(length(levels.order_in_data) != length(levels.order))
     stop("The number of element of levels.order does not match the number classes of confidence level")
@@ -170,12 +166,14 @@ EOO.sensitivity <- function(XY,
   
   ## Obtaining the data for each class of confidence level
   XY$classes <- 
-    as.double(factor(XY$valid, levels = levels.order, labels = 1:n.levels))
+    # as.double(factor(XY$valid, levels = levels.order, labels = 1:n.levels))
+    as.double(factor(XY$valid, levels = levels.order_in_data, labels = 1:n.levels))
   
-  
+  XY.orig <- XY
+
   XY.list <- 
     coord.check(XY = XY, 
-                listing = TRUE, listing_by_valid = TRUE)
+                listing = TRUE, listing_by_valid = TRUE)$list_data
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -190,16 +188,6 @@ EOO.sensitivity <- function(XY,
   }
   
   names_ <- names(XY.list)
-  
-  
-  
-  # if (is.null(names(XY.list))) {
-  #   names_ <-
-  #     rep(Name_Sp, length(XY.list))
-  # } else {
-    # names_ <- names(XY.list)
-  # }
-  
   
   x <- NULL
   if (show_progress) {
@@ -221,14 +209,7 @@ EOO.sensitivity <- function(XY,
       .combine = 'c',
       .options.snow = opts
     ) %d% {
-      # source("./R/EOO.comp.R")
-      # source("./R/alpha.hull.poly.R")
-      # source("./R/proj_crs.R")
-      # source("./R/ahull_to_SPLDF.R")
-      # source("./R/coord.check.R")
-      # library(sf)
-      # library(sp)
-      
+
       if (!parallel & show_progress)
         setTxtProgressBar(pb, x)
       
@@ -237,7 +218,7 @@ EOO.sensitivity <- function(XY,
           XY = XY.list[[x]],
           exclude.area = exclude.area,
           country_map = country_map,
-          Name_Sp = names_[x],
+          #Name_Sp = names_[x],
           method.range = method.range,
           alpha = alpha,
           buff.alpha = buff.alpha,
@@ -303,30 +284,7 @@ EOO.sensitivity <- function(XY,
   # if (length(output) == 1)
   #   names(output) <- Name_Sp
 
-  
-  # Obtaining EOO for each taxon and class of confidence level
-  # result <- vector("list", n.levels)
-  # names(result) <- paste0("level.", 1:n.levels)
-  # cat("Starting the EOO analysis for each species and confidence levels...", sep= "\n")
-  # for(i in 1:length(result)) {
-  #   result[[i]] <- EOO.computing(XY = XY.list[[i]],
-  #                              exclude.area = exclude.area,
-  #                              country_map = country_map,
-  #                              write_shp = FALSE,
-  #                              #Name_Sp = names_list[[i]],
-  #                              method.range = method.range,
-  #                              alpha = alpha,
-  #                              buff.alpha = buff.alpha,
-  #                              method.less.than3 = method.less.than3,
-  #                              #alpha.hull = alpha.hull,
-  #                              #convex.hull = convex.hull,
-  #                              write_results = write_results,
-  #                              export_shp = export_shp[i],
-  #                              parallel = parallel,
-  #                              NbeCores = NbeCores,
-  #                              show_progress = show_progress)
-  # }
-  
+
   if(occ.based) {
     # cat("extract spatial")
     output_spatial <- output[grep("spatial", names(output))]
@@ -356,9 +314,7 @@ EOO.sensitivity <- function(XY,
     cat("Starting the occurrence-based analysis...", sep= "\n")
 
     XY.list.taxa <- 
-      coord.check(XY = XY, listing = TRUE)
-    
-    # list_data <- split(XY.list[[1]], f = XY.list[[1]]$tax)
+      coord.check(XY = XY, listing = TRUE)$list_data
     
     if (parallel) {
       cl <- snow::makeSOCKcluster(NbeCores)
@@ -391,15 +347,9 @@ EOO.sensitivity <- function(XY,
         .combine = 'rbind',
         .options.snow = opts
       ) %d% {
-        # source("C://Users//renato//Documents//raflima//R_packages//ConR//R//over.valid.poly.R")
-        
+
         if (!parallel & show_progress)
          setTxtProgressBar(pb, x)
-        
-        # names_poly <- names_[id_spatial]
-        # poly <- output_spatial
-        # points <- XY.list.taxa[x][[1]]
-        # names_taxa <- names(list_data)[x]
         
         res <-
           over.valid.poly(
@@ -434,6 +384,11 @@ EOO.sensitivity <- function(XY,
   #   write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (occ.based) {
+    
+    output <- merge(XY.orig, output[ ,c("recordID", "rel_dist")], 
+                    by = "recordID", all.x = TRUE)
+    output <- output[order(output$recordID), ]
+    
     output <- list(results = as.data.frame(Results_short),
                    results_occ = output,
                    spatial = output_spatial)
