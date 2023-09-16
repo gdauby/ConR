@@ -99,7 +99,7 @@ alpha.hull.poly <-
       }
       
       y.as.spldf <- ahull_to_SPLDF(ahull.obj)
-      y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
+      # y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
       
       NZp <- slot(y.as.spldf_buff, "polygons")
       holes <-

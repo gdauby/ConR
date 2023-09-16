@@ -53,7 +53,7 @@ cell.occupied <-
         r <-
           terra::rast(ext,
                       resolution = size * 1000,
-                      crs = crs_proj)
+                      crs = crs_proj$wkt)
         
         r_proj <- project(rast(r), "epsg:4326")
         
@@ -76,7 +76,7 @@ cell.occupied <-
         coord_vec <- coord[, 1:2]
         colnames(coord_vec) <- c("x", "y")
         coord_vec <- terra::vect(coord_vec, 
-                                 crs = as.character(crs_proj), geom=c("x", "y"))
+                                 crs = crs_proj$wkt, geom=c("x", "y"))
         coord_vec_proj <- 
           project(coord_vec, "epsg:4326")
         
@@ -134,7 +134,7 @@ cell.occupied <-
         r <-
           terra::rast(ext,
                       resolution = size * 1000,
-                      crs = as.character(crs_proj))
+                      crs = crs_proj$wkt)
         
         r_proj <- project(rast(r), "epsg:4326")
         
@@ -150,7 +150,7 @@ cell.occupied <-
         coord_vec <- coord[, 1:2]
         colnames(coord_vec) <- c("x", "y")
         coord_vec <- terra::vect(coord_vec, 
-                                 crs = as.character(crs_proj), geom=c("x", "y"))
+                                 crs = crs_proj$wkt, geom=c("x", "y"))
         coord_vec_proj <- 
           project(coord_vec, "epsg:4326")
         
