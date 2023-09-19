@@ -93,7 +93,7 @@ locations.comp <- function(XY,
                            show_progress = TRUE,
                            proj_type = "cea") {
   
-  proj_type <- proj_crs(proj_type = proj_type, wkt = T)
+  proj_type <- proj_crs(proj_type = proj_type)
   
   if (length(method_polygons) > 1)
     stop('Choose only one method_polygons, either "no_more_than_one" or "grid"')
