@@ -63,8 +63,8 @@
 #' @param parallel a logical. Whether running in parallel. By default, it is FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical. Whether a progress bar should displayed. TRUE by default
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
+#' @inheritParams proj_crs
 #'
 #' @return If `export_shp` is FALSE, a `dataframe` with one field
 #' containing EOO in square kilometers.  `NA` is given when EOO could not

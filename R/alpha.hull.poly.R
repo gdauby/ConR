@@ -8,14 +8,13 @@
 #' @param exclude.area logical
 #' @param poly_exclude sf polygon
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' @param proj_type character string or numeric or object of crs class, by default is "cea"
 #' 
 #' @details 
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
 #' @import sf
-#' @importFrom sp SpatialPolygons Polygons CRS proj4string
 #' @importFrom stats median quantile dist
 #' @importFrom methods slot
 #' 
@@ -32,23 +31,15 @@ alpha.hull.poly <-
     if (!try(requireNamespace("alphahull", quietly = F), silent = TRUE))
       stop("The package alphahull is required for this procedure, please install it")
     
-    if (!try(requireNamespace("rgeos", quietly = F), silent = TRUE))
-      stop("The package rgeos is required for this procedure, please install it")
+    # if (!try(requireNamespace("rgeos", quietly = F), silent = TRUE))
+    #   stop("The package rgeos is required for this procedure, please install it")
     
     requireNamespace("alphahull")
-    requireNamespace("rgeos")
+    # requireNamespace("rgeos")
 
     if (mode == "planar") {
       
-      if(class(proj_type) != "CRS") {
-        
-        projEAC <- proj_crs(proj_type = proj_type)
-        
-      } else {
-        
-        projEAC <- proj_type
-        
-      }
+      projEAC <- proj_crs(proj_type = proj_type)
       
       XY <-
         sf_project(
@@ -79,164 +70,95 @@ alpha.hull.poly <-
     
     Used_data <- XY
     
-
+    run_alpha <- TRUE
+    while (run_alpha) {
+      ahull.obj <-
+        try(alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha), silent = T)
       
-      run_alpha <- TRUE
-      while(run_alpha) {
+      if (class(ahull.obj) != "try-error") {
+        run_alpha <- FALSE
         
-        ahull.obj <-
-          try(alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha), silent = T)
+      } else {
+        Used_data <- apply(Used_data, 2, jitter)
         
-        if(class(ahull.obj) != "try-error") {
-          
-          run_alpha <- FALSE
-          
-        } else {
-          
-          Used_data <- apply(Used_data, 2, jitter)
-          
-        }
       }
+    }
+    
+    y.as.spldf <- ahull_to_SPLDF(ahull.obj)
+    y.as.spldf_sf <- st_as_sf(y.as.spldf)
+    NZfill <- st_buffer(y.as.spldf_sf, buff)
+    if (mode == "planar")
+      st_crs(NZfill) <- projEAC
+    if (mode == "spheroid")
+      st_crs(NZfill) <- 4326
+    
       
-      y.as.spldf <- ahull_to_SPLDF(ahull.obj)
-      # y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
-      
-      NZp <- slot(y.as.spldf_buff, "polygons")
-      holes <-
-        lapply(NZp, function(x)
-          sapply(slot(x, "Polygons"), slot,
-                 "hole"))
-      res <- lapply(1:length(NZp), function(i)
-        slot(NZp[[i]],
-                      "Polygons")[!holes[[i]]])
-      IDs <- row.names(y.as.spldf_buff)
-      NZfill <- sp::SpatialPolygons(
-        lapply(1:length(res), function(i)
-          sp::Polygons(res[[i]], ID = IDs[i])),
-        proj4string = sp::CRS(sp::proj4string(y.as.spldf_buff), doCheckCRSArgs = TRUE)
-      )
+      # 
+      # # y.as.spldf_buff <- rgeos::gBuffer(y.as.spldf, width = buff)
+      # 
+      # NZp <- slot(y.as.spldf_buff, "polygons")
+      # holes <-
+      #   lapply(NZp, function(x)
+      #     sapply(slot(x, "Polygons"), slot,
+      #            "hole"))
+      # res <- lapply(1:length(NZp), function(i)
+      #   slot(NZp[[i]],
+      #                 "Polygons")[!holes[[i]]])
+      # IDs <- row.names(y.as.spldf_buff)
+      # NZfill <- sp::SpatialPolygons(
+      #   lapply(1:length(res), function(i)
+      #     sp::Polygons(res[[i]], ID = IDs[i])),
+      #   proj4string = sp::CRS(sp::proj4string(y.as.spldf_buff), doCheckCRSArgs = TRUE)
+      # )
       
       # crs <- sp::CRS("+proj=longlat +datum=WGS84", doCheckCRSArgs = TRUE)
       # raster::crs(NZfill) <- crs
     
-      NZfill <-
-        suppressWarnings(rgeos::gBuffer(NZfill, byid = TRUE, width = 0))
+      # NZfill <-
+      #   suppressWarnings(rgeos::gBuffer(NZfill, byid = TRUE, width = 0))
       
-      if (mode == "planar") {
+      if (exclude.area) {
         
-        NZfill <- as(NZfill, "sf")
-        
-        sf::st_crs(NZfill) <-
-          projEAC
-        
-        # sp::proj4string(NZfill) <- projEAC
-
-        if (exclude.area) {
-
+        if (mode == "planar") {
           poly_exclude_proj <-
             st_transform(st_make_valid(poly_exclude), crs = projEAC)
-
-
-          ### work around to avoid bug appearing randomly
-          # cont_try <- TRUE
-          # while(cont_try) {
-          #   NZfill <-
-          #     try(suppressWarnings(suppressMessages(st_union(
-          #       st_union(st_intersection(st_make_valid(NZfill), poly_exclude_proj))
-          #     ))))
-          #
-          #   if (class(NZfill) != "try-error")
-          #     cont_try <- FALSE
-          # }
-
-
+          
           NZfill <-
             suppressWarnings(suppressMessages(st_union(
               st_intersection(st_make_valid(NZfill), poly_exclude_proj)
             )))
           
-          
-          sf::st_crs(NZfill) <-
-            projEAC
-
           if(length(NZfill) == 0) {
             
             warning("After excluding areas, the alpha hull is empty. EOO is NA.")
-
+            
             NZfill <- NA
           }
-
-          # NZfill <- as(NZfill, "Spatial")
-
+          
         }
-      }
-
-      if (mode == "spheroid") {
         
-        NZfill <- as(NZfill, "sf")
-        
-        sf::st_crs(NZfill) <-
-          4326
-        
-        # p1_lines <- suppressWarnings(sf::st_cast(NZfill, "MULTILINESTRING"))
-        # p1_lines_seg <-
-        #   sf::st_segmentize(p1_lines, units::set_units(20, km))
-        # p1 <- sf::st_cast(p1_lines_seg, "POLYGON")
-        
-        # sp::proj4string(NZfill) <- sp::CRS(SRS_string = 'EPSG:4326')
-        
-        # NZfill_vertices <-
-        #   try(suppressWarnings(geosphere::makePoly(NZfill)), silent = TRUE)
-        # 
-        # if(class(NZfill_vertices) == "try-error") {
-        #   NZfill_vertices <- 
-        #     NZfill
-        #   
-        #   warning("Failed to add vertices to polygon, be careful with EOO estimation if large EOO")
-        # }
-        
-        if (exclude.area) {
-
-          # NZfill_sf <- as(NZfill, "sf")
-
-          # poly_exclude <-
-          #   st_make_valid(poly_exclude)
-
+        if (mode == "spheroid") {
+          
+          
           NZfill <-
             suppressWarnings(suppressMessages(st_union(
-            st_intersection(st_make_valid(NZfill), poly_exclude)
-          )))
-
-          # NZfill <- NZfill_sf
-
+              st_intersection(st_make_valid(NZfill), poly_exclude)
+            )))
+          
           if(length(NZfill) == 0) {
             
             warning("After excluding areas, the alpha hull is empty. EOO is set to NA.")
-
+            
             NZfill <- NA
             
           } 
-          # else {
-          # 
-          #   sf::st_crs(NZfill) <-
-          #     4326
-          # 
-          #   # NZfill <- as(NZfill, "Spatial")
-          # 
-          # }
-
+          
         }
-        # else {
-        #   
-        #   NZfill <- as(NZfill, "sf")
-        #   
-        # }
+        
         
       }
       
-      # raster::crs(NZfill) <- "+proj=longlat +datum=WGS84"
-      
-      NZfill <- st_sf(geom = NZfill)
+      # NZfill <- st_sf(geom = NZfill)
 
     return(NZfill)
 }

@@ -8,7 +8,7 @@
 #' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
 #' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
 #'
-#' @importFrom sp Lines Line SpatialLines CRS SpatialLinesDataFrame
+#' @importFrom sp Lines Line SpatialLines SpatialLinesDataFrame
 #' 
 ahull_to_SPLDF <- function(x)
 {
@@ -45,7 +45,7 @@ ahull_to_SPLDF <- function(x)
   
   # copy over CRS data from original point data
   l.spl <-
-    sp::SpatialLines(list(l), proj4string = CRS(as.character(NA), doCheckCRSArgs=TRUE))
+    sp::SpatialLines(list(l))
   
   # promote to SpatialLinesDataFrame, required for export to GRASS / OGR
   l.spldf <-

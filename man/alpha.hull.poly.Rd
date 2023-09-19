@@ -27,7 +27,7 @@ alpha.hull.poly(
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{character string or numeric or object of crs class, by default is "cea"}
 }
 \description{
 Alpha hull process
