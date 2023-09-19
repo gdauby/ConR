@@ -149,7 +149,7 @@ AOH.estimation <- function(XY,
     #   as(country_map, "sf")
   }
   
-  proj_type_ <- proj_crs(proj_type = proj_type, wkt = T)
+  proj_type_ <- proj_crs(proj_type = proj_type)
   
   EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE) # , ...
   
