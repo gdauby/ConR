@@ -18,6 +18,16 @@ coord.check <-
     
     XY <- as.data.frame(XY)
     
+    # if (length(grep("[?]", XY[, 3])) > 0)
+      XY[, 3] <- gsub("[?]", "_", XY[, 3])
+    # if (length(grep("[/]", XY[, 3])) > 0)
+      XY[, 3] <- gsub("[/]", "_", XY[, 3])
+    
+    # if (length(grep("\\(", XY[, 3])) > 0)
+      XY[, 3] <- gsub("\\(", "", XY[, 3])
+    # if (length(grep("\\)", XY[, 3])) > 0)
+      XY[, 3] <- gsub("\\)", "", XY[, 3])
+    
     if (ncol(XY) < 3) stop("At least three columns are expected in the following order : latitude, longitude and species names")
     
     if (any(is.na(XY[, c(1:2)]))) {
@@ -126,10 +136,7 @@ coord.check <-
     
     if (listing) {
       
-        if (length(grep("[?]", XY[, 3])) > 0)
-          XY[, 3] <- gsub("[?]", "_", XY[, 3])
-        if (length(grep("[/]", XY[, 3])) > 0)
-          XY[, 3] <- gsub("[/]", "_", XY[, 3])
+
         
         if (listing_by_valid) {
           list_data <-

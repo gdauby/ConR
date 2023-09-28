@@ -95,10 +95,20 @@ locations.comp <- function(XY,
   
   proj_type <- proj_crs(proj_type = proj_type)
   
-  if (length(method_polygons) > 1)
-    stop('Choose only one method_polygons, either "no_more_than_one" or "grid"')
+  if (length(method_polygons) > 1 & is.null(threat_list)) {
+    warning('threat_list is NULL, hence notice that method_polygons is not used')
+  }
   
-  match.arg(method_polygons, c("no_more_than_one", "grid"))
+  match.arg(unique(method_polygons), c("no_more_than_one", "grid"), several.ok = TRUE)
+  
+  if (!is.null(threat_list)) {
+    
+    if (length(method_polygons) > 1 & length(method_polygons) != length(threat_list))
+      stop('method_polygons and threat_list must be of same length')
+    
+    if (length(method_polygons) == 1 & length(threat_list) > 1)
+      method_polygons <- rep(method_polygons, length(threat_list))
+  }
   
   list_data <- 
     coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_locations, check_eoo = FALSE)
@@ -148,7 +158,7 @@ locations.comp <- function(XY,
     if (any(which_rast))
       threat_list[which(which_rast)] <- lapply(threat_list[which(which_rast)],
              function(x)
-               terra::project(x, proj_type))
+               terra::project(x, proj_type$input))
     
     if (!is.null(names_threat)) {
       
@@ -252,7 +262,13 @@ locations.comp <- function(XY,
       ### find for each threats spatial data which id intersect with occurrences
       if (any(intersects_poly)) {
         
+        method_polygons <- c("grid", method_polygons[which(intersects_poly)])
+        
         # threat_list_sf <- threat_list[which_sf][intersects_poly]
+        
+        # DATA_SF$tax <- gsub(" ", "_", DATA_SF$tax)
+        # DATA_SF$tax <- gsub("\\(", "", DATA_SF$tax)
+        # DATA_SF$tax <- gsub("\\)", "", DATA_SF$tax)
         
         threat_list_inter <-
           lapply(crop_poly, function(x)
@@ -486,12 +502,12 @@ locations.comp <- function(XY,
       
       # XY_shp_s <- XY_shp[[i]]
       if (length(id_shape) > 1) {
-        id_shape_sel <- id_shape[unique_ranks[i]]          
+        id_shape_sel <- id_shape[unique_ranks[i]]
       } else {
         id_shape_sel <- id_shape
       }
       
-      if (method_polygons == "no_more_than_one" & unique_ranks[i] > 0) {
+      if (method_polygons[i] == "no_more_than_one" & unique_ranks[i] > 0) {
         
         selected_ranked_occ <- rank_locations[rank_locations$rank == unique_ranks[i],]
         
@@ -600,8 +616,8 @@ locations.comp <- function(XY,
     
     shapes_loc <- do.call('rbind', shapes_loc)
     
-    if (method_polygons != "no_more_than_one")
-      shapes_loc <- shapes_loc[ ,-which(colnames(shapes_loc) == id_shape_sel)]
+    # if (method_polygons != "no_more_than_one")
+    #   shapes_loc <- shapes_loc[ ,-which(colnames(shapes_loc) == id_shape_sel)]
     
   }
   
