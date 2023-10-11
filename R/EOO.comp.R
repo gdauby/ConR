@@ -102,6 +102,8 @@ EOO.comp <-  function(XY,
 ) {
   # , verbose=TRUE
   
+  match.arg(method.range, c("convex.hull", "alpha.hull"))
+  
   XY <- 
     coord.check(XY = XY, listing = FALSE, check_eoo = FALSE)
   
@@ -268,48 +270,6 @@ EOO.comp <-  function(XY,
                             exclude.area = exclude.area,
                             poly_exclude = country_map)
       
-      # old <- function(XY) {
-      #   p1 <-
-      #     .Convex.Hull.Poly(XY[,c(2, 1)])
-      #   eoo <- round(suppressWarnings(geosphere::areaPolygon(p1)),
-      #         0)
-      #   return(eoo)
-      # }
-      # 
-      
-      # 
-      # library(sf)
-      # 
-      # microbenchmark::microbenchmark("old" = { eoo <- old(XY = XY) },
-      #                "new" = {
-      #                  eoo <- new(XY = XY)
-      #                }, times = 400L)
-      # 
-      # microbenchmark::microbenchmark("old" = {
-      #   p1 <-
-      #     .Convex.Hull.Poly(XY[, c(2, 1)], mode = "spheroid")
-      # },
-      # "new" = {
-      #   p1 <-
-      #     .Convex.Hull.Poly(XY[, c(2, 1)], mode = "planar")
-      # },
-      # times = 400L)
-      
-      # if (exclude.area) {
-      #   croped.EOO <- 
-      #     .crop.poly(poly = p1, 
-      #                crop = country_map)
-      #   p1 <- croped.EOO[[2]]
-      # }
-      
-      ## If exclude.area is TRUE
-      # if (exclude.area) {
-      #   EOO <-
-      #     croped.EOO[[1]]
-      # } else{
-      #   EOO <-
-      #     suppressWarnings(geosphere::areaPolygon(p1)) / 1000000
-      # }
       
       if(any(class(p1) == "SpatialPolygons") | any(class(p1) == "sfc") | any(class(p1) == "sf")) {
         

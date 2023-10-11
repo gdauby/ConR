@@ -4,15 +4,13 @@
 \alias{proj_crs}
 \title{Get the projection system}
 \usage{
-proj_crs(proj_type = "cea", wkt = FALSE)
+proj_crs(proj_type = "cea")
 }
 \arguments{
 \item{proj_type}{string or numeric}
-
-\item{wkt}{logical whether the output should be as character string indicating EPSG}
 }
 \value{
-\code{CRS} class object or a character vector if \code{wkt} is TRUE
+\code{crs} class object
 }
 \description{
 get class "CRS" of coordinate reference system
@@ -20,7 +18,7 @@ get class "CRS" of coordinate reference system
 \examples{
 ## By default, the output projection is Equal-Area Scalable Earth (EASE) Global
 ## Global cylindrical equal-area projection
-## See https://epsg.io/6933
+## See https://epsg.io/54034
 proj_crs(proj_type = "cea")
 
 ## Another readily available projection is Antarctic Polar Stereographic
@@ -28,12 +26,6 @@ proj_crs(proj_type = "cea")
 proj_crs(proj_type = "Antarctic")
 
 ## Otherwise, many projection can be retrieved from EPSG code
-## Check  for EPSG code
-\dontrun{
-all_projs <- rgdal::make_EPSG()
-head(all_projs)
-}
-proj_crs(proj_type = 3395)
 
 
 }

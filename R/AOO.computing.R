@@ -77,7 +77,7 @@ AOO.computing <- function(XY,
                           proj_type = "cea"
 ) {
   
-  proj_type <- proj_crs(proj_type = proj_type, wkt = T)
+  proj_type <- proj_crs(proj_type = proj_type)
   
   list_data <- 
     coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_AOO, check_eoo = FALSE)

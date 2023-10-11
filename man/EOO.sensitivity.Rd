@@ -68,7 +68,7 @@ file. By default is "EOO.sensitivity.results"}
 
 \item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{string or numeric}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 }
