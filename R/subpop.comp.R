@@ -2,7 +2,8 @@
 #' @title Number of Subpopulations
 #'
 #' @description Estimate the number of subpopulations following the method
-#'   **circular buffer method** (overlapping buffered circles form a single subpopulation)
+#'   **circular buffer method** (overlapping buffered circles form a single 
+#'   subpopulation)
 #'
 #' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
@@ -15,7 +16,8 @@
 #'   ```ConR``` function ```subpop.radius```.
 #' @param export_shp logical. Whether the resulting shapefiles should be
 #'   exported. FALSE by default.
-#' @param parallel logical. Whether compute should run in parallel. FALSE by default.
+#' @param parallel logical. Whether compute should run in parallel. FALSE by
+#'   default.
 #' @param NbeCores integer. Number of cores for parallel computation. Default to
 #'   2.
 #' @param show_progress logical. Whether a bar showing progress in computation
@@ -40,8 +42,10 @@
 #'   2071-2085. doi: 10.1007/s10531-010-9826-9
 #'
 #' @return 
-#' If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop a `Simple feature collection` with as many MULTIPOLYGON as taxa
-#' If `export_shp` is FALSE, a vector with estimated number of subpopulation per taxa
+#' If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop
+#' a `Simple feature collection` with as many MULTIPOLYGON as taxa.
+#' If `export_shp` is FALSE, a vector with estimated number of subpopulation per
+#' taxa.
 #' 
 #' @examples 
 #' data(dataset.ex)
@@ -71,14 +75,12 @@ subpop.comp <- function(XY,
                         show_progress = TRUE,
                         NbeCores = 2) {
   
-  ### ADDED BY RENATO: SPC RECOMMEND NOT USING ANY DEFAULTS TO FORCE ASSESSORS TO THINK ###
   if (is.null(Resol_sub_pop)) 
     stop("Radius is missing, please provide a value for all species or a data frame with species-specific values")
   
   proj_type <- 
     proj_crs(proj_type = proj_type)
   
-  ### PART INCLUDED BY RENATO ###
   if ("data.frame" %in% class(Resol_sub_pop)) {
     XY <- merge(XY, Resol_sub_pop, 
                 by = "tax", all.X = TRUE, sort = FALSE)
@@ -86,8 +88,7 @@ subpop.comp <- function(XY,
   } else {
     XY$radius <- Resol_sub_pop   
   }
-  ### END OF PART INCLUDED BY RENATO ###
-  
+
   list_data <-
     coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
@@ -131,9 +132,9 @@ subpop.comp <- function(XY,
       res <- 
         subpop.estimation(
           XY = list_data[[1]][[x]], 
-          Resol_sub_pop = unique(list_data[[1]][[x]]$radius), #### PART EDITED BY RENATO #### 
+          Resol_sub_pop = unique(list_data[[1]][[x]]$radius),
           proj_type = proj_type,
-          export_shp = export_shp #### NEW RGUMENT ADDED BY RENATO ####
+          export_shp = export_shp
         )
       
       if (export_shp) {
@@ -169,7 +170,6 @@ subpop.comp <- function(XY,
   }
   
 
-  
   ### GILLES, NOT SURE WHY IT IS NECESSARY TO TRANFORM SPECIES ORIGINAL NAMES...
   #SO I CHANGED IT, BUT LEFT THE PREVIOUS CODE IF YOU WANT TO TAKE IT BACK
   # SpNames <- gsub(pattern = " ", 

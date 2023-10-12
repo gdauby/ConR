@@ -76,5 +76,5 @@ Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Lima, R.A.F.
+Renato A. Ferreira de Lima
 }

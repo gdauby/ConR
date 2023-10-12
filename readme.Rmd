@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 The ideas behind this package, and its testing involved many people and institutes.
-See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704).
+<!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
 
 
@@ -54,9 +54,7 @@ library(ConR)
 ```
 ```{r loadData,include=FALSE}
 library(ConR)
-# source("D:/MonDossierR/ConR_orig/R/IUCNeval.functionv11.R")
 data(dataset.ex)
-# load("D:/MonDossierR/ConR_orig/data/dataset.ex.RData")
 MyData <- dataset.ex
 MyData <- MyData[which(!MyData[,3] %in% c("species_1", "species_2")),]
 MyData$tax <- as.character(MyData$tax)
@@ -66,12 +64,12 @@ MyData$tax <- as.character(MyData$tax)
 Any function in R is documented by a help file which can be obtained by the following code:
 ```
 ?EOO.computing
-?IUCN.eval
-?map.res
+?AOO.computing
 ?subpop.comp
+?locations.comp
+?criterion_A
+?EOO.sensitivity
 ```
-
-
 
 
 ## Funding
@@ -82,7 +80,7 @@ The development of this package was supported by:
   
   - CESAB (Centre for the Synthesis and Analysis of Biodiversity). Research program of the FRB (Foundation for Research on Biodiversity) under the [RAINBIO project](https://gdauby.github.io/rainbio/index.html).
 
-## Acknowledgements
+<!-- ## Acknowledgements -->
 
 
 ## See Also

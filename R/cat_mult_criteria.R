@@ -1,6 +1,7 @@
 #' @title Categorize Taxa Using Multiple IUCN Criteria
 #' 
-#' @description Provide the consensus IUCN category based on multiples IUCN sub-criteria.
+#' @description Provide the consensus IUCN category based on multiples IUCN
+#'   sub-criteria.
 #'
 #' @param assess.df a data frame containing the taxon name in the first columns
 #'   and the assessments under each criterion in the subsequent columns.
@@ -18,7 +19,7 @@
 #'   the sub-criteria evaluated. Nevertheless, the function also returns the
 #'   categories and sub-criteria related to lower categories of threat.
 #' 
-#' @author Lima, R.A.F.
+#' @author Renato A. Ferreira de Lima
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
@@ -29,8 +30,7 @@
 #'                     A2 = c(NA, "VU", "VU", NA),
 #'                     B1 = c("LC", "VU", "LC", "LC"),
 #'                     B2 = c("LC", "EN", "LC", "VU"),
-#'                     D = c(NA, "LC", "LC", NA),
-#'                     stringsAsFactors = FALSE)
+#'                     D = c(NA, "LC", "LC", NA))
 #' cat_mult_criteria(df)                     
 #' 
 #'
@@ -50,14 +50,14 @@ cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   names(hier) <- c("2", "2", "1", "1", "0")
   
   ## Replacing the categories by ordered numbers
-  tmp[] <- lapply(tmp, gsub, pattern = "^LC or NT$", replacement = 0)
-  tmp[] <- lapply(tmp, gsub, pattern = "^LC$", replacement = 0)
-  tmp[] <- lapply(tmp, gsub, pattern = "^DD$", replacement = 0.5)
-  tmp[] <- lapply(tmp, gsub, pattern = "^NT$", replacement = 1)
-  tmp[] <- lapply(tmp, gsub, pattern = "^VU$", replacement = 2)
-  tmp[] <- lapply(tmp, gsub, pattern = "^EN$", replacement = 3)
-  tmp[] <- lapply(tmp, gsub, pattern = "^CR$", replacement = 4)
-  tmp[] <- lapply(tmp, gsub, pattern = "^EW$|^EX$|^RE$", replacement = 5)
+  tmp[] <- lapply(tmp, gsub, pattern = "^LC or NT$", replacement = 0, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^LC$", replacement = 0, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^DD$", replacement = 0.5, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^NT$", replacement = 1, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^VU$", replacement = 2, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^EN$", replacement = 3, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^CR$", replacement = 4, perl = TRUE)
+  tmp[] <- lapply(tmp, gsub, pattern = "^EW$|^EX$|^RE$", replacement = 5, perl = TRUE)
   
   ## Getting the main (highest) criteria for each species
   tmp[,2:n.crits] <- apply(tmp[,2:n.crits], 2, as.double)
@@ -84,22 +84,24 @@ cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
     )
   
   #Final edits on the results
-  tmp$aux.criteria <- gsub("^: $", "", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("\\+NA\\+", "+", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("NA\\+", "+", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("\\+NA", "+", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("\\+\\+", "+", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub(": \\+", ": ", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("\\+$", "", tmp$aux.criteria)
-  tmp$aux.criteria <- gsub("\\+;", ";", tmp$aux.criteria)
+  tmp$aux.criteria <- gsub("^: $", "", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("\\+NA\\+", "+", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("NA\\+", "+", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("\\+NA", "+", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("\\+\\+", "+", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub(": \\+", ": ", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("\\+$", "", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("\\+;", ";", tmp$aux.criteria, perl = TRUE)
   
   tmp$main.criteria[is.infinite(as.double(tmp$category))] <- ""
   tmp$category[is.infinite(as.double(tmp$category))] <- ""
   tmp$category <- stringr::str_replace_all(tmp$category,  rpl.cds)
   
   #Merging with the entry data.frame
-  res <- merge(assess.df, tmp[,c(tax,"category","main.criteria","aux.criteria")], by = tax)
+  res <- merge(assess.df, tmp[,c(tax,"category","main.criteria","aux.criteria")], 
+               by = tax)
   res <- res[order(res$order),]
   res <- res[,-which(names(res) %in% "order")]
+  
   return(res)
 }

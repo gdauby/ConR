@@ -13,6 +13,9 @@
 #'
 #' @references https://stackoverflow.com/questions/7198178/automatically-determine-position-of-plot-legend
 #' 
+#' @noRd
+#' 
+#' 
 auto.legend.pos <- function(x, y, xlim=range(x), ylim=range(y)) {
   countIt <- function(a, zero.only = TRUE) {
     tl <- sum(x <= xlim[1]*(1-a)+xlim[2]*a & y >= ylim[1]*a+ylim[2]*(1-a), na.rm = TRUE)

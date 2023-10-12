@@ -108,10 +108,13 @@ pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
 
 }
 \references{
+D. Anderson and K. Burnham (2004). Model selection and multi-model
+inference. Second edition. Springer-Verlag, New York.
+
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Lima, R.A.F. & Dauby, G.
+Renato A. Ferreira de Lima & Gilles Dauby
 }

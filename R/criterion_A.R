@@ -112,7 +112,7 @@
 #'   But final reduction values above 100% will be reduced to 100% for any
 #'   subcriterion (A1, A2, A3 and A4) with a warning.
 #'   
-#' @author Lima, R.A.F. & Dauby, G.
+#' @author Renato A. Ferreira de Lima & Gilles Dauby
 #' 
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

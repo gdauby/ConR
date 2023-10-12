@@ -37,11 +37,22 @@
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories? Default to TRUE.
 #'   
-#' @return list
+#' @return A list of three or four elements:
+#' \itemize{
+#' \item \code{ranks_B}: a character vector with the consensus category of each 
+#' taxon based on subcriteria B1 and B2
+#' \item \code{cats_code}: a character vector with the final IUCN category for 
+#' each taxon
+#' \item \code{orig_ranks_B}: original vector of threat categories for each 
+#' taxon before taking into account the threshold for protected areas 
+#' \item \code{all_cats}: a data frame with the categorization of each taxon 
+#' based on all sub criteria, only returned if \code{all.cats=TRUE}
+#' }
 #' 
-#' @details The function categorizes taxa following criterion B and categories of the IUCN. 
+#' @details The function categorizes taxa following criterion B and categories
+#'   of the IUCN.
 #' 
-#' @author Dauby, G. & Lima, R.A.F.
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

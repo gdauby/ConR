@@ -23,7 +23,8 @@ EOO.comp(
 
 \item{country_map}{SpatialPolygonDataframe. Default if NULL}
 
-\item{method.range}{string, by default "convex.hull", can also take "alpha.hull"}
+\item{method.range}{string, by default "convex.hull", can also take
+"alpha.hull"}
 
 \item{alpha}{integer}
 
@@ -31,9 +32,11 @@ EOO.comp(
 
 \item{method.less.than3}{string}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{character string or numeric or object of CRS class, by
+default is "cea"}
 }
 \value{
 A list with one element being a numeric vector [\link{1}]EOO and the polygon as Simple feature collection [\link{2}]spatial.polygon
@@ -59,7 +62,7 @@ It can makes sense to use a planar projection to estimate the EOO. See example.
 
 It is possible to use another projection by providing the EPSG code to \code{proj_type}. See example.
 Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
-from the \code{rgdal} packag for getting the EPSG code.
+from the \code{rgdal} package for getting the EPSG code.
 
 For the very specific (and infrequent) case where all occurrences are
 localized on a straight line (in which case EOO would be null),
@@ -112,5 +115,5 @@ plot(p1, lwd = 2, col = 'red', add = TRUE)
 
 }
 \author{
-Dauby, G. & Lima, R.A.F.
+Gilles Dauby & Renato A. Ferreira de Lima
 }

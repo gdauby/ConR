@@ -19,7 +19,8 @@ category ('main.criteria'). It also returns the auxiliary category provided
 by other criteria ('aux.criteria'), separated by a ';'
 }
 \description{
-Provide the consensus IUCN category based on multiples IUCN sub-criteria.
+Provide the consensus IUCN category based on multiples IUCN
+sub-criteria.
 }
 \details{
 The definiton of the main category of threat, follows the
@@ -34,8 +35,7 @@ df <- data.frame(tax = c("sp1","sp2","sp3","sp4"),
                     A2 = c(NA, "VU", "VU", NA),
                     B1 = c("LC", "VU", "LC", "LC"),
                     B2 = c("LC", "EN", "LC", "VU"),
-                    D = c(NA, "LC", "LC", NA),
-                    stringsAsFactors = FALSE)
+                    D = c(NA, "LC", "LC", NA))
 cat_mult_criteria(df)                     
 
 
@@ -47,5 +47,5 @@ Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Lima, R.A.F.
+Renato A. Ferreira de Lima
 }

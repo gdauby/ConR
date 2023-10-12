@@ -47,7 +47,7 @@
 #'   differences between population minima and maxima to classify populations
 #'   with extreme fluctuations. Default to 10 as recommended by IUCN (2019).
 #' @param high.alter numerical. Threshold of proportion of changes that are
-#'   followed by a change in the opposite direction. Default to 80\%. Currently NOT implemented.
+#'   followed by a change in the opposite direction. Default to 80%. Currently NOT implemented.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
 #' @param parallel logical. Should calculations be parallelized? Default to 
@@ -57,6 +57,7 @@
 #' @param show_progress logical. Should the progress bar be displayed? Default
 #'  to TRUE.
 #' @param ... other parameters to be passed as arguments for function `pop.decline.fit`
+#' @param {name} {description}
 #' 
 #' @return A data frame containing, for each of taxon, the year of assessment,
 #'   the time interval of the assessment (include past and future estimates, if
@@ -148,7 +149,7 @@
 #'   reduced the value of population size reduction and values above one will
 #'   increase them.
 #'   
-#' @author Lima, R.A.F. & Dauby, G.
+#' @author Renato A. Ferreira de Lima & Gilles Dauby
 #'   
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

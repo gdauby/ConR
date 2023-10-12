@@ -28,31 +28,37 @@ AOH.estimation(
 \item{show_progress}{logical. whether a bar showing progress in computation
 should be shown. Default to TRUE.}
 
-\item{proj_type}{character string, numeric or object of CRS class. Default to "cea".}
+\item{proj_type}{character string, numeric or object of CRS class. Default to
+"cea".}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
 \item{hab.map}{raster, raster layer/stack or spatial polygons containing the
 habitat spatial information}
 
-\item{hab.map.type}{logical, vector of same lenght of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable}
+\item{hab.map.type}{logical, vector of same lenght of hab.map, if TRUE means
+hab.map is suitable for species, if FALSE unsuitable}
 
-\item{hab.class}{classes of values in \code{hab.map} to be considered as 'habitat'.}
+\item{hab.class}{classes of values in \code{hab.map} to be considered as
+'habitat'.}
 
 \item{years}{numeric. Time interval between the first and last \code{hab.map}
-if more than one raster is provided (e.g. if \code{hab.map} is a RasterStack object).}
+if more than one raster is provided (e.g. if \code{hab.map} is a RasterStack
+object).}
 
 \item{country_map}{a \code{SpatialPolygonsDataFrame} or}
 
-\item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
-are cropped of \code{SpatialPolygons} used for calculating EOO. By default
-is FALSE}
+\item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map} are
+cropped of \code{SpatialPolygons} used for calculating EOO. By default is FALSE}
 
 \item{parallel}{logical. Should computing run in parallel? Default to FALSE.}
 
-\item{NbeCores}{integer. The number of cores for parallel execution. Default to 2.}
+\item{NbeCores}{integer. The number of cores for parallel execution. Default
+to 2.}
 
-\item{simplifiy_poly}{logical whether the resulting polygon should be simplified using ms_simplify function of rmapshaper package}
+\item{simplifiy_poly}{logical whether the resulting polygon should be
+simplified using ms_simplify function of rmapshaper package}
 
 \item{buffer}{logical
 \code{SpatialPolygons} showing for example countries or continent borders.

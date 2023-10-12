@@ -39,7 +39,7 @@
 #'   which can be used as a measure of the temporal variability in population
 #'   size (Cuervo & Møller 2017).
 #' 
-#' @author Lima, R.A.F.
+#' @author Renato A. Ferreira de Lima
 #'
 #' @references 
 #'  IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
@@ -101,8 +101,9 @@ pop.fluctuation <- function(x,
     
   } else { nomes = NULL }
   
-  if(!all(names(x) %in% years)) 
+  if(!all(names(x) %in% years)) {
     x <- x[,names(x) %in% years]
+  }
   
   if(plot.test) {
     
@@ -119,9 +120,10 @@ pop.fluctuation <- function(x,
     
     time <- years
     obs  <- x[j,]
+    time <- time[match(names(obs), time, nomatch = 0)]
     time <- time[!is.na(obs)]
     obs  <- obs[!is.na(obs)]
-    
+
     # Mean magnitude of the fluctuations
     fluct <- NULL
     for(i in 1:(length(obs)-1)) {

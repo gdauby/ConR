@@ -72,9 +72,12 @@
 #'   A4_val = NULL
 #' )
 #' 
-#' @author Dauby, G. & Lima, R.A.F.
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
-#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria. Version 14. Standards and Petitions Committee. Downloadable from: http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+#' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
+#'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
+#'   http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+#'   
 #' @importFrom stringr str_replace_all
 #' 
 #' @export cat_criterion_a

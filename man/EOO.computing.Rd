@@ -92,9 +92,11 @@ and provide polygons used for EOO computation
 \strong{It is mandatory to respect field positions, but field names do not
 matter}
 
-\tabular{ccc}{ \link{,1} \tab ddlat \tab numeric, latitude (in decimal
-degrees)\cr \link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-\link{,3} \tab tax \tab character or factor, taxa names\cr }
+\tabular{lll}{
+1 \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
+2 \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
+3 \tab tax \tab character or factor, taxa names
+}
 
 \strong{Important notes:}
 

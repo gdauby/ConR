@@ -4,3 +4,4 @@ inst/doc
 .R/test_data.R
 *.Rproj
 *.Rhistory
+test_data.R

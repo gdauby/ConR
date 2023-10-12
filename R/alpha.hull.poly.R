@@ -3,16 +3,21 @@
 #' Alpha hull process
 #'
 #' @param XY data.frame coordinates
-#' @param alpha integer if mode planar, in kilometers, if mode spheroid in decimal degrees
+#' @param alpha integer if mode planar, in kilometers, if mode spheroid in
+#'   decimal degrees
 #' @param buff numeric
 #' @param exclude.area logical
 #' @param poly_exclude sf polygon
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param proj_type character string or numeric or object of crs class, by default is "cea"
+#' @param mode character string either 'spheroid' or 'planar'. By default
+#'   'spheroid'
+#' @param proj_type character string or numeric or object of crs class, by
+#'   default is "cea"
 #' 
-#' @details 
-#' The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
-#' in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange 
+#' @details The functions ahull_to_SPLDF and alpha.hull.poly were originally
+#' posted in the website
+#' https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
+#' in a now broken link. It is also used in functions written by David Bucklin,
+#' see https://github.com/dnbucklin/r_movement_homerange
 #'
 #' @import sf
 #' @importFrom stats median quantile dist
