@@ -1,10 +1,11 @@
 #' @title Extent of Occurrences multi-taxa computation
 #' 
-#' @description Compute extent of occurrences (EOO) for multiple taxa in square kilometers
+#' @description
+#' Compute extent of occurrences (EOO) for multiple taxa in square kilometers
 #' and provide polygons used for EOO computation
 #' 
 #' 
-#' @details 
+#' @details
 #' **Input** as a `dataframe` should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not
@@ -58,7 +59,7 @@
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
-#' @param write_results a logical. If TRUE, results will be exported in the  working environment as a csv file. By default it is FALSE
+#' @param write_results a logical. If TRUE, results will be exported in the working environment as a csv file. By default it is FALSE
 #' @param file.name a character string. Name file for exported results in csv file. By default is "EOO.results"
 #' @param parallel a logical. Whether running in parallel. By default, it is FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
@@ -66,8 +67,9 @@
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #' @inheritParams proj_crs
 #'
-#' @return If `export_shp` is FALSE, a `dataframe` with one field
-#' containing EOO in square kilometers.  `NA` is given when EOO could not
+#' @return
+#' If `export_shp` is FALSE, a `dataframe` with one field
+#' containing EOO in square kilometers. `NA` is given when EOO could not
 #' be computed because there is less than three unique occurrences (or two if
 #' `method.less.than3` is put to "arbitrary").
 #' 
@@ -94,7 +96,7 @@
 #' 
 #' ## This exclude areas outside of land (i.e. ocean) for EOO computation
 #' EOO <- EOO.computing(dataset.ex, 
-#'   exclude.area=TRUE, country_map=land)
+#' exclude.area=TRUE, country_map=land)
 #' }
 #' 
 #' @import sf

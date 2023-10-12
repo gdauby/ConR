@@ -102,7 +102,7 @@ Convex.Hull.Poly <-
     
     if (mode == "planar") {
       
-      if(class(proj_type) != "CRS") {
+      if(class(proj_type) != "crs") {
         
         projEAC <- proj_crs(proj_type = proj_type)
         
