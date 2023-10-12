@@ -59,7 +59,7 @@ default is "convex.hull"}
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
 
-\item{write_results}{a logical. If TRUE, results will be exported in the  working environment as a csv file. By default it is FALSE}
+\item{write_results}{a logical. If TRUE, results will be exported in the working environment as a csv file. By default it is FALSE}
 
 \item{file.name}{a character string. Name file for exported results in csv file. By default is "EOO.results"}
 
@@ -75,7 +75,7 @@ is "not comp"}
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field
-containing EOO in square kilometers.  \code{NA} is given when EOO could not
+containing EOO in square kilometers. \code{NA} is given when EOO could not
 be computed because there is less than three unique occurrences (or two if
 \code{method.less.than3} is put to "arbitrary").
 
@@ -127,7 +127,7 @@ EOO <- EOO.computing(dataset.ex)
 
 ## This exclude areas outside of land (i.e. ocean) for EOO computation
 EOO <- EOO.computing(dataset.ex, 
-  exclude.area=TRUE, country_map=land)
+exclude.area=TRUE, country_map=land)
 }
 
 }
