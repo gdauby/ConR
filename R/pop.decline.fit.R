@@ -98,7 +98,7 @@
 #' 
 #' @importFrom nls.multstart nls_multstart
 #' @importFrom segmented segmented seg.control
-#' @importFrom stats na.omit
+#' @importFrom stats na.omit predict
 #'
 #' @export pop.decline.fit
 #' 
@@ -220,7 +220,9 @@ pop.decline.fit <- function(pop.size,
       exp <- suppressWarnings( nls.multstart::nls_multstart(f, data = stats::na.omit(DATA),
                                                             start_lower = c(a=0.1, b=-0.1),
                                                             start_upper = c(a=1, b=0.01),
-                                                            iter = 500, supp_errors = 'Y', convergence_count = 100,
+                                                            iter = 500, 
+                                                            supp_errors = 'Y', 
+                                                            convergence_count = 100,
                                                             na.action = stats::na.omit)
       )
       

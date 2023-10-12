@@ -57,7 +57,6 @@
 #' @param show_progress logical. Should the progress bar be displayed? Default
 #'  to TRUE.
 #' @param ... other parameters to be passed as arguments for function `pop.decline.fit`
-#' @param {name} {description}
 #' 
 #' @return A data frame containing, for each of taxon, the year of assessment,
 #'   the time interval of the assessment (include past and future estimates, if
@@ -200,6 +199,7 @@
 #' @importFrom snow makeSOCKcluster stopCluster
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
+#' @importFrom stats setNames
 #' 
 #' @export criterion_C
 criterion_C = function(x,

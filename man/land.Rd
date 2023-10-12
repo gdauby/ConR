@@ -7,7 +7,7 @@
 A dataframe
 }
 \source{
-\url{http://www.naturalearthdata.com/downloads/10m-physical-vectors/}
+\url{https://www.naturalearthdata.com/downloads/10m-physical-vectors/}
 }
 \usage{
 data(land)

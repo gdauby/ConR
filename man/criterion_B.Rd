@@ -113,10 +113,6 @@ of occurrence - EOO, and area of occupancy, AOO)
 \details{
 The function ...
 }
-\examples{
-To be included
-
-}
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

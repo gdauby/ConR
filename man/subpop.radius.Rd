@@ -15,14 +15,18 @@ subpop.radius(
 \arguments{
 \item{XY}{a data.frame. containing the geographical coordinates for each taxon.}
 
+\item{factor.div}{numeric. denominator value used to obtain the fraction of
+the maximum distance. Default to 10.}
+
 \item{quant.max}{numeric. The upper-quantile of the inter-point distance to
 be considered as a threshold of maximum distance. Can vary between 0 and 1.
 Default to 1.}
 
-\item{proj_type}{}
+\item{mode}{a character. Type of coordinate projection: "spheroid" or
+"planar". Defualts to "spheroid".}
 
-\item{factor.div.}{numeric. denominator value used to obtain the fraction of
-the maximum distance. Default to 10.}
+\item{proj_type}{character string or numeric or object of CRS class, by
+default is "cea"}
 }
 \value{
 The estimated radius in kilometres for each taxon.

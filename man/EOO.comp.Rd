@@ -65,11 +65,11 @@ Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics
 from the \code{rgdal} package for getting the EPSG code.
 
 For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null),
-'noises' are added to coordinates, using the \code{jitter} function,
-see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}.
-There is a warning when this happens. This means that EOO value will not be constant
-across multiple estimation (although the variation should be small)
+localized on a straight line (in which case EOO would be null), 'noises' are
+added to coordinates, using the function
+\href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}{jitter}.
+There is a warning when this happens. This means that EOO value will not be
+constant across multiple estimation (although the variation should be small)
 }
 \examples{
 

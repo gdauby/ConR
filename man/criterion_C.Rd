@@ -108,8 +108,6 @@ to 2.}
 to TRUE.}
 
 \item{...}{other parameters to be passed as arguments for function \code{pop.decline.fit}}
-
-\item{{name}}{{description}}
 }
 \value{
 A data frame containing, for each of taxon, the year of assessment,

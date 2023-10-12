@@ -105,7 +105,8 @@ AOO <- c(5, 25)
 locations <- c(1, 10)
 protected <- c(80, 50)
 decline <- c("Stable", "Decreasing")
-cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, protected = protected, decline = decline)
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, 
+                  protected = protected, decline = decline)
 
 EOO <- c(34000, 5000)
 AOO <- c(300, 25)
@@ -113,7 +114,8 @@ locations <- c(9, 12)
 sever.frag <- c(FALSE, TRUE)
 protected <- c(100, 80)
 decline <- c("Decreasing", "Decreasing")
-cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, 
+                  sever.frag = sever.frag, protected = protected, decline = decline)
 
 EOO <- c(34000, 5000)
 AOO <- c(300, 25)
@@ -121,7 +123,8 @@ locations <- c(15, 12)
 sever.frag <- c(TRUE, TRUE)
 protected <- c(80, 50)
 decline <- c("Decreasing", "Decreasing")
-cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, sever.frag = sever.frag, protected = protected, decline = decline)
+cat_criterion_b(EOO = EOO, AOO = AOO, locations = locations, 
+                  sever.frag = sever.frag, protected = protected, decline = decline)
 
 }
 \references{

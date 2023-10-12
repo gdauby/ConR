@@ -61,7 +61,7 @@ pop.fluctuation(x = example_fluctuation)
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
 Version 14. Standards and Petitions Committee. Downloadable from:
-http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
+https://www.iucnredlist.org/resources/redlistguidelines.
 
 Cuervo, J.J. & Møller, A.P. (2017). Colonial, more widely distributed and
 less abundant bird species undergo wider population fluctuations independent

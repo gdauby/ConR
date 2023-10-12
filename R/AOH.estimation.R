@@ -35,8 +35,7 @@
 #' @param simplifiy_poly logical whether the resulting polygon should be
 #'   simplified using ms_simplify function of rmapshaper package
 #' @param buffer logical
-
-
+#' 
 #' `SpatialPolygons` showing for example countries or continent borders.
 #' This shapefile will be used for cropping the `SpatialPolygons`l if
 #' exclude.area is TRUE
@@ -99,14 +98,14 @@
 #'   polygons. But note that for rasters, this include additional steps that can
 #'   be time and memory consuming.
 #'   
-#' @examples No examples available yet.
-#' 
 #' @importFrom terra project crop vect rast app crs
 #' @importFrom stars st_as_stars
 #' @importFrom rmapshaper ms_simplify
+#' @importFrom dplyr bind_rows
 #' @import sf
 #' 
 #' @export AOH.estimation
+#' 
 AOH.estimation <- function(XY,
                      show_progress = TRUE,
                      proj_type = "cea",

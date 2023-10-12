@@ -148,11 +148,13 @@ thousand records from ~5100 species using 5 cores.
 }
 \examples{
 
-mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0,-44.0,-26.0,-34.0,-22.0,-40.0,-46.0,-34.0),
-                   ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2,-22.0,-46.0,-23.0,-25.0,-43.0,-32.0,-32.0),
+mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0,-44.0,
+                             -26.0,-34.0,-22.0,-40.0,-46.0,-34.0),
+                   ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2,-22.0,
+                             -46.0,-23.0,-25.0,-43.0,-32.0,-32.0),
                    tax = rep(c("a", "b"), each=7),
-                   valid = c(c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE),c(FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE)),
-                   stringsAsFactors = FALSE)
+                   valid = c(c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE),
+                              c(FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE)))
 plot(mydf[,2:1], col = as.factor(mydf$tax), 
            pch = as.double(as.factor(mydf$tax)))
 points(mydf[mydf$valid,2:1], col = as.factor(mydf$tax)[mydf$valid], 

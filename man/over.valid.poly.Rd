@@ -24,17 +24,17 @@ over.valid.poly(
 
 \item{names_taxa}{character string}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'#'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{character string or numeric or object of CRS class, by
+default is "cea"}
 
 \item{min.dist}{minimum tolerated distance between polygons and points.
 Default to 0.1 m.}
 
 \item{value}{output value: proportional distance ("dist") or inside/outside
 the polygon ("flag")?}
-
-\item{proj_user}{projected coordinate system (in meters)}
 }
 \description{
 Get Occurrences Distance to a Polygon

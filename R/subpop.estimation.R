@@ -5,16 +5,18 @@
 #' @param XY data.frame with first two columns are projected coordinates (numeric)
 #' @param Resol_sub_pop numeric. Defines the radius of the circles
 #'   around each occurrence, in kilometres.
-#' @param export_shp logical
-#' @param proj_type
+#' @param export_shp logical. Whether the resulting shapefiles should be
+#'   exported. FALSE by default.
+#' @param proj_type character string or numeric or object of CRS class, by
+#'   default is "cea"
 #'
 #' @importFrom utils packageVersion
-#' @import sf
+#' @importFrom sf st_as_sf st_buffer st_union st_cast st_crs
 #' 
 subpop.estimation <- function(XY,
                          Resol_sub_pop, 
                          export_shp = FALSE,
-                         proj_type) {
+                         proj_type = "cea") {
   
   if(utils::packageVersion("sf") < '0.9.0')
     stop('A more recent version of the "sf" package is needed, please update this package')

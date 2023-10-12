@@ -7,7 +7,7 @@
 A dataframe
 }
 \source{
-GBIF.org (9th February 2016) GBIF Occurrence Download \url{http://doi.org/10.15468/dl.2tkoae}
+GBIF.org (9th February 2016) GBIF Occurrence Download (https://doi.org/10.15468/dl.2tkoae)
 }
 \usage{
 data(Malagasy.amphibian)
@@ -20,7 +20,7 @@ This dataset was further filtered out for keeping only species that have at leas
 }
 \references{
 Download Information:
-DOI: http://doi.org/10.15468/dl.2tkoae (may take some hours before being active)
+DOI: 10.15468/dl.2tkoae (may take some hours before being active)
 Creation Date: Tuesday, February 9, 2016 9:31:26 PM CET
 Records included: 74352 records from 50 published datasets
 Data size: 4.6 MB

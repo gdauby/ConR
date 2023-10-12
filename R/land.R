@@ -7,5 +7,5 @@
 #' @name land
 #' @usage data(land)
 #' @format A dataframe
-#' @source <http://www.naturalearthdata.com/downloads/10m-physical-vectors/>
+#' @source <https://www.naturalearthdata.com/downloads/10m-physical-vectors/>
 NULL

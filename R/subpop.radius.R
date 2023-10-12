@@ -7,12 +7,17 @@
 #'   conservation assessments of extinction risk.
 #'
 #' @param XY a data.frame. containing the geographical coordinates for each taxon.
-#' @param factor.div. numeric. denominator value used to obtain the fraction of
+#' @param factor.div numeric. denominator value used to obtain the fraction of
 #'   the maximum distance. Default to 10.
 #' @param quant.max numeric. The upper-quantile of the inter-point distance to
 #'   be considered as a threshold of maximum distance. Can vary between 0 and 1.
 #'   Default to 1.
-#' @param proj_type
+#' @param mode a character. Type of coordinate projection: "spheroid" or
+#'   "planar". Defualts to "spheroid".
+#' @param proj_type character string or numeric or object of CRS class, by
+#'   default is "cea"
+#' 
+#' 
 #' 
 #' @details 
 #' **Input** as a `dataframe` should have the following structure:
@@ -113,6 +118,7 @@ subpop.radius = function(XY,
   #package data.table. Maybe use another approach to not import the
   #the package just for this small function? But I am not sure if
   #the foreach loop is really necessary.
+  ddlat <- ddlon <- tax <- NULL
   
   XY.dt <- data.table::data.table(XY)
   data.table::setkeyv(XY.dt, "tax") ## setting 'tax' as key/group to the data.table (makes computations faster)

@@ -61,6 +61,7 @@ to 2.}
 simplified using ms_simplify function of rmapshaper package}
 
 \item{buffer}{logical
+
 \code{SpatialPolygons} showing for example countries or continent borders.
 This shapefile will be used for cropping the \code{SpatialPolygons}l if
 exclude.area is TRUE}
@@ -136,8 +137,4 @@ the pixels within the EOO. However, if the EOO polygon is small enough to
 fit entirely within a pixel, metrics will refer to this single pixel. So,
 make sure that the resolution of the rasters provided make sense to the
 range of the taxa being assessed.
-}
-\examples{
-No examples available yet.
-
 }

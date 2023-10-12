@@ -105,7 +105,7 @@ pop.decline.test <- function(x,
   if(class(CI)[1] == "try-error") {
     
     seq.ys <- seq(min(ys),  max(ys), by = 1)
-    preds <- predict(x$best.model, newdata = data.frame(ys = seq.ys))
+    preds <- stats::predict(x$best.model, newdata = data.frame(ys = seq.ys))
     mod <- stats::lm(I(diff(preds) / head(preds, 1)) ~ 1)
     ci.diff <- suppressMessages(stats::confint(mod))
     

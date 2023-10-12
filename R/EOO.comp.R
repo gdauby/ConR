@@ -39,11 +39,11 @@
 #' from the `rgdal` package for getting the EPSG code.
 #' 
 #' For the very specific (and infrequent) case where all occurrences are
-#' localized on a straight line (in which case EOO would be null), 
-#' 'noises' are added to coordinates, using the `jitter` function, 
-#' see \href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}. 
-#' There is a warning when this happens. This means that EOO value will not be constant 
-#' across multiple estimation (although the variation should be small)
+#' localized on a straight line (in which case EOO would be null), 'noises' are
+#' added to coordinates, using the function
+#' [jitter](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter).
+#' There is a warning when this happens. This means that EOO value will not be
+#' constant across multiple estimation (although the variation should be small)
 #' 
 #' @examples
 #' 

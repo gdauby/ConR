@@ -6,7 +6,7 @@ Maintainer: Gilles Dauby <gildauby@gmail.com>
 Description: Multi-species estimation of biological indicators of populations used
     for the preliminary assessment of conservation status following the Red List 
     Criteria A, B, C and D of the International Union for Conservation of Nature 
-    (IUCN, see <http://www.iucnredlist.org>).
+    (IUCN).
 Depends:
     R (>= 4.0)
 License: GPL-2
@@ -27,6 +27,7 @@ Imports:
     lifecycle,
     FuzzyNumbers.Ext.2,
     stringr,
+    dplyr,
     graphics,
     stats,
     utils,

@@ -5,3 +5,4 @@ inst/doc
 *.Rproj
 *.Rhistory
 test_data.R
+data-raw/
