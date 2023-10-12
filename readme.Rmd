@@ -82,6 +82,9 @@ The development of this package was supported by:
 
 <!-- ## Acknowledgements -->
 
+## Citation
+
+G. Dauby & R. A. F. de Lima (2022). ConR: Computation of Parameters Used in Preliminary Assessment of Species Conservation Status. R package (version 2.0.0).
 
 ## See Also
 
