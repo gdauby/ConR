@@ -29,7 +29,7 @@
 #'   influence the extinction risk of the regional population, the category
 #'   (...) should be kept unaltered" (IUCN 2012).
 #'
-#' @author Lima, R.A.F.
+#' @author Renato A. Ferreira de Lima
 #'
 #' @references IUCN (2012). Guidelines for Application of IUCN Red List Criteria
 #'   at Regional and National Levels (Version 4.0). IUCN. Gland, Switzerland and

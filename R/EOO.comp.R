@@ -5,14 +5,17 @@
 #' @param XY data.frame
 #' @param exclude.area logical. Default if FALSE
 #' @param country_map SpatialPolygonDataframe. Default if NULL
-#' @param method.range string, by default "convex.hull", can also take "alpha.hull"
+#' @param method.range string, by default "convex.hull", can also take
+#'   "alpha.hull"
 #' @param alpha integer
 #' @param buff.alpha numeric
 #' @param method.less.than3 string
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' @param mode character string either 'spheroid' or 'planar'. By default
+#'   'spheroid'
+#' @param proj_type character string or numeric or object of CRS class, by
+#'   default is "cea"
 #'
-#' @author Dauby, G. & Lima, R.A.F.
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #' 
 #' @return A list with one element being a numeric vector [[1]]EOO and the polygon as Simple feature collection [[2]]spatial.polygon
 #'  
@@ -33,7 +36,7 @@
 #' 
 #' It is possible to use another projection by providing the EPSG code to `proj_type`. See example.
 #' Check [make_EPSG](https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG)
-#' from the `rgdal` packag for getting the EPSG code.
+#' from the `rgdal` package for getting the EPSG code.
 #' 
 #' For the very specific (and infrequent) case where all occurrences are
 #' localized on a straight line (in which case EOO would be null), 

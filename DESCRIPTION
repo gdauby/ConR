@@ -1,12 +1,12 @@
 Package: ConR
 Type: Package
-Title: Computation of Parameters Used in Preliminary Assessment of Conservation Status
+Title: Computation of Parameters Used in Preliminary Assessment of Species Conservation Status
 Version: 2.0.11
 Maintainer: Gilles Dauby <gildauby@gmail.com>
 Description: Multi-species estimation of biological indicators of populations used
-    for the preliminary assessment of conservation status following Criterion A, B, 
-    C and D of the International Union for Conservation of Nature (IUCN, 
-    see <http://www.iucnredlist.org>).
+    for the preliminary assessment of conservation status following the Red List 
+    Criteria A, B, C and D of the International Union for Conservation of Nature 
+    (IUCN, see <http://www.iucnredlist.org>).
 Depends:
     R (>= 4.0)
 License: GPL-2
@@ -44,7 +44,7 @@ Authors@R: c(
 	email = "gildauby@gmail.com", 
 	comment = c(ORCID = "0000-0002-9498-413X")),
 	person("Renato", "Augusto Ferreira de Lima", role = c("aut"),
-	email = "renato.lima@naturalis.nl", 
+	email = "raflima@usp.br", 
 	comment = c(ORCID = "0000-0002-1048-0138")))
 RdMacros: lifecycle
 Roxygen: list(markdown = TRUE)

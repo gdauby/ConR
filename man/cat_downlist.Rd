@@ -58,5 +58,5 @@ at Regional and National Levels (Version 4.0). IUCN. Gland, Switzerland and
 Cambridge, UK. 41pp.
 }
 \author{
-Lima, R.A.F.
+Renato A. Ferreira de Lima
 }

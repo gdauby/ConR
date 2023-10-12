@@ -33,7 +33,7 @@ allowing the comparison of models with few or more degrees of freedom then
 the number of observations, which return infinite values of logLik of the
 correction term in the AICc comparison. These alternatives are
 statistically incorrect, but they allow model ranking for selection within
-the needs of package \code{conR}. These alternatives are provided because the
+the needs of package \code{ConR}. These alternatives are provided because the
 assessment of species conservation status often relies on very few
 observations (e.g. population size estimates).
 
@@ -49,10 +49,12 @@ that can generate non-realistic projections depending on the population
 data or on the years chosen for the projection period.
 }
 \references{
-Burnham and Anderson (2004)
+D. Anderson and K. Burnham (2004). Model selection and multi-model
+inference. Second edition. Springer-Verlag, New York.
+
 Ben Bolker and R Development Core Team (2017). bbmle: Tools for General Maximum Likelihood
 Estimation. R package version 1.0.20. https://CRAN.R-project.org/package=bbmle
 }
 \author{
-Lima, R.A.F.
+Renato A. Ferreira de Lima
 }

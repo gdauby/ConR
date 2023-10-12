@@ -47,7 +47,7 @@
 #'   and continuing decline for each sub-criterion *must* be the same.
 #'
 #'
-#' @author Lima, R.A.F. & Dauby, G.
+#' @author Renato A. Ferreira de Lima & Gilles Dauby
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
 #'   Criteria. Version 14. Standards and Petitions Committee. Downloadable from:

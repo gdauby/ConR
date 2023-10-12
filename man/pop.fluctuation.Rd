@@ -68,5 +68,5 @@ less abundant bird species undergo wider population fluctuations independent
 of their population trend. PloS one, 12(3): e0173220.
 }
 \author{
-Lima, R.A.F.
+Renato A. Ferreira de Lima
 }

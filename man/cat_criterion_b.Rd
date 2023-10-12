@@ -68,14 +68,25 @@ fluctuations. Default to 10 as recommended by IUCN.}
 and not just the consensus categories? Default to TRUE.}
 }
 \value{
-list
+A list of three or four elements:
+\itemize{
+\item \code{ranks_B}: a character vector with the consensus category of each
+taxon based on subcriteria B1 and B2
+\item \code{cats_code}: a character vector with the final IUCN category for
+each taxon
+\item \code{orig_ranks_B}: original vector of threat categories for each
+taxon before taking into account the threshold for protected areas
+\item \code{all_cats}: a data frame with the categorization of each taxon
+based on all sub criteria, only returned if \code{all.cats=TRUE}
+}
 }
 \description{
 Provide IUCN threat categories based on B sub-criteria,
 conditions and thresholds.
 }
 \details{
-The function categorizes taxa following criterion B and categories of the IUCN.
+The function categorizes taxa following criterion B and categories
+of the IUCN.
 }
 \examples{
 
@@ -119,5 +130,5 @@ Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Dauby, G. & Lima, R.A.F.
+Gilles Dauby & Renato A. Ferreira de Lima
 }

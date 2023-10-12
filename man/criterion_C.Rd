@@ -93,7 +93,7 @@ differences between population minima and maxima to classify populations
 with extreme fluctuations. Default to 10 as recommended by IUCN (2019).}
 
 \item{high.alter}{numerical. Threshold of proportion of changes that are
-followed by a change in the opposite direction. Default to 80\\%. Currently NOT implemented.}
+followed by a change in the opposite direction. Default to 80\%. Currently NOT implemented.}
 
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
@@ -108,6 +108,8 @@ to 2.}
 to TRUE.}
 
 \item{...}{other parameters to be passed as arguments for function \code{pop.decline.fit}}
+
+\item{{name}}{{description}}
 }
 \value{
 A data frame containing, for each of taxon, the year of assessment,
@@ -253,5 +255,5 @@ Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Lima, R.A.F. & Dauby, G.
+Renato A. Ferreira de Lima & Gilles Dauby
 }

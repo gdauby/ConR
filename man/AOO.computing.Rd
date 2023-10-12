@@ -18,17 +18,23 @@ AOO.computing(
 \arguments{
 \item{XY}{\link[base:data.frame]{data.frame} see Details.}
 
-\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size in kilometres used for estimating Area of Occupancy.}
+\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
+in kilometres used for estimating Area of Occupancy.}
 
-\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of raster with random starting position used for estimating the AOO. If 0 but some translation of the raster are still done.}
+\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
+raster with random starting position used for estimating the AOO. If 0 but
+some translation of the raster are still done.}
 
 \item{parallel}{logical, by default is FALSE. Whether running in parallel.}
 
-\item{NbeCores}{integer, by default is 2. Register the number of cores for parallel execution. Only used if parallel is TRUE.}
+\item{NbeCores}{integer, by default is 2. Register the number of cores for
+parallel execution. Only used if parallel is TRUE.}
 
-\item{show_progress}{logical, by default is TRUE. Whether a progress bar during computation is shown.}
+\item{show_progress}{logical, by default is TRUE. Whether a progress bar
+during computation is shown.}
 
-\item{export_shp}{logical, by default is FALSE. Whether a shapefile of occupied cells should be exported.}
+\item{export_shp}{logical, by default is FALSE. Whether a shapefile of
+occupied cells should be exported.}
 
 \item{proj_type}{character or numeric, by default is "cea", see Details.}
 }
@@ -58,10 +64,11 @@ See Examples.
 }
 
 \section{Iteration to get the minimal AOO}{
-The argument \code{nbe.rep.rast.AOO} should ideally be higher than 10 for increasing
-the chance to get the minimal number of occupied cell. However, increasing \code{nbe.rep.rast.AOO}
-also increases the computing time.
-Note that if \code{nbe.rep.rast.AOO = 0}, several translations of the grid overlaying occurrences are still conducted
+The argument \code{nbe.rep.rast.AOO} should ideally be higher than 10 for
+increasing the chance to get the minimal number of occupied cell. However,
+increasing \code{nbe.rep.rast.AOO} also increases the computing time. Note that if
+\code{nbe.rep.rast.AOO = 0}, several translations of the grid overlaying
+occurrences are still conducted
 }
 
 \section{proj_type}{
@@ -82,7 +89,8 @@ AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
 
 }
 \references{
-Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
+Gaston & Fuller 2009 The sizes of species'geographic ranges,
+Journal of Applied Ecology, 49 1-9
 }
 \author{
 Gilles Dauby \email{gilles.dauby@ird.fr}

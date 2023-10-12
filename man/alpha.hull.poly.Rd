@@ -17,7 +17,8 @@ alpha.hull.poly(
 \arguments{
 \item{XY}{data.frame coordinates}
 
-\item{alpha}{integer if mode planar, in kilometers, if mode spheroid in decimal degrees}
+\item{alpha}{integer if mode planar, in kilometers, if mode spheroid in
+decimal degrees}
 
 \item{buff}{numeric}
 
@@ -25,14 +26,19 @@ alpha.hull.poly(
 
 \item{poly_exclude}{sf polygon}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
-\item{proj_type}{character string or numeric or object of crs class, by default is "cea"}
+\item{proj_type}{character string or numeric or object of crs class, by
+default is "cea"}
 }
 \description{
 Alpha hull process
 }
 \details{
-The functions ahull_to_SPLDF and alpha.hull.poly were originally posted in the website https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
-in a now broken link. It is also used in functions written by David Bucklin, see https://github.com/dnbucklin/r_movement_homerange
+The functions ahull_to_SPLDF and alpha.hull.poly were originally
+posted in the website
+https://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/working-spatial-data/converting-alpha-shapes-sp-objects/
+in a now broken link. It is also used in functions written by David Bucklin,
+see https://github.com/dnbucklin/r_movement_homerange
 }

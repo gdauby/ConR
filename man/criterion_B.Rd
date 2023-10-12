@@ -83,9 +83,12 @@ the buffer in decimal degree added to alpha hull. By default is 0.1}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
 is FALSE}
 
-\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size in kilometres used for estimating Area of Occupancy.}
+\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
+in kilometres used for estimating Area of Occupancy.}
 
-\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of raster with random starting position used for estimating the AOO. If 0 but some translation of the raster are still done.}
+\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
+raster with random starting position used for estimating the AOO. If 0 but
+some translation of the raster are still done.}
 
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
@@ -120,5 +123,5 @@ Criteria. Version 14. Standards and Petitions Committee. Downloadable from:
 http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 }
 \author{
-Dauby, G. & Lima, R.A.F.
+Gilles Dauby & Renato A. Ferreira de Lima
 }

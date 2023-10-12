@@ -30,7 +30,8 @@ default is "cea"}
 \item{export_shp}{logical. Whether the resulting shapefiles should be
 exported. FALSE by default.}
 
-\item{parallel}{logical. Whether compute should run in parallel. FALSE by default.}
+\item{parallel}{logical. Whether compute should run in parallel. FALSE by
+default.}
 
 \item{show_progress}{logical. Whether a bar showing progress in computation
 should be shown. TRUE by default.}
@@ -39,12 +40,15 @@ should be shown. TRUE by default.}
 2.}
 }
 \value{
-If \code{export_shp} is TRUE, a list with [\link{1}]number_subpop and [\link{2}]poly_subpop a \verb{Simple feature collection} with as many MULTIPOLYGON as taxa
-If \code{export_shp} is FALSE, a vector with estimated number of subpopulation per taxa
+If \code{export_shp} is TRUE, a list with [\link{1}]number_subpop and [\link{2}]poly_subpop
+a \verb{Simple feature collection} with as many MULTIPOLYGON as taxa.
+If \code{export_shp} is FALSE, a vector with estimated number of subpopulation per
+taxa.
 }
 \description{
 Estimate the number of subpopulations following the method
-\strong{circular buffer method} (overlapping buffered circles form a single subpopulation)
+\strong{circular buffer method} (overlapping buffered circles form a single
+subpopulation)
 }
 \details{
 \strong{Input} as a \code{dataframe} should have the following structure:
