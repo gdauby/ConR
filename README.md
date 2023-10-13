@@ -1,10 +1,21 @@
 
+# ConR package
+
 <!-- badges: start -->
 
 [![Travis build
 status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
-<!-- badges: end --> [![CRAN RStudio mirror
+[![CRAN RStudio mirror
 downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
+<!-- badges: end -->
+
+The `ConR` pacakge aims at assisting the preliminary assessment of
+species conservation status based on the International Union for
+Conservation of Nature (IUCN) Red List Categories and Criteria. More
+especifically, it helps users to calculate the population metrics
+related to the IUCN criteria A, B, C and D and to assign one of the IUCN
+categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It was developed speed
+up the assessment of hundreds to thousands of species at the same time.
 
 The ideas behind this package, and its testing involved many people and
 institutes.
@@ -14,13 +25,10 @@ institutes.
 
 **First step**. Install [R](https://cran.r-project.org/).
 
-**Second step**. A proper way to work with R is to define a [working
-directory](https://bookdown.org/ndphillips/YaRrr/the-working-directory.html).
-If you are working with Rstudio, you can create the first time a
-[project](https://bookdown.org/ndphillips/YaRrr/projects-in-rstudio.html),
-which much simplify handling of scripts and data.
+<!-- **Second step**. A proper way to work with R is to define a [working directory](https://bookdown.org/ndphillips/YaRrr/the-working-directory.html). If you are working with Rstudio, you can create the first time a [project](https://bookdown.org/ndphillips/YaRrr/projects-in-rstudio.html), which much simplify handling of scripts and data. -->
+<!-- **Third step**. Install ConR package (one of the two following) : -->
 
-**Third step**. Install ConR package (one of the two following) :
+**Second step**. Install ConR package (one of the two following):
 
 To install the version on CRAN
 
@@ -31,7 +39,7 @@ To install the version under development.
     install.packages("devtools")
     devtools::install_github("gdauby/ConR")
 
-# Loading ConR
+## Loading ConR
 
 **Attach ConR package** This should be done everytime you open an R
 session.
@@ -53,7 +61,8 @@ be obtained by the following code:
 The development of this package was supported by:
 
 - the European Union’s Horizon 2020 research and innovation program
-  under the Marie Skłodowska-Curie grant agreement No 795114.
+  under the Marie Skłodowska-Curie grant agreement No 795114 ([THREAT
+  project](https://cordis.europa.eu/project/id/795114))
 
 - CESAB (Centre for the Synthesis and Analysis of Biodiversity).
   Research program of the FRB (Foundation for Research on Biodiversity)
