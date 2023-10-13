@@ -1,0 +1,30 @@
+---
+title: "Introduction to ConR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ConR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ConR)
+```
+
+
+This vignette show how to apply ConR for applying a workflow to obtain multi-criterion evaluation for one or multiple species.
+
+
+
+
+
+
+
+
