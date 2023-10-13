@@ -21,7 +21,6 @@ Imports:
     rnaturalearth,
     sf,
     stars,
-    sp,
     nls.multstart,
     segmented,
     lifecycle,
@@ -35,7 +34,12 @@ Imports:
     terra,
     rmapshaper
 LazyData: true
-Suggests: rmarkdown, testthat, rnaturalearthdata, alphahull
+Suggests: 
+    rmarkdown,
+    testthat,
+    rnaturalearthdata,
+    alphahull,
+    knitr
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues
@@ -49,3 +53,4 @@ Authors@R: c(
 	comment = c(ORCID = "0000-0002-1048-0138")))
 RdMacros: lifecycle
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr

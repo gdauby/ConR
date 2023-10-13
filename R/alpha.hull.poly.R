@@ -89,8 +89,8 @@ alpha.hull.poly <-
       }
     }
     
-    y.as.spldf <- ahull_to_SPLDF(ahull.obj)
-    y.as.spldf_sf <- st_as_sf(y.as.spldf)
+    y.as.spldf_sf <- ahull_to_SPLDF(ahull.obj)
+    # y.as.spldf_sf <- st_as_sf(y.as.spldf)
     NZfill <- st_buffer(y.as.spldf_sf, buff)
     if (mode == "planar")
       st_crs(NZfill) <- projEAC
