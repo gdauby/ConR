@@ -1,0 +1,88 @@
+---
+title: "AOO"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup, echo=F, include = FALSE}
+# library(ConR)
+devtools::load_all()
+```
+
+
+
+## Example 1
+
+
+Generate an artificial example dataset
+```{r}
+
+set.seed(3)
+nbe_occ <- sample(seq(3, 100, 1), 20, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+head(test_data)
+dim(test_data)
+
+
+```
+
+
+```{r}
+species_one <- test_data[which(test_data$taxa == "tax1"),]
+
+AOO.computing(XY = species_one)
+
+aoo_res <- AOO.computing(XY = test_data, 
+              Cell_size_AOO = 100, # input$aoo_size min=0.1, max=50, value = 2, round=TRUE, step=1
+              nbe.rep.rast.AOO = 2,  # input$rep_rast min = 0, max = 30, value = 10, round=TRUE, step=1
+              export_shp = T)
+
+aoo_res$AOO ## resultats à garder
+aoo_res$AOO_poly ## polygones à garder si l'on veut cartographier les resultats, à voir selon les sorties que l'on pourra faire
+
+
+```
+
+
+```{r}
+
+
+
+
+AOO.decline(
+  XY = test_data,
+  hab.map = all_shp[1:2],
+  hab.map.type = c(FALSE, FALSE)
+)
+
+
+AOO.decline(
+  XY = test_data,
+  hab.map = all_shp[1:2],
+  hab.map.type = c(FALSE, FALSE),
+  all_individual_layers = T
+)
+
+AOO.decline(
+  XY = test_data,
+  hab.map = all_shp[4],
+  hab.map.type = c(FALSE, FALSE),
+  all_individual_layers = T
+)
+
+
+
+```
+

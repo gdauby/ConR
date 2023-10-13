@@ -1,0 +1,64 @@
+---
+title: "locations"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup, echo=F, include = FALSE}
+# library(ConR)
+devtools::load_all()
+```
+
+
+
+## Example 1
+
+
+Generate an artificial example dataset
+```{r}
+
+set.seed(3)
+nbe_occ <- sample(seq(3, 100, 1), 20, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-20, -13, 0.05), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(44, 48, 0.01), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+head(test_data)
+dim(test_data)
+
+
+```
+
+
+
+```{r}
+
+resr <- locations.comp(XY = test_data)
+
+XY = test_data
+method = "fixed_grid"
+nbe_rep = 0
+protec.areas = NULL
+Cell_size_locations = 10
+method_protected_area = "no_more_than_one"
+ID_shape_PA = "WDPA_PID"
+Rel_cell_size = 0.05
+parallel = FALSE
+NbeCores = 2
+show_progress = TRUE
+proj_type = "cea"
+
+
+```
+
+
+

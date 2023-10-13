@@ -1,0 +1,341 @@
+---
+title: "EOO"
+author: "Gilles Dauby"
+date: "01/09/2021"
+output: html_document
+---
+
+
+```{r}
+
+
+## generation d'un jeu de donnees artificel
+set.seed(3)
+nbe_occ <- sample(seq(1, 30, 1), 20, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+head(test_data)
+dim(test_data)
+table(test_data$taxa)
+
+
+test_data <- read.csv("D:/MonDossierR/conr_add_scripts/plam_thomas.csv", row.names = 1)
+
+test_data <- read.csv("D:/MonDossierR/conr_add_scripts/exemple_homemade_cleaned_data.csv")
+test_data <- read_csv("D:/MonDossierR/conr_add_scripts/data_for_GD.csv")
+
+test_data <- readxl::read_excel("D:/MonDossierR/conr_add_scripts/all_rec_cam_subset.xlsx")
+test_data <- test_data %>% select(ddlat, ddlon, tax_sp_level)
+
+eoo_res <-
+  EOO.computing(XY = test_data, 
+                mode = "planar",  # input$mode_eoo a définir par utilisateur : 'spheroid' or 'planar'. By default 'spheroid'
+                export_shp = TRUE)
+
+eoo_res$spatial
+eoo_res$results
+
+
+test_data <- data.frame(ddlat = c(8, 8, 14, 8), ddlon = c(1, 1, 7, 1), tax = "tax1")
+
+
+# for (i in 585:length(unique(test_data$accepted_name))) {
+#   print(i)
+# aoo_res <- AOO.computing(XY = test_data[which(test_data$accepted_name == unique(test_data$accepted_name)[i]),], 
+#               Cell_size_AOO = 2, # input$aoo_size min=0.1, max=50, value = 2, round=TRUE, step=1
+#               nbe.rep.rast.AOO = 0,  # input$rep_rast min = 0, max = 30, value = 10, round=TRUE, step=1
+#               export_shp = T)
+#   
+# }
+
+aoo_res <- AOO.computing(XY = test_data, 
+              Cell_size_AOO = 2, # input$aoo_size min=0.1, max=50, value = 2, round=TRUE, step=1
+              nbe.rep.rast.AOO = 5,  # input$rep_rast min = 0, max = 30, value = 10, round=TRUE, step=1
+              export_shp = T)
+
+locations <- locations.comp(XY = test_data, 
+                            Cell_size_locations = 100 # input$locations_size min=0.1, max=50, value = 10, round=TRUE, step=1
+                            )
+
+categories <- 
+  cat_criterion_b(EOO = p1$results$eoo, AOO = aoo_res$AOO$aoo, locations = locations$locations$locations)
+
+results_full <-
+    data.frame(
+      taxa = row.names(aoo_res),
+      EOO = eoo_res$results$eoo,
+      AOO = aoo_res$AOO$aoo,
+      locations = locations$locations$locations,
+      category = categories$ranks_B,
+      cat_codes = categories$cats_code
+    )
+
+
+
+set.seed(3)
+nbe_occ <- sample(seq(1, 3, 1), 3, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+head(test_data)
+dim(test_data)
+
+p1 <- 
+  EOO.computing(XY = test_data, 
+                mode = "spheroid",  # input$mode_eoo a définir par utilisateur : 'spheroid' or 'planar'. By default 'spheroid'
+                export_shp = TRUE, 
+                method.range = "alpha.hull", alpha = 100)
+
+jj <- p1$spatial[1,]
+mapview::mapview(jj)
+
+data("Malagasy.amphibian")
+
+XY <- Malagasy.amphibian
+
+locations.comp(XY = test_data, Cell_size_locations = 10)
+
+
+
+#'
+### example Large distribution
+# Spheroid estimation
+XY <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
+p1 <- 
+  EOO.comp(XY =  XY[,c(2, 1)])
+plot(country_map$geometry)
+plot(p1$spatial.polygon$geometry, lwd = 2, col = 'red', add = TRUE)
+
+p2 <- 
+  EOO.comp(XY = XY[,c(2, 1)], mode = "planar")
+plot(country_map$geometry)
+plot(p2$spatial.polygon$geom, lwd = 2, col = 'red', add = TRUE)
+
+# World Mercartor projection
+p2 <- 
+  EOO.comp(XY = XY[,c(2, 1)], mode = "planar", proj_type = 3395)
+plot(country_map$geometry)
+plot(p2$spatial.polygon$geom, lwd = 2, col = 'red', add = TRUE)
+
+### example Antartic distribution
+XY <- rbind(c(-150, -65), c(0, -62), c(120, -78), c(150, -65))
+
+p1 <- 
+  EOO.comp(XY = XY[,c(2, 1)], mode = "planar", proj_type = "Antarctic")
+
+p1 <- st_transform(p1$spatial.polygon, proj_crs(proj_type = "Antarctic"))
+plot(st_transform(st_as_sf(country_map), proj_crs(proj_type = "Antarctic"))$geometry, extent = p1)
+plot(p1, lwd = 2, col = 'red', add = TRUE)
+
+p1 <- 
+  EOO.comp(XY = XY[,c(2, 1)], mode = "planar")
+
+p1 <- 
+  EOO.comp(XY = XY[,c(2, 1)])
+
+p1 <- st_transform(p1$spatial.polygon, proj_crs(proj_type = "Antarctic"))
+plot(st_transform(st_as_sf(country_map), proj_crs(proj_type = "Antarctic"))$geometry, extent = p1)
+plot(p1, lwd = 2, col = 'red', add = TRUE)
+
+
+
+mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0,-44.0,-26.0,-34.0,-22.0,-40.0,-46.0,-34.0),
+                   ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2,-22.0,-46.0,-23.0,-25.0,-43.0,-32.0,-32.0),
+                   tax = rep(c("a", "b"), each=7),
+                   valid = c(c(TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE),c(FALSE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE)),
+                   stringsAsFactors = FALSE)
+plot(mydf[,2:1], col = as.factor(mydf$tax), 
+           pch = as.double(as.factor(mydf$tax)))
+points(mydf[mydf$valid,2:1], col = as.factor(mydf$tax)[mydf$valid], 
+           pch = 15 + as.double(as.factor(mydf$tax))[mydf$valid])                       
+EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE))
+
+
+
+```
+
+
+```{r}
+## generation d'un jeu de donnees artificel pour reproduire/tester le workflow
+set.seed(3)
+nbe_occ <- sample(seq(1, 15, 1), 10, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+
+test_data <- read_csv("D:/MonDossierR/conr_add_scripts/conr-data.csv")
+test_data <- test_data %>% filter(STATUS_CONR == "IN")
+test_data <- test_data %>% select(ddlat =  decimalLatitude, ddlon = decimalLongitude, species)
+test_data <- readxl::read_excel("D:/MonDossierR/conr_add_scripts/test_data_one_sp.xlsx")
+test_data <- test_data %>% select(ddlat, ddlon, tax_sp_level)
+
+test_data <- dataset.ex
+test_data <- (example <- structure(list(lon = c(-2.59487105548141, -2.01867048441999), lat = c(39.1635112135211, 38.9798640743379), species = c("myspecies", "myspecies")), row.names = c(1L, 2L), class = "data.frame"))
+
+test_data <- readr::read_csv("D:/MonDossierR/conr_add_scripts/temp_for_GD.csv")
+
+
+eoo_res <-
+  EOO.computing(XY = test_data, 
+                mode = "planar",  # input$mode_eoo a définir par utilisateur : 'spheroid' or 'planar'. By default 'spheroid'
+                export_shp = TRUE)
+
+data(dataset.ex)
+aoo_res <- AOO.computing(XY = dataset.ex, 
+              Cell_size_AOO = 2, # input$aoo_size min=0.1, max=50, value = 2, round=TRUE, step=1
+              nbe.rep.rast.AOO = 10,  # input$rep_rast min = 0, max = 30, value = 10, round=TRUE, step=1
+              export_shp = T)
+aoo_res
+
+
+eoo_res$spatial ### data a garder
+eoo_res$results ### data a garder
+
+aoo_res <- AOO.computing(XY = test_data, 
+              Cell_size_AOO = 2, # input$aoo_size min=0.1, max=50, value = 2, round=TRUE, step=1
+              nbe.rep.rast.AOO = 10,  # input$rep_rast min = 0, max = 30, value = 10, round=TRUE, step=1
+              export_shp = F)
+
+
+
+### check if any overlapping polygons to assess threats
+source("D:/database/data.RAINBIO/Version11/functions_bdd_shp.R")
+library(tidyverse)
+library(DBI)
+library(sf)
+
+check_overlap <- extract_overlap_shp(XY = test_data)
+
+check_overlap$shp_tables %>% 
+  dplyr::select(id, table_name, type, description, reference, priority, polygon_method) ### Garder cette table entière comme paramètre et afficher ces 4 colonnes
+
+
+### Si au moins un polygone se superspose avec les données (any(check_overlap$res) est TRUE), alors l'utilisateur peut sélectionner  (maximum) 5 polygones
+## L'ordre dans lequel les shapefile sont choisis ont une importance
+## je ne sais pas quel est la meilleure fonction shiny pour ça
+## peut etre selectizeInput
+
+
+## une fois la sélection faite, il faut aller 'collecter' ces shapefiles sur le serveur avec la fonction suivante (ici pour tous les shapefiles qui se superposent)
+## Function à tester si pas trop lente
+
+
+if (any(check_overlap$shp_tables$overlap)) {
+  all_shp <-
+    collect_shp(table_names = check_overlap$shp_tables[which(check_overlap$shp_tables$overlap),], 
+                XY_sf = check_overlap$XY_sf)
+} else {
+  all_shp <-
+    NULL
+}
+
+all_shp ### Garder cette liste
+spatial_data <- all_shp
+
+names(spatial_data)
+check_overlap$shp_tables %>% select(table_name, priority)
+
+## Finalement, ces shapefiles sont utilisés dans le calcule des location avec le paramètre polygon_list
+locations <- locations.comp(XY = test_data, 
+                            Cell_size_locations = 10,  # input$locations_size min=0.1, max=50, value = 10, round=TRUE, step=1
+                            threat_list =  all_shp, 
+                            threat_weight = check_overlap$shp_tables$priority,
+                            method_polygons = check_overlap$shp_tables$polygon_method, 
+                            # threat_weight = c(1, 20, 1, 1, 1), 
+                            nbe_rep = 10)
+
+## Finalement, ces shapefiles sont utilisés dans le calcule des location avec le paramètre polygon_list
+locations <- locations.comp(XY = test_data, 
+                            Cell_size_locations = 10,  # input$locations_size min=0.1, max=50, value = 10, round=TRUE, step=1
+                            threat_list =  all_shp, 
+                            threat_weight = check_overlap$shp_tables$priority,
+                            method_polygons = "no_more_than_one", 
+                            nbe_rep = 3)
+
+criterion_B(x = test_data, 
+            threat_list = all_shp, 
+            id_shape = "id_orig", 
+            threat_weight = c(1, 1, 1, 1, 1))
+
+criterion_B(x = test_data)
+
+
+protected_areas <- 
+  st_read("C:/Users/dauby/Dropbox/Shapefiles_Raster App Shiny/THREATS/protected areas/NationalParks_filtered_corrected.shp", 
+                        check_ring_dir = TRUE)
+
+locations <- locations.comp(XY = test_data %>%  dplyr::select(ddlat, ddlon, tax_sp_level), 
+                            Cell_size_locations = 10,  # input$locations_size min=0.1, max=50, value = 10, round=TRUE, step=1
+                            threat_list =  protected_areas, 
+                            id_shape = "WDPA_PID",
+                            threat_weight = c(1),
+                            method_polygons = "grid", 
+                            # threat_weight = c(1, 20, 1, 1, 1), 
+                            nbe_rep = 10)
+
+conR_B <- criterion_B(x = as_tibble(test_data) %>%  dplyr::select(ddlat, ddlon, tax_sp_level),
+                      nbe.rep.rast.AOO = 10, threat_list = protected_areas, id_shape = "WDPA_PID", parallel = F, NbeCores = 4)
+
+
+
+```
+
+```{r}
+
+source("D:/database/data.RAINBIO/Version11/functions_bdd_shp.R")
+
+## generation d'un jeu de donnees artificel
+set.seed(3)
+nbe_occ <- sample(seq(1, 30, 1), 20, replace = TRUE) ### 500 species with number of occurrences sampled between 3 and 100
+ddlat <- lapply(nbe_occ, function(x) sample(seq(-10, 15, 0.1), x))
+ddlon <- lapply(nbe_occ, function(x) sample(seq(7, 25, 0.1), x))
+names(ddlon) <- names(ddlat) <- paste0("tax", seq(1,length(ddlat), 1))
+ddlat <- lapply(seq_along(ddlat), function(i) data.frame(ddlat =  ddlat[[i]]))
+ddlon <- lapply(seq_along(ddlon), function(i) data.frame(ddlon =  ddlon[[i]], taxa = names(ddlon)[i]))
+test_data <- 
+  data.frame(ddlat = do.call('rbind', ddlat), ddlon = do.call('rbind', ddlon)[,1], taxa = do.call('rbind', ddlon)[,2])
+
+
+# extract_rb <- readxl::read_excel("D:/MonDossierR/conr_add_scripts/test_extract_rainbio.xlsx")
+# 
+# test_data <- extract_rb %>% filter(georef_final == 1) %>% dplyr::select(ddlat, ddlon, tax_sp_level) %>% filter(tax_sp_level %in% c("Talbotiella breteleri", "Klainedoxa gabonensis", "Ruellia praetermissa"))
+
+test_data <- read_csv("D:/MonDossierR/conr_add_scripts/conr-data2.csv")
+test_data <- test_data %>% dplyr::select(ddlat, ddlon, tax_sp_level)
+
+library(dplyr)
+
+check_overlap <- extract_overlap_shp(XY = test_data)
+
+all_shp <- collect_shp(table_names = check_overlap$shp_tables)
+
+locations.comp_new(XY = test_data, 
+                   polygon_list = all_shp)
+
+locations.comp_new(XY = test_data, 
+                   polygon_list = all_shp, method_polygons = "ee", names_polygons = names(all_shp))
+
+
+polygon_list <- all_shp
+XY <- test_data
+names_polygons <- names(all_shp)
+
+```
+
+
+
+
+
