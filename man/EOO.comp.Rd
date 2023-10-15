@@ -74,7 +74,7 @@ constant across multiple estimation (although the variation should be small)
 \examples{
 
 country_map <-
-  rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
+  rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
 
 ### example Large distribution
 # Spheroid estimation

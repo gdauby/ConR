@@ -227,7 +227,7 @@ criterion_D = function(pop.size = NULL,
                                         paste(y, collapse = "+")
                                       }))
 
-  if(all.cats & class(ranks) == "data.frame")
+  if(all.cats &  inherits(ranks, "data.frame"))
     Results = cbind.data.frame(Results, cats,
                                deparse.level = 0,
                                stringsAsFactors = FALSE)

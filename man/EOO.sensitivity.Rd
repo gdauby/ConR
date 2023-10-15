@@ -57,8 +57,6 @@ default is "convex.hull"}
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
 
-\item{write_results}{a logical. If TRUE, results will be exported in the working environment as a csv file. By default it is FALSE}
-
 \item{file.name}{a character string. Name file for exported results in csv
 file. By default is "EOO.sensitivity.results"}
 

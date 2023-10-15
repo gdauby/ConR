@@ -99,6 +99,7 @@
 #' @importFrom nls.multstart nls_multstart
 #' @importFrom segmented segmented seg.control
 #' @importFrom stats na.omit predict
+#' @importFrom graphics axis legend par points
 #'
 #' @export pop.decline.fit
 #' 
@@ -179,7 +180,7 @@ pop.decline.fit <- function(pop.size,
     lin <- try(stats::nls(f, data = stats::na.omit(DATA),
                           start = list(a = sts[1], b = sts[2])), TRUE)
     
-    if (class(lin) == "try-error") 
+    if (inherits(lin, "try-error")) 
       lin = stats::lm(ps ~ ys, data = stats::na.omit(DATA))
     
     model.ls[["linear"]] = lin
@@ -194,7 +195,7 @@ pop.decline.fit <- function(pop.size,
                            start = list(a = sts[1], b = sts[2], c = sts[3]),
                            stats::nls.control(maxiter = 500)), TRUE)
     
-    if (class(quad) == "try-error")
+    if (inherits(quad, "try-error"))
       quad <- suppressWarnings( nls.multstart::nls_multstart(f, data = stats::na.omit(DATA),
                                                              start_lower = c(a=0.1, b=-0.5, c= -0.1),
                                                              start_upper = c(a=1, b=0.5, c= 0.1),
@@ -202,7 +203,7 @@ pop.decline.fit <- function(pop.size,
                                                              na.action = stats::na.omit)
       )
     
-    if (class(quad) == "try-error") 
+    if (inherits(quad, "try-error")) 
       quad = stats::lm(ps ~ ys + I(ys^2), data = stats::na.omit(DATA))
     
     model.ls[["quadratic"]] = quad
@@ -215,7 +216,7 @@ pop.decline.fit <- function(pop.size,
     exp <- try(stats::nls(f, data = stats::na.omit(DATA), 
                           start = list(a= 1, b= -0.1)), TRUE) 
     
-    if (class(exp) == "try-error") { 
+    if (inherits(exp, "try-error")) { 
       
       exp <- suppressWarnings( nls.multstart::nls_multstart(f, data = stats::na.omit(DATA),
                                                             start_lower = c(a=0.1, b=-0.1),
@@ -238,7 +239,7 @@ pop.decline.fit <- function(pop.size,
     logis <- try(stats::nls(f, data = stats::na.omit(DATA), 
                             start = list(a=1,b=-0.1)), TRUE)
     
-    if (class(logis) == "try-error") { 
+    if (inherits(logis, "try-error")) { 
       
       logis <- suppressWarnings( nls.multstart::nls_multstart(f, data = stats::na.omit(DATA),
                                                               start_lower = c(a=1, b=-0.5),
@@ -260,7 +261,7 @@ pop.decline.fit <- function(pop.size,
     gen.logis <- try(stats::nls(f, data = stats::na.omit(DATA), 
                                 start=list(a=min(stats::na.omit(DATA)$ps), b=-0.2, m = stats::median(stats::na.omit(DATA)$ys))), TRUE)
     
-    if (class(gen.logis) == "try-error") { 
+    if (inherits(gen.logis, "try-error")) { 
       
       gen.logis <- suppressWarnings( nls.multstart::nls_multstart(f, data = stats::na.omit(DATA),
                                                                   start_lower = c(a=0, b=-0.5, m=max(stats::na.omit(DATA)$ys)),
@@ -303,11 +304,11 @@ pop.decline.fit <- function(pop.size,
     error <- errorCondition(piece2)
     
     warn.patt <- "no residual degrees of freedom"
-    if(class(piece2)[1] == "try-error" & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
+    if(any(inherits(piece2, "try-error"))  & !any(grepl(warn.patt, attributes(warn)$names, ignore.case = TRUE))) {
       
       counter <- 0
       
-      while(class(piece2)[1] == "try-error" & counter < max.count){
+      while(any(inherits(piece2, "try-error")) & counter < max.count){
         
         try(piece2 <- segmented::segmented.default(md, seg.Z = ~ys, psi = c(jitter(quebras[1]/2, 1), jitter(quebras[1], 1)),
                                            control = segmented::seg.control(display = FALSE, it.max = 100, n.boot = 50)), TRUE)
@@ -383,17 +384,17 @@ pop.decline.fit <- function(pop.size,
     if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) 
       ylim <- range(c(ylim, preds), na.rm=TRUE)     
     
-    par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
+    graphics::par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
     graphics::plot(DATA$ps ~ DATA$ys, pch=19, cex=1.2, #data = DATA, 
          ylim = ylim, xlim = xlim,
          xlab = "Years", ylab = "Population size (%)",
          xaxt = "n", yaxt= "n", cex.lab = 1.2)
-    axis(1, at = DATA$ys, labels = DATA$years, tcl = -0.3)
+    graphics::axis(1, at = DATA$ys, labels = DATA$years, tcl = -0.3)
     ats <- pretty(seq(min(ylim), max(ylim), 0.1))
     axis(2, at = ats, labels = ats*100, las = 1, tcl = -0.3)
     
     if(!is.null(project.years)) 
-      points(est.prop ~ ys, cex=1.2, data = subset(DATA, is.na(DATA$ps)))
+      graphics::points(est.prop ~ ys, cex=1.2, data = subset(DATA, is.na(DATA$ps)))
     
     range1 <- (range(stats::na.omit(DATA)$ys)[1] - 1)
     range2 <- (range(stats::na.omit(DATA)$ys)[2] + 1)
@@ -408,7 +409,7 @@ pop.decline.fit <- function(pop.size,
                                         add= TRUE, lwd= 2, lty= 2, col = "#D55E00")
       graphics::curve(stats::coef(mod)[1] + stats::coef(mod)[2]*x, from = range1, to = range2,
             add= TRUE, lwd= 2, col = "#D55E00")
-      legend(leg.pos, c("Linear model"), lwd= 2, col= "#D55E00", bty = "n")
+      graphics::legend(leg.pos, c("Linear model"), lwd= 2, col= "#D55E00", bty = "n")
       
     }
     

@@ -62,7 +62,6 @@
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
-#' @param write_results a logical. If TRUE, results will be exported in the working environment as a csv file. By default it is FALSE
 #' @param file.name a character string. Name file for exported results in csv file. By default is "EOO.results"
 #' @param parallel a logical. Whether running in parallel. By default, it is FALSE
 #' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
@@ -122,7 +121,7 @@ EOO.computing <- function(XY,
                           method.range = "convex.hull",
                           # Name_Sp = "species1",
                           method.less.than3 = "not comp",
-                          write_results = FALSE,
+                          # write_results = FALSE,
                           file.name = "EOO.results",
                           parallel = FALSE,
                           NbeCores = 2,
@@ -314,8 +313,8 @@ EOO.computing <- function(XY,
     # }
   }
   
-  if (write_results)
-    write.csv(res_df, paste(getwd(), "/", file.name, ".csv", sep = ""))
+  # if (write_results)
+  #   utils::write.csv(res_df, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (!export_shp)
     output <- res_df

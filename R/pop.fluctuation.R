@@ -110,7 +110,7 @@ pop.fluctuation <- function(x,
     panels = c(ceiling(sqrt(dim(x)[1])), ceiling(sqrt(dim(x)[1]))) 
     if(panels[1]>3) panels[1] <- 3
     if(panels[2]>3) panels[2] <- 3
-    par(mfrow = panels, mgp = c(2.5,0.5,0), mar= c(3.5,4,0.5,1), las=1, tcl = -0.25)
+    graphics::par(mfrow = panels, mgp = c(2.5,0.5,0), mar= c(3.5,4,0.5,1), las=1, tcl = -0.25)
     ylim <- range(x, na.rm=TRUE) + c(0,5)
     
   }  
@@ -175,8 +175,8 @@ pop.fluctuation <- function(x,
       graphics::curve(stats::coef(mod)[1] + stats::coef(mod)[2]*x, add=TRUE, lwd=2,col=2)
       
       #leg.pos <- auto.legend.pos(obs, time, xlim = range(time), ylim = ylim)
-      legend("bottomleft", paste(c("Mean fluct.= "),mean.fluct), bty = "n")
-      if(!is.null(nomes)) legend("topright", nomes[j], bty = "n")
+      graphics::legend("bottomleft", paste(c("Mean fluct.= "),mean.fluct), bty = "n")
+      if(!is.null(nomes)) graphics::legend("topright", nomes[j], bty = "n")
       
     }
     

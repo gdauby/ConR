@@ -8,7 +8,6 @@
 #' @param nbe_rep integer
 #' @param export_shp logical
 #' @param proj_type character string
-#' 
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,

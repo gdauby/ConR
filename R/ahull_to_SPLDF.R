@@ -12,7 +12,7 @@
 #' 
 ahull_to_SPLDF <- function(x)
 {
-  if (class(x) != 'ahull')
+  if (!inherits(x, 'ahull'))
     stop('This function only works with `ahull` class objects')
   
   # convert ashape edges to DF

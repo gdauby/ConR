@@ -48,7 +48,7 @@
 #' @examples
 #' 
 #' country_map <-
-#'   rnaturalearth::ne_countries(scale = 50, returnclass = "sp")
+#'   rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
 #'
 #' ### example Large distribution
 #' # Spheroid estimation
@@ -103,7 +103,12 @@ EOO.comp <-  function(XY,
                       mode = "spheroid",
                       proj_type = "cea"
 ) {
-  # , verbose=TRUE
+  
+  if (!requireNamespace("lwgeom", quietly = TRUE))
+    stop(
+      "The 'lwgeom' package is required to run this function. ",
+      "Please install it first."
+    )
   
   match.arg(method.range, c("convex.hull", "alpha.hull"))
   

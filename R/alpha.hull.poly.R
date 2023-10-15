@@ -80,7 +80,7 @@ alpha.hull.poly <-
       ahull.obj <-
         try(alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha), silent = T)
       
-      if (class(ahull.obj) != "try-error") {
+      if (inherits(ahull.obj, "try-error")) {
         run_alpha <- FALSE
         
       } else {

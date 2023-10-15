@@ -24,8 +24,8 @@ Convex.Hull.Poly <-
     if (exclude.area & is.null(poly_exclude))
       stop("exclude.area is TRUE but no shape provided")
     
-    if(any(grepl('Spatial', class(poly_exclude))))
-      poly_exclude <- as(poly_exclude, "sf")
+    # if(any(grepl('Spatial', class(poly_exclude))))
+    #   poly_exclude <- as(poly_exclude, "sf")
     
     if (mode == "spheroid") {
       
@@ -102,7 +102,7 @@ Convex.Hull.Poly <-
     
     if (mode == "planar") {
       
-      if(class(proj_type) != "crs") {
+      if(inherits(proj_type, "crs")) {
         
         projEAC <- proj_crs(proj_type = proj_type)
         

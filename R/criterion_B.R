@@ -68,6 +68,12 @@ criterion_B <- function(x,
   }
   colnames(x)[1:3] <- c("ddlat","ddlon","tax")
   
+  if (!requireNamespace("lwgeom", quietly = TRUE))
+    stop(
+      "The 'lwgeom' package is required to run this function. ",
+      "Please install it first."
+    )
+  
   if(tibble::is_tibble(x)) x <- as.data.frame(x)
   
   if (is.null(country_map)) {
@@ -178,7 +184,6 @@ criterion_B <- function(x,
       alpha = alpha,
       buff.alpha = buff.alpha,
       method.range = method.range,
-      write_results = FALSE, 
       parallel = parallel,
       show_progress = show_progress,
       NbeCores = NbeCores, 
