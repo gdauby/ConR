@@ -39,11 +39,11 @@ occupied cells should be exported.}
 \item{proj_type}{character or numeric, by default is "cea", see Details.}
 }
 \value{
-If \code{export_shp} if FALSE a vector of AOO estimates for each taxa
+If \code{export_shp} if FALSE (the default) a numeric vector of AOO estimates for each taxa
 If \code{export_shp} if TRUE a list with two elements
 \enumerate{
 \item a vector of AOO estimates for each taxa
-\item a list of SpatialPolygonsDataFrame for each taxa
+\item a list of simple feature for each taxa
 }
 }
 \description{
@@ -72,20 +72,20 @@ occurrences are still conducted
 }
 
 \section{proj_type}{
-See \code{\link[=proj_type]{proj_type()}}
+See \code{proj_type}
 }
 
 \examples{
 data(dataset.ex)
-\dontrun{
+
 AOO <- AOO.computing(dataset.ex)
-}
+
 
 # This would estimate AOO for all taxa by overlaying randomly a 
-# grid 100 times. For each taxa, the minimum value is kept
-\dontrun{
+# grid 10 times. For each taxa, the minimum value is kept
+
 AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
-}
+
 
 }
 \references{

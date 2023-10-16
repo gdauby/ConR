@@ -1,5 +1,5 @@
 
-#' @title Number of Subpopulations
+#' @title Estimate the number of subpopulations for one or multiple species
 #'
 #' @description Estimate the number of subpopulations following the method
 #'   **circular buffer method** (overlapping buffered circles form a single 
@@ -26,14 +26,14 @@
 #'   default is "cea"
 #' 
 #' @details 
-#' **Input** as a `dataframe` should have the following structure:
+#' `XY` as a [data.frame][base::data.frame()] should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not matter**
 #' 
-#' \tabular{ccc}{
-#'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-#'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, taxa names\cr
+#' \enumerate{
+#'   \item The first column is contains numeric value i.e. latitude in decimal degrees
+#'   \item The second column is contains numeric value i.e. longitude in decimal degrees
+#'   \item The third column is contains character value i.e. the names of the species
 #' }
 #' 
 #' @references Rivers MC, Bachman SP, Meagher TR, Lughadha EN, Brummitt NA
@@ -42,7 +42,14 @@
 #'   2071-2085. doi: 10.1007/s10531-010-9826-9
 #'
 #' @return 
-#' If `export_shp` is TRUE, a list with [[1]]number_subpop and [[2]]poly_subpop
+#' If `export_shp` is TRUE,
+#' \enumerate{
+#'   \item EOO a numeric vector of AOO estimates for each taxa
+#'   \item spatial.polygon a simple feature collection
+#' }
+#' 
+#' 
+#'  a list with [[1]]number_subpop and [[2]]poly_subpop
 #' a `Simple feature collection` with as many MULTIPOLYGON as taxa.
 #' If `export_shp` is FALSE, a vector with estimated number of subpopulation per
 #' taxa.

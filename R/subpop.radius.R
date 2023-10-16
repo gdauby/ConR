@@ -14,20 +14,19 @@
 #'   Default to 1.
 #' @param mode a character. Type of coordinate projection: "spheroid" or
 #'   "planar". Defualts to "spheroid".
-#' @param proj_type character string or numeric or object of CRS class, by
-#'   default is "cea"
+#' @inheritParams proj_crs
 #' 
 #' 
 #' 
 #' @details 
-#' **Input** as a `dataframe` should have the following structure:
+#' `XY` as a [data.frame][base::data.frame()] should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not matter**
 #' 
-#' \tabular{ccc}{
-#'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-#'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, taxa names\cr
+#' \enumerate{
+#'   \item The first column is contains numeric value i.e. latitude in decimal degrees
+#'   \item The second column is contains numeric value i.e. longitude in decimal degrees
+#'   \item The third column is contains character value i.e. the names of the species
 #' }
 #' 
 #' @return The estimated radius in kilometres for each taxon.
@@ -73,9 +72,6 @@ subpop.radius = function(XY,
                   proj_type = proj_crs(proj_type = proj_type)
       )
   
-  ## Getting the maximum inter-point distance
-  #### GILLES: The function 'subpop.radius' is so small that I did not put 'f'
-  # as a separate internal function
   f <- function(lat, lon, proj = FALSE) {
     
     x <- cbind.data.frame(lon, lat)

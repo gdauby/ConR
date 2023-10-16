@@ -7,9 +7,10 @@
 #' @param nbe_rep integer
 #' @param export_shp logical
 #' @param proj_type character string
-#' @param Rel_cell_size numeric, if `method_locations="sliding scale"`, `Cell_size_locations` is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by `Rel_cell_size`. By default, it is 0.05
+#' @param Rel_cell_size numeric, if `method_locations="sliding_scale"`, `Cell_size_locations` is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by `Rel_cell_size`. By default, it is 0.05
 #' 
-Locations.estimation <- function(coordEAC,
+#' 
+locations.estimation <- function(coordEAC,
                                  cell_size = 10,
                                  nbe_rep = 0,
                                  # poly_borders = NULL,
@@ -21,7 +22,7 @@ Locations.estimation <- function(coordEAC,
 ) {
   
   
-  if (any(method == "sliding scale")) {
+  if (any(method == "sliding_scale")) {
     
     if (nrow(coordEAC) > 1) {
       

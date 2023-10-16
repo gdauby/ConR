@@ -21,7 +21,7 @@ AOO.estimation(
 
 \item{export_shp}{logical}
 
-\item{proj_type}{character string}
+\item{proj_type}{string or numeric}
 }
 \description{
 AOO estimation

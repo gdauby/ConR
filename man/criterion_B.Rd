@@ -46,15 +46,13 @@ criterion_B(
 
 \item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
 
-\item{Cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
-
 \item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
 \itemize{
 \item \code{"no_more_than_one"} (the default): each single POLYGON will be considered as a single location
-\item \code{"grid"}: a grid of \code{Cell_size_locations} size will be used to estimate the number of location within polygons
+\item \code{"grid"}: a grid of \code{cell_size_locations} size will be used to estimate the number of location within polygons
 }}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding scale"}, \code{Cell_size_locations} is ignored
+\item{Rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
 and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
 
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
@@ -96,7 +94,7 @@ some translation of the raster are still done.}
 
 \item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is \code{"cea"}}
+\item{proj_type}{string or numeric}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 }

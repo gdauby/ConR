@@ -25,8 +25,7 @@ Default to 1.}
 \item{mode}{a character. Type of coordinate projection: "spheroid" or
 "planar". Defualts to "spheroid".}
 
-\item{proj_type}{character string or numeric or object of CRS class, by
-default is "cea"}
+\item{proj_type}{string or numeric}
 }
 \value{
 The estimated radius in kilometres for each taxon.
@@ -39,14 +38,14 @@ circular buffer method (Rivers et al 2010) to obtain subpopulations for
 conservation assessments of extinction risk.
 }
 \details{
-\strong{Input} as a \code{dataframe} should have the following structure:
+\code{XY} as a \link[base:data.frame]{data.frame} should have the following structure:
 
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
-\tabular{ccc}{
-\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-\link{,3} \tab tax \tab character or factor, taxa names\cr
+\enumerate{
+\item The first column is contains numeric value i.e. latitude in decimal degrees
+\item The second column is contains numeric value i.e. longitude in decimal degrees
+\item The third column is contains character value i.e. the names of the species
 }
 }
 \examples{

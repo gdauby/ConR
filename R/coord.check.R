@@ -27,6 +27,9 @@ coord.check <-
       XY[, 3] <- gsub("\\(", "", XY[, 3])
     # if (length(grep("\\)", XY[, 3])) > 0)
       XY[, 3] <- gsub("\\)", "", XY[, 3])
+      
+      
+    if (!is.numeric(XY[,1])) XY[,1] <- as.numeric(XY[,1])  
     
     if (ncol(XY) < 3) stop("At least three columns are expected in the following order : latitude, longitude and species names")
     

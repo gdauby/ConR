@@ -31,8 +31,10 @@ to assign one of the IUCN categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It
 was developed speed up the assessment of hundreds to thousands of species at the
 same time.
 
+
 The ideas behind this package, and its testing involved many people and
 institutes.
+>>>>>>> 76e58416813fded8cfebebe85e21e4d712cb6f8b
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
 ## Install R, ConR and dependent packages

@@ -19,33 +19,46 @@ AOO.decline(
 )
 }
 \arguments{
-\item{XY}{\code{"dataframe"} see Details}
+\item{XY}{\link[base:data.frame]{data.frame} see Details.}
 
-\item{Cell_size_AOO}{numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)}
+\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
+in kilometres used for estimating Area of Occupancy.}
 
-\item{nbe.rep.rast.AOO}{numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done}
+\item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
+raster with random starting position used for estimating the AOO. If 0 but
+some translation of the raster are still done.}
 
-\item{parallel}{logical, whether running in parallel. By default, it is FALSE}
+\item{parallel}{logical, by default is FALSE. Whether running in parallel.}
 
-\item{NbeCores}{string integer, register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{integer, by default is 2. Register the number of cores for
+parallel execution. Only used if parallel is TRUE.}
 
-\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+\item{show_progress}{logical, by default is TRUE. Whether a progress bar
+during computation is shown.}
 
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{character or numeric, by default is "cea", see Details.}
 
 \item{hab.map}{raster, raster layer/stack or spatial polygons containing the
 habitat spatial information}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as suitable}
 
-\item{hab.map.type}{logical, vector of same length of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable}
+\item{hab.map.type}{logical, vector of same length of \code{hab.map},
+\itemize{
+\item \code{TRUE} means the habitat of \code{hab.map} is suitable
+\item \code{FALSE} means the habitat of \code{hab.map} is unsuitable
+}}
 
-\item{all_individual_layers}{logical, by default FALSE, if TRUE compute AOO decline for each individual hab.map and threat.map provided}
+\item{all_individual_layers}{logical
+\itemize{
+\item \code{TRUE} compute AOO decline for each individual \code{hab.map}
+\item \code{FALSE} (the default) compute AOO decline for all layers together
+}}
 }
 \value{
 \enumerate{
-\item AOOs a data.frame of AOO estimates for each taxa and for each layer/spatial polygons if all_individual_layers is TRUE
-\item AOO_decline a data.frame of AOO.decline in percentages
+\item AOOs a \code{dataframe} of AOO estimates for each taxa and for each layer/spatial polygons if \code{all_individual_layers} is TRUE
+\item AOO_decline a \code{dataframe} of AOO.decline in percentages
 \item categories based on the sub-criteria of IUCN criterion A
 }
 }
@@ -54,15 +67,13 @@ Estimate areas of occupancy (AOO) decline for multiple taxa in square kilometers
 `r lifecycle::badge("experimental")
 }
 \details{
-\strong{Input} as a \code{dataframe} should have the following structure:
+\strong{Input} as a \link[base:data.frame]{data.frame} should have the following structure:
 
-\strong{It is mandatory to respect field positions, but field names do not matter}
-
-\tabular{ccc}{
-\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-\link{,3} \tab tax \tab character or factor, taxa names\cr
+\strong{It is mandatory to respect field positions, but field names do not matter}\tabular{lll}{
+   latitude \tab longitude \tab species \cr
+   numeric \tab numeric \tab character \cr
 }
+
 
 The argument \code{nbe.rep.rast.AOO} should ideally be higher than 20 for increasing
 the chance to get the minimal number of occupied cell. Increasing \code{nbe.rep.rast.AOO} however

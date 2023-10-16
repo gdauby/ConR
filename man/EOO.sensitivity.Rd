@@ -15,7 +15,6 @@ EOO.sensitivity(
   buff.alpha = 0.1,
   method.range = "convex.hull",
   method.less.than3 = "not comp",
-  write_results = FALSE,
   file.name = "EOO.sensitivity.results",
   parallel = FALSE,
   NbeCores = 2,
@@ -25,7 +24,7 @@ EOO.sensitivity(
 )
 }
 \arguments{
-\item{XY}{\code{dataframe} see Details}
+\item{XY}{\link[base:data.frame]{data.frame} see Details}
 
 \item{levels.order}{a character vector with at least two classes ordered from
 the least confident to the more confident class of records. See Details.}
@@ -83,15 +82,16 @@ quantifies indirectly the most influential occurrences related to EOO
 estimation.
 }
 \details{
-\strong{Input} as a \code{dataframe} should have the following structure:
+\strong{Input} as a \link[base:data.frame]{data.frame} should have the following structure:
 
 \strong{It is mandatory to respect field positions, but field names do not
 matter}
 
-\tabular{ccc}{ \link{,1} \tab ddlat \tab numeric, latitude (in decimal
-degrees)\cr \link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-\link{,3} \tab tax \tab character or factor, taxa names\cr
-\link{,4} \tab valid \tab character or factor, classes of confidence level}
+\enumerate{
+\item The first column is contains numeric value i.e. latitude in decimal degrees
+\item The second column is contains numeric value i.e. longitude in decimal degrees
+\item The third column is contains character value i.e. the names of the species
+}
 
 The function works with a minimum of two classes, that can be, for example, levels of
 confidence in the geographical coordinates, the taxonomic determination or a

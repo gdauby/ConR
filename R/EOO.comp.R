@@ -15,10 +15,15 @@
 #' @param proj_type character string or numeric or object of CRS class, by
 #'   default is "cea"
 #'
-#' @author Gilles Dauby & Renato A. Ferreira de Lima
+#' @author Gilles Dauby & Renato A. Ferreira de LimaA
 #' 
-#' @return A list with one element being a numeric vector [[1]]EOO and the polygon as Simple feature collection [[2]]spatial.polygon
-#'  
+#' @return A list
+#' \enumerate{
+#'   \item EOO a numeric vector of AOO estimates for each taxa
+#'   \item spatial.polygon a simple feature collection
+#' }
+#' 
+#' 
 #' @details If `exclude.area` is TRUE and country_map is not provided, 
 #' the world country polygons used comes from the package [rnaturalearth](https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries)
 #' 
@@ -48,43 +53,50 @@
 #' @examples
 #' 
 #' country_map <-
-#'   rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-#'
+#' rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
+#' 
 #' ### example Large distribution
 #' # Spheroid estimation
-#' XY <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
+#' XY <- 
+#'   data.frame(x = c(-20, 5, 0, -20, -20), 
+#'              y = c(-65, -45, -40, -55, -40),
+#'              taxa = "species")
 #' p1 <- 
-#'   EOO.comp(XY =  XY[,c(2, 1)])
-#' plot(country_map)
+#'   EOO.comp(XY =  XY)
+#' p1$EOO
+#' plot(country_map$geometry)
 #' plot(p1$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
 #' 
 #' p2 <- 
-#'   EOO.comp(XY = XY[,c(2, 1)], mode = "planar")
-#' plot(st_as_sf(country_map), reset = FALSE, extent = as(p2$spatial.polygon, "sf"))
+#'   EOO.comp(XY = XY, mode = "planar")
+#' p2$EOO
+#' plot(country_map$geometry)
 #' plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
 #' 
 #' # World Mercartor projection
 #' p2 <- 
-#'   EOO.comp(XY = XY[,c(2, 1)], mode = "planar", proj_type = 3395)
-#' plot(st_as_sf(country_map), reset = FALSE, extent = as(p2$spatial.polygon, "sf"))
+#'   EOO.comp(XY = XY, mode = "planar", proj_type = 3395)
+#' p2$EOO
+#' plot(country_map$geometry)
 #' plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
 #' 
+#' 
 #' ### example Antartic distribution
-#' XY <- rbind(c(-150, -65), c(0, -62), c(120, -78), c(150, -65))
-#' 
+#' XY <- 
+#'   data.frame(x = c(-65, -62, -78, -65), 
+#'              y = c(-150, 0, 120, 150),
+#'              taxa = "species")
 #' p1 <- 
-#'   EOO.comp(XY = XY[,c(2, 1)], mode = "planar", proj_type = "Antarctic")
+#'   EOO.comp(XY = XY, mode = "planar", proj_type = "Antarctic")
 #' 
-#' p1 <- st_transform(as(p1$spatial.polygon, "sf"), proj_crs(proj_type = "Antarctic"))
-#' plot(st_transform(st_as_sf(country_map), proj_crs(proj_type = "Antarctic")), extent = p1)
+#' p1 <- st_transform(p1$spatial.polygon, proj_crs(proj_type = "Antarctic"))
+#' plot(st_transform(country_map, proj_crs(proj_type = "Antarctic"))$geometry, extent = p1)
 #' plot(p1, lwd = 2, col = 'red', add = TRUE)
 #' 
+#' \dontrun{
 #' p1 <- 
-#'   EOO.comp(XY = XY[,c(2, 1)])
-#' 
-#' p1 <- st_transform(as(p1$spatial.polygon, "sf"), proj_crs(proj_type = "Antarctic"))
-#' plot(st_transform(st_as_sf(country_map), proj_crs(proj_type = "Antarctic")), extent = p1)
-#' plot(p1, lwd = 2, col = 'red', add = TRUE)
+#'   EOO.comp(XY = XY) ## this example fail
+#' }
 #' 
 #' 
 #' @import sf

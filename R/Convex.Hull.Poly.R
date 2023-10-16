@@ -108,7 +108,7 @@ Convex.Hull.Poly <-
         
       } else {
         
-        projEAC <- proj_type
+        projEAC <- proj_crs(proj_type = proj_type)
         
       }
       

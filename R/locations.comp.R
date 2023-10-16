@@ -7,38 +7,40 @@
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' @param XY [data.frame][base::data.frame()], see details
-#' @param method string, indicating the method used for estimating the number of locations. Either "fixed_grid" or "sliding scale". See details. By default, it is "fixed_grid"
-#' @param nbe_rep numeric , indicate the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done
+#' @param method string, indicating the method used for estimating the number of locations. See Details
+#'  * `"fixed_grid"` (the default)
+#'  * `"sliding_scale"`
+#' @param nbe_rep numeric, the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done
 #' @param threat_list list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and `method_polygons`). By default, no shapefile is provided
 #' @param names_threat character vector, indicating names of threats, optional
 #' @param threat_weight numeric vector, indicating weight given to each threat
-#' @param Cell_size_locations numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10
+#' @param cell_size_locations numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10
 #' @param method_polygons string. Used if `threat_list` is provided. See Details.
 #'   * `"no_more_than_one"` (the default): each single POLYGON will be considered as a single location
-#'   * `"grid"`: a grid of `Cell_size_locations` size will be used to estimate the number of location within polygons
+#'   * `"grid"`: a grid of `cell_size_locations` size will be used to estimate the number of location within polygons
 #' @param id_shape string
-#' @param Rel_cell_size numeric, if `method_locations="sliding scale"`, `Cell_size_locations` is ignored 
+#' @param Rel_cell_size numeric, if `method_locations="sliding_scale"`, `cell_size_locations` is ignored 
 #' and the resolution is given by the maximum distance separating two occurrences multiplied by `Rel_cell_size`. By default, it is 0.05
 #' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores integer, register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
-#' @param proj_type character string or numeric or object of CRS class, by default is `"cea"`
+#' @inheritParams proj_crs
 #' 
 #' @details 
 #' ## 
-#' `XY` as a `dataframe` should have the following structure:
+#' `XY` as a [data.frame][base::data.frame()] should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not matter**
 #' 
-#' \tabular{ccc}{
-#'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-#'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, taxa names\cr
+#' \enumerate{
+#'   \item The first column is contains numeric value i.e. latitude in decimal degrees
+#'   \item The second column is contains numeric value i.e. longitude in decimal degrees
+#'   \item The third column is contains character value i.e. the names of the species
 #' }
 #' 
 #' 
 #' 
-#' Locations are estimated by overlaying a grid of a given resolution (see `Cell_size_locations` for
+#' Locations are estimated by overlaying a grid of a given resolution (see `cell_size_locations` for
 #' specifying the resolution). The number of locations is  the number of
 #' occupied locations. Note that the grid position is overlaid in order to
 #' minimize the number of locations (several translation of the grid are
@@ -50,15 +52,18 @@
 #' which means occurrences within polygon documenting threats (if provided) will not be taken into account for estimating the number of locations following the grid system,
 #' 
 #' If `method` is "fixed_grid" as it is by default, the resolution is fixed and determined 
-#' by the argument `Cell_size_locations`.
-#' If `method` is "sliding scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
+#' by the argument `cell_size_locations`.
+#' If `method` is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
 #' and x is a defined parameter. 1/x is defined by `Rel_cell_size` argument and is 0.05 by default. 
 #' See Rivers M.C. et al. (2010) for more information on the methods.
 #' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
 #'
-#' @return A list with one list for each species containing [[1]]data.frame with the number of locations and 
-#' potential issue for each species and [[2]]sf with representing the squared polygons. If threat_list is not null, then [[2]] is a list for each threat
+#' @return A list
+#' \enumerate{
+#'   \item a `data.frame` of two columns with the number of locations and potential issue for each species
+#'   \item a `sf` object representing the squared polygons OR a list of `sf` if `threat_list` is TRUE
+#' }
 #' 
 #' @examples 
 #' data(dataset.ex)
@@ -84,7 +89,7 @@ locations.comp <- function(XY,
                            threat_list = NULL,
                            names_threat = NULL,
                            threat_weight = NULL,
-                           Cell_size_locations = 10,
+                           cell_size_locations = 10,
                            method_polygons = c("no_more_than_one"),
                            id_shape = "id_orig",
                            Rel_cell_size = 0.05,
@@ -111,7 +116,7 @@ locations.comp <- function(XY,
   }
   
   list_data <- 
-    coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_locations, check_eoo = FALSE)
+    coord.check(XY = XY, proj_type = proj_type, cell_size = cell_size_locations, check_eoo = FALSE)
   
   issue_close_to_anti <- list_data$issue_close_to_anti
   list_data <- list_data$list_data
@@ -193,7 +198,7 @@ locations.comp <- function(XY,
     res_list <- .generate_loc(dataset = list_data,
                               method = method,
                               nbe_rep = nbe_rep,
-                              Cell_size_locations = Cell_size_locations,
+                              cell_size_locations = cell_size_locations,
                               Rel_cell_size = Rel_cell_size,
                               parallel = parallel,
                               NbeCores = NbeCores,
@@ -582,7 +587,7 @@ locations.comp <- function(XY,
         res_list <- .generate_loc(dataset = list_data_pa,
                                   method = method,
                                   nbe_rep = nbe_rep,
-                                  Cell_size_locations = Cell_size_locations,
+                                  cell_size_locations = cell_size_locations,
                                   Rel_cell_size = Rel_cell_size,
                                   parallel = parallel,
                                   NbeCores = NbeCores,
@@ -655,7 +660,7 @@ locations.comp <- function(XY,
 .generate_loc <- function(dataset,
                           method = "fixed_grid",
                           nbe_rep = 0,
-                          Cell_size_locations = 10,
+                          cell_size_locations = 10,
                           Rel_cell_size = 0.05,
                           parallel = FALSE,
                           NbeCores = 2,
@@ -663,9 +668,9 @@ locations.comp <- function(XY,
                           proj_type = "cea") {
   
   if (length(method) > 1)
-    stop('Choose only one method_polygons, either "fixed_grid" or "sliding scale"')
+    stop('Choose only one method_polygons, either "fixed_grid" or "sliding_scale"')
   
-  match.arg(method, c("fixed_grid", "sliding scale"))
+  match.arg(method, c("fixed_grid", "sliding_scale"))
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -706,9 +711,9 @@ locations.comp <- function(XY,
         utils::setTxtProgressBar(pb, x)
       
       res <- 
-        Locations.estimation(
+        locations.estimation(
           coordEAC = dataset[[x]], 
-          cell_size = Cell_size_locations, 
+          cell_size = cell_size_locations, 
           export_shp = TRUE, 
           proj_type = proj_type, 
           method = method,

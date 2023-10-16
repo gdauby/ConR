@@ -7,15 +7,16 @@
 #' 
 #' @details 
 #'
-#' **Input** as a `dataframe` should have the following structure:
+#' **Input** as a [data.frame][base::data.frame()] should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not
 #' matter**
 #' 
-#' \tabular{ccc}{ [,1] \tab ddlat \tab numeric, latitude (in decimal
-#' degrees)\cr [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#' [,3] \tab tax \tab character or factor, taxa names\cr 
-#' [,4] \tab valid \tab character or factor, classes of confidence level}
+#' \enumerate{
+#'   \item The first column is contains numeric value i.e. latitude in decimal degrees
+#'   \item The second column is contains numeric value i.e. longitude in decimal degrees
+#'   \item The third column is contains character value i.e. the names of the species
+#' }
 #' 
 #' The function works with a minimum of two classes, that can be, for example, levels of
 #' confidence in the geographical coordinates, the taxonomic determination or a
@@ -74,7 +75,7 @@
 #'   the input data with a new column for each confidence level with a measure 
 #'   of influence of the occurrences on the estimation of EOO.
 #' 
-#' @param XY `dataframe` see Details
+#' @param XY [data.frame][base::data.frame()] see Details
 #' @param file.name a character string. Name file for exported results in csv
 #' file. By default is "EOO.sensitivity.results"
 #' @param levels.order a character vector with at least two classes ordered from
@@ -128,7 +129,6 @@ EOO.sensitivity <- function(XY,
                           method.range = "convex.hull",
                           #Name_Sp = "species1",
                           method.less.than3 = "not comp",
-                          write_results = FALSE,
                           file.name = "EOO.sensitivity.results",
                           parallel = FALSE,
                           NbeCores = 2,

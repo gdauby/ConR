@@ -37,9 +37,10 @@
 #' 
 #' get.patches(XY = mydf, dist_isolated = 200)
 #' 
+#' @keyword internal
 #' @import sf
 #' 
-#' 
+#' @noRd
 get.patches <- function(XY, 
                         cell_size = NULL,
                         nbe_rep = 0,
