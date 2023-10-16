@@ -1,7 +1,7 @@
 
 <!-- <img src="https://github.com/gdauby/ConR/blob/c9e93b479737ed2b037822fa032d847a51ebe4e1/inst/figures/conr_sticker5.png" align="right" alt="" width="120" /> -->
 
-<img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker5.png" align="right" alt="" width="120" />
+<img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker4.png" align="right" alt="" width="120" />
 
 # ConR package
 
@@ -24,7 +24,7 @@ categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It was developed speed
 up the assessment of hundreds to thousands of species at the same time.
 
 The ideas behind this package, and its testing involved many people and
-institutes.
+institutes. \>\>\>\>\>\>\> 76e58416813fded8cfebebe85e21e4d712cb6f8b
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
 ## Install R, ConR and dependent packages
