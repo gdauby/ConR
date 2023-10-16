@@ -1,4 +1,8 @@
 
+<!-- <img src="https://github.com/gdauby/ConR/blob/c9e93b479737ed2b037822fa032d847a51ebe4e1/inst/figures/conr_sticker5.png" align="right" alt="" width="120" /> -->
+
+<img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker5.png" align="right" alt="" width="120" />
+
 # ConR package
 
 <!-- badges: start -->
@@ -8,6 +12,8 @@ status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.
 [![CRAN RStudio mirror
 downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
 <!-- badges: end -->
+
+<br/><br/>
 
 The `ConR` pacakge aims at assisting the preliminary assessment of
 species conservation status based on the International Union for

@@ -10,6 +10,9 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
+<!-- <img src="https://github.com/gdauby/ConR/blob/c9e93b479737ed2b037822fa032d847a51ebe4e1/inst/figures/conr_sticker5.png" align="right" alt="" width="120" /> -->
+
+<img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker5.png" align="right" alt="" width="120" />
 
 # ConR package
 
@@ -18,12 +21,20 @@ knitr::opts_chunk$set(
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
 <!-- badges: end -->
 
+<br/><br/>
+
+The ``ConR`` pacakge aims at assisting the preliminary assessment of species
+conservation status based on the International Union for Conservation of Nature
+(IUCN) Red List Categories and Criteria. More especifically, it helps users to
+calculate the population metrics related to the IUCN criteria A, B, C and D and
+to assign one of the IUCN categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It
+was developed speed up the assessment of hundreds to thousands of species at the
+same time.
 
 
-The ``ConR`` pacakge aims at assisting the preliminary assessment of species conservation status based on the International Union for Conservation of Nature (IUCN) Red List Categories and Criteria. More specifically, it helps users to calculate the population metrics related to the IUCN criteria A, B, C and D and to assign one of the IUCN categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It was developed speed up the assessment of hundreds to thousands of species at the same time.
-
-
-The ideas behind this package, and its testing involved many people and institutes.
+The ideas behind this package, and its testing involved many people and
+institutes.
+>>>>>>> 76e58416813fded8cfebebe85e21e4d712cb6f8b
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
 ## Install R, ConR and dependent packages
@@ -65,7 +76,8 @@ MyData$tax <- as.character(MyData$tax)
 ```
 
 **Help files**
-Any function in R is documented by a help file which can be obtained by the following code:
+Any function in R is documented by a help file which can be obtained by the
+following code:
 ```
 ?EOO.computing
 ?AOO.computing
@@ -88,7 +100,9 @@ The development of this package was supported by:
 
 ## Citation
 
-G. Dauby & R. A. F. de Lima (2022). ConR: Computation of Parameters Used in Preliminary Assessment of Species Conservation Status. R package (version 2.0.0).
+G. Dauby & R. A. F. de Lima (2022). ConR: Computation of Parameters Used in
+Preliminary Assessment of Species Conservation Status. R package (version
+2.0.0).
 
 ## See Also
 
