@@ -35,6 +35,7 @@
 #' @param simplifiy_poly logical whether the resulting polygon should be
 #'   simplified using ms_simplify function of rmapshaper package
 #' @param buffer logical
+#' @param ... additional arguments passed to `EOO.computing`
 #' 
 #' `SpatialPolygons` showing for example countries or continent borders.
 #' This shapefile will be used for cropping the `SpatialPolygons`l if
@@ -156,7 +157,7 @@ AOH.estimation <- function(XY,
   
   proj_type_ <- proj_crs(proj_type = proj_type)
   
-  EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE) # , ...
+  EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE, ...) # 
   
   EOO.shp <- EOO.res$spatial
   

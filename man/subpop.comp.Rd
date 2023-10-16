@@ -2,7 +2,7 @@
 % Please edit documentation in R/subpop.comp.R
 \name{subpop.comp}
 \alias{subpop.comp}
-\title{Number of Subpopulations}
+\title{Estimate the number of subpopulations for one or multiple species}
 \usage{
 subpop.comp(
   XY,
@@ -40,7 +40,13 @@ should be shown. TRUE by default.}
 2.}
 }
 \value{
-If \code{export_shp} is TRUE, a list with [\link{1}]number_subpop and [\link{2}]poly_subpop
+If \code{export_shp} is TRUE,
+\enumerate{
+\item EOO a numeric vector of AOO estimates for each taxa
+\item spatial.polygon a simple feature collection
+}
+
+a list with [\link{1}]number_subpop and [\link{2}]poly_subpop
 a \verb{Simple feature collection} with as many MULTIPOLYGON as taxa.
 If \code{export_shp} is FALSE, a vector with estimated number of subpopulation per
 taxa.
@@ -51,14 +57,14 @@ Estimate the number of subpopulations following the method
 subpopulation)
 }
 \details{
-\strong{Input} as a \code{dataframe} should have the following structure:
+\code{XY} as a \link[base:data.frame]{data.frame} should have the following structure:
 
 \strong{It is mandatory to respect field positions, but field names do not matter}
 
-\tabular{ccc}{
-\link{,1} \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-\link{,2} \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-\link{,3} \tab tax \tab character or factor, taxa names\cr
+\enumerate{
+\item The first column is contains numeric value i.e. latitude in decimal degrees
+\item The second column is contains numeric value i.e. longitude in decimal degrees
+\item The third column is contains character value i.e. the names of the species
 }
 }
 \examples{

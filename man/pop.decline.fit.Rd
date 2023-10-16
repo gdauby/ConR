@@ -94,16 +94,24 @@ yrs = c(1970, 1975, 1980, 1985, 1990)
 
 ## Fitting data with different models and setting
 pop.decline.fit(pop.size = pop, years = yrs)
-pop.decline.fit(pop.size = pop, years = yrs, models = c("linear"))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential","quadratic"))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1960, 2005))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("linear", "exponential"), project.years = c(1973, 2005))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("quadratic", "general_logistic"))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("general_logistic"))
-pop.decline.fit(pop.size = pop, years = yrs, models = c("quadratic"), project.years = c(1960, 2050))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("linear"))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("linear", "exponential","quadratic"))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("linear", "exponential"), project.years = c(1960, 2005))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("linear", "exponential"), project.years = c(1973, 2005))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("quadratic", "general_logistic"))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("general_logistic"))
+pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("quadratic"), project.years = c(1960, 2050))
 
 ## Another examples, with less observations (warning or no model fit below 3 observations)
-pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), models = "all", project.years = 2030)
+pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), 
+models = "all", project.years = 2030)
 pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
 
 }

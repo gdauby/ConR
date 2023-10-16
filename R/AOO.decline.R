@@ -6,30 +6,26 @@
 #' 
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
-#' @param XY `"dataframe"` see Details
-#' @param Cell_size_AOO numeric, value indicating the grid size in kilometers used for estimating Area of Occupancy.  By default, equal to 2 km (i.e. 4 km2 grid cells)
-#' @param nbe.rep.rast.AOO numeric , indicate the number of raster with random starting position for estimating the AOO. By default, it is 0 but some minimal translation of the raster are still done
-#' @param parallel logical, whether running in parallel. By default, it is FALSE
-#' @param NbeCores string integer, register the number of cores for parallel execution. By default, it is 2
-#' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#'
+#' @inheritParams AOO.computing
 #' @param hab.map raster, raster layer/stack or spatial polygons containing the
 #'   habitat spatial information
-#' @param hab.map.type logical, vector of same length of hab.map, if TRUE means hab.map is suitable for species, if FALSE unsuitable
+#' @param hab.map.type logical, vector of same length of `hab.map`,
+#'  * `TRUE` means the habitat of `hab.map` is suitable
+#'  * `FALSE` means the habitat of `hab.map` is unsuitable
 #' @param hab.class classes of values in ```hab.map``` to be considered as suitable
-#' @param all_individual_layers logical, by default FALSE, if TRUE compute AOO decline for each individual hab.map and threat.map provided
-#'   
+#' @param all_individual_layers logical
+#'  * `TRUE` compute AOO decline for each individual `hab.map`
+#'  * `FALSE` (the default) compute AOO decline for all layers together
 #'   
 #' @details 
-#' **Input** as a `dataframe` should have the following structure:
+#' **Input** as a [data.frame][base::data.frame()] should have the following structure:
 #' 
 #' **It is mandatory to respect field positions, but field names do not matter**
 #' 
-#' \tabular{ccc}{
-#'   [,1] \tab ddlat \tab numeric, latitude (in decimal degrees)\cr
-#'   [,2] \tab ddlon \tab numeric, longitude (in decimal degrees)\cr
-#'   [,3] \tab tax \tab character or factor, taxa names\cr
-#' }
+#' | latitude | longitude | species |
+#' | --- | --- | --- |
+#' | numeric | numeric | character |
 #' 
 #' The argument `nbe.rep.rast.AOO` should ideally be higher than 20 for increasing 
 #' the chance to get the minimal number of occupied cell. Increasing `nbe.rep.rast.AOO` however 
@@ -42,8 +38,8 @@
 #'
 #' @return 
 #' \enumerate{
-#'   \item AOOs a data.frame of AOO estimates for each taxa and for each layer/spatial polygons if all_individual_layers is TRUE
-#'   \item AOO_decline a data.frame of AOO.decline in percentages
+#'   \item AOOs a `dataframe` of AOO estimates for each taxa and for each layer/spatial polygons if `all_individual_layers` is TRUE
+#'   \item AOO_decline a `dataframe` of AOO.decline in percentages
 #'   \item categories based on the sub-criteria of IUCN criterion A
 #' }
 #'   
@@ -72,7 +68,7 @@ AOO.decline <- function(XY,
   
   ### checking arguments validity
   if (is.null(hab.map)) 
-    stop("Please provide hab.map or threat.map (a sf polygon object or a raster)")
+    stop("Please provide hab.map (a sf polygon object or a SpatRaster)")
   
   hab.map.checked <- check_hab_map(hab.map = hab.map, 
                                    hab.map.type = hab.map.type)

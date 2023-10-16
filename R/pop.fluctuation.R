@@ -19,13 +19,13 @@
 #'             
 #' @details This is a basic function that quantifies the mean fluctuation of
 #'   population sizes across time, aiming at the detection 'extreme
-#'   fluctuations' as defined by IUCN (2019). Here we quantify flucutuations as
+#'   fluctuations' as defined by IUCN (2019). Here we quantify fluctuations as
 #'   the mean change in population size between consecutive years in the time
-#'   series (e.g. if t[i]= 9 and t[i+1]= 90, change is 10). As defined in IUCN
-#'   (2019), extreme fluctuations are generally characterizes by changes higher
+#'   series (e.g. if `t[i]= 9` and `t[i+1]= 90`, change is 10). As defined in IUCN
+#'   (2019), extreme fluctuations are generally characterized by changes higher
 #'   than 10 or an order of magnitude.
 #'   
-#'   (Detailed xxplanation of 'alternance.prop' pending)
+#'   (Detailed explanation of 'alternance.prop' pending)
 #'   
 #'   The evidence of directional changes is evaluated based on a linear
 #'   regression model fitted to the population size data. The sign of the slope

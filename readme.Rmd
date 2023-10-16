@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 
 
-The ``ConR`` pacakge aims at assisting the preliminary assessment of species conservation status based on the International Union for Conservation of Nature (IUCN) Red List Categories and Criteria. More especifically, it helps users to calculate the population metrics related to the IUCN criteria A, B, C and D and to assign one of the IUCN categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It was developed speed up the assessment of hundreds to thousands of species at the same time.
+The ``ConR`` pacakge aims at assisting the preliminary assessment of species conservation status based on the International Union for Conservation of Nature (IUCN) Red List Categories and Criteria. More specifically, it helps users to calculate the population metrics related to the IUCN criteria A, B, C and D and to assign one of the IUCN categories (i.e. EX, EW, CR, EN, VU, NT, LC, DD). It was developed speed up the assessment of hundreds to thousands of species at the same time.
 
 
 The ideas behind this package, and its testing involved many people and institutes.

@@ -60,7 +60,9 @@ to 2.}
 \item{simplifiy_poly}{logical whether the resulting polygon should be
 simplified using ms_simplify function of rmapshaper package}
 
-\item{buffer}{logical
+\item{buffer}{logical}
+
+\item{...}{additional arguments passed to \code{EOO.computing}
 
 \code{SpatialPolygons} showing for example countries or continent borders.
 This shapefile will be used for cropping the \code{SpatialPolygons}l if

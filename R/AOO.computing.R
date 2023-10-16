@@ -43,31 +43,33 @@
 #' 
 #' # proj_type
 #' 
-#' See [proj_type()]
+#' 
+#' 
+#' See `proj_type`
 #' 
 #' 
 #' @references Gaston & Fuller 2009 The sizes of species'geographic ranges,
 #'   Journal of Applied Ecology, 49 1-9
 #'
 #' @return 
-#' If `export_shp` if FALSE a vector of AOO estimates for each taxa
+#' If `export_shp` if FALSE (the default) a numeric vector of AOO estimates for each taxa
 #' If `export_shp` if TRUE a list with two elements
 #' \enumerate{
 #'   \item a vector of AOO estimates for each taxa
-#'   \item a list of SpatialPolygonsDataFrame for each taxa
+#'   \item a list of simple feature for each taxa
 #' }
 #'   
 #' @examples 
 #' data(dataset.ex)
-#' \dontrun{
-#'AOO <- AOO.computing(dataset.ex)
-#'}
+#'
+#' AOO <- AOO.computing(dataset.ex)
+#'
 #'
 #'# This would estimate AOO for all taxa by overlaying randomly a 
-#'# grid 100 times. For each taxa, the minimum value is kept
-#' \dontrun{
-#'AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
-#'}
+#'# grid 10 times. For each taxa, the minimum value is kept
+#'
+#' AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
+#'
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom snow makeSOCKcluster stopCluster

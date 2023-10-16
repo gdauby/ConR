@@ -8,7 +8,7 @@
   dataset,
   method = "fixed_grid",
   nbe_rep = 0,
-  Cell_size_locations = 10,
+  cell_size_locations = 10,
   Rel_cell_size = 0.05,
   parallel = FALSE,
   NbeCores = 2,
