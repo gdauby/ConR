@@ -1,5 +1,7 @@
 
-<img src="inst/figures/conr_sticker4.png" align="right" alt="" width="120" />
+<!-- <img src="https://github.com/gdauby/ConR/blob/c9e93b479737ed2b037822fa032d847a51ebe4e1/inst/figures/conr_sticker5.png" align="right" alt="" width="120" /> -->
+
+<img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker5.png" align="right" alt="" width="120" />
 
 # ConR package
 
