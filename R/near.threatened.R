@@ -77,10 +77,11 @@
 #' locations <- c(75, 25, 25, 9)
 #' 
 #' ## Example with different species metrics
-#' near.threatened(cats, EOO, AOO, decline, pop.reduction, pop.size, locations)
+#' near.threatened(cats = cats, EOO = EOO, AOO = AOO, decline = decline, 
+#' pop.reduction = pop.reduction, pop.size = pop.size, locations = locations)
 #'
 #' ## Example with only EOO, AOO and number of locations (not enough metrics)
-#' near.threatened(cats, EOO, AOO)
+#' near.threatened(cats = cats, EOO = EOO, AOO = AOO)
 #'
 #' @export near.threatened
 #' 
@@ -199,7 +200,8 @@ near.threatened <- function(cats = NULL,
   #   output1$case5 <- pop.size > 2000 & subpop == 1
   
   ##6- The taxon exists at three sites, occupying an area of 30 km2; the population is not declining; there are no current threats, 
-  #and the species is very unlikely to become Extinct or Critically Endangered in a short time.    
+  #and the species is very unlikely to become Extinct or Critically Endangered in a short time.   
+  
   if (!is.null(locations) & !is.null(AOO) & !is.null(decline))
     output1$case6 <- locations >= 3 & AOO >= 30 & decline != "Decreasing"
   
@@ -208,10 +210,10 @@ near.threatened <- function(cats = NULL,
     if ((!is.null(EOO) | !is.null(AOO)) & !is.null(locations))
       if (!is.null(EOO) & !is.null(AOO))
         output1$case7 <- (EOO > 30000 | AOO > 3000) & locations > 30
-      if (!is.null(EOO) & is.null(AOO))
-        output1$case7 <- EOO > 30000 & locations > 30
-      if (is.null(EOO) & !is.null(AOO))
-        output1$case7 <- AOO > 3000 & locations > 30
+    if (!is.null(EOO) & is.null(AOO))
+      output1$case7 <- EOO > 30000 & locations > 30
+    if (is.null(EOO) & !is.null(AOO))
+      output1$case7 <- AOO > 3000 & locations > 30
   }
   
   #### Merging the results #### 
@@ -222,8 +224,8 @@ near.threatened <- function(cats = NULL,
     output$nt <- 0
     output <- output[,c("order","cats","lc.nt","nt")]
     
-  }  
-      
+  }
+  
   if (dim(output1)[2] > 3) {
     output1$non.nt <- (-1)*apply(output1[,-c(1:3)], 1, any)
     output1 <- output1[,c("order","non.nt")]

@@ -116,10 +116,11 @@ subpop.radius = function(XY,
   #the foreach loop is really necessary.
   ddlat <- ddlon <- tax <- NULL
   
-  XY.dt <- data.table::data.table(XY)
+  XY.dt <- data.table::data.table(XY$list_data)
   data.table::setkeyv(XY.dt, "tax") ## setting 'tax' as key/group to the data.table (makes computations faster)
   radius <- as.data.frame(XY.dt[ , f(ddlat, ddlon, proj = ifelse(is.null(proj_type), FALSE, TRUE)) , by = tax]) 
   names(radius) <- c("tax", "radius")
+  radius$radius <- as.numeric(radius$radius)
   
   return(radius)
 }

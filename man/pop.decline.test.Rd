@@ -57,7 +57,8 @@ pop = c(10000, 9600, 9100, 8200, 7500, 7200, 7000)
 yrs = c(1970, 1973, 1975, 1980, 1985, 1987, 1990)
 
 ## Fitting data with different models and setting
-best.model = pop.decline.fit(pop.size = pop, years = yrs, models = c("linear","exponential","logistic"))
+best.model = pop.decline.fit(pop.size = pop, years = yrs, 
+models = c("linear","exponential","logistic"))
 pop.decline.test(x = best.model, assess.year = 1990)
 
 best.model = pop.decline.fit(pop.size = pop, years = yrs, models = c("general_logistic"))

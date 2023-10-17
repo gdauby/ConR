@@ -140,8 +140,6 @@ locations.comp <- function(XY,
         stop("threat_weight must be integers > 0")
     }
     
-
-    
     which_rast <- unlist(lapply(threat_list, function(x) inherits(x, "SpatRaster")))
     which_sf <- unlist(lapply(threat_list, function(x) inherits(x, "sf")))
     
@@ -183,12 +181,11 @@ locations.comp <- function(XY,
   }
   
   if (is.null(threat_list)) {
-    
     res_df <-
-      data.frame(locations =  rep(NA, length(list_data)), 
+      data.frame(tax = names(list_data),
+                 locations =  rep(NA, length(list_data)), 
                  issue_locations = rep(NA, length(list_data)))
-    row.names(res_df) <- names(list_data)
-    
+
     if (length(issue_close_to_anti) > 0) {
       
       list_data <- list_data[-issue_close_to_anti]
@@ -205,7 +202,7 @@ locations.comp <- function(XY,
                               show_progress = show_progress,
                               proj_type = proj_type)
     
-    res_df[which(row.names(res_df) %in% names(res_list$res_df)), 1] <-
+    res_df[which(res_df$tax %in% names(res_list$res_df)), 2] <-
       res_list$res_df
     
     shapes_loc <- res_list$shapes
@@ -628,7 +625,7 @@ locations.comp <- function(XY,
   
   if (length(issue_close_to_anti) > 0)
     res_df[issue_close_to_anti, "issue_locations"] <-
-    "AOO could not computed because grid cells would overlap with antimeridian"
+    "Estimation of locations could not computed because grid cells would overlap with antimeridian"
   
   # if (!is.null(protec.areas))
   #   return(list(locations_pa = locations_pa,

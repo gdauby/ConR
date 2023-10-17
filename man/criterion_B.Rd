@@ -11,7 +11,7 @@ criterion_B(
   Loc.threshold = c(10, 5, 1),
   SubPop = TRUE,
   Resol_sub_pop = 5,
-  Cell_size_locations = 10,
+  cell_size_locations = 10,
   method_locations = "fixed_grid",
   method_polygons = "no_more_than_one",
   Rel_cell_size = 0.05,
@@ -45,6 +45,8 @@ criterion_B(
 \item{Loc.threshold}{numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories}
 
 \item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
+
+\item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
 \item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
 \itemize{
@@ -80,9 +82,6 @@ the buffer in decimal degree added to alpha hull. By default is 0.1}
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
 is FALSE}
-
-\item{Cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
-in kilometres used for estimating Area of Occupancy.}
 
 \item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
 raster with random starting position used for estimating the AOO. If 0 but

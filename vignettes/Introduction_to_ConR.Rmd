@@ -76,10 +76,10 @@ Then, we need to define objects containing basic species information that are
 necessary for the assessments.
 
 ```{r species-info, eval = TRUE, collapse = TRUE}
-gen.length <- c(40, 65, 50)
-p.mature <- c(0.4485, 0.3028, 0.4143)
-early.sucession <- c(0.9, 1, 1)
-harvest <- c(10, 10, 10)
+gen.length <- c(40, 65, 50) ## generation length in years
+p.mature <- c(0.4485, 0.3028, 0.4143) ## TO DEFINE
+early.sucession <- c(0.9, 1, 1) ## TO DEFINE
+harvest <- c(10, 10, 10) ## TO DEFINE
 ```
 
 ## Population sizes
@@ -151,10 +151,19 @@ EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull")
 
 <!-- CHECK HERE: Gilles, when export_shp = TRUE the element $results was empty -->
 
+--> *IT WORKS JUST FINE WIH ME, hope this is is not a problem linked to package or R version....*
+
+```{r eoo2, eval = TRUE, collapse = TRUE}
+EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", export_shp = T)
+EOO.hull$results
+EOO.hull$spatial
+```
+
+
 ### Area of occupancy (AOO)
 ```{r aoo, eval = TRUE, collapse = TRUE}
 AOO <- AOO.computing(occs[, c(1:3)], 
-                     Cell_size_AOO = 2, nbe.rep.rast.AOO = 30)
+                     cell_size_AOO = 2, nbe.rep.rast.AOO = 30)
 ```
 
 ### Number of subpopulations
@@ -168,20 +177,24 @@ sub <- subpop.comp(XY = occs[, c(1:3)],
 <!-- CHECK HERE: Gilles, subpop.radius is returning an error: "some columns are not in the data.table: tax" -->
 <!-- CHECK HERE: without the object radius I coul not test subpop.comp() -->
 
+--> *CORRECTED !!*
 
 ### Number of locations
 
 ```{r locations, eval = TRUE, collapse = TRUE}
-locs <- locations.comp(occs[, c(1:3),],  method = "fixed_grid",
+locs <- locations.comp(occs[, c(1:3),],  
+                       method = "fixed_grid",
                             nbe_rep = 30,
                             cell_size_locations = 10, 
                             Rel_cell_size = 0.05, 
-                            #protec.areas = strict.ucs.spdf, 
-                            #ID_shape_PA= "NAME",
+                            #threat_list = strict.ucs.spdf, 
+                            #ID_shape = "NAME",
                             method_polygons = "no_more_than_one")
 ```
 
 <!-- CHECK HERE: how can we include the shape file without the argument 'protec.areas' ?? -->
+
+--> *CHEK parameters corrected above, it should work*
 
 
 ### Severe fragmentation
@@ -192,7 +205,7 @@ merged_data <- merged_data[, c("ddlat","ddlon","tax","radius","aoo")]
 list_data <- coord.check(XY = merged_data,
                               listing = TRUE)
 fator = 1
-for (i in seq_lenght(list_data)) {
+for (i in seq_lentgth(list_data)) {
 get.patches(list_data[[i]],
       cell_size = 2,
       nbe_rep = 0,
@@ -205,7 +218,13 @@ critB$sever.frag <- 100 * critB$Nbe_subPop/ (critB$AOO / 4) > 50
 
 ```
 
+--> *get.patches function is tagged as internal and not exported Should we export it and if yes, make it work for multi taxa and thus not necessitates the loop ???*
+
+--> *All table from EOO, AOO and locations computations now include a column 'tax' which simplify merging*
+
 <!-- CHECK HERE: without the object radius I could not test coord.check() subpop.comp() -->
+
+
 
 ### Area of habitat (AOH)
 
@@ -255,9 +274,9 @@ critC <- criterion_C(x = mean.pop,
 ```
 
 ```{r criterion-B, eval = TRUE, collapse = TRUE}
-critB <- cat_criterion_b(EOO = EOO,
+critB <- cat_criterion_b(EOO = EOO.hull$results,
                                   AOO = AOO,
-                                  locations = nbe_loc_total,
+                                  locations = locs$locations,
                                   sever.frag = sever.frag,
                                   decline = declineB,
                                   protected.threshold = 100)

@@ -164,7 +164,8 @@ subpop.comp <- function(XY,
   if (export_shp) {
     
     number_subpop <-
-      data.frame(subpop =  unlist(output[names(output) != "spatial"]))
+      data.frame(tax =  names(output),
+                 subpop =  as.numeric(unlist(output[names(output) != "spatial"])))
 
     shapes <- output[names(output) == "spatial"]
     shapes <- do.call('rbind', shapes)
@@ -173,50 +174,9 @@ subpop.comp <- function(XY,
   } else {
     
     number_subpop <-
-      data.frame(subpop =  unlist(output))
+      data.frame(tax =  names(output),
+                 subpop =  as.numeric(unlist(output)))
   }
-  
-
-  ### GILLES, NOT SURE WHY IT IS NECESSARY TO TRANFORM SPECIES ORIGINAL NAMES...
-  #SO I CHANGED IT, BUT LEFT THE PREVIOUS CODE IF YOU WANT TO TAKE IT BACK
-  # SpNames <- gsub(pattern = " ", 
-  #                 replacement = "_", 
-  #                 names(list_data))
-  # SpNames <- names(list_data)
-  # names(number_subpop) <- SpNames
-  # 
-  # if (export_shp) { ## IF/ELSE ADDED BY RENATO
-  #   poly <- 
-  #     output[names(output) == "poly_subpop"]
-  #   names(poly) <- SpNames
-
-    ### GILLES: I INCLUDE THIS PART FROM ANOTHER FUNCTION, SINCE NOW
-    #THE OUTPUT 'subpop.estimation' ARE sf OBJECTS WITH MULTIPLE POLYGONS/CIRCLES
-  #   if(length(poly) > 1) {
-  #     poly <-
-  #       do.call("rbind", poly)
-  #     row.names(poly) <- NULL
-  #     #### GILLES: MAYBE RETURN THE POLYGONS IN THE SAME CRS OF THE OCCURRENCES: WSG84?   
-  #     # poly <- 
-  #     #   sf::st_transform(poly, crs = 4326)
-  #     
-  #   } else {
-  #     poly <-
-  #       poly[[1]]
-  #     poly <- 
-  #       sf::st_as_sf(data.frame(poly, tax = SpNames[1]))
-  #   }
-  # 
-  #   # if (length(OUTPUT) == 1)
-  #   #   OUTPUT <- OUTPUT[[1]]
-  # 
-  #   OUTPUT <- list(number_subpop = number_subpop, poly_subpop = poly)
-  # 
-  # } else {
-  #   
-  #   OUTPUT <- number_subpop
-  #   
-  # }  
   
   if (!export_shp) return(number_subpop)
   

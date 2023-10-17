@@ -113,10 +113,11 @@ pop.size <- c(25000, 12000, 12000, 1200)
 locations <- c(75, 25, 25, 9)
 
 ## Example with different species metrics
-near.threatened(cats, EOO, AOO, decline, pop.reduction, pop.size, locations)
+near.threatened(cats = cats, EOO = EOO, AOO = AOO, decline = decline, 
+pop.reduction = pop.reduction, pop.size = pop.size, locations = locations)
 
 ## Example with only EOO, AOO and number of locations (not enough metrics)
-near.threatened(cats, EOO, AOO)
+near.threatened(cats = cats, EOO = EOO, AOO = AOO)
 
 }
 \references{

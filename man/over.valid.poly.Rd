@@ -27,8 +27,7 @@ over.valid.poly(
 \item{mode}{character string either 'spheroid' or 'planar'. By default
 'spheroid'}
 
-\item{proj_type}{character string or numeric or object of CRS class, by
-default is "cea"}
+\item{proj_type}{string or numeric}
 
 \item{min.dist}{minimum tolerated distance between polygons and points.
 Default to 0.1 m.}
@@ -40,7 +39,7 @@ the polygon ("flag")?}
 Get Occurrences Distance to a Polygon
 }
 \details{
-The spatial polygon must be a \code{SpatialPolygonsDataFrame} in which
+The spatial polygon must be a \code{sf} in which
 each polygon/feature is one taxon, an the data frame contains a column
 \code{tax} with the taxa name. The XY data frame has the same structure as other
 XY objects within \code{ConR} with the three first columns being \code{ddlat},
@@ -51,6 +50,7 @@ corresponding values in columns \code{classes} should be 1 and 2.
 }
 \examples{
 
+\donttest{
 mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0),
                    ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2),
                    tax = rep("a", 7),
@@ -64,5 +64,7 @@ plot(sf::st_geometry(shp), add=TRUE)
 over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "a")
 over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "a", value = "flag")  
 over.valid.poly(shp, mydf, names_poly = "a", names_taxa = "b")
+}
 
 }
+\keyword{internal}

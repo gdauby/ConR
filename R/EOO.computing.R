@@ -156,9 +156,10 @@ EOO.computing <- function(XY,
   }
   
   res_df <-
-    data.frame(eoo =  rep(NA, length(list_data)), 
+    data.frame(tax = names(list_data),
+      eoo =  rep(NA, length(list_data)), 
                issue_eoo = rep(NA, length(list_data)))
-  row.names(res_df) <- names(list_data)
+  # row.names(res_df) <- names(list_data)
   
   if (parallel) {
     cl <- snow::makeSOCKcluster(NbeCores)
@@ -243,11 +244,11 @@ EOO.computing <- function(XY,
   
   res <- unlist(output[names(output) != "spatial"])
   
-  res_df[which(row.names(res_df) %in% names(res)), 1] <-
+  res_df[which(res_df$tax %in% names(res)), 2] <-
     res
   
   if (length(issue_long_span) > 0)
-    res_df[issue_long_span, 2] <-
+    res_df[issue_long_span, 3] <-
     "Occurrences spans more than 180 degrees longitude, EOO unlikely reliable"
   
   if (length(issue_nrow) > 0)
@@ -275,11 +276,6 @@ EOO.computing <- function(XY,
     
     dir.create(file.path(paste(getwd(), "/shapesIUCN", sep = "")), showWarnings = FALSE)
     
-    # output_spatial <- 
-    #   output_spatial[unlist(lapply(output_spatial, function(x) !is.vector(x)))]
-    
-    # exi_files <- 
-    #   list.files(paste(getwd(), "/shapesIUCN", sep = ""))
     
     sf::write_sf(output_spatial,
                  dsn = "shapesIUCN",
@@ -287,30 +283,6 @@ EOO.computing <- function(XY,
                  driver = driver_shp,
                  overwrite = TRUE)
     
-    # for (i in 1:length(output_spatial)) {
-    #   
-    #   NAME <- names_[id_spatial[i]]
-    #   NAME <- gsub(" ", "_", NAME)
-    #   
-    #   sf::write_sf(output_spatial[[i]],
-    #                dsn = "shapesIUCN",
-    #                layer = paste(NAME, "_EOO_poly", sep = ""),
-    #                driver = driver_shp,
-    #                overwrite = TRUE)
-    #   
-    #   # output_spatial[[i]]@polygons[[1]]@ID <- "1"
-    #   # ConvexHulls_poly_dataframe <-
-    #   #   sp::SpatialPolygonsDataFrame(output_spatial[[i]], data = as.data.frame(names(output_spatial[[i]])))
-    #   # colnames(ConvexHulls_poly_dataframe@data) <-
-    #   #   paste(substr(names_[id_spatial[i]], 0, 3), collapse = '')
-    #   # rgdal::writeOGR(
-    #   #   ConvexHulls_poly_dataframe,
-    #   #   "shapesIUCN",
-    #   #   paste(names_[id_spatial[i]], "_EOO_poly", sep = ""),
-    #   #   driver = "ESRI Shapefile",
-    #   #   overwrite_layer = TRUE
-    #   # )
-    # }
   }
   
   # if (write_results)

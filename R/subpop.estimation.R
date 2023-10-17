@@ -11,13 +11,12 @@
 #'   default is "cea"
 #'
 #' @import sf
+#' @keywords internal
+#' @noRd
 subpop.estimation <- function(XY,
                          Resol_sub_pop, 
                          export_shp = FALSE,
                          proj_type = "cea") {
-  
-  
-  
   
   points_sf <- st_as_sf(XY, coords = c(1, 2))
   buff_sf <- st_buffer(points_sf, dist = Resol_sub_pop * 1000)

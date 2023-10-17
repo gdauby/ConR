@@ -8,6 +8,10 @@
 #' @param nbe_rep integer
 #' @param export_shp logical
 #' @inheritParams proj_crs
+#' 
+#' 
+#' @keywords internal
+#' @noRd
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,

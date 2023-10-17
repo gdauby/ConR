@@ -6,7 +6,7 @@
 #' @author Gilles Dauby \email{gilles.dauby@@ird.fr}
 #'
 #' @param XY [data.frame][base::data.frame()] see Details.
-#' @param Cell_size_AOO numeric, by default is 2. Value indicating the grid size
+#' @param cell_size_AOO numeric, by default is 2. Value indicating the grid size
 #'   in kilometres used for estimating Area of Occupancy.
 #' @param nbe.rep.rast.AOO numeric, by default is 0. Indicate the number of
 #'   raster with random starting position used for estimating the AOO. If 0 but
@@ -78,7 +78,7 @@
 #' 
 #' @export
 AOO.computing <- function(XY,
-                          Cell_size_AOO = 2,
+                          cell_size_AOO = 2,
                           nbe.rep.rast.AOO = 0,
                           parallel = FALSE,
                           NbeCores = 2,
@@ -90,15 +90,20 @@ AOO.computing <- function(XY,
   proj_type <- proj_crs(proj_type = proj_type)
   
   list_data <- 
-    coord.check(XY = XY, proj_type = proj_type, cell_size = Cell_size_AOO, check_eoo = FALSE)
+    coord.check(XY = XY, proj_type = proj_type, cell_size = cell_size_AOO, check_eoo = FALSE)
   
   issue_close_to_anti <- list_data$issue_close_to_anti
   list_data <- list_data$list_data
   
   res_df <-
-    data.frame(aoo =  rep(NA, length(list_data)), 
+    data.frame(tax = names(list_data),
+               aoo =  rep(NA, length(list_data)), 
                issue_aoo = rep(NA, length(list_data)))
-  row.names(res_df) <- names(list_data)
+  
+  # res_df <-
+  #   data.frame(aoo =  rep(NA, length(list_data)), 
+  #              issue_aoo = rep(NA, length(list_data)))
+  # row.names(res_df) <- names(list_data)
   
   if (length(issue_close_to_anti) > 0) {
     
@@ -146,7 +151,7 @@ AOO.computing <- function(XY,
         # print(x)
         res <- AOO.estimation(
           coordEAC = list_data[[x]],
-          cell_size = Cell_size_AOO,
+          cell_size = cell_size_AOO,
           nbe_rep = nbe.rep.rast.AOO,
           export_shp = export_shp,
           proj_type = proj_type
@@ -172,27 +177,19 @@ AOO.computing <- function(XY,
 
     res <- unlist(output[names(output) != "spatial"])
     
-    res_df[which(row.names(res_df) %in% names(res)), 1] <-
+    res_df[res_df$tax %in% names(res), 2] <-
       res
     
     if (length(issue_close_to_anti) > 0)
-      res_df[issue_close_to_anti, 2] <-
+      res_df[issue_close_to_anti, 3] <-
       "AOO could not computed because grid cells would overlap with antimeridian"
     
-    
-    
     if(export_shp) {
-      
-      
-      # res <- unlist(output[names(output) == "aoo"])
-      # names(res) <- names(list_data)
-      
+
       shapes <- output[names(output) == "spatial"]
       shapes <- do.call('rbind', shapes)
       row.names(shapes) <- 1:nrow(shapes)
-      
-      # names(shapes) <- names(list_data)
-      
+
     }
     
   } else {
