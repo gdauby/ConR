@@ -57,3 +57,21 @@ NULL
 #' @format A data frame with seven rows and 28 variables
 #' @source <http://www.iucnredlist.org/documents/RedListGuidelines.pdf>
 NULL
+
+
+#' Dataset to run the package introductory vignette
+#'
+#' A dataset containing occurrence records from three arborescent species from 
+#' the Atlantic Forest obtained from different sources, but mostly from GBIF.
+#' 
+#' Only records considered to have a high confidence level in terms of
+#' georefferencing and species identifications are included.
+#' 
+#' Columns are: ddlat, ddlon, tax, coly, UC, source
+#'
+#' @keywords datasets
+#' @name example_tutorial
+#' @usage data(example_tutorial)
+#' @format A data frame with 1037 rows and 6 columns
+#' @source <https://doi.org/10.15468/dl.mzmat2>
+NULL
