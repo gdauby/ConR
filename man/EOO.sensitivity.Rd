@@ -68,6 +68,17 @@ file. By default is "EOO.sensitivity.results"}
 \item{proj_type}{string or numeric}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+
+\item{poly}{Spatial polygon}
+
+\item{points}{XY data frame}
+
+\item{names_poly}{character string}
+
+\item{names_taxa}{character string}
+
+\item{min.dist}{minimum tolerated distance between polygons and points.
+Default to 0.1 m.}
 }
 \value{
 A data frame containing, for each taxon, the EOO in square kilometres

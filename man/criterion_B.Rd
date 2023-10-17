@@ -24,7 +24,7 @@ criterion_B(
   alpha = 1,
   buff.alpha = 0.1,
   exclude.area = FALSE,
-  Cell_size_AOO = 2,
+  cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
   parallel = FALSE,
   show_progress = TRUE,
@@ -82,6 +82,9 @@ the buffer in decimal degree added to alpha hull. By default is 0.1}
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map}
 are cropped of \code{SpatialPolygons} used for calculating EOO. By default
 is FALSE}
+
+\item{cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
+in kilometres used for estimating Area of Occupancy.}
 
 \item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
 raster with random starting position used for estimating the AOO. If 0 but

@@ -6,7 +6,7 @@
 \usage{
 AOO.decline(
   XY,
-  Cell_size_AOO = 2,
+  cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
   parallel = FALSE,
   NbeCores = 2,
@@ -20,6 +20,9 @@ AOO.decline(
 }
 \arguments{
 \item{XY}{\link[base:data.frame]{data.frame} see Details.}
+
+\item{cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
+in kilometres used for estimating Area of Occupancy.}
 
 \item{nbe.rep.rast.AOO}{numeric, by default is 0. Indicate the number of
 raster with random starting position used for estimating the AOO. If 0 but

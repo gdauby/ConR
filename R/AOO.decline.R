@@ -54,7 +54,7 @@
 #' 
 #' @export AOO.decline
 AOO.decline <- function(XY,
-                        Cell_size_AOO = 2,
+                        cell_size_AOO = 2,
                         nbe.rep.rast.AOO = 0,
                         parallel = FALSE,
                         NbeCores = 2,
@@ -288,7 +288,7 @@ AOO.decline <- function(XY,
   AOO <-
     AOO.computing(
       XY = XY,
-      Cell_size_AOO = Cell_size_AOO,
+      cell_size_AOO = cell_size_AOO,
       nbe.rep.rast.AOO = nbe.rep.rast.AOO,
       export_shp = FALSE,
       parallel = parallel,
@@ -320,7 +320,7 @@ AOO.decline <- function(XY,
       AOO_treatened <-
         AOO.computing(
           XY = XY_ok,
-          Cell_size_AOO = Cell_size_AOO,
+          cell_size_AOO = cell_size_AOO,
           nbe.rep.rast.AOO = nbe.rep.rast.AOO,
           export_shp = FALSE,
           parallel = parallel,
@@ -358,7 +358,7 @@ AOO.decline <- function(XY,
     AOO_treatened <-
       AOO.computing(
         XY = XY_ok,
-        Cell_size_AOO = Cell_size_AOO,
+        cell_size_AOO = cell_size_AOO,
         nbe.rep.rast.AOO = nbe.rep.rast.AOO,
         export_shp = FALSE,
         parallel = parallel,
