@@ -1,14 +1,16 @@
 
 #' @title Area of occupancy decline
 #'
-#' @description Estimate areas of occupancy (AOO) decline for multiple taxa in square kilometers and percentage
-#' `r lifecycle::badge("experimental")
+#' @description 
+#'  `r lifecycle::badge("experimental")`
+#'  Estimate areas of occupancy (AOO) decline for multiple taxa in square kilometres and percentage
+#'  
 #' 
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #'
 #' @inheritParams AOO.computing
-#' @param hab.map raster, raster layer/stack or spatial polygons containing the
+#' @param hab.map SpatRaster or sf polygons containing the
 #'   habitat spatial information
 #' @param hab.map.type logical, vector of same length of `hab.map`,
 #'  * `TRUE` means the habitat of `hab.map` is suitable
@@ -34,45 +36,68 @@
 #' 
 #' 
 #' 
-#' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
-#'
+#' 
 #' @return 
 #' \enumerate{
 #'   \item AOOs a `dataframe` of AOO estimates for each taxa and for each layer/spatial polygons if `all_individual_layers` is TRUE
 #'   \item AOO_decline a `dataframe` of AOO.decline in percentages
 #'   \item categories based on the sub-criteria of IUCN criterion A
 #' }
-#'   
-#' @examples 
-#' \dontrun{
-#' data(land_cover_ex)
-#' AOOs <- AOO.decline(XY = dataset.ex, hab.map = land_cover_ex, hab.class = c(40, 40))
-#'}
-#'
+#' 
+#' 
+#' @examples
+#' 
+#' m <- matrix(1:25, nrow=5, ncol=5)
+#' rm <- rast(m)
+#' values(rm) <- sample(c("forest", "cities", "roads"), 25, replace = T)
+#' cls <- data.frame(id=1:3, cover=c("forest", "cities", "roads"))
+#' levels(rm) <- cls
+#' terra::crs(rm) <- "epsg:4326"
+#' 
+#' 
+#' test_data <- dummy_dist(n = 5, xmin = 0, xmax = 5, ymin = 0, ymax = 5)
+#' 
+#' 
+#' res <- AOO.decline(
+#' XY = test_data,
+#' hab.map = rm,
+#' hab.class = c("forest"),
+#' all_individual_layers = TRUE
+#' )
+#' 
+#' 
+#' res <- AOO.decline(
+#' XY = test_data,
+#' hab.map = rm,
+#' hab.class = c("cities", "roads"),
+#' all_individual_layers = TRUE, 
+#' hab.map.type = FALSE ### this means the provided hab.map is unsuitable
+#' )
+#' 
+#' 
 #' @importFrom terra project crop app vect extract
 #' @import sf
+#' @rawNamespace import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 #' 
 #' @export AOO.decline
 AOO.decline <- function(XY,
+                        hab.map,
                         cell_size_AOO = 2,
                         nbe.rep.rast.AOO = 0,
                         parallel = FALSE,
                         NbeCores = 2,
                         show_progress = TRUE,
                         proj_type = "cea",
-                        hab.map = NULL,
                         hab.class = NULL,
                         hab.map.type = NULL,
                         all_individual_layers = FALSE
 ) {
   
-  ### checking arguments validity
-  if (is.null(hab.map)) 
+  if (!exists("hab.map")) 
     stop("Please provide hab.map (a sf polygon object or a SpatRaster)")
   
   hab.map.checked <- check_hab_map(hab.map = hab.map, 
                                    hab.map.type = hab.map.type)
-  
   
   ### converting XY inputs data
   proj_type_ <- proj_crs(proj_type = proj_type)
@@ -118,7 +143,7 @@ AOO.decline <- function(XY,
       
     }
     
-    if (hab.map.checked$classes.hab.map[i,]$rast) {
+    if (hab.map.checked$classes.hab.map[i,]$SpatRaster) {
       
       hab.map.selected <- hab.map.checked$hab.map[[i]]
       
@@ -130,32 +155,54 @@ AOO.decline <- function(XY,
           
           if (!is.factor(hab.map.selected_lay)) {
             
-            val_rast <- terra::values(hab.map.selected_lay)[,1]
-            val_rast <- unique(val_rast[which(!is.na(val_rast))])
+            if (hab.map.checked$hab.map.type[i]) {
+              
+              hab.map.selected_lay <- subst(x = hab.map.selected_lay, from = as.numeric(hab.class), to = 1, others= NA)
+              
+            } else {
+              
+              hab.map.selected_lay <- subst(x = hab.map.selected_lay, from = as.numeric(hab.class), to = NA, others= 1)
+              
+            }
             
-            levels(hab.map.selected_lay) <- as.character(val_rast)
-            
-          }
-            
-          
-          if (hab.map.checked$hab.map.type[i]) {
-            ## if suitable
-            hab.map.selected_lay <- terra::app(hab.map.selected_lay,
-                                           fun = function(x) {
-                                             x[which(!x %in% hab.class)] <- NA
-                                             return(x)
-                                           })
-            
+            # val_rast <- terra::values(hab.map.selected_lay)[,1]
+            # length(val_rast[which(!is.na(val_rast))])
+            # ct <- table(val_rast[which(!is.na(val_rast))])
+            # ct[names(ct) %in% hab.class]
+            # val_rast <- unique(val_rast[which(!is.na(val_rast))])
+            # 
+            # levels(hab.map.selected_lay) <-
+            #   data.frame(id = 1:length(val_rast), cover = as.character(val_rast))
+
           } else {
-            ## if unsuitable
-            hab.map.selected_lay <- terra::app(hab.map.selected_lay,
-                                           fun = function(x) {
-                                             x[which(x %in% hab.class)] <- NA
-                                             return(x)
-                                           })
+            
+            levels_rast <- levels(hab.map.selected_lay)[[1]]
+            fac_levels <- levels_rast[which(levels_rast[,2] %in% hab.class),][,1]
+            
+            if (hab.map.checked$hab.map.type[i]) {
+              ## if suitable
+              
+              hab.map.selected_lay <- subst(x = hab.map.selected_lay, from = fac_levels, to = 1, others= NA, raw = TRUE)
+              
+              # hab.map.selected_lay <- terra::app(hab.map.selected_lay,
+              #                                    fun = function(x) {
+              #                                      x[which(!x %in% hab.class)] <- NA
+              #                                      return(x)
+              #                                    })
+              
+              
+            } else {
+              ## if unsuitable
+              # hab.map.selected_lay <- terra::app(hab.map.selected_lay,
+              #                                    fun = function(x) {
+              #                                      x[which(x %in% fac_levels)] <- NA
+              #                                      return(x)
+              #                                    })
+              hab.map.selected_lay <- subst(x = hab.map.selected_lay, from = fac_levels, to = NA, others= 1, raw = TRUE)
+              
+            }
             
           }
-          
         } else {
           
           stop("implement for hab.class numeric")
@@ -184,25 +231,33 @@ AOO.decline <- function(XY,
           
         }
         
-        
-        if (as.character(crs(hab.map.selected_lay)) != proj_type_@projargs) {
+        if (paste(terra::crs(hab.map.selected_lay, describe = T)[,c("authority", "code")], collapse = ":") !=
+             proj_type_$input) {
           
-          hab.map.selected_lay <- terra::project(hab.map.selected_lay, as.character(proj_type_))
+          hab.map.selected_lay <- 
+            terra::project(hab.map.selected_lay, proj_type_$wkt)
           
         }
         
-        
-        hab.map.selected_lay <-
-          terra::crop(hab.map.selected_lay, terra::vect(XY_sf))
-        
-        intersect_rast_points <-
-          terra::extract(hab.map.selected_lay, terra::vect(XY_sf))
+        XY_te <- terra::vect(XY_sf)
         
         index_ <- which(unlist(lapply(ids_to_keep, is.null)))[1]
         
-        ### ids stored are for which points do not fall within defined layer (i.e. under threat)
-        ids_to_keep[[as.numeric(index_)]] <-
-          which(!is.na(intersect_rast_points[, 2]))
+        is_intersect <- is.related(hab.map.selected_lay, XY_te, "intersects")
+        
+        if (is_intersect) {
+          
+          hab.map.selected_lay <-
+            terra::crop(hab.map.selected_lay, XY_te)
+          
+          intersect_rast_points <-
+            terra::extract(hab.map.selected_lay, XY_te)
+          
+          ### ids stored are for which points do not fall within defined layer (i.e. under threat)
+          ids_to_keep[[as.numeric(index_)]] <-
+            which(!is.na(intersect_rast_points[, 2]))
+          
+        }
         
         names(ids_to_keep)[[as.numeric(index_)]] <-
           paste0("hab.map.", i + j -1)
@@ -210,79 +265,6 @@ AOO.decline <- function(XY,
       }
     }
   }
-  
-  # if (!is.null(threat.map)) {
-  #   
-  #   for (i in 1:length(threat.map)) {
-  #     
-  #     threat.map_proj <- 
-  #       st_transform(threat.map[[i]], proj_type_)
-  #     
-  #     intersect_treath_map <- suppressWarnings(st_intersection(XY_sf, threat.map_proj))
-  #     
-  #     ids_to_keep[[i]] <- 
-  #       XY_id$id[!XY_id$id %in% st_set_geometry(intersect_treath_map, NULL)[,"id"]]
-  #     
-  #     names(ids_to_keep)[[i]] <- 
-  #       paste0("threat.map.", i)
-  #     
-  #   }
-  #   
-  # }
-  
-  # if (!is.null(hab.map)) {
-  #   
-  #   if (any(grepl("Raster", class(hab.map)))) {
-  #     
-  #     if (st_crs(crs(hab.map))$input != proj_type_@projargs) {
-  #       
-  #       hab.map <- raster::projectRaster(hab.map, crs = proj_type_)
-  #       
-  #     }
-  #     
-  #     ## masking input raster given hab.class
-  #     if (!is.null(hab.class)) {
-  #       
-  #       hab.map_masked <- vector('list', dim(hab.map)[3])
-  #       for (i in 1:dim(hab.map)[3]) {
-  #         
-  #         hab.map_masked[[i]] <- 
-  #           raster::calc(hab.map[[i]], function(x) ifelse(x < hab.class[i], NA, 1))
-  #         
-  # 
-  #         
-  #       }
-  #       
-  #       hab.map_masked <- raster::stack(hab.map_masked)
-  #       
-  #     } else {
-  #       
-  #       hab.map_masked <- 
-  #         hab.map
-  #       
-  #     }
-  #     
-  #     ext <- raster::extent(sf::st_bbox(XY_sf)[c(1, 3, 2, 4)])
-  #     hab.map_masked_crop <-
-  #     raster::crop(hab.map_masked, ext) # cropping raster to the extent of the polygon
-  #     
-  #     # }
-  #       
-  #     intersect_rast_points <- raster::extract(hab.map_masked_crop, XY_sf)
-  #       
-  #     for (i in 1:ncol(intersect_rast_points)) {
-  #       
-  #       ids_to_keep[[length(threat.map) + i]] <- 
-  #         which(!is.na(intersect_rast_points[,i]))
-  #       
-  #       names(ids_to_keep)[[length(threat.map) + i]] <- 
-  #         paste0("hab.map.", length(threat.map) + i)
-  #       
-  #     }
-  #     
-  #   }
-  #   
-  # }
   
   message("Total Area of occupancy")
   AOO <-
@@ -301,11 +283,11 @@ AOO.decline <- function(XY,
     data.frame(
       AOO = AOO$aoo,
       AOO_issue = AOO$issue_aoo,
-      species = rownames(AOO)
+      tax = AOO$tax
     )
   
   ### whether the AOO should be estimated for all layers individually
-  if (all_individual_layers & length(ids_to_keep) > 1) {
+  if (all_individual_layers & any(unlist(lapply(ids_to_keep, length)) > 1)) {
     
     message("Area of occupancy minus threatened areas for each layers individually")
     
@@ -336,20 +318,16 @@ AOO.decline <- function(XY,
     
     for (i in 1:length(AOO_res_list)) {
       AOO_treath <- data.frame(AOO_treatened = AOO_res_list[[i]]$aoo, 
-                               species = rownames(AOO_res_list[[i]]))
+                               tax = AOO_res_list[[i]]$tax)
       colnames(AOO_treath)[1] <- names(ids_to_keep)[i]
       all_data <- merge(all_data,
                         AOO_treath,
-                        by = "species", all.x = T)
+                        by = "tax", all.x = T)
       
       all_data[which(is.na(all_data[,i + 3])), i + 3] <- 0
     }
   }
   
-  # XY_ok <-
-  #   XY_id[which(!XY_id$id %in% as.numeric(names(which(table(unlist(ids_to_keep)) == length(ids_to_keep))))),]
-  
-  ## any point that is under at least one threat
   XY_ok <-
     XY_id[which(XY_id$id %in% as.numeric(names(table(unlist(ids_to_keep))))),]
   
@@ -367,34 +345,44 @@ AOO.decline <- function(XY,
         proj_type = proj_type
       )
     
-    AOO_treath <- data.frame(AOO_threat = AOO_treatened$aoo, 
+    AOO_treath <- data.frame(AOO_treath = AOO_treatened$aoo, 
                              AOO_issue_threat = AOO_treatened$issue_aoo,
-                             species = rownames(AOO_treatened))
+                             tax = AOO_treatened$tax)
     # colnames(AOO_treath)[1] <- "AOO_treath"
     
   } else {
     
     AOO_treath <- data.frame(AOO_treath = NA, 
-                             species = names(AOO))
+                             tax = AOO$tax)
     
   }
   
   all_data <- merge(all_data,
                     AOO_treath,
-                    by = "species", 
+                    by = "tax", 
                     all.x = T)
   
-  all_data[which(is.na(all_data[,which(grepl("AOO_threat", colnames(all_data)))])), 
-           which(grepl("AOO_threat", colnames(all_data)))] <- 0
+  all_data[which(is.na(all_data[,which(grepl("AOO_treath", colnames(all_data)))])), 
+           which(grepl("AOO_treath", colnames(all_data)))] <- 0
   
-  all_data_decline <- data.frame(species = all_data[,1], 
-                                 aoo_decline = 100 - all_data[ ,which(grepl("AOO_threat", colnames(all_data)))]/all_data$AOO*100)
+  # print(all_data$tax)
+  # print(all_data$AOO)
+  # print(all_data)
+  # print(all_data[, which(grepl("AOO_threat", colnames(all_data)))])
+  
+  all_data_decline <-
+    data.frame(tax = all_data$tax,
+               aoo_decline = round(100 - all_data[, which(grepl("AOO_treath", colnames(all_data)))] /
+                                     all_data$AOO * 100, 2))
   
   if (ncol(all_data_decline) > 3) {
-    categories <- apply(all_data_decline[,2:ncol(all_data_decline)], MARGIN = 2, FUN = function(x) cat_criterion_a(A2_val = x))
-    categories <- data.frame(species = all_data[,1], as.data.frame(lapply(categories, function(x) as.data.frame(x))))
+    categories <- apply(all_data_decline[,2:ncol(all_data_decline)], 
+                        MARGIN = 2, FUN = function(x) cat_criterion_a(A2_val = x))
+    categories <- data.frame(tax = all_data$tax, 
+                             as.data.frame(lapply(categories, function(x) as.data.frame(x))))
   } else {
-    categories <- data.frame(species = all_data[,1], as.data.frame(cat_criterion_a(A2_val = all_data_decline[,2:ncol(all_data_decline)])))
+    categories <- data.frame(tax = all_data$tax, 
+                             as.data.frame(cat_criterion_a(A2_val = all_data_decline[,2:ncol(all_data_decline)])))
   }
   
   return(list(
