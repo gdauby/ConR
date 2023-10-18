@@ -6,13 +6,13 @@
 \usage{
 AOO.decline(
   XY,
+  hab.map,
   cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
   parallel = FALSE,
   NbeCores = 2,
   show_progress = TRUE,
   proj_type = "cea",
-  hab.map = NULL,
   hab.class = NULL,
   hab.map.type = NULL,
   all_individual_layers = FALSE
@@ -20,6 +20,9 @@ AOO.decline(
 }
 \arguments{
 \item{XY}{\link[base:data.frame]{data.frame} see Details.}
+
+\item{hab.map}{SpatRaster or sf polygons containing the
+habitat spatial information}
 
 \item{cell_size_AOO}{numeric, by default is 2. Value indicating the grid size
 in kilometres used for estimating Area of Occupancy.}
@@ -37,9 +40,6 @@ parallel execution. Only used if parallel is TRUE.}
 during computation is shown.}
 
 \item{proj_type}{character or numeric, by default is "cea", see Details.}
-
-\item{hab.map}{raster, raster layer/stack or spatial polygons containing the
-habitat spatial information}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as suitable}
 
@@ -63,8 +63,8 @@ habitat spatial information}
 }
 }
 \description{
-Estimate areas of occupancy (AOO) decline for multiple taxa in square kilometers and percentage
-`r lifecycle::badge("experimental")
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Estimate areas of occupancy (AOO) decline for multiple taxa in square kilometres and percentage
 }
 \details{
 \strong{Input} as a \link[base:data.frame]{data.frame} should have the following structure:
@@ -81,14 +81,35 @@ also increase the computing time. So this is a trade-off that depends on the imp
 get the minimal AOO and the size of the dataset.
 }
 \examples{
-\dontrun{
-data(land_cover_ex)
-AOOs <- AOO.decline(XY = dataset.ex, hab.map = land_cover_ex, hab.class = c(40, 40))
-}
 
-}
-\references{
-Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
+m <- matrix(1:25, nrow=5, ncol=5)
+rm <- rast(m)
+values(rm) <- sample(c("forest", "cities", "roads"), 25, replace = T)
+cls <- data.frame(id=1:3, cover=c("forest", "cities", "roads"))
+levels(rm) <- cls
+terra::crs(rm) <- "epsg:4326"
+
+
+test_data <- dummy_dist(n = 5, xmin = 0, xmax = 5, ymin = 0, ymax = 5)
+
+
+res <- AOO.decline(
+XY = test_data,
+hab.map = rm,
+hab.class = c("forest"),
+all_individual_layers = TRUE
+)
+
+
+res <- AOO.decline(
+XY = test_data,
+hab.map = rm,
+hab.class = c("cities", "roads"),
+all_individual_layers = TRUE, 
+hab.map.type = FALSE ### this means the provided hab.map is unsuitable
+)
+
+
 }
 \author{
 Gilles Dauby, \email{gildauby@gmail.com}
