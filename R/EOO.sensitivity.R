@@ -440,7 +440,7 @@ EOO.sensitivity <- function(XY,
 #'   
 #' @examples
 #' 
-#' \donttest{
+#' \dontrun{
 #' mydf <- data.frame(ddlat = c(-44.6,-46.2,-45.4,-42.2,-43.7,-45.0,-28.0),
 #'                    ddlon = c(-42.2,-42.6,-45.3,-42.5,-42.3,-39.0,-17.2),
 #'                    tax = rep("a", 7),
