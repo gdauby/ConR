@@ -102,7 +102,11 @@
 #' ## Another examples, with less observations (warning or no model fit below 3 observations)
 #' pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), 
 #' models = "all", project.years = 2030)
+#' 
+#' \dontrun{
 #' pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
+#' }
+#' 
 #' 
 #' @importFrom nls.multstart nls_multstart
 #' @importFrom segmented segmented seg.control
