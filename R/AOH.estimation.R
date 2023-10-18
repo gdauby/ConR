@@ -99,7 +99,7 @@
 #'   polygons. But note that for rasters, this include additional steps that can
 #'   be time and memory consuming.
 #'   
-#' @importFrom terra project crop vect rast app crs
+#' @rawNamespace import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 #' @importFrom stars st_as_stars
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom dplyr bind_rows
