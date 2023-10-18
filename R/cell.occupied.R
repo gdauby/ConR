@@ -10,10 +10,12 @@
 #' 
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
+#' @keywords internal
 #'
-#' @importFrom terra ext rast vect rasterize values as.polygons project
+#' @rawNamespace import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 #' @importFrom stats runif
 #' @import sf
+#' @noRd
 cell.occupied <-
   function(nbe_rep = 0,
            size = 4,
