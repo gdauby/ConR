@@ -654,6 +654,9 @@ locations.comp <- function(XY,
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom foreach %dopar% %do% foreach
 #' 
+#' @keywords internal
+#' 
+#' @noRd
 .generate_loc <- function(dataset,
                           method = "fixed_grid",
                           nbe_rep = 0,

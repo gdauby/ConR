@@ -4,8 +4,14 @@
 #'
 #' @param XY data.frame, of at least two columns (coordinates), third is taxa
 #' @param listing logical, whether the dataset should be splitted in a list by taxa
-#' @param proj_type ...
-#' @param listing_by_valid ...
+#' @param proj_type crs
+#' @param listing_by_valid logical
+#' @param check_eoo logical
+#' 
+#' 
+#' @return a list
+#' 
+#' @keywords internal
 #'
 #'
 coord.check <-
@@ -18,6 +24,9 @@ coord.check <-
     
     XY <- as.data.frame(XY)
     
+    if (ncol(XY) < 3) stop("At least three columns are expected in the following order : latitude, longitude and species names")
+    
+    
     # if (length(grep("[?]", XY[, 3])) > 0)
       XY[, 3] <- gsub("[?]", "_", XY[, 3])
     # if (length(grep("[/]", XY[, 3])) > 0)
@@ -29,10 +38,9 @@ coord.check <-
       XY[, 3] <- gsub("\\)", "", XY[, 3])
       
       
-    if (!is.numeric(XY[,1])) XY[,1] <- as.numeric(XY[,1])  
+    if (!is.numeric(XY[,1])) XY[,1] <- as.numeric(XY[,1])
     
-    if (ncol(XY) < 3) stop("At least three columns are expected in the following order : latitude, longitude and species names")
-    
+     
     if (any(is.na(XY[, c(1:2)]))) {
       print(
         paste(

@@ -25,8 +25,14 @@ locations.estimation(
 
 \item{proj_type}{character string}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{method}{character string}
+
+\item{Rel_cell_size}{numeric, if \code{method ="sliding_scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+}
+\value{
+a list
 }
 \description{
 Number of location estimation
 }
+\keyword{internal}

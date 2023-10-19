@@ -6,22 +6,17 @@
 \usage{
 EOO.comp(
   XY,
-  exclude.area = FALSE,
-  country_map = NULL,
   method.range = "convex.hull",
   alpha = 1,
   buff.alpha = 0.1,
   method.less.than3 = "not comp",
   mode = "spheroid",
-  proj_type = "cea"
+  proj_type = NULL,
+  reproject = TRUE
 )
 }
 \arguments{
 \item{XY}{data.frame}
-
-\item{exclude.area}{logical. Default if FALSE}
-
-\item{country_map}{SpatialPolygonDataframe. Default if NULL}
 
 \item{method.range}{string, by default "convex.hull", can also take
 "alpha.hull"}
@@ -35,8 +30,11 @@ EOO.comp(
 \item{mode}{character string either 'spheroid' or 'planar'. By default
 'spheroid'}
 
-\item{proj_type}{character string or numeric or object of CRS class, by
-default is "cea"}
+\item{proj_type}{crs}
+
+\item{exclude.area}{logical. Default if FALSE}
+
+\item{country_map}{SpatialPolygonDataframe. Default if NULL}
 }
 \value{
 A list
@@ -48,83 +46,7 @@ A list
 \description{
 Compute EOO given a data frame of coordinate in decimals degrees
 }
-\details{
-If \code{exclude.area} is TRUE and country_map is not provided,
-the world country polygons used comes from the package \href{https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries}{rnaturalearth}
-
-By default (\code{mode = "spheroid"}),the area of the polygon is based
-on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.
-
-To make a polygon more accurate, the function use the function \code{st_segmentize} from the \href{https://CRAN.R-project.org/package=sf}{sf} package.
-This adds vertices on the great circles (in order to make shortest distances between points, see example below)
-which can make difference for species with large distribution.
-
-An estimation of EOO based on projected data is also possible (\code{mode = "planar"}).
-This allow the user to use its own projection.
-By default, the projection (\code{proj_type = "cea"}) is a \href{https://epsg.io/6933}{global cylindrical equal-area projection}.
-It can makes sense to use a planar projection to estimate the EOO. See example.
-
-It is possible to use another projection by providing the EPSG code to \code{proj_type}. See example.
-Check \href{https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG}{make_EPSG}
-from the \code{rgdal} package for getting the EPSG code.
-
-For the very specific (and infrequent) case where all occurrences are
-localized on a straight line (in which case EOO would be null), 'noises' are
-added to coordinates, using the function
-\href{https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter}{jitter}.
-There is a warning when this happens. This means that EOO value will not be
-constant across multiple estimation (although the variation should be small)
-}
-\examples{
-
-country_map <-
-rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-
-### example Large distribution
-# Spheroid estimation
-XY <- 
-  data.frame(x = c(-20, 5, 0, -20, -20), 
-             y = c(-65, -45, -40, -55, -40),
-             taxa = "species")
-p1 <- 
-  EOO.comp(XY =  XY)
-p1$EOO
-plot(country_map$geometry)
-plot(p1$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-
-p2 <- 
-  EOO.comp(XY = XY, mode = "planar")
-p2$EOO
-plot(country_map$geometry)
-plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-
-# World Mercartor projection
-p2 <- 
-  EOO.comp(XY = XY, mode = "planar", proj_type = 3395)
-p2$EOO
-plot(country_map$geometry)
-plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-
-
-### example Antartic distribution
-XY <- 
-  data.frame(x = c(-65, -62, -78, -65), 
-             y = c(-150, 0, 120, 150),
-             taxa = "species")
-p1 <- 
-  EOO.comp(XY = XY, mode = "planar", proj_type = "Antarctic")
-
-p1 <- st_transform(p1$spatial.polygon, proj_crs(proj_type = "Antarctic"))
-plot(st_transform(country_map, proj_crs(proj_type = "Antarctic"))$geometry, extent = p1)
-plot(p1, lwd = 2, col = 'red', add = TRUE)
-
-\dontrun{
-p1 <- 
-  EOO.comp(XY = XY) ## this example fail
-}
-
-
-}
 \author{
 Gilles Dauby & Renato A. Ferreira de LimaA
 }
+\keyword{internal}

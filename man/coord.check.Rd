@@ -18,10 +18,16 @@ coord.check(
 
 \item{listing}{logical, whether the dataset should be splitted in a list by taxa}
 
-\item{proj_type}{...}
+\item{proj_type}{crs}
 
-\item{listing_by_valid}{...}
+\item{listing_by_valid}{logical}
+
+\item{check_eoo}{logical}
+}
+\value{
+a list
 }
 \description{
 Coordinates check
 }
+\keyword{internal}

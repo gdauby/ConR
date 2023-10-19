@@ -16,13 +16,13 @@ over.valid.poly(
 )
 }
 \arguments{
-\item{poly}{Spatial polygon}
+\item{poly}{a sf object}
 
-\item{points}{XY data frame}
+\item{points}{XY a data.frame}
 
-\item{names_poly}{character string}
+\item{names_poly}{a character string}
 
-\item{names_taxa}{character string}
+\item{names_taxa}{a character string}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default
 'spheroid'}
@@ -30,10 +30,10 @@ over.valid.poly(
 \item{proj_type}{string or numeric}
 
 \item{min.dist}{minimum tolerated distance between polygons and points.
-Default to 0.1 m.}
+Default to 0.1 m}
 
 \item{value}{output value: proportional distance ("dist") or inside/outside
-the polygon ("flag")?}
+the polygon ("flag")}
 }
 \description{
 Get Occurrences Distance to a Polygon

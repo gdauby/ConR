@@ -53,6 +53,7 @@ Authors@R: c(
 	person("Renato", "Augusto Ferreira de Lima", role = c("aut"),
 	email = "raflima@usp.br", 
 	comment = c(ORCID = "0000-0002-1048-0138")))
-RdMacros: lifecycle
+RdMacros: 
+    lifecycle
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

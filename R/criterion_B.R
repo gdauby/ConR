@@ -13,6 +13,7 @@
 #' @inheritParams locations.comp
 #' @inheritParams EOO.computing
 #' @inheritParams AOO.computing
+#' @inheritParams subpop.comp
 #' 
 #' 
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
@@ -62,7 +63,7 @@ criterion_B <- function(x,
                        mode = "spheroid",
                        DrawMap = FALSE) {
   
-  if(class(x)[1] == "spgeoIN") {
+  if(identical(class(x)[1], "spgeoIN")) {
     x <- cbind(x$species_coordinates, x$identifier)
     x <- x[,c(2,1,3)]
   }
@@ -83,40 +84,9 @@ criterion_B <- function(x,
     
   } else {
     
-    # if(any(grepl('sf', class(country_map))))
-    #   country_map <- 
-    #     as(country_map, "Spatial")
-    
     if (any(!st_is_valid(country_map)))
       country_map <- sf::st_make_valid(country_map)
-    
-    # country_map <-
-    #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
-    
-    # country_map <- 
-    #   as(country_map, "sf")
   }
-  
-  # if (!is.null(threat_list)) {
-  #   # if (!sp::identicalCRS(protec.areas, country_map)) {
-  #   #   
-  #   #   sp::proj4string(protec.areas) <- 
-  #   #     sp::CRS(SRS_string = 'EPSG:4326')
-  #   #   sp::proj4string(country_map) <-
-  #   #     sp::CRS(SRS_string = 'EPSG:4326')
-  #   #   
-  #   # }
-  #   
-  #   if (st_crs(protec.areas) != st_crs(country_map)) {
-  #     
-  #     st_crs(protec.areas) <- 4326
-  #     st_crs(country_map) <- 4326
-  #     
-  #   }
-  #   
-  #   
-  # }
-  
   
   ##########################################################################################
   ##############################  Sub-populations estimations ############################## 
@@ -146,7 +116,6 @@ criterion_B <- function(x,
       NbeSubPop <- subpop_stats
       
     }
-    
   }
   
   ##########################################################################################
@@ -170,7 +139,6 @@ criterion_B <- function(x,
       NbeCores = NbeCores, 
       proj_type = proj_type
     )
-  
   
   ##########################################################################################
   ##############################  EOO ####################### 

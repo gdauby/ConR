@@ -17,6 +17,23 @@
 #' 3 \tab tax \tab character or factor, taxa names
 #' }
 #' 
+#' If `exclude.area` is TRUE and country_map is not provided, 
+#' the world country polygons used comes from the package [rnaturalearth](https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries)
+#' 
+#' By default (`mode = "spheroid"`),the area of the polygon is based 
+#' on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.  
+#' 
+#' To make a polygon more accurate, the function use the function `st_segmentize` 
+#' from the [sf](https://CRAN.R-project.org/package=sf) package.
+#' This adds vertices on the great circles (in order to make shortest distances between points, see example below) 
+#' which can make difference for species with large distribution.  
+#' 
+#' An estimation of EOO based on projected data is also possible (`mode = "planar"`).
+#' This allow the user to use its own projection.
+#' By default, the projection (`proj_type = "cea"`) is a [global cylindrical equal-area projection](https://epsg.io/54034).
+#' It can makes sense to use a planar projection to estimate the EOO. See example.
+#' 
+#' 
 #' 
 #' **Important notes:**
 #' 
@@ -75,8 +92,8 @@
 #' be computed because there is less than three unique occurrences (or two if
 #' `method.less.than3` is put to "arbitrary").
 #' 
-#' If `export_shp` is TRUE, a `list` with: \enumerate{ \item EOO in
-#' square kilometers \item `SpatialPolygons` used for EOO computation}
+#' If `export_shp` is TRUE, a `list` with: \enumerate{ \item `results` a data.frame 
+#' \item `spatial` used for EOO computation}
 #' 
 #' @author Gilles Dauby
 #' 
@@ -91,15 +108,70 @@
 #' 
 #' @examples
 #' 
-#' data(dataset.ex)
-#' data(land)
-#' \dontrun{
-#' EOO <- EOO.computing(dataset.ex)
+#' set.seed(2)
+#' dataset <- dummy_dist(nsp = 3, max_occ = 30)
+#' EOO.computing(XY = dataset, export_shp = TRUE)
 #' 
-#' ## This exclude areas outside of land (i.e. ocean) for EOO computation
-#' EOO <- EOO.computing(dataset.ex, 
-#' exclude.area=TRUE, country_map=land)
-#' }
+#' EOO.computing(XY = dataset, mode = "planar")
+#' 
+#' EOO.computing(XY = dataset, method.range = "alpha")
+#' 
+#' res <- EOO.computing(XY = dataset, export_shp = TRUE)
+#' res$spatial
+#' 
+#' 
+#' data("land")
+#' 
+#' country_map <-
+#'   rnaturalearth::ne_countries(scale = 50, returnclass = "sf", type = "map_units")
+#' 
+#' ### example Large distribution
+#' # Spheroid estimation
+#' par(mfrow = c(2,2))
+#' XY <- 
+#'   data.frame(x = c(-20, 5, 0, -20, -20), 
+#'              y = c(-65, -45, -40, -55, -40),
+#'              taxa = "species")
+#' p1 <- 
+#'   EOO.computing(XY =  XY, export_shp = TRUE)
+#' p1$results
+#' 
+#' plot(st_geometry(country_map), extent = p1$spatial)
+#' plot(p1$spatial, lwd = 2, col = "red",  add= TRUE)
+#' 
+#' p2 <- 
+#'   EOO.computing(XY = XY, mode = "planar", export_shp = TRUE)
+#' p2$results
+#' plot(st_geometry(country_map), extent = p2$spatial)
+#' plot(p2$spatial, lwd = 2, col = "red",  add= TRUE)
+#' 
+#' # World Mercartor projection
+#' p2 <- 
+#'   EOO.computing(XY = XY, mode = "planar", proj_type = 3395, export_shp = TRUE)
+#' p2$results
+#' plot(st_geometry(country_map), extent = p2$spatial)
+#' plot(p2$spatial, lwd = 2, col = "red",  add= TRUE)
+#' 
+#' 
+#' ### example Antartic distribution
+#' XY <- 
+#'   data.frame(x = c(-65, -62, -78, -65), 
+#'              y = c(-150, 0, 120, 150),
+#'              taxa = "species")
+#' 
+#' ## This throws an error
+#' # p1 <- 
+#' #   EOO.computing(XY = XY, mode = "planar", export_shp = TRUE) 
+#' 
+#' p1 <- 
+#'   EOO.computing(XY = XY, mode = "planar", proj_type = "Antarctic", export_shp = TRUE)
+#' 
+#' 
+#' p1 <- st_transform(p1$spatial, proj_crs(proj_type = "Antarctic"))
+#' plot(st_geometry(st_transform(country_map, proj_crs(proj_type = "Antarctic"))), 
+#'      extent = p1)
+#' plot(p1, lwd = 2, col = 'red', add = TRUE)
+#' 
 #' 
 #' @import sf
 #' 
@@ -130,7 +202,15 @@ EOO.computing <- function(XY,
                           mode = "spheroid"
 ) {
   
-  list_data <- coord.check(XY = XY, check_eoo = TRUE)
+  
+  mode <- match.arg(mode, c("spheroid", "planar"))
+  
+  if (identical(mode, "planar"))
+    proj_type <- proj_crs(proj_type = proj_type)
+  
+  list_data <- coord.check(XY = XY, 
+                           check_eoo = TRUE, 
+                           proj_type = if (!is.character(proj_type)) proj_type)
   issue_long_span <- list_data$issue_long_span
   issue_nrow <- list_data$issue_nrow
   list_data <- list_data$list_data
@@ -215,15 +295,16 @@ EOO.computing <- function(XY,
       res <-
         EOO.comp(
           XY = list_data[[x]],
-          exclude.area = exclude.area,
-          country_map = country_map,
+          # exclude.area = exclude.area,
+          # country_map = country_map,
           # Name_Sp = names_[x],
           method.range = method.range,
           alpha = alpha,
           buff.alpha = buff.alpha,
           method.less.than3 = method.less.than3, 
           mode = mode, 
-          proj_type = proj_type
+          proj_type = proj_type, 
+          reproject = FALSE
         )
       
       names(res) <- c("eoo", "spatial")
@@ -251,13 +332,13 @@ EOO.computing <- function(XY,
     res_df[issue_long_span, 3] <-
     "Occurrences spans more than 180 degrees longitude, EOO unlikely reliable"
   
-  if (length(issue_nrow) > 0)
-    res_df[issue_nrow, 2] <-
-    paste(res_df[issue_nrow, 2], "EOO cannot be estimated because less than 3 unique pair of coordinates", sep = "|")
+  if (length(issue_nrow) > 0) {
+    res_df[issue_nrow, 3] <-
+      paste(res_df[issue_nrow, 3], "EOO cannot be estimated because less than 3 unique pair of coordinates", sep = "|")
+    res_df[, 3] <- gsub("NA|", "", res_df[, 3])
+  }
     
-  res_df$issue_eoo <- gsub("NA|", "", res_df$issue_eoo)
-  
-  if(export_shp) {
+  if (export_shp | exclude.area) {
     
     output_spatial <- output[names(output) == "spatial"]
     output_spatial <- output_spatial[!is.na(output_spatial)]
@@ -265,9 +346,37 @@ EOO.computing <- function(XY,
     output_spatial <- 
         do.call("rbind", output_spatial)
       
-    if (!is.null(output_spatial))
+    if (!is.null(output_spatial)) {
+      
       row.names(output_spatial) <- 1:nrow(output_spatial)
-  
+      
+      if (exclude.area) {
+        
+        if (identical(mode, "planar"))
+          country_map <- sf::st_transform(country_map, crs = proj_crs(proj_type = proj_type))
+        
+        p1 <-
+          suppressWarnings(suppressMessages(sf::st_intersection(output_spatial, 
+                                                                st_make_valid(st_union(country_map)))))
+        
+        eoos <- data.frame(eoo = as.numeric(st_area(p1)) / 1000000,
+                   tax = p1$tax)
+        
+        digits <-
+          c(6, 5, 4, 3, 2, 1, 0)[findInterval(eoos$eoo, 
+                                              c(0, 0.0001, 0.01, 0.1, 1, 10, 30000, Inf))]
+        
+        eoos$eoo <- round(eoos$eoo, digits)
+        
+        res_df[which(res_df$tax %in% eoos$tax), "eoo"] <- eoos$eoo
+        output_spatial <- p1
+        
+      }
+      
+      if (identical(mode, "planar"))
+        output_spatial <- sf::st_transform(output_spatial, crs = 4326)
+      
+    }
   }
   
   if(write_shp) {

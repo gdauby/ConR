@@ -6,7 +6,7 @@
 \usage{
 EOO.sensitivity(
   XY,
-  levels.order = NULL,
+  levels.order,
   occ.based = TRUE,
   value = "dist",
   exclude.area = FALSE,

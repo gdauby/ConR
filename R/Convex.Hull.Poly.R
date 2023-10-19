@@ -7,9 +7,7 @@
 #' 
 #' @param XY data.frame
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param exclude.area logical
-#' @param poly_exclude polygon
-#' @param proj_type character string or numeric or object of CRS class, by default is "cea"
+#' @param proj_type crs
 #' 
 #' @import sf
 #' @importFrom grDevices chull
@@ -17,13 +15,9 @@
 Convex.Hull.Poly <-
   function(XY,
            mode = "spheroid",
-           exclude.area = FALSE,
-           poly_exclude = NULL,
-           proj_type = "cea") {
+           proj_type = NULL) {
     
-    if (exclude.area & is.null(poly_exclude))
-      stop("exclude.area is TRUE but no shape provided")
-    
+
     # if(any(grepl('Spatial', class(poly_exclude))))
     #   poly_exclude <- as(poly_exclude, "sf")
     
@@ -66,89 +60,89 @@ Convex.Hull.Poly <-
       #p1_sf <- sf::st_sfc(sf::st_polygon(list(coord[,2:1])))
       #sf::st_crs(p1_sf) <- sf::st_crs(poly_exclude)
       
-      if (exclude.area) {
-        # p1_sf <- as(p1, "sf")
-        
-        p1 <-
-          suppressWarnings(suppressMessages(sf::st_union(
-            sf::st_intersection(p1, poly_exclude)
-          )))
-        
-        sf::st_crs(p1) <-
-          4326
-        
-        if(length(p1) == 0) {
-          warning("After excluding areas, the convex hull is empty. EOO is set as NA.")
-         
-          p1 <- NA 
-        }
-        
-        p1 <- st_sf(geom = p1)
-        
-        p1 <- p1[sf::st_is(p1, c("MULTIPOLYGON", "POLYGON")),]
-        
-        p1 <- sf::st_make_valid(p1)
-        
-        # else {
-        #   
-        #   p1 <- 
-        #     as(p1, "Spatial")
-        #   
-        # }
-        
-      }
+      # if (exclude.area) {
+      #   # p1_sf <- as(p1, "sf")
+      #   
+      #   p1 <-
+      #     suppressWarnings(suppressMessages(sf::st_union(
+      #       sf::st_intersection(p1, poly_exclude)
+      #     )))
+      #   
+      #   sf::st_crs(p1) <-
+      #     4326
+      #   
+      #   if(length(p1) == 0) {
+      #     warning("After excluding areas, the convex hull is empty. EOO is set as NA.")
+      #    
+      #     p1 <- NA 
+      #   }
+      #   
+      #   p1 <- st_sf(geom = p1)
+      #   
+      #   p1 <- p1[sf::st_is(p1, c("MULTIPOLYGON", "POLYGON")),]
+      #   
+      #   p1 <- sf::st_make_valid(p1)
+      #   
+      #   # else {
+      #   #   
+      #   #   p1 <- 
+      #   #     as(p1, "Spatial")
+      #   #   
+      #   # }
+      #   
+      # }
       
     }
     
     if (mode == "planar") {
       
-      if(inherits(proj_type, "crs")) {
-        
-        projEAC <- proj_crs(proj_type = proj_type)
-        
-      } else {
-        
-        projEAC <- proj_crs(proj_type = proj_type)
-        
-      }
+      # if(inherits(proj_type, "crs")) {
+      #   
+      #   projEAC <- proj_crs(proj_type = proj_type)
+      #   
+      # } else {
+      #   
+      #   projEAC <- proj_crs(proj_type = proj_type)
+      #   
+      # }
       
-      XY_sf_proj <-
-        sf::sf_project(
-          from = sf::st_crs(4326),
-          to =
-            sf::st_crs(projEAC),
-          pts = XY[, c(1, 2)]
-        )
+      # XY_sf_proj <-
+      #   sf::sf_project(
+      #     from = sf::st_crs(4326),
+      #     to =
+      #       sf::st_crs(projEAC),
+      #     pts = XY[, c(1, 2)]
+      #   )
       
-      p1 <- sf::st_convex_hull(x = sf::st_multipoint(XY_sf_proj))
+      p1 <- sf::st_convex_hull(x = sf::st_multipoint(as.matrix(XY[, c(1, 2)])))
       # eoo <- st_area(p1)
       
       p1 <-
         sf::st_sfc(p1)
       
-      sf::st_crs(p1) <- projEAC
+      sf::st_crs(p1) <- proj_type
       
-      if (exclude.area) {
-
-        poly_exclude_proj <-
-          sf::st_transform(poly_exclude, crs = projEAC)
-        
-        p1 <-
-          sf::st_union(sf::st_intersection(p1, poly_exclude_proj))
-        
-        if(length(p1) == 0) {
-          warning("After excluding areas, the convex hull is empty. EOO is NA.")
-          
-          p1 <- NA 
-        } 
-        # else {
-        #   
-        #   p1 <- 
-        #     as(p1, "Spatial")
-        #   
-        # }
-        
-      }
+      # if (exclude.area) {
+      # 
+      #   poly_exclude_proj <-
+      #     sf::st_transform(poly_exclude, crs = projEAC)
+      #   
+      #   p1 <-
+      #     sf::st_union(sf::st_intersection(p1, poly_exclude_proj))
+      #   
+      #   if(length(p1) == 0) {
+      #     warning("After excluding areas, the convex hull is empty. EOO is NA.")
+      #     
+      #     p1 <- NA 
+      #   } 
+      #   # else {
+      #   #   
+      #   #   p1 <- 
+      #   #     as(p1, "Spatial")
+      #   #   
+      #   # }
+      #   
+      # }
       
       p1 <- st_sf(geom = p1)
       

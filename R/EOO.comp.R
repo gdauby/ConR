@@ -12,8 +12,7 @@
 #' @param method.less.than3 string
 #' @param mode character string either 'spheroid' or 'planar'. By default
 #'   'spheroid'
-#' @param proj_type character string or numeric or object of CRS class, by
-#'   default is "cea"
+#' @param proj_type crs
 #'
 #' @author Gilles Dauby & Renato A. Ferreira de LimaA
 #' 
@@ -23,97 +22,23 @@
 #'   \item spatial.polygon a simple feature collection
 #' }
 #' 
-#' 
-#' @details If `exclude.area` is TRUE and country_map is not provided, 
-#' the world country polygons used comes from the package [rnaturalearth](https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries)
-#' 
-#' By default (`mode = "spheroid"`),the area of the polygon is based 
-#' on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.  
-#' 
-#' To make a polygon more accurate, the function use the function `st_segmentize` from the [sf](https://CRAN.R-project.org/package=sf) package.
-#' This adds vertices on the great circles (in order to make shortest distances between points, see example below) 
-#' which can make difference for species with large distribution.  
-#' 
-#' An estimation of EOO based on projected data is also possible (`mode = "planar"`).
-#' This allow the user to use its own projection.
-#' By default, the projection (`proj_type = "cea"`) is a [global cylindrical equal-area projection](https://epsg.io/6933).
-#' It can makes sense to use a planar projection to estimate the EOO. See example.
-#' 
-#' It is possible to use another projection by providing the EPSG code to `proj_type`. See example.
-#' Check [make_EPSG](https://www.rdocumentation.org/packages/rgdal/versions/0.4-10/topics/make_EPSG)
-#' from the `rgdal` package for getting the EPSG code.
-#' 
-#' For the very specific (and infrequent) case where all occurrences are
-#' localized on a straight line (in which case EOO would be null), 'noises' are
-#' added to coordinates, using the function
-#' [jitter](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/jitter).
-#' There is a warning when this happens. This means that EOO value will not be
-#' constant across multiple estimation (although the variation should be small)
-#' 
-#' @examples
-#' 
-#' country_map <-
-#' rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-#' 
-#' ### example Large distribution
-#' # Spheroid estimation
-#' XY <- 
-#'   data.frame(x = c(-20, 5, 0, -20, -20), 
-#'              y = c(-65, -45, -40, -55, -40),
-#'              taxa = "species")
-#' p1 <- 
-#'   EOO.comp(XY =  XY)
-#' p1$EOO
-#' plot(country_map$geometry)
-#' plot(p1$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-#' 
-#' p2 <- 
-#'   EOO.comp(XY = XY, mode = "planar")
-#' p2$EOO
-#' plot(country_map$geometry)
-#' plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-#' 
-#' # World Mercartor projection
-#' p2 <- 
-#'   EOO.comp(XY = XY, mode = "planar", proj_type = 3395)
-#' p2$EOO
-#' plot(country_map$geometry)
-#' plot(p2$spatial.polygon, lwd = 2, col = 'red', add = TRUE)
-#' 
-#' 
-#' ### example Antartic distribution
-#' XY <- 
-#'   data.frame(x = c(-65, -62, -78, -65), 
-#'              y = c(-150, 0, 120, 150),
-#'              taxa = "species")
-#' p1 <- 
-#'   EOO.comp(XY = XY, mode = "planar", proj_type = "Antarctic")
-#' 
-#' p1 <- st_transform(p1$spatial.polygon, proj_crs(proj_type = "Antarctic"))
-#' plot(st_transform(country_map, proj_crs(proj_type = "Antarctic"))$geometry, extent = p1)
-#' plot(p1, lwd = 2, col = 'red', add = TRUE)
-#' 
-#' \dontrun{
-#' p1 <- 
-#'   EOO.comp(XY = XY) ## this example fail
-#' }
-#' 
+#' @keywords internal
 #' 
 #' @import sf
 #' @importFrom stats dist cor
 #' @importFrom rnaturalearth ne_countries
-#' 
 #' @export
 EOO.comp <-  function(XY,
-                      exclude.area = FALSE,
-                      country_map = NULL,
+                      # exclude.area = FALSE,
+                      # country_map = NULL,
                       # Name_Sp = "tax",
                       method.range = "convex.hull",
                       alpha = 1,
                       buff.alpha = 0.1,
                       method.less.than3 = "not comp",
                       mode = "spheroid",
-                      proj_type = "cea"
+                      proj_type = NULL,
+                      reproject = TRUE
 ) {
   
   if (!requireNamespace("lwgeom", quietly = TRUE))
@@ -122,58 +47,26 @@ EOO.comp <-  function(XY,
       "Please install it first."
     )
   
-  match.arg(method.range, c("convex.hull", "alpha.hull"))
+  method.range <- match.arg(method.range, c("convex.hull", "alpha.hull"))
   
-  XY <- 
-    coord.check(XY = XY, listing = FALSE, check_eoo = FALSE)
+  # XY <- 
+  #   coord.check(XY = XY, listing = FALSE, check_eoo = FALSE)
   
-  XY <- XY$list_data
+  # XY <- XY$list_data
   
   Name_Sp <- XY[1,3]
   
-  if (exclude.area) {
-    ### Getting by default land map if poly_borders is not provided
-    if (is.null(country_map)) {
-      
-      country_map <-
-        rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-      
-    } 
-    # else {
-    #   
-    #   stop("Provide country_map")
-    #   
-    #   # if(any(grepl('sf', class(country_map))))
-    #   #   country_map <- 
-    #   #     suppressWarnings(as(country_map, "Spatial"))
-    #   
-    #   # country_map <-
-    #   #   suppressWarnings(sf::st_buffer(country_map, dist = 0))
-    #   
-    #   # country_map <- 
-    #   #   as(country_map, "sf")
-    # }
-  }
-  
-  
-  
-  ### Checking if the method of calculating EOO has been chosen
-  # if (!convex.hull & !alpha.hull)
-  #   stop("alpha.hull and convex.hull are both FALSE, one should TRUE")
-  
-  # if (nrow(unique(XY)) > 1)
-  #   if (max(dist(XY[, 2]), na.rm = T) >= 180)
-  #     warning(
-  #       paste(
-  #         "Occurrences spans more than 180 degrees longitude for species _",
-  #         as.character(Name_Sp),
-  #         "_ EOO unlikely reliable, check the projection for a proper estimation and use a 'planar' (projected) mode"
-  #       )
-  #     )
-  
-  # if(alpha.hull) {
-  #   convex.hull <- FALSE
+  # if (exclude.area) {
+  #   ### Getting by default land map if poly_borders is not provided
+  #   if (is.null(country_map)) {
+  #     
+  #     country_map <-
+  #       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
+  #     
+  #   } 
   # }
+  
+  
   
   ## Check if there are less than 3 unique occurrences
   if (nrow(XY) < 3) {
@@ -192,27 +85,27 @@ EOO.comp <-  function(XY,
     } else {
       if (method.less.than3 == "arbitrary") {
         
-        projEAC <- proj_crs(proj_type = proj_type)
-        
+        # projEAC <- proj_type
+        # 
+        # # coordEAC <-
+        # #   as.data.frame(matrix(unlist(
+        # #     rgdal::project(
+        # #       as.matrix(unique(XY)[, 1:2]),
+        # #       proj = as.character(projEAC),
+        # #       inv = FALSE
+        # #     )
+        # #   ), ncol = 2))
+        # 
         # coordEAC <-
-        #   as.data.frame(matrix(unlist(
-        #     rgdal::project(
-        #       as.matrix(unique(XY)[, 1:2]),
-        #       proj = as.character(projEAC),
-        #       inv = FALSE
-        #     )
-        #   ), ncol = 2))
-        
-        coordEAC <-
-          sf_project(
-          from = sf::st_crs(4326),
-          to =
-            sf::st_crs(projEAC),
-          pts = XY[, c(1, 2)]
-        )
+        #   sf_project(
+        #   from = sf::st_crs(4326),
+        #   to =
+        #     sf::st_crs(projEAC),
+        #   pts = XY[, c(1, 2)]
+        # )
         
         EOO <-
-          as.numeric(dist(coordEAC / 1000) * 0.1 * dist(coordEAC / 1000))
+          as.numeric(dist(XY[, c(1, 2)] / 1000) * 0.1 * dist(XY[, c(1, 2)] / 1000))
       }
       
       if (method.less.than3 == "not comp") {
@@ -271,8 +164,6 @@ EOO.comp <-  function(XY,
               XY = XY[, c(2, 1)],
               alpha = alpha,
               buff = buff.alpha,
-              exclude.area = exclude.area,
-              poly_exclude = country_map,
               mode = mode,
               proj_type = proj_type)
 
@@ -286,9 +177,7 @@ EOO.comp <-  function(XY,
         p1 <-
           Convex.Hull.Poly(XY = XY[, c(2, 1)],
                             mode = mode,
-                            proj_type = proj_type, 
-                            exclude.area = exclude.area,
-                            poly_exclude = country_map)
+                            proj_type = proj_type)
       
       
       if(any(class(p1) == "SpatialPolygons") | any(class(p1) == "sfc") | any(class(p1) == "sf")) {
@@ -313,7 +202,7 @@ EOO.comp <-  function(XY,
           EOO <-
             as.numeric(st_area(p1)) / 1000000
           
-          if (mode == "planar")
+          if (mode == "planar" & reproject)
             p1 <-
               sf::st_transform(p1, 4326)
           

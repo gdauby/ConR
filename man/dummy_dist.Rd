@@ -4,7 +4,30 @@
 \alias{dummy_dist}
 \title{Generate dummy distribution data}
 \usage{
-dummy_dist(n = 10, xmin = 0, xmax = 5, ymin = 0, ymax = 5, step = 0.1)
+dummy_dist(
+  nsp = 10,
+  max_occ = 10,
+  xmin = 0,
+  xmax = 5,
+  ymin = 0,
+  ymax = 5,
+  step = 0.1
+)
+}
+\arguments{
+\item{nsp}{integer}
+
+\item{max_occ}{integer}
+
+\item{xmin}{numeric}
+
+\item{xmax}{numeric}
+
+\item{ymin}{numeric}
+
+\item{ymax}{numeric}
+
+\item{step}{numeric}
 }
 \value{
 A data.frame with three columns
@@ -13,8 +36,8 @@ A data.frame with three columns
 Generates dummy geographic distribution data for multiple species
 }
 \examples{
-dummy_dist(n = 5) ## five species dataset
-dummy_dist(xmin = -20, xmax = 30, n = 30)
+dummy_dist(nsp = 5) ## five species dataset
+dummy_dist(xmin = -20, xmax = 30, nsp = 30)
 
 }
 \author{

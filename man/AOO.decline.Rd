@@ -83,8 +83,8 @@ get the minimal AOO and the size of the dataset.
 \examples{
 
 m <- matrix(1:25, nrow=5, ncol=5)
-rm <- rast(m)
-values(rm) <- sample(c("forest", "cities", "roads"), 25, replace = T)
+rm <- terra::rast(m)
+terra::values(rm) <- sample(c("forest", "cities", "roads"), 25, replace = TRUE)
 cls <- data.frame(id=1:3, cover=c("forest", "cities", "roads"))
 levels(rm) <- cls
 terra::crs(rm) <- "epsg:4326"

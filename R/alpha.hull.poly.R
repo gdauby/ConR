@@ -6,12 +6,9 @@
 #' @param alpha integer if mode planar, in kilometers, if mode spheroid in
 #'   decimal degrees
 #' @param buff numeric
-#' @param exclude.area logical
-#' @param poly_exclude sf polygon
 #' @param mode character string either 'spheroid' or 'planar'. By default
 #'   'spheroid'
-#' @param proj_type character string or numeric or object of crs class, by
-#'   default is "cea"
+#' @param proj_type crs
 #' 
 #' @details The functions ahull_to_SPLDF and alpha.hull.poly were originally
 #' posted in the website
@@ -27,8 +24,6 @@ alpha.hull.poly <-
   function(XY,
            alpha = 1,
            buff = 0.1,
-           exclude.area = FALSE,
-           poly_exclude = NULL,
            mode = "spheroid",
            proj_type = "cea")
   {
@@ -44,15 +39,15 @@ alpha.hull.poly <-
 
     if (mode == "planar") {
       
-      projEAC <- proj_crs(proj_type = proj_type)
+      # projEAC <- proj_crs(proj_type = proj_type)
       
-      XY <-
-        sf_project(
-          from = sf::st_crs(4326),
-          to =
-            sf::st_crs(projEAC),
-          pts = XY[, c(1, 2)]
-        )
+      # XY <-
+      #   sf_project(
+      #     from = sf::st_crs(4326),
+      #     to =
+      #       sf::st_crs(projEAC),
+      #     pts = XY[, c(1, 2)]
+      #   )
       
       if (alpha < median(dist(XY,  upper = F))/1000/10) {
         
@@ -80,7 +75,7 @@ alpha.hull.poly <-
       ahull.obj <-
         try(alphahull::ahull(Used_data[, c(1, 2)], alpha = alpha), silent = T)
       
-      if (inherits(ahull.obj, "try-error")) {
+      if (inherits(ahull.obj, "ahull")) {
         run_alpha <- FALSE
         
       } else {
@@ -93,7 +88,7 @@ alpha.hull.poly <-
     # y.as.spldf_sf <- st_as_sf(y.as.spldf)
     NZfill <- st_buffer(y.as.spldf_sf, buff)
     if (mode == "planar")
-      st_crs(NZfill) <- projEAC
+      st_crs(NZfill) <- proj_type
     if (mode == "spheroid")
       st_crs(NZfill) <- 4326
     
@@ -122,46 +117,46 @@ alpha.hull.poly <-
       # NZfill <-
       #   suppressWarnings(rgeos::gBuffer(NZfill, byid = TRUE, width = 0))
       
-      if (exclude.area) {
-        
-        if (mode == "planar") {
-          poly_exclude_proj <-
-            st_transform(st_make_valid(poly_exclude), crs = projEAC)
-          
-          NZfill <-
-            suppressWarnings(suppressMessages(st_union(
-              st_intersection(st_make_valid(NZfill), poly_exclude_proj)
-            )))
-          
-          if(length(NZfill) == 0) {
-            
-            warning("After excluding areas, the alpha hull is empty. EOO is NA.")
-            
-            NZfill <- NA
-          }
-          
-        }
-        
-        if (mode == "spheroid") {
-          
-          
-          NZfill <-
-            suppressWarnings(suppressMessages(st_union(
-              st_intersection(st_make_valid(NZfill), poly_exclude)
-            )))
-          
-          if(length(NZfill) == 0) {
-            
-            warning("After excluding areas, the alpha hull is empty. EOO is set to NA.")
-            
-            NZfill <- NA
-            
-          } 
-          
-        }
-        
-        
-      }
+      # if (exclude.area) {
+      #   
+      #   if (mode == "planar") {
+      #     poly_exclude_proj <-
+      #       st_transform(st_make_valid(poly_exclude), crs = projEAC)
+      #     
+      #     NZfill <-
+      #       suppressWarnings(suppressMessages(st_union(
+      #         st_intersection(st_make_valid(NZfill), poly_exclude_proj)
+      #       )))
+      #     
+      #     if(length(NZfill) == 0) {
+      #       
+      #       warning("After excluding areas, the alpha hull is empty. EOO is NA.")
+      #       
+      #       NZfill <- NA
+      #     }
+      #     
+      #   }
+      #   
+      #   if (mode == "spheroid") {
+      #     
+      #     
+      #     NZfill <-
+      #       suppressWarnings(suppressMessages(st_union(
+      #         st_intersection(st_make_valid(NZfill), poly_exclude)
+      #       )))
+      #     
+      #     if(length(NZfill) == 0) {
+      #       
+      #       warning("After excluding areas, the alpha hull is empty. EOO is set to NA.")
+      #       
+      #       NZfill <- NA
+      #       
+      #     } 
+      #     
+      #   }
+      #   
+      #   
+      # }
       
       # NZfill <- st_sf(geom = NZfill)
 

@@ -126,7 +126,7 @@
 #' @export EOO.sensitivity
 #' 
 EOO.sensitivity <- function(XY,
-                          levels.order = NULL,
+                          levels.order,
                           occ.based = TRUE,
                           value = "dist",
                           exclude.area = FALSE,
@@ -144,6 +144,16 @@ EOO.sensitivity <- function(XY,
                           mode = "spheroid"
 ){ 
   
+  mode <- match.arg(mode, c("spheroid", "planar"))
+  
+  if (missing(levels.order)) 
+    stop("'levels.order' should be provided")
+  
+  if (identical(mode, "planar"))
+    proj_type <- proj_crs(proj_type = proj_type)
+  
+  value <- match.arg(value, c("dist", "flag"))
+
   XY$recordID <- 1:dim(XY)[1]
   
   if(length(unique(as.data.frame(XY)[,4])) < 2)
@@ -223,10 +233,8 @@ EOO.sensitivity <- function(XY,
         setTxtProgressBar(pb, x)
       
       res <-
-        ConR::EOO.comp(
+        EOO.comp(
           XY = XY.list[[x]],
-          exclude.area = exclude.area,
-          country_map = country_map,
           #Name_Sp = names_[x],
           method.range = method.range,
           alpha = alpha,
@@ -249,43 +257,43 @@ EOO.sensitivity <- function(XY,
   if(parallel) snow::stopCluster(cl)
   if(show_progress) close(pb)
   
-  Results_short <-
-    data.frame(EOO = unlist(output[grep("EOO", names(output))]),
+  res <-
+    data.frame(eoo = unlist(output[grep("EOO", names(output))]),
                nbe_occ = unlist(lapply(XY.list, nrow)),
                tax = unlist(lapply(strsplit(names_, split = "___"), function(x) x[1])),
                classes = as.numeric(unlist(lapply(strsplit(names_, split = "_"), function(x) x[length(x)]))))
-  row.names(Results_short) <- names_
+  row.names(res) <- 1:nrow(res)
   
   cat("EOO differences...", sep= "\n")
 
-  data.table::setDT(Results_short)
+  data.table::setDT(res)
   increases <-
-    Results_short[, lapply(.SD, function(x)
+    res[, lapply(.SD, function(x)
       (x[2:length(x)] - x[1]) / x[1] * 100),
-      by = .(tax), .SDcols = "EOO"]
+      by = .(tax), .SDcols = "eoo"]
   
   comp_names <- 
-    Results_short[, lapply(.SD, function(x) x[2:length(x)]), 
+    res[, lapply(.SD, function(x) x[2:length(x)]), 
                   by = .(tax), .SDcols = "classes"]
   
   increases <- 
     data.table::data.table(increases, classes = comp_names$classes)
   
-  colnames(increases)[colnames(increases) == "EOO"] <- 
-    "EOO.increase"
+  colnames(increases)[colnames(increases) == "eoo"] <- 
+    "eoo.increase"
   
-  Results_short <- 
-    merge(Results_short, increases, by = c("tax", "classes"), all.x = TRUE)
+  res <- 
+    merge(res, increases, by = c("tax", "classes"), all.x = TRUE)
   
   #   colnames(increases)[2] <-
   #     paste("EOO", 2, sep = "_")
   #
   #
-  #   Results_short_subst <-
-  #     Results_short[Results_short$classes == 1, c("EOO", "nbe_occ", "tax")]
+  #   res_subst <-
+  #     res[res$classes == 1, c("EOO", "nbe_occ", "tax")]
   #
-  #   Results_short_subst <-
-  #     merge(Results_short_subst, increases, by = 'tax')
+  #   res_subst <-
+  #     merge(res_subst, increases, by = 'tax')
   #
   # print(increases)
   # print(comp_names)
@@ -390,7 +398,7 @@ EOO.sensitivity <- function(XY,
   }
   
   # if (write_results)
-  #   write.csv(Results_short, paste(getwd(), "/", file.name, ".csv", sep = ""))
+  #   write.csv(res, paste(getwd(), "/", file.name, ".csv", sep = ""))
   
   if (occ.based) {
     
@@ -398,11 +406,11 @@ EOO.sensitivity <- function(XY,
                     by = "recordID", all.x = TRUE)
     output <- output[order(output$recordID), ]
     
-    output <- list(results = as.data.frame(Results_short),
+    output <- list(results = as.data.frame(res),
                    results_occ = output,
                    spatial = output_spatial)
   } else {
-    output <- Results_short
+    output <- res
   }
   
   cat("Returning the results.", sep= "\n")
@@ -416,18 +424,19 @@ EOO.sensitivity <- function(XY,
 #'
 #' Get Occurrences Distance to a Polygon
 #'
-#' @param poly Spatial polygon
-#' @param points XY data frame
-#' @param names_poly character string
-#' @param names_taxa character string
+#' @param poly a sf object
+#' @param points XY a data.frame
+#' @param names_poly a character string
+#' @param names_taxa a character string
 #' @param mode character string either 'spheroid' or 'planar'. By default
 #'   'spheroid'
 #' @param min.dist minimum tolerated distance between polygons and points.
-#'   Default to 0.1 m.
+#'   Default to 0.1 m
 #' @param value output value: proportional distance ("dist") or inside/outside
-#'   the polygon ("flag")?
+#'   the polygon ("flag")
 #' @inheritParams proj_crs
 #' 
+#'  
 #' 
 #' @details The spatial polygon must be a `sf` in which
 #'   each polygon/feature is one taxon, an the data frame contains a column
@@ -459,6 +468,7 @@ EOO.sensitivity <- function(XY,
 #' @import sf
 #' @importFrom fields rdist
 #' @keywords internal
+#' @export
 over.valid.poly <- function(poly,
                             points,
                             names_poly = NULL,
@@ -530,35 +540,6 @@ over.valid.poly <- function(poly,
       df_weights <- data.frame(points,
                                rel_dist = round(rel_dist, 3))
       
-      # coords <- as.data.frame(sf::st_coordinates(points_sf))
-      # true.ids <- points_sf$classes >= max(points_sf$classes, na.rm = TRUE)
-      # coords.true <- coords[true.ids,]
-      # coords.true$tax <- points_sf$tax[true.ids]
-      # coords.true <- coords.true[!is.na(coords.true[, 1]), ]
-      
-      # med_dists <- tapply(1:nrow(coords.true), coords.true$tax, 
-      #                     function(x) mean(dist(coords.true[x, 1:2]), na.rm = TRUE))
-      # med_dists <- tapply(1:nrow(coords.true), coords.true$tax, 
-      #                                 function(x) mean(as.matrix(distances::distances(coords.true[x, 1:2])), na.rm = TRUE))
-      # med_dists <- tapply(1:nrow(coords.true), coords.true$tax, 
-      #                                 function(x) mean(fields::rdist(coords.true[x, 1:2], compact = TRUE), na.rm = TRUE))
-      # rob <- tapply(1:nrow(coords.true), coords.true$tax, 
-      #               function(x) robustbase::covMcd(coords.true[x, 1:2], alpha = 1/2, tol=1e-20))
-      # NOT WORKING...
-      # maha <- tapply(1:nrow(coords), points_sf$tax, 
-      #                function(x) sqrt(stats::mahalanobis(coords[x, 1:2], center = rob[x]$center, cov = rob[x]$cov, tol=1e-20)))
-      #max_dists <- tapply(1:nrow(coords.true), coords.true$tax,
-      #                                 function(x) quantile(distances::distance_matrix(distances::distances(coords.true[x, 1:2])), prob=0.95 , na.rm = TRUE))
-      ## MAYBE USE FUNCTION rdist.eart INSTEAD
-      # max_dists <- tapply(1:nrow(coords.true), coords.true$tax, 
-      #                      function(x) quantile(fields::rdist(coords.true[x, 1:2], compact = TRUE), prob=0.95 , na.rm = TRUE))
-      # tmp <- dplyr::left_join(data.frame(dist = dists, tax = points_sf$tax, stringsAsFactors = FALSE),
-      #                         data.frame(
-      #                           #med_dists = as.double(med_dists),
-      #                           inter_dists = as.double(max_dists),
-      #                           tax = names(max_dists), stringsAsFactors = FALSE), 
-      #                         by = 'tax')
-      # dist <- round(tmp$d / tmp$inter_dists, 5)
       return(df_weights)
     }
     
@@ -573,7 +554,4 @@ over.valid.poly <- function(poly,
     #return(NA)
     return(rep(NA, nrow(points)))
   }
-  
-  
-  
 }  

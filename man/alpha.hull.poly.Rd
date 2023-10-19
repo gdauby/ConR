@@ -8,8 +8,6 @@ alpha.hull.poly(
   XY,
   alpha = 1,
   buff = 0.1,
-  exclude.area = FALSE,
-  poly_exclude = NULL,
   mode = "spheroid",
   proj_type = "cea"
 )
@@ -22,15 +20,10 @@ decimal degrees}
 
 \item{buff}{numeric}
 
-\item{exclude.area}{logical}
-
-\item{poly_exclude}{sf polygon}
-
 \item{mode}{character string either 'spheroid' or 'planar'. By default
 'spheroid'}
 
-\item{proj_type}{character string or numeric or object of crs class, by
-default is "cea"}
+\item{proj_type}{crs}
 }
 \description{
 Alpha hull process

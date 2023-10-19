@@ -4,24 +4,14 @@
 \alias{Convex.Hull.Poly}
 \title{Internal function}
 \usage{
-Convex.Hull.Poly(
-  XY,
-  mode = "spheroid",
-  exclude.area = FALSE,
-  poly_exclude = NULL,
-  proj_type = "cea"
-)
+Convex.Hull.Poly(XY, mode = "spheroid", proj_type = NULL)
 }
 \arguments{
 \item{XY}{data.frame}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 
-\item{exclude.area}{logical}
-
-\item{poly_exclude}{polygon}
-
-\item{proj_type}{character string or numeric or object of CRS class, by default is "cea"}
+\item{proj_type}{crs}
 }
 \description{
 Build convex hull polygon

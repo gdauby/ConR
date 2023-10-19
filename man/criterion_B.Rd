@@ -46,6 +46,12 @@ criterion_B(
 
 \item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
 
+\item{Resol_sub_pop}{a value defining the radius of the circles around each
+occurrence (in kilometres) or data frame vector containing a column 'tax'
+with the taxa names and a column 'radius' with the species-specific radius
+(in kilometre as well). Typically, this data frame is the output of
+\code{ConR} function \code{subpop.radius}.}
+
 \item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
 \item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
