@@ -526,7 +526,7 @@ over.valid.poly <- function(poly,
     # flag <- dists < min.dist
     
     
-    if(value == "dist") {
+    if (identical(value, "dist")) {
       
       dist_ch_strict <- 
         as.vector(sf::st_distance(points_sf[points_sf$classes == 1,]))
@@ -544,7 +544,7 @@ over.valid.poly <- function(poly,
     }
     
     
-    if(value == "flag") {
+    if (identical(value, "flag")) {
       
       return(flag)
       

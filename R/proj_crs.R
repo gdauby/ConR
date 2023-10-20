@@ -38,17 +38,17 @@ proj_crs <- function(proj_type = "cea") {
       
       ## https://epsg.io/54034
       # Cylindrical Equal Area
-      if(proj_type == "cea")
+      if(identical(proj_type, "cea"))
         proj_type <-
           "ESRI:54034"
       
       # https://epsg.io/3031
-      if(proj_type == "Antarctic")
+      if(identical(proj_type, "Antarctic"))
         proj_type <-
           'EPSG:3031'
       
       # https://epsg.io/102022
-      if(proj_type == "Africa_eac")
+      if(identical(proj_type, "Africa_eac"))
         proj_type <-
           "ESRI:102022"
     }

@@ -159,6 +159,13 @@ criterion_B <- function(x,
       mode = mode
     ) # , verbose=FALSE
   
+  if (DrawMap) {
+    
+    EOO_poly <- EOO$spatial
+    EOO <- EOO$results
+    
+  }
+  
   
   ################### AOO estimation #######################################################
   message("Area of occupancy computation")
@@ -174,6 +181,14 @@ criterion_B <- function(x,
       proj_type = proj_type
     )
   
+  if (DrawMap) {
+    
+    stop("Mapping it not yet available")
+    
+    AOO_poly <- AOO$AOO_poly
+    AOO <- AOO$AOO
+    
+  }
   
   if (any(EOO$eoo - AOO$aoo < 0) || any(is.na(EOO$eoo))) {
     message("Some EOO values are lower than AOO OR null and are thus set equal to AOO")
@@ -202,7 +217,7 @@ criterion_B <- function(x,
   
   results_full <-
     data.frame(
-      taxa = row.names(AOO),
+      tax = AOO$tax,
       EOO = EOO$eoo,
       AOO = AOO$aoo,
       locations = locations_res$locations$locations,
