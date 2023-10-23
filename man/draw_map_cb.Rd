@@ -4,7 +4,7 @@
 \alias{draw_map_cb}
 \title{Internal function}
 \usage{
-draw_map_cb(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop)
+draw_map_cb(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type)
 }
 \arguments{
 \item{XY}{data.frame, of at least two columns (coordinates), third is taxa}
@@ -18,6 +18,8 @@ draw_map_cb(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop)
 \item{locations_poly}{sf}
 
 \item{subpop}{sf}
+
+\item{proj_type}{crs}
 }
 \value{
 a plot

@@ -1,6 +1,7 @@
 #' @title Estimate the number of locations.
 #'
 #' @description 
+#' `r lifecycle::badge("stable")`
 #' Estimate the number of locations (sensu IUCN) for multiple taxa, 
 #' taking into account spatial threats if provided.
 #'
@@ -101,7 +102,8 @@ locations.comp <- function(XY,
     warning('threat_list is NULL, hence notice that method_polygons is not used')
   }
   
-  match.arg(unique(method_polygons), c("no_more_than_one", "grid"), several.ok = TRUE)
+  method_polygons <- match.arg(unique(method_polygons), c("no_more_than_one", "grid"), several.ok = TRUE)
+  method <- match.arg(method, c("fixed_grid", "sliding_scale"))
   
   if (!is.null(threat_list)) {
     
@@ -641,6 +643,7 @@ locations.comp <- function(XY,
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom parallel stopCluster
+#' @importFrom foreach %dopar% %do% foreach
 #' 
 #' @keywords internal
 #' 
@@ -660,9 +663,10 @@ locations.comp <- function(XY,
   
   match.arg(method, c("fixed_grid", "sliding_scale"))
   
-  activate_parallel(parallel = parallel)
+  cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+  `%d%` <- c_par(parallel = parallel)
   
-  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(dataset))
   opts <- pro_res$opts
   pb <- pro_res$pb
   

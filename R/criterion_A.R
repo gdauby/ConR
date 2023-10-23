@@ -470,9 +470,10 @@ criterion_A = function(x,
     
     cat("Computing the predictions based on population trends...", sep= "\n")
     
-    activate_parallel(parallel = parallel)
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(which.pred))
     opts <- pro_res$opts
     pb <- pro_res$pb
     

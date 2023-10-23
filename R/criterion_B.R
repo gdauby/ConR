@@ -10,10 +10,14 @@
 #' @param AOO.threshold numeric vector indicating the thresholds used to categorize AOO in IUCN categories
 #' @param Loc.threshold numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories
 #' @param SubPop logical if the number of sub-populations should be computed. By default is TRUE
+#' @param method_locations string, indicating the method used for estimating the number of locations. See Details
+#'  * `"fixed_grid"` (the default)
+#'  * `"sliding_scale"`
 #' @inheritParams locations.comp
 #' @inheritParams EOO.computing
 #' @inheritParams AOO.computing
 #' @inheritParams subpop.comp
+#' @param DrawMap logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment
 #' 
 #' 
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
@@ -243,7 +247,8 @@ criterion_B <- function(x,
                 eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
                 aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
                 locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
-                subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),])
+                subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
+                proj_type = proj_crs(proj_type = proj_type))
     
   }
   
@@ -277,13 +282,18 @@ criterion_B <- function(x,
 #' @param aoo_poly sf
 #' @param locations_poly sf
 #' @param subpop sf
+#' @param proj_type crs
+#' 
+#' 
+#' @importFrom grDevices rgb
+#' @importFrom graphics mtext
 #' 
 #' @return a plot
 #' 
 #' @keywords internal
 #'
 #'
-draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop) {
+draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type) {
   
   name_file <-
     paste("IUCN_", gsub(pattern = " ", replacement = "_", name_sp), sep =

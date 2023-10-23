@@ -4,7 +4,7 @@
 \alias{activate_parallel}
 \title{Internal function}
 \usage{
-activate_parallel(parallel = FALSE)
+activate_parallel(parallel = FALSE, NbeCores = 2)
 }
 \arguments{
 \item{XY}{data.frame}

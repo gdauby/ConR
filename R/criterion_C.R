@@ -577,9 +577,10 @@ criterion_C = function(x,
     
     cat("Computing the estimated continuing decline (subcriteria C1)...", sep= "\n")
     
-    activate_parallel(parallel = parallel)
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(pop_data))
     opts <- pro_res$opts
     pb <- pro_res$pb
     

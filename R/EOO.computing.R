@@ -245,7 +245,8 @@ EOO.computing <- function(XY,
       eoo =  rep(NA, length(list_data)), 
                issue_eoo = rep(NA, length(list_data)))
   
-  activate_parallel(parallel = parallel)
+  cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+  `%d%` <- c_par(parallel = parallel)
 
   pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
   opts <- pro_res$opts

@@ -101,7 +101,6 @@
 #'   
 #' @rawNamespace import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 #' @importFrom stars st_as_stars
-#' @importFrom rmapshaper ms_simplify
 #' @importFrom dplyr bind_rows
 #' @import sf
 #' 
@@ -437,9 +436,10 @@ AOH.estimation <- function(XY,
         
         if (any(class(hab.class) == "data.frame")) {
           
-          activate_parallel(parallel = parallel)
+          cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+          `%d%` <- c_par(parallel = parallel)
           
-          pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+          pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(hab.class))
           opts <- pro_res$opts
           pb <- pro_res$pb
           
@@ -503,9 +503,10 @@ AOH.estimation <- function(XY,
           #
           # }
           
-          activate_parallel(parallel = parallel)
+          cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+          `%d%` <- c_par(parallel = parallel)
           
-          pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+          pro_res <- display_progress_bar(show_progress = show_progress, max_pb = nrow(EOO.shp.proj))
           opts <- pro_res$opts
           pb <- pro_res$pb
           
@@ -651,9 +652,10 @@ AOH.estimation <- function(XY,
     
     all_sp <- unique(all_poly$tax)
     
-    activate_parallel(parallel = parallel)
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(1:nbe_sp))
     opts <- pro_res$opts
     pb <- pro_res$pb
     

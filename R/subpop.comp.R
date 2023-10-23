@@ -1,7 +1,9 @@
 
 #' @title Estimate the number of subpopulations for one or multiple species
 #'
-#' @description Estimate the number of subpopulations following the method
+#' @description 
+#' `r lifecycle::badge("stable")`
+#'  Estimate the number of subpopulations following the method
 #'   **circular buffer method** (overlapping buffered circles form a single 
 #'   subpopulation)
 #'
@@ -44,12 +46,10 @@
 #' @return 
 #' If `export_shp` is TRUE,
 #' \enumerate{
-#'   \item EOO a numeric vector of AOO estimates for each taxa
-#'   \item spatial.polygon a simple feature collection
+#'   \item number_subpop a numeric vector of AOO estimates for each taxa
+#'   \item poly_subpop a simple feature collection
 #' }
 #' 
-#' 
-#'  a list with [[1]]number_subpop and [[2]]poly_subpop
 #' a `Simple feature collection` with as many MULTIPOLYGON as taxa.
 #' If `export_shp` is FALSE, a vector with estimated number of subpopulation per
 #' taxa.
@@ -96,7 +96,8 @@ subpop.comp <- function(XY,
   list_data <-
     coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
-  activate_parallel(parallel = parallel)
+  cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+  `%d%` <- c_par(parallel = parallel)
   
   pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
   opts <- pro_res$opts

@@ -76,6 +76,7 @@
 #' 
 #' 
 #' @importFrom terra project crop app vect extract
+#' @importFrom lifecycle badge
 #' @import sf
 #' @rawNamespace import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 #' 
