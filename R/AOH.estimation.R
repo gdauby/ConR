@@ -1,6 +1,8 @@
 #' @title  Terrestrial Area of Habitat
 #' 
-#' @description The function compute the amount of 'habitat' within the EOO of
+#' @description 
+#'  `r lifecycle::badge("experimental")`
+#' The function compute the amount of 'habitat' within the EOO of
 #'   each species, which may represent habitat itself or any other proxy, value or
 #'   category the user may find relevant (e.g. area covered by protected areas,
 #'   altitude, etc...). If two or more time intervals are provided, the function
@@ -17,16 +19,16 @@
 #'   "cea".
 #' @param mode character string either 'spheroid' or 'planar'. By default
 #'   'spheroid'
-#' @param hab.map raster, raster layer/stack or spatial polygons containing the
+#' @param hab.map SpatRaster or sf containing the
 #'   habitat spatial information
-#' @param hab.map.type logical, vector of same lenght of hab.map, if TRUE means
+#' @param hab.map.type logical, vector of same length of hab.map, if TRUE means
 #'   hab.map is suitable for species, if FALSE unsuitable
 #' @param hab.class classes of values in ```hab.map``` to be considered as
 #'   'habitat'.
 #' @param years numeric. Time interval between the first and last ```hab.map```
-#'   if more than one raster is provided (e.g. if ```hab.map``` is a RasterStack
+#'   if more than one SpatRaster is provided (e.g. if ```hab.map``` is a SpatRaster
 #'   object).
-#' @param country_map a `SpatialPolygonsDataFrame` or
+#' @param country_map a `sf`
 #' @param exclude.area a logical, if TRUE, areas outside of `country_map` are
 #'   cropped of `SpatialPolygons` used for calculating EOO. By default is FALSE
 #' @param parallel logical. Should computing run in parallel? Default to FALSE.
@@ -34,7 +36,7 @@
 #'   to 2.
 #' @param simplifiy_poly logical whether the resulting polygon should be
 #'   simplified using ms_simplify function of rmapshaper package
-#' @param buffer logical
+#' @param buffer numeric
 #' @param ... additional arguments passed to `EOO.computing`
 #' 
 #' `SpatialPolygons` showing for example countries or continent borders.
@@ -126,15 +128,6 @@ AOH.estimation <- function(XY,
   if (is.null(hab.map))
     stop("Please provide hab.map (a sf polygon object or a raster or a SpatRaster)")
   
-  
-  ## converting to terra if raster
-  # if (any(class(hab.map) == "RasterLayer")) {
-  #   
-  #   hab.map <- terra::rast(hab.map)[[1]]
-  #   
-  # }
-  
-
   if (is.null(country_map)) {
     
     country_map <-
@@ -142,21 +135,14 @@ AOH.estimation <- function(XY,
     
   } else {
     
-    # if(any(grepl('sf', class(country_map))))
-    #   country_map <- 
-    #     suppressWarnings(as(country_map, "Spatial"))
-    
-    
     country_map <-
       suppressWarnings(sf::st_buffer(country_map, dist = 0))
     
-    # country_map <- 
-    #   as(country_map, "sf")
   }
   
   proj_type_ <- proj_crs(proj_type = proj_type)
   
-  EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE, ...) # 
+  EOO.res <- EOO.computing(XY = XY, export_shp = TRUE, mode = mode, exclude.area = FALSE, ...)
   
   EOO.shp <- EOO.res$spatial
   
@@ -219,17 +205,8 @@ AOH.estimation <- function(XY,
         sf::st_intersection(EOO.shp.proj, st_union(country_map.proj))
       ))
     
-    # sf::st_crs(p1) <-
-    #   4326
-    # 
-    # if(length(p1) == 0) {
-    #   warning("After excluding areas, the convex hull is empty. EOO is set as NA.")
-    #   
-    # }
   }
   
-  # if (any(class(hab.map) == "RasterStack"))
-  #   hab.map <- raster::unstack(hab.map)
   
   if (!is.null(years)) {
     if (length(hab.map) != length(years))
@@ -242,32 +219,27 @@ AOH.estimation <- function(XY,
   EOO.res.all <- EOO.res$results
 
   
+  # hab.map <- terra::project(hab.map, proj_type_$wkt)
+  
   # loop across hab.map provided
   AOH.poly <- vector('list', length(hab.map) + 1)
   for (i in 1:length(hab.map)) {
     
     hab.map.selected <- hab.map[[i]]
     
-    if (any(grepl("Raster", class(hab.map.selected)))) {
+    if (any(identical(class(hab.map.selected)[1], "SpatRaster"))) {
+      
+
+      if (paste(terra::crs(hab.map.selected, describe = T)[,c("authority", "code")], collapse = ":") !=
+          proj_type_$input) {
+
+        hab.map.selected <- terra::project(hab.map.selected, proj_type_$wkt)
+        
+      }
+      
       
       hab.map.selected <-
         terra::crop(hab.map.selected, terra::vect(EOO.shp.proj))
-      # raster::crop(hab.map.selected, st_bbox(EOO.shp.proj)) # cropping raster to the extent of the polygon
-      
-      if (as.character(terra::crs(hab.map.selected, describe = TRUE)$code) != unlist(strsplit(proj_type_, ":"))[2]) {
-        
-        # hab.map.selected <- raster::projectRaster(hab.map.selected, crs = proj_type_)
-        
-        hab.map.selected <- terra::project(hab.map.selected, proj_type_)
-        
-        # hab.map.selected.terra <- terra::rast(hab.map.selected)
-        # 
-        # 
-        # microbenchmark::microbenchmark(raster = raster::projectRaster(hab.map.selected, crs = proj_type_),
-        #                                terra = terra::project(hab.map.selected.terra, as.character(proj_type_)), 
-        #                                times = 5)
-        
-      }
       
       ## masking input raster given hab.class
       if (!is.null(hab.class)) {
@@ -434,61 +406,69 @@ AOH.estimation <- function(XY,
         
       }
         
-        if (any(class(hab.class) == "data.frame")) {
-          
-          cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
-          `%d%` <- c_par(parallel = parallel)
-          
-          pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(hab.class))
-          opts <- pro_res$opts
-          pb <- pro_res$pb
-          
-          output <-
-            foreach::foreach(
-              x = 1:nrow(hab.class),
-              .options.snow = opts,
-              .packages = 'sf'
-            ) %d% {
-              
-              if (!parallel & show_progress)
-                setTxtProgressBar(pb, x)
-              
-              hab.map_poly <- 
-                hab.map_masked[which(hab.map_masked$values > as.numeric(hab.class[x,2]) & hab.map_masked$values < as.numeric(hab.class[x,3])),]
-              
-              test <- 
-                st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[x,1]),], 
-                                         hab.map_poly))
-              
+      if (any(class(hab.class) == "data.frame")) {
+        cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+        `%d%` <- c_par(parallel = parallel)
+        
+        pro_res <-
+          display_progress_bar(show_progress = show_progress, max_pb = length(hab.class))
+        opts <- pro_res$opts
+        pb <- pro_res$pb
+        
+        output <-
+          foreach::foreach(
+            x = 1:nrow(hab.class),
+            .options.snow = opts,
+            .packages = 'sf'
+          ) %d% {
+            if (!parallel & show_progress)
+              setTxtProgressBar(pb, x)
+            
+            hab.map_poly <-
+              hab.map_masked[which(
+                hab.map_masked$values > as.numeric(hab.class[x, 2]) &
+                  hab.map_masked$values < as.numeric(hab.class[x, 3])
+              ), ]
+            
+            test <-
+              st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[x, 1]), ],
+                                       hab.map_poly))
+            
             test
-              
-            }
-          
-          if(parallel) parallel::stopCluster(cl)
-          if(show_progress) close(pb)
-          
-          EOO.shp.proj.hab.map <- 
-            do.call('rbind', lapply(output, function(x) st_as_sf(x)))
-          EOO.shp.proj.hab.map <- cbind(EOO.shp.proj.hab.map, tax = EOO.shp.proj$tax, hab.map = i)
-          
-          names(EOO.shp.proj.hab.map)[names(EOO.shp.proj.hab.map) == attr(EOO.shp.proj.hab.map, "sf_column")] = "geometry"
-          st_geometry(EOO.shp.proj.hab.map) = "geometry"
-          
-          # EOO.shp.hab.map_list <- vector('list', nrow(hab.class))
-          # for (j in 1:nrow(hab.class)) {
-          #   
-          #   hab.map_poly <- 
-          #     hab.map_masked[which(hab.map_masked$layer > as.numeric(hab.class[j,2]) & hab.map_masked$layer < as.numeric(hab.class[j,3])),]
-          #   
-          #   EOO.shp.hab.map_list[[j]] <- 
-          #     st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[j,1]),], hab.map_poly))
-          #   
-          # }
-          # 
-          # 
-          # EOO.shp.proj.hab.map <- do.call('rbind', lapply(EOO.shp.hab.map_list, function(x) st_as_sf(x)))
-          # EOO.shp.proj.hab.map <- cbind(EOO.shp.proj.hab.map, tax = EOO.shp.proj$tax)
-        }
+            
+          }
+        
+        if (parallel)
+          parallel::stopCluster(cl)
+        if (show_progress)
+          close(pb)
+        
+        EOO.shp.proj.hab.map <-
+          do.call('rbind', lapply(output, function(x)
+            st_as_sf(x)))
+        EOO.shp.proj.hab.map <-
+          cbind(EOO.shp.proj.hab.map,
+                tax = EOO.shp.proj$tax,
+                hab.map = i)
+        
+        names(EOO.shp.proj.hab.map)[names(EOO.shp.proj.hab.map) == attr(EOO.shp.proj.hab.map, "sf_column")] = "geometry"
+        st_geometry(EOO.shp.proj.hab.map) = "geometry"
+        
+        # EOO.shp.hab.map_list <- vector('list', nrow(hab.class))
+        # for (j in 1:nrow(hab.class)) {
+        #
+        #   hab.map_poly <-
+        #     hab.map_masked[which(hab.map_masked$layer > as.numeric(hab.class[j,2]) & hab.map_masked$layer < as.numeric(hab.class[j,3])),]
+        #
+        #   EOO.shp.hab.map_list[[j]] <-
+        #     st_union(st_intersection(EOO.shp.proj[which(EOO.shp.proj$tax == hab.class[j,1]),], hab.map_poly))
+        #
+        # }
+        #
+        #
+        # EOO.shp.proj.hab.map <- do.call('rbind', lapply(EOO.shp.hab.map_list, function(x) st_as_sf(x)))
+        # EOO.shp.proj.hab.map <- cbind(EOO.shp.proj.hab.map, tax = EOO.shp.proj$tax)
+      }
         
       if (any(class(hab.class) == "numeric")) {
         message("intersection with EOO polygons")

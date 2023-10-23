@@ -81,10 +81,6 @@
 #' @param levels.order a character vector with at least two classes ordered from
 #'   the least confident to the more confident class of records. See Details.
 #' @param occ.based logical. Should the measure of influence of each record be returned? Default to TRUE.
-#' @param poly Spatial polygon
-#' @param points XY data frame
-#' @param names_poly character string
-#' @param names_taxa character string
 #' @param min.dist minimum tolerated distance between polygons and points.
 #'   Default to 0.1 m.
 #' @param value output value: proportional distance ("dist") or inside/outside
@@ -132,14 +128,14 @@ EOO.sensitivity <- function(XY,
                           alpha = 1,
                           buff.alpha = 0.1,
                           method.range = "convex.hull",
-                          #Name_Sp = "species1",
                           method.less.than3 = "not comp",
                           file.name = "EOO.sensitivity.results",
                           parallel = FALSE,
                           NbeCores = 2,
                           show_progress = TRUE,
                           proj_type = "cea",
-                          mode = "spheroid"
+                          mode = "spheroid",
+                          min.dist = 0.1
 ){ 
   
   mode <- match.arg(mode, c("spheroid", "planar"))
@@ -192,9 +188,10 @@ EOO.sensitivity <- function(XY,
     coord.check(XY = XY, 
                 listing = TRUE, listing_by_valid = TRUE)$list_data
   
-  activate_parallel(parallel = parallel)
+  cl <- activate_parallel(parallel = parallel)
+  `%d%` <- c_par(parallel = parallel)
   
-  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(XY.list))
   opts <- pro_res$opts
   pb <- pro_res$pb
   
@@ -232,6 +229,8 @@ EOO.sensitivity <- function(XY,
   
   if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
+  
+  names_ <- names(XY.list)
   
   res <-
     data.frame(eoo = unlist(output[grep("EOO", names(output))]),
@@ -309,9 +308,10 @@ EOO.sensitivity <- function(XY,
     XY.list.taxa <- 
       coord.check(XY = XY, listing = TRUE)$list_data
     
-    activate_parallel(parallel = parallel)
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(XY.list.taxa))
     opts <- pro_res$opts
     pb <- pro_res$pb
     
@@ -333,7 +333,7 @@ EOO.sensitivity <- function(XY,
             names_taxa = names(XY.list.taxa)[x],
             value = value,
             names_poly = names_[id_spatial],
-            min.dist = 0.1
+            min.dist = min.dist
           )
         res
       }
