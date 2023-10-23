@@ -71,7 +71,7 @@ criterion_B <- function(x,
   
   if (!requireNamespace("lwgeom", quietly = TRUE))
     stop(
-      "The 'lwgeom' package is required to run this function. ",
+      "The 'lwgeom' package is required to run this function.",
       "Please install it first."
     )
   
@@ -161,7 +161,7 @@ criterion_B <- function(x,
   
   if (DrawMap) {
     
-    EOO_poly <- EOO$spatial
+    eoo_poly <- EOO$spatial
     EOO <- EOO$results
     
   }
@@ -183,9 +183,9 @@ criterion_B <- function(x,
   
   if (DrawMap) {
     
-    stop("Mapping it not yet available")
+    aoo_poly <- AOO$AOO_poly
     
-    AOO_poly <- AOO$AOO_poly
+    
     AOO <- AOO$AOO
     
   }
@@ -231,11 +231,162 @@ criterion_B <- function(x,
       locations_res$locations[colnames(locations_res$locations) %in% names(threat_list)]
     )
   
+  list_data <- coord.check(XY = x)
+  
+  
+  for (i in 1:length(list_data$list_data)) {
+    
+    name_sp = results_full$tax[i]
+    
+    draw_map_cb(XY = list_data$list_data[[i]], 
+                name_sp = name_sp, 
+                eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+                aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+                locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
+                subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),])
+    
+  }
+  
+  
+  name_sp <- results_full$tax[1]
+  eoo_poly <- eoo_poly[which(eoo_poly$tax == name_sp),]
+  aoo_poly <- aoo_poly[which(aoo_poly$tax == name_sp),]
+  locations_poly <- locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),]
+  XY <- x[which(x[,3] == name_sp),]
+  SubPopPoly <- SubPopPoly[which(SubPopPoly$tax == name_sp),]
+    
+  draw_map_cb(XY = x[which(x[,3] == name_sp),], 
+              name_sp = results_full$tax[1], 
+              eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+              aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+              locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),])
+  
   return(results_full)
 }
 
 
 
 
-
+#' Internal function
+#'
+#' Coordinates check
+#'
+#' @param XY data.frame, of at least two columns (coordinates), third is taxa
+#' @param name_sp character vector
+#' @param eoo_poly sf
+#' @param aoo_poly sf
+#' @param locations_poly sf
+#' @param subpop sf
+#' 
+#' @return a plot
+#' 
+#' @keywords internal
+#'
+#'
+draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop) {
+  
+  name_file <-
+    paste("IUCN_", gsub(pattern = " ", replacement = "_", name_sp), sep =
+            "")
+  
+  directory_name <- 
+    "IUCN_"
+  
+  dir.create(file.path(paste(
+    getwd(), paste("/", directory_name, "criterion_b_map", sep = ""), sep = ""
+  )), showWarnings = FALSE)
+  
+  grDevices::png(
+    paste(file.path(paste(
+      getwd(), paste("/", 
+                     directory_name, 
+                     "criterion_b_map", sep = ""), sep = ""
+    )), "/", name_file, ".png", sep = "")
+    ,
+    width = 2000,
+    height = 2000
+  )
+  
+  graphics::par(mar = c(10, 12, 10, 2),
+                xpd = FALSE,
+                las = 1)
+  
+  XY_sf <- st_as_sf(XY, coords = c("ddlon", "ddlat"))
+  st_crs(XY_sf) <- 4326
+  
+  plot(
+    st_geometry(XY_sf),
+    pch = 19,
+    cex = 2,
+    col = rgb(
+      red = 0,
+      green = 0,
+      blue = 0,
+      alpha = 0.2
+    )
+  )
+  
+  if (!is.null(eoo_poly)) {
+    plot(
+      st_geometry(eoo_poly),
+      col = rgb(
+        red = 0.2,
+        green = 0.2,
+        blue = 0.2,
+        alpha = 0.1
+      ),
+      extent = XY_sf,
+      add= TRUE
+    )
+  }
+  
+  plot(st_geometry(subpop), 
+       add =T, 
+       border="black", 
+       lwd=1, lty=1, 
+       extent = XY_sf)
+  
+  plot(locations_poly,
+       add = T,
+       col = rgb(
+         red = 1,
+         green = 0,
+         blue = 0,
+         alpha = 0.2
+       ))
+  
+  
+  graphics::axis(1, outer=FALSE, cex.axis=3, tick = FALSE, line=1.5)  #pos=min(range(XY[,2]))-2)
+  graphics::axis(1, outer=FALSE,labels=FALSE, cex.axis=3, tick = TRUE, line=0)  #pos=min(range(XY[,2]))-2)
+  graphics::axis(2, outer=FALSE, cex.axis=3, tick = FALSE, line=1.5)  #pos=min(range(XY[,2]))-2)
+  graphics::axis(2, outer=FALSE,labels=FALSE, cex.axis=3, tick = TRUE, line=0)  #pos=min(range(XY[,2]))-2)
+  graphics::box()
+  
+  
+  xlim <- graphics::par("xaxp")[1:2]
+  xlim <- abs(xlim[1]-xlim[2])
+  border_to_center <- as.data.frame(matrix(NA, 2, 2))
+  border_to_center[,1] <- c(xlim/10, 0)
+  border_to_center[,2] <- c(0,0)
+  scaleBAR <- round(matrix(unlist(sf::sf_project(
+    from = sf::st_crs(4326),
+    to =
+      proj_crs(proj_type),
+    pts = border_to_center
+  )), ncol = 2)/ 1000, 0)[1, 1]
+  
+  plot(
+    terra::rast(matrix(NA, nrow=2, ncol=2)),
+    col = NA,
+    add = T
+  )
+  
+  terra::sbar(d = scaleBAR, 
+              type = "bar", 
+              below = "kilometers", 
+              cex=2.5, xy = "bottomright")
+  mtext(name_sp, side=3, cex=3, line=3)
+  
+  grDevices::dev.off()
+}
 

@@ -195,11 +195,9 @@
 #'   subcriteria = c("C1")
 #'   )
 #'   
-#' @importFrom utils txtProgressBar setTxtProgressBar head
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
+#' @importFrom utils setTxtProgressBar head
 #' @importFrom stats setNames
+#' @importFrom parallel stopCluster
 #' 
 #' @export criterion_C
 criterion_C = function(x,
@@ -579,33 +577,12 @@ criterion_C = function(x,
     
     cat("Computing the estimated continuing decline (subcriteria C1)...", sep= "\n")
     
-    if (parallel) {
-      cl <- snow::makeSOCKcluster(NbeCores)
-      doSNOW::registerDoSNOW(cl)
-      
-      message('Parallel running with ',
-              NbeCores, ' cores')
-      
-      `%d%` <- foreach::`%dopar%`
-      
-    } else {
-      `%d%` <- foreach::`%do%`
-    }
+    activate_parallel(parallel = parallel)
     
-    if (show_progress) {
-      pb <- txtProgressBar(min = 0,
-                       max = length(pop_data),
-                       style = 3)
-      
-      progress <- function(n)
-        setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-      
-    } else {
-      opts <- NULL
-    }
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    opts <- pro_res$opts
+    pb <- pro_res$pb
     
-    w <- NULL
     models.fit <- foreach::foreach(
         w = 1:length(pop_data),
         .options.snow = opts
@@ -636,7 +613,7 @@ criterion_C = function(x,
         res
       }
     
-    if(parallel) snow::stopCluster(cl)
+    if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
     
     cont.decline <- sapply(models.fit, pop.decline.test, 

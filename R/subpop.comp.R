@@ -66,11 +66,8 @@
 #' subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
 #' subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
 #' 
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom foreach foreach
-#' 
+#' @importFrom utils setTxtProgressBar
+#' @importFrom parallel stopCluster
 #' 
 #' @export subpop.comp
 #' 
@@ -99,32 +96,11 @@ subpop.comp <- function(XY,
   list_data <-
     coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
-  if (parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
-    
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    
-    `%d%` <- foreach::`%dopar%`
-  } else{
-    `%d%` <- foreach::`%do%`
-  }
+  activate_parallel(parallel = parallel)
   
-  x <- NULL
-  
-  if (show_progress) {
-    pb <-
-      utils::txtProgressBar(min = 0,
-                            max = length(list_data[[1]]),
-                            style = 3)
-    
-    progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else{
-    opts <- NULL
-  }
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  opts <- pro_res$opts
+  pb <- pro_res$pb
   
   output <-
     foreach::foreach(
@@ -158,18 +134,20 @@ subpop.comp <- function(XY,
       res
     }
   
-  if(parallel) snow::stopCluster(cl)
+  if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
   
   if (export_shp) {
     
     number_subpop <-
-      data.frame(tax =  names(output),
+      data.frame(tax =  names(output[names(output) != "spatial"]),
                  subpop =  as.numeric(unlist(output[names(output) != "spatial"])))
 
     shapes <- output[names(output) == "spatial"]
     shapes <- do.call('rbind', shapes)
     row.names(shapes) <- 1:nrow(shapes)
+    
+    shapes <- st_transform(shapes, 4326)
     
   } else {
     

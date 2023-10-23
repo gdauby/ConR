@@ -78,9 +78,6 @@
 #'}
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
 #' 
 #' @export
 locations.comp <- function(XY,
@@ -627,13 +624,6 @@ locations.comp <- function(XY,
     res_df[issue_close_to_anti, "issue_locations"] <-
     "Estimation of locations could not computed because grid cells would overlap with antimeridian"
   
-  # if (!is.null(protec.areas))
-  #   return(list(locations_pa = locations_pa,
-  #               locations_not_pa = locations_not_pa,
-  #               locations_poly_pa = r2_PA,
-  #               locations_poly_not_pa = r2))
-  
-  # if (is.null(protec.areas))
   return(list(locations = res_df,
               locations_poly = shapes_loc,
               threat_list = if (!is.null(threat_list)) crop_poly else NA))
@@ -650,9 +640,7 @@ locations.comp <- function(XY,
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
+#' @importFrom parallel stopCluster
 #' 
 #' @keywords internal
 #' 
@@ -672,33 +660,11 @@ locations.comp <- function(XY,
   
   match.arg(method, c("fixed_grid", "sliding_scale"))
   
-  if (parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
-    
-    # registerDoParallel(NbeCores)
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    
-    `%d%` <- foreach::`%dopar%`
-  } else{
-    `%d%` <- foreach::`%do%`
-  }
+  activate_parallel(parallel = parallel)
   
-  x <- NULL
-  
-  if (show_progress) {
-    pb <-
-      utils::txtProgressBar(min = 0,
-                            max = length(dataset),
-                            style = 3)
-    
-    progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else {
-    opts <- NULL
-  }
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  opts <- pro_res$opts
+  pb <- pro_res$pb
   
   output <-
     foreach::foreach(
@@ -728,7 +694,7 @@ locations.comp <- function(XY,
       res
     }
   
-  if(parallel) snow::stopCluster(cl)
+  if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
   
   # Locations <- unlist(output[names(output) != "spatial"])
@@ -740,12 +706,6 @@ locations.comp <- function(XY,
   shapes <- do.call('rbind', shapes)
   row.names(shapes) <- 1:nrow(shapes)
   
-  # r2 <- output[names(output) == "spatial"]
-  # names(Locations) <-
-  #   names(r2) <-
-  #   gsub(pattern = " ",
-  #        replacement = "_",
-  #        names(list_data))
   
   return(list(res_df = res_df,
                shapes = shapes))

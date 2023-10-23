@@ -15,7 +15,6 @@ Imports:
     grDevices,
     methods,
     tibble,
-    snow,
     doSNOW,
     foreach,
     rnaturalearth,
@@ -32,7 +31,6 @@ Imports:
     utils,
     data.table,
     terra,
-    rmapshaper,
     units
 LazyData: true
 Suggests: 
@@ -41,7 +39,8 @@ Suggests:
     rnaturalearthdata,
     alphahull,
     knitr,
-    lwgeom
+    lwgeom,
+    rmapshaper
 Encoding: UTF-8
 URL: https://gdauby.github.io/ConR/
 BugReports: https://github.com/gdauby/ConR/issues

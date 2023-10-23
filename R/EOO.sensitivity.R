@@ -118,9 +118,7 @@
 #' EOO.sensitivity(mydf, levels.order = c(FALSE, TRUE))
 #'                    
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
+#' @importFrom parallel stopCluster
 #' @importFrom data.table setDT data.table
 #' 
 #' @export EOO.sensitivity
@@ -194,33 +192,11 @@ EOO.sensitivity <- function(XY,
     coord.check(XY = XY, 
                 listing = TRUE, listing_by_valid = TRUE)$list_data
   
-  if (parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
-    
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    
-    `%d%` <- foreach::`%dopar%`
-  } else {
-    `%d%` <- foreach::`%do%`
-  }
+  activate_parallel(parallel = parallel)
   
-  names_ <- names(XY.list)
-  
-  x <- NULL
-  if (show_progress) {
-    pb <-
-      txtProgressBar(min = 0,
-                     max = length(XY.list),
-                     style = 3)
-    
-    progress <- function(n)
-      setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else {
-    opts <- NULL
-  }
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  opts <- pro_res$opts
+  pb <- pro_res$pb
   
   output <-
     foreach::foreach(
@@ -254,7 +230,7 @@ EOO.sensitivity <- function(XY,
       
     }
   
-  if(parallel) snow::stopCluster(cl)
+  if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
   
   res <-
@@ -333,29 +309,11 @@ EOO.sensitivity <- function(XY,
     XY.list.taxa <- 
       coord.check(XY = XY, listing = TRUE)$list_data
     
-    if (parallel) {
-      cl <- snow::makeSOCKcluster(NbeCores)
-      doSNOW::registerDoSNOW(cl)
-      
-      message('Parallel running with ',
-              NbeCores, ' cores')
-      
-      `%d%` <- foreach::`%dopar%`
-    } else {
-      `%d%` <- foreach::`%do%`
-    }
+    activate_parallel(parallel = parallel)
     
-    if(show_progress) {
-      pb <- txtProgressBar(min = 0,
-                       max = length(XY.list.taxa),
-                       style = 3)
-      
-      progress <- function(n)
-        setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-    } else {
-      opts <- NULL
-    }
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    opts <- pro_res$opts
+    pb <- pro_res$pb
     
     x <- NULL
     output <-
@@ -380,7 +338,7 @@ EOO.sensitivity <- function(XY,
         res
       }
     
-    if(parallel) snow::stopCluster(cl)
+    if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
     
     output <- 

@@ -13,6 +13,7 @@
 #' @param mode character string either 'spheroid' or 'planar'. By default
 #'   'spheroid'
 #' @param proj_type crs
+#' @param reproject logical FALSE whether the polygon should be converted to geographic coordinates if mode is `planar`
 #'
 #' @author Gilles Dauby & Renato A. Ferreira de LimaA
 #' 
@@ -38,7 +39,7 @@ EOO.comp <-  function(XY,
                       method.less.than3 = "not comp",
                       mode = "spheroid",
                       proj_type = NULL,
-                      reproject = TRUE
+                      reproject = FALSE
 ) {
   
   if (!requireNamespace("lwgeom", quietly = TRUE))

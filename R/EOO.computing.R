@@ -173,13 +173,18 @@
 #' plot(p1, lwd = 2, col = 'red', add = TRUE)
 #' 
 #' 
+#' ## Parallel computation becomes advantageous for very large dataset
+#' # library(microbenchmark)
+#' # microbenchmark(EOO.computing(XY = dummy_dist(nsp = 1000, seed = 1)), 
+#' # EOO.computing(XY = dummy_dist(nsp = 1000, seed = 1), parallel = T, NbeCores = 4), times = 2)
+#' 
+#' 
+#' 
 #' @import sf
 #' 
 #' @importFrom rnaturalearth ne_countries
-#' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
+#' @importFrom utils setTxtProgressBar
+#' @importFrom parallel stopCluster
 #' 
 #' @export EOO.computing
 EOO.computing <- function(XY,
@@ -239,40 +244,12 @@ EOO.computing <- function(XY,
     data.frame(tax = names(list_data),
       eoo =  rep(NA, length(list_data)), 
                issue_eoo = rep(NA, length(list_data)))
-  # row.names(res_df) <- names(list_data)
   
-  if (parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
-    
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    
-    `%d%` <- foreach::`%dopar%`
-  } else {
-    `%d%` <- foreach::`%do%`
-  }
-  
-  # if (is.null(names(list_data))) {
-  #   names_ <-
-  #     rep(Name_Sp, length(list_data))
-  # } else {
-  #   names_ <- names(list_data)
-  # }
-  
-  x <- NULL
-  if (show_progress) {
-    pb <-
-      txtProgressBar(min = 0,
-                     max = length(list_data),
-                     style = 3)
-    
-    progress <- function(n)
-      setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else {
-    opts <- NULL
-  }
+  activate_parallel(parallel = parallel)
+
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  opts <- pro_res$opts
+  pb <- pro_res$pb
   
   output <-
     foreach::foreach(
@@ -280,24 +257,13 @@ EOO.computing <- function(XY,
       .combine = 'c',
       .options.snow = opts
     ) %d% {
-      # source("./R/EOO.comp.R")
-      # source("./R/Convex.Hull.Poly.R")
-      # source("./R/proj_crs.R")
-      # source("./R/ahull_to_SPLDF.R")
-      # source("./R/coord.check.R")
-      # library(sf)
-      # library(sp)
-      
-      
+
       if (!parallel & show_progress)
         setTxtProgressBar(pb, x)
       
       res <-
         EOO.comp(
           XY = list_data[[x]],
-          # exclude.area = exclude.area,
-          # country_map = country_map,
-          # Name_Sp = names_[x],
           method.range = method.range,
           alpha = alpha,
           buff.alpha = buff.alpha,
@@ -309,18 +275,12 @@ EOO.computing <- function(XY,
       
       names(res) <- c("eoo", "spatial")
       names(res)[1] <- list_data[[x]]$tax[1]
-      
-      # names(res)[1] <-
-      #   paste0(names(res)[1], "_" , x)
-      # if (length(res) > 1)
-      #   names(res)[2] <-
-      #   paste0(names(res)[2], "_" , x)
-      
+
       res
       
     }
   
-  if(parallel) snow::stopCluster(cl)
+  if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
   
   res <- unlist(output[names(output) != "spatial"])
