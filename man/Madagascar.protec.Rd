@@ -13,7 +13,7 @@ World Database on Protected Areas http://protectedplanet.net/country/MG
 data(Madagascar.protec)
 }
 \description{
-A SpatialPolygonDataFrame showing Malagasy protected areas
+A Simple feature collection with 127 features and 3 fields showing Malagasy protected areas WGS 84 CRS
 }
 \references{
 http://protectedplanet.net/country/MG

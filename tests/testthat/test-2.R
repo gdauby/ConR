@@ -8,9 +8,9 @@ context("Test that subpop.comp outputs are correct length and objects")
 
 test_that("subpop.comp", {
   
-  SUB <- subpop.comp(dummy_ex, Resol_sub_pop=25)
+  SUB <- subpop.comp(XY = dummy_ex, Resol_sub_pop = 25)
   
-  expect_equal(length(SUB), 2)
-  expect_equal(length(SUB[[1]]), 1)
+  expect_equal(length(SUB), 1)
+  expect_equal(SUB$subpop, 10)
 
 })

@@ -11,3 +11,6 @@
 ^\.travis\.yml$
 ^tic\.R$
 ^EOO.results.csv
+^CRAN-RELEASE$
+^IUCN_criterion_b_map$
+^readme.html

@@ -1,0 +1,326 @@
+---
+title: "Conservation assessments based on multiple-IUCN criteria using ConR"
+
+date: "`r format(Sys.time(), '%B %Y')`"
+author: 
+  - Renato A. F. de Lima^[Universidade de São Paulo, https://github.com/LimaRAF] and Gilles Dauby^[IRD, https://github.com/gdauby]
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        number_sections: true
+    md_document:
+      variant: gfm
+
+vignette: >
+  %\VignetteIndexEntry{Introduction to ConR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{rmarkdown::render}
+    \usepackage[utf8]{inputenc}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = TRUE)
+```
+
+```{r load, echo = FALSE, eval = TRUE, include=FALSE}
+devtools::load_all() # for development
+```
+
+<br/><br/>
+
+This vignette show how to use ``ConR`` to apply a workflow for conducting
+conservation assessments for multiple species using the IUCN criteria A, B, C
+and D. Here, we use only three species to make it simple. But ``ConR`` was
+developed to perform assessments for many more species at the same time.
+
+<br/><br/>
+
+# Definitions
+
+We will use as examples three emblematic and threatened arborescent species that
+are endemic or near-endemic to the Atlantic Forest in South America: *Araucaria angustifolia*, *Euterpe edulis* and *Paubrasilia echinata*. Thus, it is
+necessary to obtain information for this specific part of the world (e.g.
+habitat cover maps, protected areas). Here, we assume that this information is
+already available.
+
+```{r species, eval = TRUE, collapse = TRUE}
+spp <- c("Araucaria angustifolia", "Euterpe edulis", "Paubrasilia echinata")
+```
+
+
+<br/><br/>
+
+# Species information
+
+To perform the IUCN conservation assessments we will need different types of
+species information, related to their biology, distribution, population size,
+threats, among other information.
+
+## Occurrence records 
+
+First, we will load some real occurrence data for these species. This example
+data is provided with ``ConR`` in the internal object `example_tutorial`, but
+users can load a file containing a similar data frame. We will save it as `occs`
+for simplicity.
+
+```{r occurrences, eval = TRUE, collapse = TRUE}
+data(example_tutorial)
+occs <- example_tutorial
+head(occs, 2)
+```
+
+## Species biology and uses
+
+Then, we need to define objects containing basic species information that are
+necessary for the assessments.
+
+```{r species-info, eval = TRUE, collapse = TRUE}
+gen.length <- c(40, 65, 50) ## generation length in years
+p.mature <- c(0.4485, 0.3028, 0.4143) ## TO DEFINE
+early.sucession <- c(0.9, 1, 1) ## TO DEFINE
+harvest <- c(10, 10, 10) ## TO DEFINE
+```
+
+## Population sizes
+
+```{r pop-sizes, eval = TRUE, collapse = TRUE}
+araucaria <- c(2263714973, 1763953733, 1742714122, 1706724090, 1672711025, 
+               1648088967, 1597720526, 1571864195, 1500976994, 1406079272, 
+               1283024003, 1212589860, 1196021554, 1115185361, 1142419430, 
+               1163973686, 1159640510, 1162421409)
+euterpe <- c(4131301664, 3423126071, 3375255741, 3301309873, 3173853514, 
+             3060527245, 2844478840, 2668655717, 2457462150, 2292870303, 
+             2032409445, 1726153167, 1713775781, 1695875046, 1691503991, 
+             1700665970, 1696332109, 1702100498)
+paubrasil <- c(24777189, 20519325, 20094366, 19379164, 18179102, 17154073, 
+               15487787, 14304065, 12087519, 11100112, 8456852, 5808083, 
+               5800533, 5970905, 6115215, 6181785, 6190677, 6268826)
+years <- c("1850", "1940", "1945", "1950", "1955", "1960", "1965", "1970", 
+           "1975", "1980", "1985", "1992", "1995", "2000", "2005", "2010", 
+           "2015", "2018")
+pop.sizes <- rbind(araucaria, euterpe, paubrasil)
+colnames(pop.sizes) <- years
+row.names(pop.sizes) <- spp
+```
+
+
+```{r est-pop-sizes, eval = TRUE, collapse = TRUE}
+missing.years <- c(1853, 1858, 1868, 1878, 1883, 1888, 1898, 1908, 1913, 1918, 
+                   1928, 1938, 1943, 1948, 1953, 1958, 1963, 1968, 1973, 1978, 
+                   1983, 1988)
+results <- vector("list", length(spp))
+for (i in seq_along(spp)) {
+  res <- pop.decline.fit(pop.size = pop.sizes[i,],
+                  years = years,
+                  project.years = missing.years,
+                  models = c("quadratic", "exponential", 
+                             "logistic", "general_logistic"), 
+                  plot.fit = FALSE)
+  results[[i]] <- res$data[,c("Year", "Observed", "Predicted")]
+}
+
+years <- results[[1]]$Year
+ncols <- length(years)
+nrows <- length(spp)
+mean.pop <- matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, years))
+for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
+```
+
+ 
+
+<br/><br/>
+
+# Population metrics
+
+<br/><br/>
+
+## Species distribution metrics 
+
+First we need to load ``ConR`` to make the functions available in your R
+workspace.
+
+```{r setup}
+library(ConR)
+```
+
+### Extent of Occurrence (EOO)
+```{r eoo, eval = TRUE, collapse = TRUE}
+EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull")
+```
+
+<!-- CHECK HERE: Gilles, when export_shp = TRUE the element $results was empty -->
+
+--> *IT WORKS JUST FINE WIH ME, hope this is is not a problem linked to package or R version....*
+
+```{r eoo2, eval = TRUE, collapse = TRUE}
+EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", export_shp = T)
+EOO.hull$results
+EOO.hull$spatial
+```
+
+
+### Area of occupancy (AOO)
+```{r aoo, eval = TRUE, collapse = TRUE}
+AOO <- AOO.computing(occs[, c(1:3)], 
+                     cell_size_AOO = 2, nbe.rep.rast.AOO = 30)
+```
+
+### Number of subpopulations
+```{r subpops, eval = TRUE, collapse = TRUE}
+radius <- subpop.radius(XY = occs[, c(1:3)], 
+                       factor.div = 10, quant.max = 0.9)
+sub <- subpop.comp(XY = occs[, c(1:3)],
+                   Resol_sub_pop = radius[,c("tax", "radius")])
+```
+
+<!-- CHECK HERE: Gilles, subpop.radius is returning an error: "some columns are not in the data.table: tax" -->
+<!-- CHECK HERE: without the object radius I coul not test subpop.comp() -->
+
+--> *CORRECTED !!*
+
+### Number of locations
+
+```{r locations, eval = TRUE, collapse = TRUE}
+locs <- locations.comp(occs[, c(1:3),],  
+                       method = "fixed_grid",
+                            nbe_rep = 30,
+                            cell_size_locations = 10, 
+                            Rel_cell_size = 0.05, 
+                            #threat_list = strict.ucs.spdf, 
+                            #ID_shape = "NAME",
+                            method_polygons = "no_more_than_one")
+```
+
+<!-- CHECK HERE: how can we include the shape file without the argument 'protec.areas' ?? -->
+
+--> *CHEK parameters corrected above, it should work*
+
+
+### Severe fragmentation
+```{r fragmentation, eval = TRUE, collapse = TRUE}
+merged_data <- merge(occs, radius, by = "tax", all.x = TRUE, sort = FALSE)
+merged_data <- merge(merged_data, AOO[,c("tax", "aoo")], by = "tax", all.x = TRUE, sort = FALSE)
+merged_data <- merged_data[, c("ddlat","ddlon","tax","radius","aoo")]
+list_data <- coord.check(XY = merged_data,
+                              listing = TRUE)
+fator = 1
+for (i in seq_lentgth(list_data)) {
+get.patches(list_data[[i]],
+      cell_size = 2,
+      nbe_rep = 0,
+      AOO = as.double(unique(list_data[[i]]$AOO)),
+      Resol_sub_pop = as.double(unique(list_data[[i]]$radius)),
+      dist_isolated = as.double(unique(list_data[[i]]$radius)) * fator,
+    )
+}
+critB$sever.frag <- 100 * critB$Nbe_subPop/ (critB$AOO / 4) > 50
+
+```
+
+--> *get.patches function is tagged as internal and not exported Should we export it and if yes, make it work for multi taxa and thus not necessitates the loop ???*
+
+--> *All table from EOO, AOO and locations computations now include a column 'tax' which simplify merging*
+
+<!-- CHECK HERE: without the object radius I could not test coord.check() subpop.comp() -->
+
+
+
+### Area of habitat (AOH)
+
+```{r area-of-habitat, eval = TRUE, collapse = TRUE}
+toto <- read.csv("data/ESACCI-LC-Legend.csv", as.is=TRUE)
+hab.class <- toto$NB_LAB[grepl("ForestCover", toto$LegendTreeCoSimp)]
+
+## Loading aggregated rasters and extracting the habitat loss/quality
+ano1 = 2000
+hab.map <- raster::stack(paste0("data/ESA_Land_Cover_map_", ano1, "_2015_AF_1km.tif"))
+names(hab.map) <- paste("ESA",c(ano1,2015), sep=".")
+anos <- 2015 - ano1 
+
+toto.1 <- EOO.habitat(EOO.poly, 
+                      hab.map, 
+                      hab.class = hab.class, 
+                      years = anos,
+                      parallel = TRUE, NbeCores = 5)
+```
+
+
+<br/><br/>
+
+## Small and declining populations (Criterion C) 
+
+
+```{r criterion-C, eval = TRUE, collapse = TRUE}
+critC <- criterion_C(x = mean.pop,
+                       assess.year = 2018,
+                       project = FALSE,
+                       recent.year = 2000,
+                       subcriteria = c("C1","C2"),
+                       generation.time = gen.length,
+                       prop.mature = p.mature,
+                       subpop.size = NULL, # subpop.sizes,
+                       correction = early.sucession)
+```
+
+## Species geographic range (IUCN criterion B)
+
+
+```{r combine-B, eval = TRUE, collapse = TRUE}
+# est.decline <- critC$cont.decline
+# eoo.decline <- readRDS("data/EOO_hab_loss_2000_2015_uncropped.rds")
+# declineB <- eoo.decline$rel.loss
+
+```
+
+```{r criterion-B, eval = TRUE, collapse = TRUE}
+critB <- cat_criterion_b(EOO = EOO.hull$results,
+                                  AOO = AOO,
+                                  locations = locs$locations,
+                                  sever.frag = sever.frag,
+                                  decline = declineB,
+                                  protected.threshold = 100)
+```
+
+
+## Population size reduction (IUCN criterion A)
+                       
+```{r criterion-A, eval = TRUE, collapse = TRUE}
+critA <- criterion_A(mean.pop, assess.year = 2018,
+                     project.years = NULL, subcriteria = c("A2"),
+                     generation.time = gen.length,
+                     exploitation = harvest)
+```
+
+
+## Very small population sizes (IUCN criterion D)
+
+```{r criterion-D, eval = TRUE, collapse = TRUE}
+
+```
+
+
+# IUCN criteria assessments
+
+## Combining all metrics
+```{r all-criteria, eval = TRUE, collapse = TRUE}
+
+```
+
+
+## Near threatened
+
+```{r near-threatened, eval = TRUE, collapse = TRUE}
+near.threatened()
+```
+
+
+
+## Consensus assessment
+
+```{r consensus, eval = TRUE, collapse = TRUE}
+cat_mult_criteria()
+```
+
+
+

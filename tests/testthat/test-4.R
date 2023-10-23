@@ -7,9 +7,9 @@ context("Test that locations.comp outputs are correct length and objects")
 
 test_that("locations.comp", {
   
-  locations <- locations.comp(dataset.ex, show_progress = FALSE)
+  locations <- locations.comp(XY = dataset.ex)
   
   testthat::expect_equal(class(locations), "list")
-  testthat::expect_output(str(locations[[1]][[1]]), "SpatialPolygonsDataFrame", fixed = TRUE)
+  testthat::expect_output(str(locations$locations_poly), "sf", fixed = TRUE)
 
 })

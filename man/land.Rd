@@ -7,12 +7,12 @@
 A dataframe
 }
 \source{
-\url{http://www.naturalearthdata.com/downloads/10m-physical-vectors/}
+\url{https://www.naturalearthdata.com/downloads/10m-physical-vectors/}
 }
 \usage{
 data(land)
 }
 \description{
-A SpatialPolygonDataFrame showing land cover
+A Simple feature collection with 1 feature MULTIPOLYGON showing land border WGS 84 CRS
 }
 \keyword{datasets}
