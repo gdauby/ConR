@@ -78,7 +78,7 @@ necessary for the assessments.
 gen.length <- c(40, 65, 50) ## generation length in years
 p.mature <- c(0.4485, 0.3028, 0.4143) ## proportion of mature individuals in the population
 early.sucession <- c(0.9, 1, 1) ## correction applied to population decline
-harvest <- c(10, 10, 10) ## TO DEFINE
+harvest <- c(10, 10, 10) ##  levels of exploitation causing reductions in population size (in %)
 ```
 
 ## Population sizes
@@ -126,8 +126,6 @@ mean.pop <- matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, years))
 for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
 ```
 
- 
-
 <br/><br/>
 
 # Population metrics
@@ -146,7 +144,7 @@ library(ConR)
 ### Extent of Occurrence (EOO)
 ```{r eoo, eval = TRUE, collapse = TRUE}
 EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", 
-                          export_shp = T)
+                          export_shp = TRUE)
 EOO.hull$results
 EOO.hull$spatial
 ```
