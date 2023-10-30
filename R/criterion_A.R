@@ -176,9 +176,7 @@
 #'   generation.time = 10)
 #'   
 #' @importFrom utils txtProgressBar setTxtProgressBar head
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom foreach %dopar% %do% foreach
+#' @importFrom parallel stopCluster
 #' 
 #' @export criterion_A
 criterion_A = function(x, 
@@ -472,38 +470,18 @@ criterion_A = function(x,
     
     cat("Computing the predictions based on population trends...", sep= "\n")
     
-    if (parallel) {
-      cl <- snow::makeSOCKcluster(NbeCores)
-      doSNOW::registerDoSNOW(cl)
-      
-      message('Parallel running with ',
-              NbeCores, ' cores')
-      
-      `%d%` <- foreach::`%dopar%`
-      
-    } else {
-      `%d%` <- foreach::`%do%`
-    }
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
     
-    if (show_progress) {
-      pb <- txtProgressBar(min = 0,
-                           max = length(which.pred),
-                           style = 3)
-      
-      progress <- function(n)
-        setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-      
-    } else {
-      opts <- NULL
-    }
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(which.pred))
+    opts <- pro_res$opts
+    pb <- pro_res$pb
     
     x <- NULL
     models.fit <- foreach::foreach(
       x = which.pred,
       .options.snow = opts
     ) %d% {
-      #source("C://Users//renato//Documents//raflima//R_packages//ConR//R//pop.decline.fit.R")
       
       if (!parallel & show_progress) setTxtProgressBar(pb, x)
       
@@ -523,7 +501,7 @@ criterion_A = function(x,
       res
     }
     
-    if(parallel) snow::stopCluster(cl)
+    if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
     
     for (i in 1:length(which.pred)) { 

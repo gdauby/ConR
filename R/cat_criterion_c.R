@@ -146,7 +146,7 @@ cat_criterion_c <- function(C1_df = NULL,
                                             paste(y[!is.na(y)], collapse = "+")
                                           }))
     
-  }    
+  }
   
   ranks_C <- as.character(apply(rank, 1, max, na.rm=TRUE))
   ranks_C <- stringr::str_replace_all(ranks_C,  rpl.cds)

@@ -72,8 +72,7 @@
 #'
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
+#' @importFrom parallel stopCluster
 #' @importFrom foreach %dopar% %do% foreach
 #' 
 #' @export
@@ -113,31 +112,11 @@ AOO.computing <- function(XY,
   
   if (length(list_data) > 0) {
     
-    if (parallel) {
-      cl <- snow::makeSOCKcluster(NbeCores)
-      doSNOW::registerDoSNOW(cl)
-      
-      message('Parallel running with ',
-              NbeCores, ' cores')
-      `%d%` <- foreach::`%dopar%`
-    } else{
-      `%d%` <- foreach::`%do%`
-    }
-    
-    
-    x <- NULL
-    if(show_progress) {
-      pb <-
-        txtProgressBar(min = 0,
-                       max = length(list_data),
-                       style = 3)
-      
-      progress <- function(n)
-        setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-    } else {opts <- NULL}
-    
-    # print(proj_type)
+    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+    `%d%` <- c_par(parallel = parallel)
+    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+    opts <- pro_res$opts
+    pb <- pro_res$pb
     
     output <-
       foreach::foreach(
@@ -172,7 +151,7 @@ AOO.computing <- function(XY,
         res
       }
     
-    if(parallel) snow::stopCluster(cl)
+    if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
 
     res <- unlist(output[names(output) != "spatial"])
@@ -209,7 +188,7 @@ AOO.computing <- function(XY,
 }
 
 
-
+#' @importFrom foreach %dopar% %do% foreach
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,

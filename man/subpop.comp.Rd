@@ -42,16 +42,16 @@ should be shown. TRUE by default.}
 \value{
 If \code{export_shp} is TRUE,
 \enumerate{
-\item EOO a numeric vector of AOO estimates for each taxa
-\item spatial.polygon a simple feature collection
+\item number_subpop a numeric vector of AOO estimates for each taxa
+\item poly_subpop a simple feature collection
 }
 
-a list with [\link{1}]number_subpop and [\link{2}]poly_subpop
 a \verb{Simple feature collection} with as many MULTIPOLYGON as taxa.
 If \code{export_shp} is FALSE, a vector with estimated number of subpopulation per
 taxa.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Estimate the number of subpopulations following the method
 \strong{circular buffer method} (overlapping buffered circles form a single
 subpopulation)

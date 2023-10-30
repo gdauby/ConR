@@ -12,7 +12,7 @@ EOO.comp(
   method.less.than3 = "not comp",
   mode = "spheroid",
   proj_type = NULL,
-  reproject = TRUE
+  reproject = FALSE
 )
 }
 \arguments{
@@ -31,6 +31,8 @@ EOO.comp(
 'spheroid'}
 
 \item{proj_type}{crs}
+
+\item{reproject}{logical FALSE whether the polygon should be converted to geographic coordinates if mode is \code{planar}}
 
 \item{exclude.area}{logical. Default if FALSE}
 

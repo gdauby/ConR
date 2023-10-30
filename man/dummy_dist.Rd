@@ -11,7 +11,8 @@ dummy_dist(
   xmax = 5,
   ymin = 0,
   ymax = 5,
-  step = 0.1
+  step = 0.1,
+  seed = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ dummy_dist(
 \item{ymax}{numeric}
 
 \item{step}{numeric}
+
+\item{seed}{integer}
 }
 \value{
 A data.frame with three columns

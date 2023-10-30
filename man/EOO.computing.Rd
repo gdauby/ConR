@@ -198,6 +198,13 @@ plot(st_geometry(st_transform(country_map, proj_crs(proj_type = "Antarctic"))),
 plot(p1, lwd = 2, col = 'red', add = TRUE)
 
 
+## Parallel computation becomes advantageous for very large dataset
+# library(microbenchmark)
+# microbenchmark(EOO.computing(XY = dummy_dist(nsp = 1000, seed = 1)), 
+# EOO.computing(XY = dummy_dist(nsp = 1000, seed = 1), parallel = T, NbeCores = 4), times = 2)
+
+
+
 }
 \references{
 Gaston & Fuller 2009 The sizes of species'geographic ranges,
