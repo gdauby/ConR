@@ -48,7 +48,6 @@ already available.
 spp <- c("Araucaria angustifolia", "Euterpe edulis", "Paubrasilia echinata")
 ```
 
-
 <br/><br/>
 
 # Species information
@@ -77,8 +76,8 @@ necessary for the assessments.
 
 ```{r species-info, eval = TRUE, collapse = TRUE}
 gen.length <- c(40, 65, 50) ## generation length in years
-p.mature <- c(0.4485, 0.3028, 0.4143) ## TO DEFINE
-early.sucession <- c(0.9, 1, 1) ## TO DEFINE
+p.mature <- c(0.4485, 0.3028, 0.4143) ## proportion of mature individuals in the population
+early.sucession <- c(0.9, 1, 1) ## correction applied to population decline
 harvest <- c(10, 10, 10) ## TO DEFINE
 ```
 
@@ -146,19 +145,11 @@ library(ConR)
 
 ### Extent of Occurrence (EOO)
 ```{r eoo, eval = TRUE, collapse = TRUE}
-EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull")
-```
-
-<!-- CHECK HERE: Gilles, when export_shp = TRUE the element $results was empty -->
-
---> *IT WORKS JUST FINE WIH ME, hope this is is not a problem linked to package or R version....*
-
-```{r eoo2, eval = TRUE, collapse = TRUE}
-EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", export_shp = T)
+EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", 
+                          export_shp = T)
 EOO.hull$results
 EOO.hull$spatial
 ```
-
 
 ### Area of occupancy (AOO)
 ```{r aoo, eval = TRUE, collapse = TRUE}
@@ -173,11 +164,6 @@ radius <- subpop.radius(XY = occs[, c(1:3)],
 sub <- subpop.comp(XY = occs[, c(1:3)],
                    Resol_sub_pop = radius[,c("tax", "radius")])
 ```
-
-<!-- CHECK HERE: Gilles, subpop.radius is returning an error: "some columns are not in the data.table: tax" -->
-<!-- CHECK HERE: without the object radius I coul not test subpop.comp() -->
-
---> *CORRECTED !!*
 
 ### Number of locations
 
@@ -205,13 +191,13 @@ merged_data <- merged_data[, c("ddlat","ddlon","tax","radius","aoo")]
 list_data <- coord.check(XY = merged_data,
                               listing = TRUE)
 fator = 1
-for (i in seq_lentgth(list_data)) {
-get.patches(list_data[[i]],
+for (i in seq_along(list_data$list_data)) {
+    get.patches(list_data$list_data[[i]],
       cell_size = 2,
       nbe_rep = 0,
-      AOO = as.double(unique(list_data[[i]]$AOO)),
-      Resol_sub_pop = as.double(unique(list_data[[i]]$radius)),
-      dist_isolated = as.double(unique(list_data[[i]]$radius)) * fator,
+      AOO = as.double(unique(list_data$list_data[[i]]$AOO)),
+      Resol_sub_pop = as.double(unique(list_data$list_data[[i]]$radius)),
+      dist_isolated = as.double(unique(list_data$list_data[[i]]$radius)) * fator,
     )
 }
 critB$sever.frag <- 100 * critB$Nbe_subPop/ (critB$AOO / 4) > 50
