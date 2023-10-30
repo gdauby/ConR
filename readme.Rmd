@@ -14,14 +14,10 @@ knitr::opts_chunk$set(
 
 # ConR package
 
-<!-- badges: start -->
-[![Travis build status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
-<!-- badges: end -->
 
 <br/><br/>
 
-The ``ConR`` pacakge aims at assisting the preliminary assessment of species
+The ``ConR`` package aims at assisting the preliminary assessment of species
 conservation status based on the International Union for Conservation of Nature
 (IUCN) Red List Categories and Criteria. More specifically, it helps users to
 calculate the population metrics related to the IUCN criteria A, B, C and D and
@@ -35,10 +31,10 @@ institutes.
 
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
-The package it not anymore available on CRAN because of the recent retirement of various packages (rgdal, rgeos). 
+The package it not available anymore on CRAN because of the recent retirement of various packages (rgdal, rgeos). 
 The new version is nevertheless available on github and will soon be available on CRAN.
 
-To install the version from github :
+To install the github version :
 
 ```
 install.packages("devtools")

@@ -1,7 +1,9 @@
 
 #' @title Estimate the number of subpopulations for one or multiple species
 #'
-#' @description Estimate the number of subpopulations following the method
+#' @description 
+#' `r lifecycle::badge("stable")`
+#'  Estimate the number of subpopulations following the method
 #'   **circular buffer method** (overlapping buffered circles form a single 
 #'   subpopulation)
 #'
@@ -44,12 +46,10 @@
 #' @return 
 #' If `export_shp` is TRUE,
 #' \enumerate{
-#'   \item EOO a numeric vector of AOO estimates for each taxa
-#'   \item spatial.polygon a simple feature collection
+#'   \item number_subpop a numeric vector of AOO estimates for each taxa
+#'   \item poly_subpop a simple feature collection
 #' }
 #' 
-#' 
-#'  a list with [[1]]number_subpop and [[2]]poly_subpop
 #' a `Simple feature collection` with as many MULTIPOLYGON as taxa.
 #' If `export_shp` is FALSE, a vector with estimated number of subpopulation per
 #' taxa.
@@ -66,11 +66,8 @@
 #' subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
 #' subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
 #' 
-#' @importFrom snow makeSOCKcluster stopCluster
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom utils txtProgressBar setTxtProgressBar
-#' @importFrom foreach foreach
-#' 
+#' @importFrom utils setTxtProgressBar
+#' @importFrom parallel stopCluster
 #' 
 #' @export subpop.comp
 #' 
@@ -99,32 +96,12 @@ subpop.comp <- function(XY,
   list_data <-
     coord.check(XY = XY, listing = TRUE, proj_type = proj_type)
   
-  if (parallel) {
-    cl <- snow::makeSOCKcluster(NbeCores)
-    doSNOW::registerDoSNOW(cl)
-    
-    message('Parallel running with ',
-            NbeCores, ' cores')
-    
-    `%d%` <- foreach::`%dopar%`
-  } else{
-    `%d%` <- foreach::`%do%`
-  }
+  cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
+  `%d%` <- c_par(parallel = parallel)
   
-  x <- NULL
-  
-  if (show_progress) {
-    pb <-
-      utils::txtProgressBar(min = 0,
-                            max = length(list_data[[1]]),
-                            style = 3)
-    
-    progress <- function(n)
-      utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
-  } else{
-    opts <- NULL
-  }
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  opts <- pro_res$opts
+  pb <- pro_res$pb
   
   output <-
     foreach::foreach(
@@ -158,18 +135,20 @@ subpop.comp <- function(XY,
       res
     }
   
-  if(parallel) snow::stopCluster(cl)
+  if(parallel) parallel::stopCluster(cl)
   if(show_progress) close(pb)
   
   if (export_shp) {
     
     number_subpop <-
-      data.frame(tax =  names(output),
+      data.frame(tax =  names(output[names(output) != "spatial"]),
                  subpop =  as.numeric(unlist(output[names(output) != "spatial"])))
 
     shapes <- output[names(output) == "spatial"]
     shapes <- do.call('rbind', shapes)
     row.names(shapes) <- 1:nrow(shapes)
+    
+    shapes <- st_transform(shapes, 4326)
     
   } else {
     

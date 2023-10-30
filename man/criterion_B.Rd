@@ -54,6 +54,12 @@ with the taxa names and a column 'radius' with the species-specific radius
 
 \item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
 
+\item{method_locations}{string, indicating the method used for estimating the number of locations. See Details
+\itemize{
+\item \code{"fixed_grid"} (the default)
+\item \code{"sliding_scale"}
+}}
+
 \item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
 \itemize{
 \item \code{"no_more_than_one"} (the default): each single POLYGON will be considered as a single location
@@ -105,6 +111,8 @@ some translation of the raster are still done.}
 \item{proj_type}{string or numeric}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+
+\item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment}
 }
 \value{
 A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),

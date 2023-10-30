@@ -18,7 +18,7 @@ subpop.estimation <- function(XY,
                          export_shp = FALSE,
                          proj_type = "cea") {
   
-  points_sf <- st_as_sf(XY, coords = c(1, 2))
+  points_sf <- st_as_sf(XY, coords = c(2, 1))
   buff_sf <- st_buffer(points_sf, dist = Resol_sub_pop * 1000)
   buff_sf <- st_union(buff_sf) 
   buff_sf <- st_cast(buff_sf, "POLYGON")

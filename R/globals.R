@@ -1,2 +1,2 @@
 utils::globalVariables(c("classes.hab.map", "km", 
-                         ".SD", ".", "tax", "x"))
+                         ".SD", ".", "tax", "x", "w"))
