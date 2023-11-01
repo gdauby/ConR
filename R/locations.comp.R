@@ -48,17 +48,25 @@
 #' performed and the one providing the minimum number of occupied cells is
 #' provided).
 #' 
-#' If `threat_list` is provided, 
-#' 
-#' which means occurrences within polygon documenting threats (if provided) will not be taken into account for estimating the number of locations following the grid system,
+#' If `threat_list` is provided, which means occurrences within polygon
+#' documenting threats (if provided) will not be taken into account for
+#' estimating the number of locations following the grid system,
 #' 
 #' If `method` is "fixed_grid" as it is by default, the resolution is fixed and determined 
 #' by the argument `cell_size_locations`.
+#' 
 #' If `method` is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
 #' and x is a defined parameter. 1/x is defined by `Rel_cell_size` argument and is 0.05 by default. 
 #' See Rivers M.C. et al. (2010) for more information on the methods.
 #' 
-#' @references Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
+#' @references 
+#' 
+#' Gaston & Fuller (2009) The sizes of species'geographic ranges, Journal of
+#' Applied Ecology: 49 1-9
+#' 
+#' Rivers, Bachman, Meagher, Lughadha & Brummitt (2010) Subpopulations,
+#' locations and fragmentation: applying IUCN red list criteria to herbarium
+#' specimen data. Biodiversity and Conservation 19: 2071-2085.
 #'
 #' @return A list
 #' \enumerate{

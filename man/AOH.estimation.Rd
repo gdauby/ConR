@@ -34,20 +34,20 @@ should be shown. Default to TRUE.}
 \item{mode}{character string either 'spheroid' or 'planar'. By default
 'spheroid'}
 
-\item{hab.map}{raster, raster layer/stack or spatial polygons containing the
+\item{hab.map}{SpatRaster or sf containing the
 habitat spatial information}
 
-\item{hab.map.type}{logical, vector of same lenght of hab.map, if TRUE means
+\item{hab.map.type}{logical, vector of same length of hab.map, if TRUE means
 hab.map is suitable for species, if FALSE unsuitable}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as
 'habitat'.}
 
 \item{years}{numeric. Time interval between the first and last \code{hab.map}
-if more than one raster is provided (e.g. if \code{hab.map} is a RasterStack
+if more than one SpatRaster is provided (e.g. if \code{hab.map} is a SpatRaster
 object).}
 
-\item{country_map}{a \code{SpatialPolygonsDataFrame} or}
+\item{country_map}{a \code{sf}}
 
 \item{exclude.area}{a logical, if TRUE, areas outside of \code{country_map} are
 cropped of \code{SpatialPolygons} used for calculating EOO. By default is FALSE}
@@ -60,7 +60,7 @@ to 2.}
 \item{simplifiy_poly}{logical whether the resulting polygon should be
 simplified using ms_simplify function of rmapshaper package}
 
-\item{buffer}{logical}
+\item{buffer}{numeric}
 
 \item{...}{additional arguments passed to \code{EOO.computing}
 
@@ -109,6 +109,7 @@ polygons. But note that for rasters, this include additional steps that can
 be time and memory consuming.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 The function compute the amount of 'habitat' within the EOO of
 each species, which may represent habitat itself or any other proxy, value or
 category the user may find relevant (e.g. area covered by protected areas,

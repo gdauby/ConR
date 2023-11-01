@@ -340,7 +340,6 @@ cat_criterion_b <- function(EOO = NULL,
           all_cats = all_cats
         )
       )
-    
   }
 }
 

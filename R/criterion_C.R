@@ -235,13 +235,24 @@ criterion_C = function(x,
 
   if(is.null(years)) {
     
-    anos <- as.numeric(gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))]))
-    
-    if(is.null(anos)) 
-      stop("Please provide at least two years with estimates of population sizes") 
-    
-    years <- anos
-    warning("The years of the population sizes were not given and were taken from the input population data", call. = FALSE)
+    if(is.null(names(x))) {
+      anos <- as.numeric(gsub("[^0-9]", "", colnames(x)[grepl("[0-9]", colnames(x))]))
+
+      if(is.null(anos) | length(anos) < 1)
+        stop("Please provide at least two years with estimates of population sizes")
+
+      years <- anos
+      warning("The years of the population sizes were not given and were taken from the input population data", call. = FALSE)
+
+    } else {
+      anos <- as.numeric(gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))]))
+      
+      if(is.null(anos) | length(anos) < 1) 
+        stop("Please provide at least two years with estimates of population sizes") 
+      
+      years <- anos
+      warning("The years of the population sizes were not given and were taken from the input population data", call. = FALSE)
+    }
   }
   
   if(is.vector(x)) {
@@ -319,12 +330,12 @@ criterion_C = function(x,
       
       if(any(duplicated(x[,1]))) {
       
-        numb.subpop <- stats::setNames(as.vector(table(x$species)), nm = unique(x$species))
+        numb.subpop <- stats::setNames(as.vector(table(x[,1])), nm = unique(x[,1]))
         
         subpop.size <- split(x[ , which(names(x) == assess.year)], f = x[,1])
         
-        x <- cbind.data.frame(data.frame (species = unique(x$species)),
-                           rowsum(x[, which(names(x) %in% years)], x$species, reorder = FALSE, row.names = FALSE))
+        x <- cbind.data.frame(data.frame (species = x[,1]),
+                           rowsum(x[, which(names(x) %in% years)], x[,1], reorder = FALSE, row.names = FALSE))
         
         row.names(x) <- NULL 
     
@@ -342,7 +353,7 @@ criterion_C = function(x,
       if(length(subpop.size) != dim(x)[1])
         stop("The length of subpop.size does not match the number of taxa in the input data frame 'x'")
       
-      numb.subpop <- stats::setNames(sapply(subpop.size, length), nm = unique(x$species))
+      numb.subpop <- stats::setNames(sapply(subpop.size, length), nm = unique(x[,1]))
       if (all(numb.subpop == 1))
         stop("Please provide the number of individuals for each subpopulation to assess sub-criterion C2 or select only subcriterion C1")
       
@@ -645,24 +656,34 @@ criterion_C = function(x,
     }
   }
 
-  pop_data1 <- lapply(1:length(pop_data), function(i)
-    pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+  # if (is.null(ignore.years)) {
+    pop_data1 <- lapply(1:length(pop_data), function(i)
+                          pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]]])
+  # } else {
+  #   pop_data1 <- lapply(1:length(pop_data), function(i)
+  #                         pop_data[[i]][names(pop_data[[i]]) %in% yrs[[i]] & 
+  #                                     !names(pop_data[[i]]) %in% ignore.years])
+  # }
   
   ps.interval <- sapply(1:length(pop_data1), function(i)
     paste(unique(
       c(
-        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])],1)),
-        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)],1)),
-        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])],1))
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% prev.year3[i])], 0)),
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% assess.year)], 0)),
+        as.character(round(pop_data1[[i]][which(names(pop_data1[[i]]) %in% proj.year3[i])], 0))
       )
     ), collapse = "-"))
   
   assess.period <- lapply(1:length(pop_data1),
                           function(i)
                             paste(unique(sort(
-                              c(min(names(pop_data1[[i]])),
+                              c(
+                                names(pop_data1[[i]])[which(names(pop_data1[[i]]) %in% prev.year3[i])],
+                                #min(names(pop_data1[[i]])),
                                 assess.year,
-                                max(names(pop_data1[[i]])))
+                                names(pop_data1[[i]])[which(names(pop_data1[[i]]) %in% proj.year3[i])]
+                                #max(names(pop_data1[[i]]))
+                                )
                             )), collapse = "-"))
 
   ## Small population size and continuing decline using IUCN criteria

@@ -24,9 +24,9 @@
 #'
 #' This function interpret subpopulations as obtained using
 #' ```subpop.estimation``` function as habitat patches. First, subpopulations
-#' that are isolated i.e. distant to all others subpopulations by at ```least
-#' dist_isolated``` kilometres, are identified. Then, the percentage of the AOO
-#' concerned by those "isolated" subpopulations is calculated.
+#' that are isolated i.e. distant to all others subpopulations by at least
+#' ```dist_isolated``` kilometres, are identified. Then, the percentage of the
+#' AOO concerned by those "isolated" subpopulations is calculated.
 #'   
 #' @examples
 #' 
@@ -42,7 +42,7 @@
 #' 
 #' @keywords internal
 #' 
-#' @import sf
+#' @importFrom sf st_as_sf st_transform st_coordinates st_distance st_geometry
 #' 
 #' @noRd
 get.patches <- function(XY, 
@@ -74,7 +74,7 @@ get.patches <- function(XY,
   if (is.null(AOO)) {
     res_aoo <-
       #For Casearia sylvestris (AOO = 3104): 24.5 secs; For Annona neosalicifoli (AOO = 604): 1.11 secs
-      ConR:::AOO.estimation(
+      AOO.estimation(
         coordEAC = XY_proj_coord[, c(2, 1)],
         cell_size = cell_size,
         nbe_rep = nbe_rep,
@@ -93,7 +93,7 @@ get.patches <- function(XY,
   if (is.null(subpop_poly)) {
       
     res_subpop <-          #For Casearia sylvestris: 0.30 secs; For Annona neosalicifolia: 0.07 secs
-      ConR:::subpop.estimation(
+      subpop.estimation(
         XY = XY_proj_coord,
         Resol_sub_pop = Resol_sub_pop,
         proj_type = proj_type,

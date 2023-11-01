@@ -91,12 +91,13 @@ minimize the number of locations (several translation of the grid are
 performed and the one providing the minimum number of occupied cells is
 provided).
 
-If \code{threat_list} is provided,
-
-which means occurrences within polygon documenting threats (if provided) will not be taken into account for estimating the number of locations following the grid system,
+If \code{threat_list} is provided, which means occurrences within polygon
+documenting threats (if provided) will not be taken into account for
+estimating the number of locations following the grid system,
 
 If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined
 by the argument \code{cell_size_locations}.
+
 If \code{method} is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences
 and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default.
 See Rivers M.C. et al. (2010) for more information on the methods.
@@ -116,7 +117,12 @@ locations <- locations.comp(dataset.ex, nbe_rep = 100)
 
 }
 \references{
-Gaston & Fuller 2009 The sizes of species'geographic ranges, Journal of Applied Ecology, 49 1-9
+Gaston & Fuller (2009) The sizes of species'geographic ranges, Journal of
+Applied Ecology: 49 1-9
+
+Rivers, Bachman, Meagher, Lughadha & Brummitt (2010) Subpopulations,
+locations and fragmentation: applying IUCN red list criteria to herbarium
+specimen data. Biodiversity and Conservation 19: 2071-2085.
 }
 \author{
 Gilles Dauby, \email{gildauby@gmail.com}

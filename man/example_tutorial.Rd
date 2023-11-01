@@ -4,7 +4,7 @@
 \alias{example_tutorial}
 \title{Dataset to run the package introductory vignette}
 \format{
-A data frame with 1037 rows and 6 columns
+A named list with two data frames: 'occurrences' and 'population.sizes'
 }
 \source{
 \url{https://doi.org/10.15468/dl.mzmat2}
@@ -13,13 +13,17 @@ A data frame with 1037 rows and 6 columns
 data(example_tutorial)
 }
 \description{
-A dataset containing occurrence records from three arborescent species from
-the Atlantic Forest obtained from different sources, but mostly from GBIF.
+A dataset containing occurrence records and population size estimates from
+three arborescent species from the Atlantic Forest obtained from different
+sources, but mostly from GBIF and TreeCo.
 }
 \details{
-Only records considered to have a high confidence level in terms of
-georefferencing and species identifications are included.
+Only occurrence records considered to have a high confidence level in terms
+of georefferencing and species identifications are included.
 
-Columns are: ddlat, ddlon, tax, coly, UC, source
+In data frame 'occurrences' columns are: ddlat, ddlon, tax, coly, UC, source
+
+In data frame 'population.sizes' columns are: species, and all years with
+population estimates
 }
 \keyword{datasets}
