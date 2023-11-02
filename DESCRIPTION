@@ -1,7 +1,7 @@
 Package: ConR
 Type: Package
 Title: Computation of Parameters Used in Preliminary Assessment of Species Conservation Status
-Version: 2.0.11
+Version: 2.0.12
 Maintainer: Gilles Dauby <gildauby@gmail.com>
 Description: Multi-species estimation of biological indicators of populations used
     for the preliminary assessment of conservation status following the Red List 
