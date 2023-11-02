@@ -102,12 +102,12 @@ locations.comp <- function(XY,
     warning('threat_list is NULL, hence notice that method_polygons is not used')
   }
   
-  method_polygons <- match.arg(unique(method_polygons), c("no_more_than_one", "grid"), several.ok = TRUE)
+  # method_polygons <- match.arg(unique(method_polygons), c("no_more_than_one", "grid"), several.ok = TRUE)
   method <- match.arg(method, c("fixed_grid", "sliding_scale"))
   
   if (!is.null(threat_list)) {
     
-    if (length(method_polygons) > 1 | length(method_polygons) != length(threat_list))
+    if (length(method_polygons) > 1 & length(method_polygons) != length(threat_list))
       stop('method_polygons and threat_list must be of same length')
     
     if (length(method_polygons) == 1 & length(threat_list) > 1)
