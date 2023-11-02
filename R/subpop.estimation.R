@@ -12,7 +12,7 @@
 #'
 #' @import sf
 #' @keywords internal
-#' @noRd
+#' @export
 subpop.estimation <- function(XY,
                          Resol_sub_pop, 
                          export_shp = FALSE,

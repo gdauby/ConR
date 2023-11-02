@@ -1,6 +1,8 @@
-#' Internal function
+#' @title Internal function
 #'
-#' Get Occupied Cells and Patches
+#' @description 
+#'  `r lifecycle::badge("experimental")`
+#'  Get Occupied Cells and Patches
 #'
 #' @param points XY data frame
 #' @param cell_size numeric
@@ -74,7 +76,7 @@ get.patches <- function(XY,
   if (is.null(AOO)) {
     res_aoo <-
       #For Casearia sylvestris (AOO = 3104): 24.5 secs; For Annona neosalicifoli (AOO = 604): 1.11 secs
-      ConR:::AOO.estimation(
+      AOO.estimation(
         coordEAC = XY_proj_coord[, c(2, 1)],
         cell_size = cell_size,
         nbe_rep = nbe_rep,
@@ -93,7 +95,7 @@ get.patches <- function(XY,
   if (is.null(subpop_poly)) {
       
     res_subpop <-          #For Casearia sylvestris: 0.30 secs; For Annona neosalicifolia: 0.07 secs
-      ConR:::subpop.estimation(
+      subpop.estimation(
         XY = XY_proj_coord,
         Resol_sub_pop = Resol_sub_pop,
         proj_type = proj_type,

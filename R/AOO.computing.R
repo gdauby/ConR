@@ -189,6 +189,8 @@ AOO.computing <- function(XY,
 
 
 #' @importFrom foreach %dopar% %do% foreach
+#' @keywords intenal
+#' @export
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,
