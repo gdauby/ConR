@@ -23,6 +23,7 @@ display_progress_bar <- function(show_progress = TRUE, max_pb) {
     opts <- list(progress = progress)
   } else {
     opts <- NULL
+    pb <- NA
   }
   return(list(opts = opts, pb = pb))
 }
