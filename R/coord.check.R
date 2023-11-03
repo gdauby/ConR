@@ -9,11 +9,15 @@
 #' @param check_eoo logical
 #' 
 #' 
-#' @return a list
+#' @return a list with verified dataset and added columns
 #' 
-#' @keywords internal
+#' @examples
+#' 
+#' dataset <- coord.check(XY = dummy_dist())
+#' dataset$list_data
+#' dataset$issue_nrow ## this indicates which species has less that 3 unique pairs of coordinates
 #'
-#'
+#' @export
 coord.check <-
   function(XY,
            listing = TRUE,
@@ -21,6 +25,8 @@ coord.check <-
            listing_by_valid = FALSE,
            cell_size = NULL,
            check_eoo = TRUE) {
+    
+    if(tibble::is_tibble(XY)) XY <- as.data.frame(XY)
     
     XY <- as.data.frame(XY)
     
@@ -39,7 +45,7 @@ coord.check <-
       
       
     if (!is.numeric(XY[,1])) XY[,1] <- as.numeric(XY[,1])
-    
+    if (!is.numeric(XY[,2])) XY[,2] <- as.numeric(XY[,2])
      
     if (any(is.na(XY[, c(1:2)]))) {
       print(
@@ -61,8 +67,8 @@ coord.check <-
     
     if (any(XY[, 2] > 180) ||
         any(XY[, 2] < -180) ||
-        any(XY[, 1] < -180) ||
-        any(XY[, 1] > 180))
+        any(XY[, 1] < -90) ||
+        any(XY[, 1] > 90))
       stop("coordinates are outside of expected range")
     
     colnames(XY)[1:3] <- c("ddlat", "ddlon", "tax")
@@ -146,8 +152,6 @@ coord.check <-
     }
     
     if (listing) {
-      
-
         
         if (listing_by_valid) {
           list_data <-
@@ -209,14 +213,6 @@ coord.check <-
             
           }
           
-          # list_data <-
-          #   do.call("rbind", lapply(list_data, function(x) do.call("rbind", x)))
-          
-          
-          # XY$tax_class <-
-          #   paste(XY$tax, XY$classes, sep = "___")
-          # list_data <-
-          #   split(XY, f = XY$tax_class)
           
           list_data <- list_data[!unlist(lapply(list_data, is.null))]
           
@@ -225,16 +221,22 @@ coord.check <-
           list_data <- split(unique(XY), f = unique(XY)$tax)
           
         }
+      
+      
+      unique_occs <- unlist(lapply(list_data, nrow))
         
     } else{
       
       list_data <-
         XY
       
+      unique_occs <- NA
+      
     }
     
     return(list(list_data = list_data, 
                 issue_close_to_anti = issue_close_to_anti,
                 issue_long_span = issue_long_span,
-                issue_nrow = issue_nrow))
+                issue_nrow = issue_nrow,
+                unique_occs = unique_occs))
   }
