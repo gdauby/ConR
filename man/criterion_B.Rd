@@ -31,7 +31,8 @@ criterion_B(
   NbeCores = 2,
   proj_type = "cea",
   mode = "spheroid",
-  DrawMap = FALSE
+  DrawMap = FALSE,
+  add.legend = TRUE
 )
 }
 \arguments{
@@ -113,6 +114,8 @@ some translation of the raster are still done.}
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 
 \item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment}
+
+\item{add.legend}{logical, whether legend should be added to map}
 }
 \value{
 A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),

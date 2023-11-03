@@ -18,7 +18,7 @@
 #' @inheritParams AOO.computing
 #' @inheritParams subpop.comp
 #' @param DrawMap logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment
-#' 
+#' @param add.legend logical, whether legend should be added to map
 #' 
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
 #'   the IUCN categories associated with the sub-criteria and the consensus category
@@ -65,7 +65,8 @@ criterion_B <- function(x,
                        NbeCores = 2,
                        proj_type = "cea",
                        mode = "spheroid",
-                       DrawMap = FALSE) {
+                       DrawMap = FALSE,
+                       add.legend = TRUE) {
   
   if(identical(class(x)[1], "spgeoIN")) {
     x <- cbind(x$species_coordinates, x$identifier)
@@ -246,7 +247,9 @@ criterion_B <- function(x,
                   aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
                   locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
                   subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
-                  proj_type = proj_crs(proj_type = proj_type))
+                  proj_type = proj_crs(proj_type = proj_type), 
+                  results = results_full[which(results_full$tax == name_sp),], 
+                  add.legend = add.legend)
       
     }
     
@@ -282,7 +285,8 @@ criterion_B <- function(x,
 #' @param locations_poly sf
 #' @param subpop sf
 #' @param proj_type crs
-#' 
+#' @param results data.frame
+#' @param add.legend logical
 #' 
 #' @importFrom grDevices rgb
 #' @importFrom graphics mtext
@@ -292,7 +296,7 @@ criterion_B <- function(x,
 #' @keywords internal
 #'
 #'
-draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type) {
+draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type, results, add.legend =TRUE) {
   
   name_file <-
     paste("IUCN_", gsub(pattern = " ", replacement = "_", name_sp), sep =
@@ -319,6 +323,9 @@ draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop,
   graphics::par(mar = c(10, 12, 10, 2),
                 xpd = FALSE,
                 las = 1)
+  
+  if (add.legend) nf <-
+    layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE), c(4, 1.5), c(4, 1.5))
   
   XY_sf <- st_as_sf(XY, coords = c("ddlon", "ddlat"))
   st_crs(XY_sf) <- 4326
@@ -377,24 +384,45 @@ draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop,
   border_to_center <- as.data.frame(matrix(NA, 2, 2))
   border_to_center[,1] <- c(xlim/10, 0)
   border_to_center[,2] <- c(0,0)
-  scaleBAR <- round(matrix(unlist(sf::sf_project(
-    from = sf::st_crs(4326),
-    to =
-      proj_crs(proj_type),
-    pts = border_to_center
-  )), ncol = 2)/ 1000, 0)[1, 1]
+  # scaleBAR <- round(matrix(unlist(sf::sf_project(
+  #   from = sf::st_crs(4326),
+  #   to =
+  #     proj_type,
+  #   pts = border_to_center
+  # )), ncol = 2)/ 1000, 0)[1, 1]
   
-  plot(
-    terra::rast(matrix(NA, nrow=2, ncol=2)),
-    col = NA,
-    add = T
-  )
-  
-  terra::sbar(d = scaleBAR, 
-              type = "bar", 
-              below = "kilometers", 
-              cex=2.5, xy = "bottomright")
+  # plot(
+  #   terra::rast(matrix(NA, nrow=2, ncol=2)),
+  #   col = NA,
+  #   add = T
+  # )
+  # 
+  # terra::sbar(d = scaleBAR, 
+  #             type = "bar", 
+  #             below = "kilometers", 
+  #             cex=2.5, xy = "bottomright")
   mtext(name_sp, side=3, cex=3, line=3)
+  
+  if (add.legend) {
+    graphics::par(mar=c(1,1,1,1), xpd=T)
+    plot(1:10, 1:10, type="n", bty='n', xaxt='n', yaxt='n')
+
+    legend(1,10,  c(paste("EOO=", ifelse(!is.na(results$EOO), format(round(as.numeric(results$EOO),1), scientific = 5), NA), "km2"),
+                      paste("AOO=", format(results$AOO, scientific = 5),"km2"),
+                      # paste("Number of unique occurrences=", results$),
+                      paste("Number of sub-populations=", results$subpop),
+                      paste("Number of locations=", results$locations),
+                      paste("IUCN category according to criterion B:", results$category_B)), cex=3.5, bg = grDevices::grey(0.9))
+    
+    # graphics::par(mar=c(4,1,1,1))
+    # plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
+    # graphics::points(XY[,1],XY[,2], pch=8, cex=2, col="red")
+  }
+  
+  
+  
+  
+  
   
   grDevices::dev.off()
 }

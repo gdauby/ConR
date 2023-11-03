@@ -145,7 +145,6 @@ res <- EOO.computing(XY = dataset, export_shp = TRUE)
 res$spatial
 
 
-data("land")
 
 country_map <-
   rnaturalearth::ne_countries(scale = 50, returnclass = "sf", type = "map_units")

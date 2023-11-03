@@ -4,7 +4,17 @@
 \alias{draw_map_cb}
 \title{Internal function}
 \usage{
-draw_map_cb(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type)
+draw_map_cb(
+  XY,
+  name_sp,
+  eoo_poly,
+  aoo_poly,
+  locations_poly,
+  subpop,
+  proj_type,
+  results,
+  add.legend = TRUE
+)
 }
 \arguments{
 \item{XY}{data.frame, of at least two columns (coordinates), third is taxa}
@@ -20,6 +30,10 @@ draw_map_cb(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type)
 \item{subpop}{sf}
 
 \item{proj_type}{crs}
+
+\item{results}{data.frame}
+
+\item{add.legend}{logical}
 }
 \value{
 a plot
