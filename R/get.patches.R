@@ -26,9 +26,9 @@
 #'
 #' This function interpret subpopulations as obtained using
 #' ```subpop.estimation``` function as habitat patches. First, subpopulations
-#' that are isolated i.e. distant to all others subpopulations by at ```least
-#' dist_isolated``` kilometres, are identified. Then, the percentage of the AOO
-#' concerned by those "isolated" subpopulations is calculated.
+#' that are isolated i.e. distant to all others subpopulations by at least
+#' ```dist_isolated``` kilometres, are identified. Then, the percentage of the
+#' AOO concerned by those "isolated" subpopulations is calculated.
 #'   
 #' @examples
 #' 
@@ -44,7 +44,7 @@
 #' 
 #' @keywords internal
 #' 
-#' @import sf
+#' @importFrom sf st_as_sf st_transform st_coordinates st_distance st_geometry
 #' 
 #' @noRd
 get.patches <- function(XY, 

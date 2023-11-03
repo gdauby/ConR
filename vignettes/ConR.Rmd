@@ -1,0 +1,530 @@
+---
+title: "Conservation assessments based on multiple-IUCN criteria using ConR"
+
+# date: "`r format(Sys.time(), '%B %Y')`"
+# author: 
+#   - Renato A. F. de Lima^[Universidade de São Paulo, https://github.com/LimaRAF] # and Gilles Dauby^[IRD, https://github.com/gdauby]
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        number_sections: true
+    md_document:
+      variant: gfm
+
+vignette: >
+  %\VignetteIndexEntry{Introduction to ConR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{rmarkdown::render}
+    \usepackage[utf8]{inputenc}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = TRUE)
+```
+
+```{r load, echo = FALSE, eval = TRUE, include=FALSE}
+devtools::load_all() # for development
+library(sf)
+```
+
+<br/><br/>
+
+This vignette shows how to use ``ConR`` to apply a workflow for conducting
+conservation assessments for multiple species using the IUCN criteria A, B, C
+and D. Here, we use only three species to make it simple. But ``ConR`` was
+developed to perform assessments for many more species at the same time.
+
+<br/><br/>
+
+# Definitions
+
+We will use as examples three emblematic and threatened arborescent species that
+are endemic or near-endemic to the Atlantic Forest in South America: *Araucaria angustifolia*, 
+*Euterpe edulis* and *Paubrasilia echinata*. Thus, it is
+necessary to obtain information for this specific region of the world (e.g.
+habitat cover maps, protected areas), which should be available to run this 
+tutorial.
+
+```{r species, eval = TRUE, collapse = TRUE}
+spp <- c("Araucaria angustifolia", "Euterpe edulis", "Paubrasilia echinata")
+```
+
+Another more general but important piece of information is the year of the
+assessment itself (which depends on the information available) and the starting
+year used to assess recent continuing decline (which depends on the region):
+
+```{r year, eval = TRUE, collapse = TRUE}
+assess.year <- 2018
+recent.year <- 2000
+```
+  
+<br/><br/>
+
+# Species information
+
+To perform the IUCN conservation assessments, we need different types of
+species information related to their biology, distribution, population size,
+threats, among other information.
+
+## Occurrence records 
+
+We will use real occurrence data for our target species. This example dataset
+data is provided with ``ConR`` within the internal object `example_tutorial`,
+but users can load a file containing a similar format. We will name it `occs` 
+for simplicity.
+
+```{r occurrences, eval = TRUE, collapse = TRUE}
+data(example_tutorial)
+occs <- example_tutorial$occurrences
+head(occs, 2)
+```
+
+## Species biology and uses
+
+Then, we need to define objects with the basic species information that are
+necessary for the IUCN assessments.
+
+```{r species-info, eval = TRUE, collapse = TRUE}
+gen.length <- c(40, 65, 50) ## generation length in years
+p.mature <- c(0.4485, 0.3028, 0.4143) ## proportion of mature individuals in the population
+early.sucession <- c(0.9, 1, 1) ## correction applied to population decline
+harvest <- c(10, 10, 10) ##  levels of exploitation causing reductions in population size (in %)
+```
+
+## Population sizes
+
+To assess the IUCN criteria A, C and D, we also need to provide `ConR` the
+population size information. For this tutorial, this information is also
+provided within the internal object `example_tutorial`. We will name it
+`pop.sizes`:
+
+```{r pop-sizes, eval = TRUE, collapse = TRUE}
+pop.sizes <- example_tutorial$population.sizes
+years <- names(pop.sizes[,-1])
+pop.sizes[, 1:4]
+```
+
+To match the time frame of 1-3 generation times into the past or into the
+future, we need to estimate the population sizes for the years that we do not
+have information available. These estimates are produced using the fit of
+different statistical models (i.e. quadratic, exponential, logistic, general
+logistic) to the population size trends. Here, we will only
+estimate population sizes into the past, but one can also use the same `ConR`
+function `pop.decline.fit()` to estimate them into the future.
+
+But first we need to load ``ConR`` to make the functions available in our R
+workspace.
+
+```{r setup}
+library(ConR)
+```
+
+Then we actually do the estimates using function `pop.decline.fit()`
+
+```{r est-pop-sizes, eval = TRUE, collapse = TRUE}
+# Vector of years missing from the input data
+possible.years <- 
+  sort(unique(gen.length * rep(c(1:3), each=length(gen.length))), decreasing = TRUE)
+missing.years <- assess.year - possible.years
+
+# Estimating population sizes for the missing years
+results <- vector("list", length(spp))
+for (i in seq_along(spp)) {
+  res <- pop.decline.fit(pop.size = pop.sizes[i,],
+                  years = years,
+                  project.years = missing.years,
+                  models = c("quadratic", "exponential", 
+                             "logistic", "general_logistic"), 
+                  plot.fit = FALSE)
+  results[[i]] <- res$data[,c("Year", "Observed", "Predicted")]
+}
+
+new.years <- results[[1]]$Year
+ncols <- length(new.years)
+nrows <- length(spp)
+mean.pop <- 
+  matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, new.years))
+
+for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
+```
+
+We now have a new object called `mean.pop` which stores both the input
+population sizes and the estimates based on the statistical models that best
+describe the input data.
+
+<br/><br/>
+
+# Population metrics 
+
+<!-- CHECK HERE: Gilles, je fait etape par etape car criterionB me renvoy un error :
+Error in draw_map_cb(XY = list_data$list_data[[i]], name_sp = name_sp,  : 
+  object 'eoo_poly' not found. Mais ça serai plus prope d'avoir un seule wrapper
+  comme pour les autres criter -->
+
+## Number of spatially valid and unique occurrences
+
+We can begin by expecting how many valid occurrences are available for each
+species.
+
+```{r number-occs, eval = TRUE, collapse = TRUE}
+nb.occs <- sapply(coord.check(occs[, c(1:3)])$list_data, dim)[1,]
+```
+
+<!-- SUGGESTION: In THREAT we had a function called unique.coords to return how 
+many spatially unique occurrences are available. Maybe coord.check() or EOO.computing could return the number of occurrences that were actually useful to compute EOO and AOO? -->
+
+<!-- CHECK HERE:  coord.check() returns an error if ddlon > 180 but it does not return an error if ddlat > 90 -->
+
+
+## Extent of Occurrence (EOO)
+
+We then use the species occurrences to compute their extent of occurrences (EOO)
+in square kilometers using the function `EOO.computing()` and the
+IUCN-recommended Convex Hull method.
+
+```{r eoo, eval = TRUE, collapse = TRUE}
+EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", 
+                          export_shp = TRUE, show_progress = TRUE)
+```
+
+<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
+Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
+  object 'pb' not found -->
+
+## Area of occupancy (AOO)
+
+Another important metric for IUCN assessments is the species' area of occupancy
+(AOO), also in square kilometers, which is computed using the function
+`AOO.computing()`. Here, we also set as defaults the IUCN recommendation of
+using 2x2 km grid cells to compute AOO. `ConR` allows for computing AOO using multiple random starting positions of the grid, to make sure the AOO estimate is not influenced by the grid start position.
+
+
+```{r aoo, eval = TRUE, collapse = TRUE}
+AOO <- AOO.computing(occs[, c(1:3)], 
+                     cell_size_AOO = 2, nbe.rep.rast.AOO = 30,
+                     show_progress = TRUE)
+```
+
+<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
+Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
+  object 'pb' not found -->
+
+
+## Number of subpopulations
+
+The number of subpopulations within each species is also an important
+information. The delimitation of subpopulations depends on species dispersal
+abilities. If this information is available, it can be directly provided to the
+function `subpop.comp()`. If it is not available, `ConR` offers the possibility
+of estimating the maximum distance between species occurrences using the
+function `subpop.radius()` and the circular buffer method. This distance can be
+used as a proxy of species' dispersal abilities:
+
+```{r subpops, eval = TRUE, collapse = TRUE}
+radius <- subpop.radius(XY = occs[, c(1:3)], 
+                       quant.max = 0.9)
+sub <- subpop.comp(XY = occs[, c(1:3)],
+                   Resol_sub_pop = radius[,c("tax", "radius")],
+                   show_progress = TRUE)
+```
+
+<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
+Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
+  object 'pb' not found -->
+
+
+## Number of locations
+
+One of the conditions to detect threat under the IUCN criterion B (restricted geographic range) is related to the number of locations where the species occur. Locations depend on the spatial extent of the threats faced by the species. Here we used an extent of 10 km that makes sense for the target region, the Atlantic Forest. This computation is performed using the function `locations.comp()`.
+
+```{r locations, eval = TRUE, collapse = TRUE}
+locs <- locations.comp(occs[, c(1:3),],  
+                       method = "fixed_grid",
+                       nbe_rep = 30,
+                       cell_size_locations = 10, 
+                       Rel_cell_size = 0.05, 
+                       #threat_list = strict.ucs.spdf, 
+                       #id_shape = "NAME",
+                       method_polygons = "no_more_than_one", 
+                       show_progress = TRUE)
+```
+<!-- CHECK HERE: I managed to include the shape file but i am getting an error in line 618: do.call("rbind", shapes_loc)  ?? -->
+
+<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
+Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
+  object 'pb' not found -->
+
+
+## Severe fragmentation
+
+Another conditions to detect threat under the IUCN criterion B is severe
+fragmentation, that is, more than half of species area of occupancy correspond
+to habitat patches separated from others by a large distance. Thus, to assess
+severe fragmentation we need the information on the species AOO and dispersal
+ability. The function ``get.patches()`` computes the percentage of AOO that is
+isolated a large distance.
+
+
+```{r fragmentation, eval = TRUE, collapse = TRUE}
+merged_data <- merge(occs, radius, by = "tax", all.x = TRUE, sort = FALSE)
+merged_data <- merge(merged_data, AOO[,c("tax", "aoo")], by = "tax", all.x = TRUE, sort = FALSE)
+merged_data <- merged_data[, c("ddlat","ddlon","tax","radius","aoo")]
+list_data <- coord.check(XY = merged_data,
+                         listing = TRUE)
+res <- rep(NA, length(list_data$list_data))
+for (i in seq_along(list_data$list_data)) {
+  res[i] <- get.patches(list_data$list_data[[i]],
+              cell_size = 2,
+              nbe_rep = 0,
+              AOO = as.double(unique(list_data$list_data[[i]]$aoo)),
+              Resol_sub_pop = as.double(unique(list_data$list_data[[i]]$radius)),
+              subpop_poly = NULL,
+              dist_isolated = as.double(unique(list_data$list_data[[i]]$radius)),
+              proj_type = "cea",
+              export_shp = FALSE
+  )
+}
+frag.level <- 100 * sub$subpop/ (AOO$aoo / 4)
+sever.frag <- frag.level > 50
+
+```
+
+<!-- *get.patches function is tagged as internal and not exported Should we export it and if yes, make it work for multi taxa and thus not necessitates the loop ???* -->
+<!-- YES! --> 
+
+<!-- *All table from EOO, AOO and locations computations now include a column 'tax' which simplify merging* --> <!-- NICE, THANKS! -->
+
+
+## Area of habitat (AOH)
+
+The area of habitat (AOH) is currently not an official population metric that is
+compared against the IUCN Criteria. However, it provides important information
+on the amount of habitat left for a given species within its EOO and more
+importantly how this amount changes through time.
+
+Here, we compute AOH to infer the continuing declines of the species area of
+habitat, another important condition to assess the IUCN criterion B.
+
+```{r area-of-habitat, eval = TRUE, collapse = TRUE}
+# toto <- read.csv("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESACCI-LC-Legend.csv", as.is=TRUE)
+# hab.class <- toto$NB_LAB[grepl("ForestCover", toto$LegendTreeCoSimp)]
+
+## Loading aggregated rasters and extracting the habitat loss/quality
+# ano1 = 2000
+# hab.map <- raster::stack(paste0("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESA_Land_Cover_map_", ano1, "_2015_AF_1km.tif"))
+# hab.map <- stars::read_stars(paste0("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESA_Land_Cover_map_", ano1, "_2015_AF_1km.tif"))
+# names(hab.map) <- paste("ESA",c(ano1,2015), sep=".")
+# hab.map1 <- as(hab.map, "SpatRaster")
+# anos <- 2015 - ano1 
+# 
+# AOH <- AOH.estimation(XY = occs[, c(1:3),], 
+#                       hab.map = hab.map, 
+#                       hab.class = hab.class, 
+#                       # years = c(2000, 2015),
+#                       # years = anos,
+#                       parallel = TRUE, NbeCores = 5)
+AOH <- data.frame(tax = spp,
+                  prop.EOO = c(18.80422, 18.74939, 16.89696), 
+                  area.EOO = c(309588.7, 389226.0, 274717.6),
+                  loss = c(1.587834, 1.529609, 1.535355), 
+                  recover = c(1.616235, 1.494770, 1.317942), 
+                  rel.loss = c(8.456802, 8.143053, 8.971141),
+                  rate.loss  = c(0.5637868, 0.5428702, 0.5980761), 
+                  rate.recover  = c(0.5730043, 0.5314911, 0.5199917))
+declineB <- AOH$rel.loss
+declineB[AOH$rel.loss >= 1] <- "Decreasing"
+declineB[AOH$rel.loss < 1 & AOH$rel.loss >= 0] <- "Not Decreasing"
+```
+
+<!-- CHECK HERE: error. In the first version of this function 'years' was the time interval between rasters (as described in the details of the function documentation). Now I got this error: "the number of years provided is different to the number of layers/polygon provided".
+In addition, the function must return the relative change in AOH if multiple raster are provide,
+so we can access decline for criterion B. The previous columns returned by the function (which were used to assess continuing decline) are in the data frame above -->
+
+<br/><br/>
+
+# IUCN criteria assessments
+
+## Population size reduction (IUCN criterion A)
+
+The IUCN criterion A mainly evaluates paste and projects population size reductions. In `ConR`, it is assessed using the function `criterion_A()`, which requires population sizes through time (`mean.pop`) and generation lengths (`gen.length`). For this tutorial, we will assess only the subcriterion A2, which makes more sense in the specific context of the Atlantic Forest. 
+
+`ConR` also allows to include information on exploitation levels for commercial species (e.g. timber), related to the base d of criterion A. These levels are provided using the argument `exploitation`.
+                       
+```{r criterion-A, eval = TRUE, collapse = TRUE}
+critA <- criterion_A(mean.pop, 
+                     assess.year = assess.year,
+                     project.years = NULL, 
+                     subcriteria = c("A2"),
+                     generation.time = gen.length,
+                     exploitation = harvest)
+names(critA)[which(names(critA) %in% "category_A")] <- "A2"
+```
+
+## Species geographic range (IUCN criterion B)
+
+We first combine all spatial metrics obtained in the previous section.
+
+```{r metrics-B, eval = TRUE, collapse = TRUE}
+critB <- data.frame(species = spp,
+                     Nbe_occs = nb.occs,
+                     EOO = EOO.hull$results$eoo,
+                     AOO = AOO$aoo,
+                     Nbe_subpops = sub$subpop,
+                     Nbe_locs = locs$locations$locations,
+                     declineB = declineB,
+                     sever.frag = sever.frag)
+```
+
+And now we actually compare the metrics against the IUCN criteria and
+thresholds, using the function `cat_criterion_b()`.
+
+
+```{r criterion-B, eval = TRUE, collapse = TRUE}
+cats_B <- cat_criterion_b(EOO = EOO.hull$results$eoo,
+                                  AOO = AOO$aoo,
+                                  locations = locs$locations$locations,
+                                  sever.frag = sever.frag,
+                                  decline = declineB,
+                                  protected.threshold = 100,
+                          all.cats = TRUE)
+critB$category_B <- cats_B$ranks_B
+critB$category_B_code <- cats_B$cats_code
+critB$B1 <- cats_B$all_cats$B1a
+critB$B2 <- cats_B$all_cats$B2a
+```
+
+<!-- NOTE: again, there is still a mismatch between the functions of criterion B 
+and thos of other criteria that already return the assessments themselves -->
+
+## Small and declining populations (IUCN criterion C) 
+
+The IUCN criterion C is about small and declining populations. In `ConR`, this criterion is assessed using the function `criterion_C()`, which requires subpopulation sizes to apply the sub-criterion C2.
+
+We do not have estimates of subpopulation sizes available. So, we take a simple
+approach which is assuming that all subpopulations have the same size. And we store this simplification in the object `subpop.sizes`.
+
+
+```{r subpop-sizes, eval = TRUE, collapse = TRUE}
+id.assess <- which(names(mean.pop) %in% assess.year)
+df <- merge(data.frame(tax = spp, '2018' = mean.pop[,id.assess]), sub)
+subpop.sizes <- vector("list", dim(sub)[1])
+names(subpop.sizes) <- sub$tax
+for(i in seq_along(subpop.sizes)) {
+  subpop.sizes[[i]] <- rep(df$X2018[i]/df$subpop[i], df$subpop[i])
+}
+```
+
+Now, we apply criterion C itself using `criterion_C()`, which requires
+information on population sizes through time (`mean.pop`), generation lengths
+(`gen.length`) and proportion of mature individuals (`p.mature`), besides the
+subpopulation sizes obtained above (`subpop.sizes`).
+
+```{r criterion-C, eval = TRUE, collapse = TRUE}
+critC <- criterion_C(x = mean.pop,
+                       assess.year = assess.year,
+                       project = FALSE,
+                       recent.year = recent.year,
+                       # ignore.years = c(1808,1818,1823,1838),
+                       subcriteria = c("C1","C2"),
+                       generation.time = gen.length,
+                       prop.mature = p.mature,
+                       subpop.size = subpop.sizes,
+                       correction = early.sucession, 
+                     show_progress = TRUE)
+```
+
+<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
+Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
+  object 'pb' not found -->
+
+If C1 is listed within the argument `subcriteria`, the function returns the
+estimated continuing decline:
+
+```{r continuing-decline, eval = TRUE, collapse = TRUE}
+est.decline <- critC$cont.decline
+```
+
+## Very small population sizes (IUCN criterion D)
+
+The IUCN criterion D is assessed using the function `criterion_D()`. We have no
+spatially explicit information for future human activities or stochastic events
+for the Atlantic Forest. Therefore, here we assess the subcriterion D and not D2.
+However, function `criterion_D()` can be used to assess D2 if AOO and Number of
+locations are provided.
+
+```{r criterion-D, eval = TRUE, collapse = TRUE}
+p.mature.explo <- p.mature - harvest/100 # accounting for exploitation of commercial species
+#pop.sizes.assess <- mean.pop[id.assess]] # population sizes at the year of assessment
+critD <- criterion_D(pop.size = mean.pop[[28]], 
+                     Name_Sp = mean.pop[[1]], 
+                     AOO = AOO$aoo,
+                     n.Locs = locs$locations$locations,
+                     prop.mature = p.mature.explo, 
+                     subcriteria = c("D", "D2"),
+                     AOO.threshold = 20, 
+                     Loc.threshold = 5)
+
+```
+
+<!-- CHECK HERE: had an error we using only subcriteria D -->
+
+## Combining the results from all criteria
+
+Because we are assessing multiple criteria for the same set of species, we need
+to combine the results from all criteria. We try to avoid duplicated columns in the final object `all.crit`.
+
+```{r all-criteria, eval = TRUE, collapse = TRUE}
+all.crit <- merge(critA, critB, by = "species", all = TRUE)
+
+rm.dup.columns <- which(names(critC) %in% c("assessment.year", "assessment.period"))
+all.crit <- merge(all.crit, critC[, -rm.dup.columns], by = "species", all = TRUE, 
+                  suffixes = c(".A",".C"))
+
+rm.dup.columns <- which(names(critD) %in% c("AOO"))
+all.crit <- merge(all.crit, critD[, -rm.dup.columns], by = "species", all = TRUE)
+
+all.crit <- all.crit[order(all.crit$species),]
+```
+
+
+## Near threatened
+
+Next, we try to tell apart the Least Concern (LC) from Near-Threatened (NT)
+species using the function `near.threatened()`:
+
+```{r near-threatened, eval = TRUE, collapse = TRUE}
+subcriteria <- c("A2", "B1", "B2", "C1", "C2", "D")
+for(i in 1:length(subcriteria)) {
+  all.crit[,subcriteria[i]] <- 
+    near.threatened(cats = all.crit[,subcriteria[i]],
+                    EOO = all.crit$EOO,
+                    AOO = all.crit$AOO,
+                    decline = all.crit$declineB,
+                    pop.reduction = all.crit$reduction_A12,
+                    pop.size = all.crit$pop.size,
+                    pop.size.low = NULL,
+                    locations = all.crit$Nbe_locs,
+                    sever.frag = all.crit$sever.frag,
+                    ext.fluct = NULL,
+                    subpop = all.crit$Nbe_subpops, 
+                    subcriteria = subcriteria[i])
+}
+```
+
+
+## Consensus assessment
+
+Finally, we obtained the consensus categories for all four IUCN criteria using
+the function `cat_mult_criteria()`. Although the criteria resulting in the most
+restrictive category for each species prevails, the function returns the
+evaluation result using other criteria.
+
+```{r consensus, eval = TRUE, collapse = TRUE}
+consensus <- cat_mult_criteria(all.crit[,c("species", subcriteria)])
+all.crit <- cbind.data.frame(all.crit, consensus[,c("category","main.criteria","aux.criteria")])
+```
+
+The object `all.crit` now contains all relevant population metrics and the
+results of the IUCN conservation assessments using the Red List criteria A-D.
+
