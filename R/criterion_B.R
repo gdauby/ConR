@@ -84,7 +84,7 @@ criterion_B <- function(x,
     
     country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-    
+    country_map <- sf::st_make_valid(country_map)
   } else {
     
     if (any(!st_is_valid(country_map)))
@@ -237,6 +237,11 @@ criterion_B <- function(x,
   list_data <- coord.check(XY = x)
   
   if (DrawMap) {
+    
+    poly_borders <- 
+      suppressWarnings(sf::st_crop(country_map, c(xmin = min(x[,2]), ymin = min(x[,1]), xmax = max(x[,2]), ymax = max(x[,1]))))
+    poly_borders <- st_make_valid(poly_borders)
+    
     for (i in 1:length(list_data$list_data)) {
       
       name_sp = results_full$tax[i]
@@ -249,7 +254,8 @@ criterion_B <- function(x,
                   subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
                   proj_type = proj_crs(proj_type = proj_type), 
                   results = results_full[which(results_full$tax == name_sp),], 
-                  add.legend = add.legend)
+                  add.legend = add.legend,
+                  poly_borders = poly_borders)
       
     }
     
@@ -296,7 +302,16 @@ criterion_B <- function(x,
 #' @keywords internal
 #'
 #'
-draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop, proj_type, results, add.legend =TRUE) {
+draw_map_cb <- function(XY, 
+                        name_sp, 
+                        eoo_poly, 
+                        aoo_poly, 
+                        locations_poly, 
+                        subpop, 
+                        proj_type, 
+                        results, 
+                        add.legend =TRUE,
+                        poly_borders) {
   
   name_file <-
     paste("IUCN_", gsub(pattern = " ", replacement = "_", name_sp), sep =
@@ -362,7 +377,7 @@ draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop,
        lwd=1, lty=1, 
        extent = XY_sf)
   
-  plot(locations_poly,
+  plot(st_geometry(locations_poly),
        add = T,
        col = rgb(
          red = 1,
@@ -371,6 +386,13 @@ draw_map_cb <- function(XY, name_sp, eoo_poly, aoo_poly, locations_poly, subpop,
          alpha = 0.2
        ))
   
+  if (nrow(poly_borders) > 0)
+    plot(
+      st_geometry(poly_borders),
+      col = NA,
+      axes = FALSE,
+      add = T
+    )
   
   graphics::axis(1, outer=FALSE, cex.axis=3, tick = FALSE, line=1.5)  #pos=min(range(XY[,2]))-2)
   graphics::axis(1, outer=FALSE,labels=FALSE, cex.axis=3, tick = TRUE, line=0)  #pos=min(range(XY[,2]))-2)

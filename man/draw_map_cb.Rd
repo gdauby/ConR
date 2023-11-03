@@ -13,7 +13,8 @@ draw_map_cb(
   subpop,
   proj_type,
   results,
-  add.legend = TRUE
+  add.legend = TRUE,
+  poly_borders
 )
 }
 \arguments{
