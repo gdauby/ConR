@@ -38,10 +38,10 @@
 #' @importFrom rnaturalearth ne_countries
 #' 
 #' @export criterion_B
-criterion_B <- function(x, 
+criterion_B <- function(x,
                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
-                       EOO.threshold = c(20000, 5000, 100), 
-                       AOO.threshold = c(2000, 500, 10), 
+                       EOO.threshold = c(20000, 5000, 100),
+                       AOO.threshold = c(2000, 500, 10),
                        Loc.threshold = c(10, 5, 1),
                        SubPop = TRUE,
                        Resol_sub_pop = 5,
@@ -79,8 +79,6 @@ criterion_B <- function(x,
       "Please install it first."
     )
   
-  if(tibble::is_tibble(x)) x <- as.data.frame(x)
-  
   if (is.null(country_map)) {
     
     country_map <-
@@ -97,7 +95,7 @@ criterion_B <- function(x,
   
   if(SubPop) {
     
-    message("Subpopulations computation")
+    if (show_progress) message("Subpopulations computation")
     
     subpop_stats <-
       subpop.comp(
@@ -125,7 +123,7 @@ criterion_B <- function(x,
   ##########################################################################################
   ##############################  Estimations of number of Locations ####################### 
   
-  message("Locations computation")
+  if (show_progress) message("Locations computation")
   
   locations_res <-
     locations.comp(
@@ -146,7 +144,7 @@ criterion_B <- function(x,
   
   ##########################################################################################
   ##############################  EOO ####################### 
-  message("Extent of occurrences computation")
+  if (show_progress) message("Extent of occurrences computation")
   EOO <-
     EOO.computing(
       XY = x,
@@ -172,7 +170,7 @@ criterion_B <- function(x,
   
   
   ################### AOO estimation #######################################################
-  message("Area of occupancy computation")
+  if (show_progress) message("Area of occupancy computation")
   AOO <-
     AOO.computing(
       XY = x,
@@ -225,8 +223,8 @@ criterion_B <- function(x,
       EOO = EOO$eoo,
       AOO = AOO$aoo,
       locations = locations_res$locations$locations,
-      category = categories$ranks_B,
-      cat_codes = categories$cats_code,
+      category_B = categories$ranks_B,
+      category_B_code = categories$cats_code,
       subpop = if (SubPop) NbeSubPop$subpop else NA,
       issue_aoo = AOO$issue_aoo,
       issue_eoo = EOO$issue_eoo,
@@ -237,34 +235,35 @@ criterion_B <- function(x,
   
   list_data <- coord.check(XY = x)
   
-  
-  for (i in 1:length(list_data$list_data)) {
+  if (DrawMap) {
+    for (i in 1:length(list_data$list_data)) {
+      
+      name_sp = results_full$tax[i]
+      
+      draw_map_cb(XY = list_data$list_data[[i]], 
+                  name_sp = name_sp, 
+                  eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+                  aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+                  locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
+                  subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
+                  proj_type = proj_crs(proj_type = proj_type))
+      
+    }
     
-    name_sp = results_full$tax[i]
-    
-    draw_map_cb(XY = list_data$list_data[[i]], 
-                name_sp = name_sp, 
-                eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
-                aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
-                locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
-                subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
-                proj_type = proj_crs(proj_type = proj_type))
+    # name_sp <- results_full$tax[1]
+    # eoo_poly <- eoo_poly[which(eoo_poly$tax == name_sp),]
+    # aoo_poly <- aoo_poly[which(aoo_poly$tax == name_sp),]
+    # locations_poly <- locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),]
+    # XY <- x[which(x[,3] == name_sp),]
+    # SubPopPoly <- SubPopPoly[which(SubPopPoly$tax == name_sp),]
+    # 
+    # draw_map_cb(XY = x[which(x[,3] == name_sp),], 
+    #             name_sp = results_full$tax[1], 
+    #             eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+    #             aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+    #             locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),])
     
   }
-  
-  
-  name_sp <- results_full$tax[1]
-  eoo_poly <- eoo_poly[which(eoo_poly$tax == name_sp),]
-  aoo_poly <- aoo_poly[which(aoo_poly$tax == name_sp),]
-  locations_poly <- locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),]
-  XY <- x[which(x[,3] == name_sp),]
-  SubPopPoly <- SubPopPoly[which(SubPopPoly$tax == name_sp),]
-    
-  draw_map_cb(XY = x[which(x[,3] == name_sp),], 
-              name_sp = results_full$tax[1], 
-              eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
-              aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
-              locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),])
   
   return(results_full)
 }
