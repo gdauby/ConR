@@ -25,9 +25,15 @@ coord.check(
 \item{check_eoo}{logical}
 }
 \value{
-a list
+a list with verified dataset and added columns
 }
 \description{
 Coordinates check
 }
-\keyword{internal}
+\examples{
+
+dataset <- coord.check(XY = dummy_dist())
+dataset$list_data
+dataset$issue_nrow ## this indicates which species has less that 3 unique pairs of coordinates
+
+}
