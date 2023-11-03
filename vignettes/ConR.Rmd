@@ -157,6 +157,8 @@ describe the input data.
 
 # Population metrics 
 
+
+
 <!-- CHECK HERE: Gilles, je fait etape par etape car criterionB me renvoy un error :
 Error in draw_map_cb(XY = list_data$list_data[[i]], name_sp = name_sp,  : 
   object 'eoo_poly' not found. Mais ça serai plus prope d'avoir un seule wrapper
@@ -168,16 +170,21 @@ We can begin by expecting how many valid occurrences are available for each
 species.
 
 ```{r number-occs, eval = TRUE, collapse = TRUE}
-nb.occs <- sapply(coord.check(occs[, c(1:3)])$list_data, dim)[1,]
+nb.occs <- coord.check(XY = occs)
+nb.occs <- nb.occs$unique_occs
 ```
-
-<!-- SUGGESTION: In THREAT we had a function called unique.coords to return how 
-many spatially unique occurrences are available. Maybe coord.check() or EOO.computing could return the number of occurrences that were actually useful to compute EOO and AOO? -->
-
-<!-- CHECK HERE:  coord.check() returns an error if ddlon > 180 but it does not return an error if ddlat > 90 -->
 
 
 ## Extent of Occurrence (EOO)
+
+```{r criterion-b, eval = TRUE, collapse = TRUE}
+
+pop_metrics <- criterion_B(x = occs, method.range = "convex.hull", show_progress = FALSE)
+
+```
+
+<!-- So far criterion_B do not wrapp AOH   ?? -->
+
 
 We then use the species occurrences to compute their extent of occurrences (EOO)
 in square kilometers using the function `EOO.computing()` and the
@@ -185,35 +192,30 @@ IUCN-recommended Convex Hull method.
 
 ```{r eoo, eval = TRUE, collapse = TRUE}
 EOO.hull <- EOO.computing(XY = occs[, c(1:3)], method.range = "convex.hull", 
-                          export_shp = TRUE, show_progress = TRUE)
+                          export_shp = TRUE, show_progress = FALSE)
 ```
 
-<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
-Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
-  object 'pb' not found -->
 
 ## Area of occupancy (AOO)
 
 Another important metric for IUCN assessments is the species' area of occupancy
 (AOO), also in square kilometers, which is computed using the function
 `AOO.computing()`. Here, we also set as defaults the IUCN recommendation of
-using 2x2 km grid cells to compute AOO. `ConR` allows for computing AOO using multiple random starting positions of the grid, to make sure the AOO estimate is not influenced by the grid start position.
+using 2x2 km grid cells to compute AOO. `ConR` allows for computing AOO using 
+multiple random starting positions of the grid, to make sure the AOO estimate 
+is not influenced by the grid start position.
 
 
 ```{r aoo, eval = TRUE, collapse = TRUE}
 AOO <- AOO.computing(occs[, c(1:3)], 
                      cell_size_AOO = 2, nbe.rep.rast.AOO = 30,
-                     show_progress = TRUE)
+                     show_progress = FALSE)
 ```
-
-<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
-Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
-  object 'pb' not found -->
 
 
 ## Number of subpopulations
 
-The number of subpopulations within each species is also an important
+The number of subpopulations for each species is also an important
 information. The delimitation of subpopulations depends on species dispersal
 abilities. If this information is available, it can be directly provided to the
 function `subpop.comp()`. If it is not available, `ConR` offers the possibility
@@ -226,13 +228,8 @@ radius <- subpop.radius(XY = occs[, c(1:3)],
                        quant.max = 0.9)
 sub <- subpop.comp(XY = occs[, c(1:3)],
                    Resol_sub_pop = radius[,c("tax", "radius")],
-                   show_progress = TRUE)
+                   show_progress = FALSE)
 ```
-
-<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
-Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
-  object 'pb' not found -->
-
 
 ## Number of locations
 
@@ -247,23 +244,13 @@ locs <- locations.comp(occs[, c(1:3),],
                        #threat_list = strict.ucs.spdf, 
                        #id_shape = "NAME",
                        method_polygons = "no_more_than_one", 
-                       show_progress = TRUE)
+                       show_progress = FALSE)
 ```
 <!-- CHECK HERE: I managed to include the shape file but i am getting an error in line 618: do.call("rbind", shapes_loc)  ?? -->
 
-<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
-Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
-  object 'pb' not found -->
-
-
 ## Severe fragmentation
 
-Another conditions to detect threat under the IUCN criterion B is severe
-fragmentation, that is, more than half of species area of occupancy correspond
-to habitat patches separated from others by a large distance. Thus, to assess
-severe fragmentation we need the information on the species AOO and dispersal
-ability. The function ``get.patches()`` computes the percentage of AOO that is
-isolated a large distance.
+Another condition to detect threat under the IUCN criterion B is whether the species populations is severely fragmented: _more than half of species AOO corresponds to habitat patches separated from others by a large distance_. Thus, to assess the level of fragmentation we need the information on the species AOO and the dispersal ability. The function ``get.patches()`` computes the percentage of AOO that is isolated across a large distance.
 
 
 ```{r fragmentation, eval = TRUE, collapse = TRUE}
@@ -282,8 +269,8 @@ for (i in seq_along(list_data$list_data)) {
               subpop_poly = NULL,
               dist_isolated = as.double(unique(list_data$list_data[[i]]$radius)),
               proj_type = "cea",
-              export_shp = FALSE
-  )
+              export_shp = FALSE)
+  
 }
 frag.level <- 100 * sub$subpop/ (AOO$aoo / 4)
 sever.frag <- frag.level > 50
@@ -292,9 +279,6 @@ sever.frag <- frag.level > 50
 
 <!-- *get.patches function is tagged as internal and not exported Should we export it and if yes, make it work for multi taxa and thus not necessitates the loop ???* -->
 <!-- YES! --> 
-
-<!-- *All table from EOO, AOO and locations computations now include a column 'tax' which simplify merging* --> <!-- NICE, THANKS! -->
-
 
 ## Area of habitat (AOH)
 
