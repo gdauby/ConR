@@ -105,6 +105,19 @@ years <- names(pop.sizes[,-1])
 pop.sizes[, 1:4]
 ```
 
+
+# Population metrics 
+
+Before we start calculating the population metrics, we need to load ``ConR`` to
+make the functions available in our R workspace.
+
+```{r setup}
+library(ConR)
+```
+
+
+## Population size decline
+
 To match the time frame of 1-3 generation times into the past or into the
 future, we need to estimate the population sizes for the years that we do not
 have information available. These estimates are produced using the fit of
@@ -113,14 +126,6 @@ logistic) to the population size trends. Here, we will only
 estimate population sizes into the past, but one can also use the same `ConR`
 function `pop.decline.fit()` to estimate them into the future.
 
-But first we need to load ``ConR`` to make the functions available in our R
-workspace.
-
-```{r setup}
-library(ConR)
-```
-
-Then we actually do the estimates using function `pop.decline.fit()`
 
 ```{r est-pop-sizes, eval = TRUE, collapse = TRUE}
 # Vector of years missing from the input data
@@ -152,10 +157,6 @@ for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
 We now have a new object called `mean.pop` which stores both the input
 population sizes and the estimates based on the statistical models that best
 describe the input data.
-
-<br/><br/>
-
-# Population metrics 
 
 
 ## Number of spatially valid and unique occurrences
@@ -227,7 +228,11 @@ sub <- subpop.comp(XY = occs[, c(1:3)],
 
 ## Number of locations
 
-One of the conditions to detect threat under the IUCN criterion B (restricted geographic range) is related to the number of locations where the species occur. Locations depend on the spatial extent of the threats faced by the species. Here we used an extent of 10 km that makes sense for the target region, the Atlantic Forest. This computation is performed using the function `locations.comp()`.
+One of the conditions to detect threat under the IUCN criterion B (restricted
+geographic range) is related to the number of locations where the species occur.
+Locations depend on the spatial extent of the threats faced by the species. Here
+we used an extent of 10 km that makes sense for the target region, the Atlantic
+Forest. This computation is performed using the function `locations.comp()`.
 
 ```{r locations, eval = TRUE, collapse = TRUE}
 locs <- locations.comp(occs[, c(1:3),],  
