@@ -157,16 +157,6 @@ describe the input data.
 
 # Population metrics 
 
-<<<<<<< HEAD:vignettes/articles/ConR.Rmd
-
-
-<!-- CHECK HERE: Gilles, je fait etape par etape car criterionB me renvoy un error :
-=======
-<!-- CHECK HERE: Gilles, j'ai fait etape par etape car la fonction criterion_B() me renvoy un error :
->>>>>>> devel:vignettes/ConR.Rmd
-Error in draw_map_cb(XY = list_data$list_data[[i]], name_sp = name_sp,  : 
-  object 'eoo_poly' not found. Mais ça serai plus prope d'avoir un seule wrapper
-  comme pour les autres criters -->
 
 ## Number of spatially valid and unique occurrences
 
