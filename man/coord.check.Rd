@@ -22,6 +22,8 @@ coord.check(
 
 \item{listing_by_valid}{logical}
 
+\item{cell_size}{numeric value}
+
 \item{check_eoo}{logical}
 }
 \value{

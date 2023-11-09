@@ -5,16 +5,22 @@
 \title{Assess IUCN Criterion B}
 \usage{
 criterion_B(
-  x,
+  x = NULL,
+  AOO = NULL,
+  EOO = NULL,
+  locations = NULL,
+  severe.frag = NULL,
+  subpops = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
-  SubPop = TRUE,
-  Resol_sub_pop = 5,
+  comp_subpop = TRUE,
+  comp_severe.frag = FALSE,
+  resol_sub_pop = 5,
   cell_size_locations = 10,
   method_locations = "fixed_grid",
   method_polygons = "no_more_than_one",
-  Rel_cell_size = 0.05,
+  rel_cell_size = 0.05,
   threat_list = NULL,
   names_threat = NULL,
   threat_weight = NULL,
@@ -26,6 +32,7 @@ criterion_B(
   exclude.area = FALSE,
   cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
+  threshold_severe = 50,
   parallel = FALSE,
   show_progress = TRUE,
   NbeCores = 2,
@@ -45,9 +52,9 @@ criterion_B(
 
 \item{Loc.threshold}{numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories}
 
-\item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
+\item{comp_subpop}{logical if the number of sub-populations should be computed. By default is TRUE}
 
-\item{Resol_sub_pop}{a value defining the radius of the circles around each
+\item{resol_sub_pop}{a value defining the radius of the circles around each
 occurrence (in kilometres) or data frame vector containing a column 'tax'
 with the taxa names and a column 'radius' with the species-specific radius
 (in kilometre as well). Typically, this data frame is the output of
@@ -57,7 +64,7 @@ with the taxa names and a column 'radius' with the species-specific radius
 
 \item{method_locations}{string, indicating the method used for estimating the number of locations. See Details
 \itemize{
-\item \code{"fixed_grid"} (the default)
+\item \code{"fixed_grid"} (by default)
 \item \code{"sliding_scale"}
 }}
 
@@ -67,8 +74,8 @@ with the taxa names and a column 'radius' with the species-specific radius
 \item \code{"grid"}: a grid of \code{cell_size_locations} size will be used to estimate the number of location within polygons
 }}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
-and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
+and the resolution is given by the maximum distance separating two occurrences multiplied by \code{rel_cell_size}. By default, it is 0.05}
 
 \item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
 
@@ -103,6 +110,9 @@ in kilometres used for estimating Area of Occupancy.}
 raster with random starting position used for estimating the AOO. If 0 but
 some translation of the raster are still done.}
 
+\item{threshold_severe}{numeric of one value indicates the threshold
+to identify severe fragmentation. By default is 50}
+
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
 \item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
@@ -113,7 +123,8 @@ some translation of the raster are still done.}
 
 \item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 
-\item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment}
+\item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created for each species
+in a directory of the working environment}
 
 \item{add.legend}{logical, whether legend should be added to map}
 }

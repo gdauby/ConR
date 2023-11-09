@@ -14,7 +14,7 @@ locations.comp(
   cell_size_locations = 10,
   method_polygons = c("no_more_than_one"),
   id_shape = "id_orig",
-  Rel_cell_size = 0.05,
+  rel_cell_size = 0.05,
   parallel = FALSE,
   NbeCores = 2,
   show_progress = TRUE,
@@ -48,8 +48,8 @@ locations.comp(
 
 \item{id_shape}{string}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
-and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
+and the resolution is given by the maximum distance separating two occurrences multiplied by \code{rel_cell_size}. By default, it is 0.05}
 
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
@@ -99,7 +99,7 @@ If \code{method} is "fixed_grid" as it is by default, the resolution is fixed an
 by the argument \code{cell_size_locations}.
 
 If \code{method} is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences
-and x is a defined parameter. 1/x is defined by \code{Rel_cell_size} argument and is 0.05 by default.
+and x is a defined parameter. 1/x is defined by \code{rel_cell_size} argument and is 0.05 by default.
 See Rivers M.C. et al. (2010) for more information on the methods.
 }
 }

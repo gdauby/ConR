@@ -64,7 +64,7 @@ file. By default is "EOO.sensitivity.results"}
 
 \item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
 
-\item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
+\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
 
 \item{proj_type}{string or numeric}
 

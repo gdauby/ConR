@@ -31,15 +31,13 @@ in kilometres used for estimating Area of Occupancy.}
 raster with random starting position used for estimating the AOO. If 0 but
 some translation of the raster are still done.}
 
-\item{parallel}{logical, by default is FALSE. Whether running in parallel.}
+\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
 
-\item{NbeCores}{integer, by default is 2. Register the number of cores for
-parallel execution. Only used if parallel is TRUE.}
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
 
-\item{show_progress}{logical, by default is TRUE. Whether a progress bar
-during computation is shown.}
+\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
 
-\item{proj_type}{character or numeric, by default is "cea", see Details.}
+\item{proj_type}{string or numeric}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as suitable}
 

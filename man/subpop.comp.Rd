@@ -6,7 +6,7 @@
 \usage{
 subpop.comp(
   XY,
-  Resol_sub_pop = NULL,
+  resol_sub_pop = NULL,
   proj_type = "cea",
   export_shp = FALSE,
   parallel = FALSE,
@@ -18,26 +18,22 @@ subpop.comp(
 \item{XY}{a data frame containing the geographical coordinates for each taxon
 (see Details).}
 
-\item{Resol_sub_pop}{a value defining the radius of the circles around each
+\item{resol_sub_pop}{a value defining the radius of the circles around each
 occurrence (in kilometres) or data frame vector containing a column 'tax'
 with the taxa names and a column 'radius' with the species-specific radius
 (in kilometre as well). Typically, this data frame is the output of
 \code{ConR} function \code{subpop.radius}.}
 
-\item{proj_type}{character string or numeric or object of CRS class, by
-default is "cea"}
+\item{proj_type}{string or numeric}
 
 \item{export_shp}{logical. Whether the resulting shapefiles should be
 exported. FALSE by default.}
 
-\item{parallel}{logical. Whether compute should run in parallel. FALSE by
-default.}
+\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
 
-\item{show_progress}{logical. Whether a bar showing progress in computation
-should be shown. TRUE by default.}
+\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
 
-\item{NbeCores}{integer. Number of cores for parallel computation. Default to
-2.}
+\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
 }
 \value{
 If \code{export_shp} is TRUE,
@@ -70,14 +66,14 @@ subpopulation)
 \examples{
 data(dataset.ex)
 
-subpop.comp(dataset.ex, Resol_sub_pop = 5)
+subpop.comp(dataset.ex, resol_sub_pop = 5)
 rad.df <- data.frame(
     tax = unique(dataset.ex$tax),
     radius = seq(3,13, by=2),
     stringsAsFactors = FALSE
   )
-subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
-subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
+subpop.comp(dataset.ex, resol_sub_pop = rad.df)
+subpop.comp(dataset.ex, resol_sub_pop = rad.df, export_shp = TRUE)
 
 }
 \references{
