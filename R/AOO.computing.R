@@ -11,14 +11,11 @@
 #' @param nbe.rep.rast.AOO numeric, by default is 0. Indicate the number of
 #'   raster with random starting position used for estimating the AOO. If 0 but
 #'   some translation of the raster are still done.
-#' @param parallel logical, by default is FALSE. Whether running in parallel.
-#' @param NbeCores integer, by default is 2. Register the number of cores for
-#'   parallel execution. Only used if parallel is TRUE.
-#' @param show_progress logical, by default is TRUE. Whether a progress bar
-#'   during computation is shown.
+#' @inheritParams activate_parallel
+#' @param show_progress logical. Whether progress informations should displayed. TRUE by default
 #' @param export_shp logical, by default is FALSE. Whether a shapefile of
 #'   occupied cells should be exported.
-#' @param proj_type character or numeric, by default is "cea", see Details.
+#' @inheritParams proj_crs
 #' 
 #' @details 
 #' # Input data
@@ -66,9 +63,9 @@
 #'
 #'
 #'# This would estimate AOO for all taxa by overlaying randomly a 
-#'# grid 10 times. For each taxa, the minimum value is kept
+#'# grid 3 times. For each taxa, the minimum value is kept
 #'
-#' AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
+#' AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 3)
 #'
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
@@ -189,7 +186,7 @@ AOO.computing <- function(XY,
 
 
 #' @importFrom foreach %dopar% %do% foreach
-#' @keywords intenal
+#' @keywords internal
 #' @export
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,

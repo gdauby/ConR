@@ -4,9 +4,8 @@
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #' 
-#' @param XY data.frame
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
-#' @param proj_type crs
+#' @param parallel a logical. Whether running in parallel. By default, it is FALSE
+#' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
 #' 
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom parallel makePSOCKcluster

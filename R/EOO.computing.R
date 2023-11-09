@@ -80,11 +80,10 @@
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
 #' @param file.name a character string. Name file for exported results in csv file. By default is "EOO.results"
-#' @param parallel a logical. Whether running in parallel. By default, it is FALSE
-#' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
-#' @param show_progress logical. Whether a progress bar should displayed. TRUE by default
+#' @param show_progress logical. Whether progress informations should displayed. TRUE by default
 #' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #' @inheritParams proj_crs
+#' @inheritParams activate_parallel
 #'
 #' @return
 #' If `export_shp` is FALSE, a `dataframe` with one field
