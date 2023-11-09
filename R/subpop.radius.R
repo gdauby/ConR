@@ -12,8 +12,7 @@
 #' @param quant.max numeric. The upper-quantile of the inter-point distance to
 #'   be considered as a threshold of maximum distance. Can vary between 0 and 1.
 #'   Default to 1.
-#' @param mode a character. Type of coordinate projection: "spheroid" or
-#'   "planar". Defualts to "spheroid".
+#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
 #' @inheritParams proj_crs
 #' 
 #' 
@@ -109,11 +108,6 @@ subpop.radius = function(XY,
     return(d.inter)
   }
 
-  ## Getting the maximum inter-point distance
-  #### GILLES: I did not changed yet this part, which is done using
-  #package data.table. Maybe use another approach to not import the
-  #the package just for this small function? But I am not sure if
-  #the foreach loop is really necessary.
   ddlat <- ddlon <- tax <- NULL
   
   XY.dt <- data.table::data.table(XY$list_data)
