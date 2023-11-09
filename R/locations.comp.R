@@ -20,8 +20,8 @@
 #'   * `"no_more_than_one"` (the default): each single POLYGON will be considered as a single location
 #'   * `"grid"`: a grid of `cell_size_locations` size will be used to estimate the number of location within polygons
 #' @param id_shape string
-#' @param Rel_cell_size numeric, if `method_locations="sliding_scale"`, `cell_size_locations` is ignored 
-#' and the resolution is given by the maximum distance separating two occurrences multiplied by `Rel_cell_size`. By default, it is 0.05
+#' @param rel_cell_size numeric, if `method_locations="sliding_scale"`, `cell_size_locations` is ignored 
+#' and the resolution is given by the maximum distance separating two occurrences multiplied by `rel_cell_size`. By default, it is 0.05
 #' @param parallel logical, whether running in parallel. By default, it is FALSE
 #' @param NbeCores integer, register the number of cores for parallel execution. By default, it is 2
 #' @param show_progress logical, whether a bar showing progress in computation should be shown. By default, it is TRUE
@@ -56,7 +56,7 @@
 #' by the argument `cell_size_locations`.
 #' 
 #' If `method` is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences 
-#' and x is a defined parameter. 1/x is defined by `Rel_cell_size` argument and is 0.05 by default. 
+#' and x is a defined parameter. 1/x is defined by `rel_cell_size` argument and is 0.05 by default. 
 #' See Rivers M.C. et al. (2010) for more information on the methods.
 #' 
 #' @references 
@@ -98,7 +98,7 @@ locations.comp <- function(XY,
                            cell_size_locations = 10,
                            method_polygons = c("no_more_than_one"),
                            id_shape = "id_orig",
-                           Rel_cell_size = 0.05,
+                           rel_cell_size = 0.05,
                            parallel = FALSE,
                            NbeCores = 2,
                            show_progress = TRUE,
@@ -193,17 +193,13 @@ locations.comp <- function(XY,
                  locations =  rep(NA, length(list_data)), 
                  issue_locations = rep(NA, length(list_data)))
 
-    if (length(issue_close_to_anti) > 0) {
-      
-      list_data <- list_data[-issue_close_to_anti]
-      
-    }
+    if (length(issue_close_to_anti) > 0) list_data <- list_data[-issue_close_to_anti]
     
     res_list <- .generate_loc(dataset = list_data,
                               method = method,
                               nbe_rep = nbe_rep,
                               cell_size_locations = cell_size_locations,
-                              Rel_cell_size = Rel_cell_size,
+                              rel_cell_size = rel_cell_size,
                               parallel = parallel,
                               NbeCores = NbeCores,
                               show_progress = show_progress,
@@ -592,7 +588,7 @@ locations.comp <- function(XY,
                                   method = method,
                                   nbe_rep = nbe_rep,
                                   cell_size_locations = cell_size_locations,
-                                  Rel_cell_size = Rel_cell_size,
+                                  rel_cell_size = rel_cell_size,
                                   parallel = parallel,
                                   NbeCores = NbeCores,
                                   show_progress = show_progress,
@@ -660,7 +656,7 @@ locations.comp <- function(XY,
                           method = "fixed_grid",
                           nbe_rep = 0,
                           cell_size_locations = 10,
-                          Rel_cell_size = 0.05,
+                          rel_cell_size = 0.05,
                           parallel = FALSE,
                           NbeCores = 2,
                           show_progress = TRUE,
@@ -696,7 +692,7 @@ locations.comp <- function(XY,
           proj_type = proj_type, 
           method = method,
           nbe_rep = nbe_rep,
-          Rel_cell_size = Rel_cell_size
+          rel_cell_size = rel_cell_size
         )
       
       names(res) <- c("nbe_occ", "spatial")
