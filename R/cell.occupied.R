@@ -214,7 +214,7 @@ cell.occupied <-
       
       r2_pol <-
         terra::as.polygons(
-          r2_)
+          r2_, aggregate = FALSE)
       
       r2_pol_sf <- sf::st_as_sf(r2_pol)
       
