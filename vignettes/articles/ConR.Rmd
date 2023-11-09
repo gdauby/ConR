@@ -152,6 +152,16 @@ mean.pop <-
   matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, new.years))
 
 for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
+
+mean.pop <-
+  cbind.data.frame(data.frame(
+    tax = c(
+      "Araucaria angustifolia",
+      "Euterpe edulis",
+      "Paubrasilia echinata"
+    )
+  ), mean.pop)
+
 ```
 
 We now have a new object called `mean.pop` which stores both the input
@@ -171,15 +181,6 @@ nb.occs <- nb.occs$unique_occs
 
 
 ## Extent of Occurrence (EOO)
-
-```{r criterion-b, eval = TRUE, collapse = TRUE}
-
-pop_metrics <- criterion_B(x = occs, method.range = "convex.hull", show_progress = FALSE)
-
-```
-
-<!-- So far criterion_B do not wrapp AOH   ?? -->
-
 
 We then use the species occurrences to compute their extent of occurrences (EOO)
 in square kilometers using the function `EOO.computing()` and the
@@ -222,7 +223,7 @@ used as a proxy of species' dispersal abilities:
 radius <- subpop.radius(XY = occs[, c(1:3)], 
                        quant.max = 0.9)
 sub <- subpop.comp(XY = occs[, c(1:3)],
-                   Resol_sub_pop = radius[,c("tax", "radius")],
+                   resol_sub_pop = radius[,c("tax", "radius")],
                    show_progress = FALSE)
 ```
 
@@ -239,7 +240,7 @@ locs <- locations.comp(occs[, c(1:3),],
                        method = "fixed_grid",
                        nbe_rep = 30,
                        cell_size_locations = 10, 
-                       Rel_cell_size = 0.05, 
+                       rel_cell_size = 0.05, 
                        #threat_list = strict.ucs.spdf, 
                        #id_shape = "NAME",
                        method_polygons = "no_more_than_one", 
@@ -249,35 +250,17 @@ locs <- locations.comp(occs[, c(1:3),],
 
 ## Severe fragmentation
 
-Another condition to detect threat under the IUCN criterion B is whether the species populations is severely fragmented: _more than half of species AOO corresponds to habitat patches separated from others by a large distance_. Thus, to assess the level of fragmentation we need the information on the species AOO and the dispersal ability. The function ``get.patches()`` computes the percentage of AOO that is isolated across a large distance.
+Another condition to detect threat under the IUCN criterion B is whether the species populations is severely fragmented: _more than half of species AOO corresponds to habitat patches separated from others by a large distance_. Thus, to assess the level of fragmentation we need the information on the species AOO and the dispersal ability. The function ``severe_frag()`` computes the percentage of AOO that is isolated across a large distance.
 
 
 ```{r fragmentation, eval = TRUE, collapse = TRUE}
-merged_data <- merge(occs, radius, by = "tax", all.x = TRUE, sort = FALSE)
-merged_data <- merge(merged_data, AOO[,c("tax", "aoo")], by = "tax", all.x = TRUE, sort = FALSE)
-merged_data <- merged_data[, c("ddlat","ddlon","tax","radius","aoo")]
-list_data <- coord.check(XY = merged_data,
-                         listing = TRUE)
-res <- rep(NA, length(list_data$list_data))
-for (i in seq_along(list_data$list_data)) {
-  res[i] <- get.patches(list_data$list_data[[i]],
-              cell_size = 2,
-              nbe_rep = 0,
-              AOO = as.double(unique(list_data$list_data[[i]]$aoo)),
-              Resol_sub_pop = as.double(unique(list_data$list_data[[i]]$radius)),
-              subpop_poly = NULL,
-              dist_isolated = as.double(unique(list_data$list_data[[i]]$radius)),
-              proj_type = "cea",
-              export_shp = FALSE)
-  
-}
-frag.level <- 100 * sub$subpop/ (AOO$aoo / 4)
-sever.frag <- frag.level > 50
+
+sever.frag <- severe_frag(XY = occs, 
+                          resol_sub_pop = radius[,c("tax", "radius")], 
+                          dist_isolated = radius$radius)
 
 ```
 
-<!-- *get.patches function is tagged as internal and not exported Should we export it and if yes, make it work for multi taxa and thus not necessitates the loop ???* -->
-<!-- YES! --> 
 
 ## Area of habitat (AOH)
 
@@ -335,50 +318,33 @@ The IUCN criterion A mainly evaluates paste and projects population size reducti
 `ConR` also allows to include information on exploitation levels for commercial species (e.g. timber), related to the base d of criterion A. These levels are provided using the argument `exploitation`.
                        
 ```{r criterion-A, eval = TRUE, collapse = TRUE}
-critA <- criterion_A(mean.pop, 
+critA <- criterion_A(x = mean.pop, 
                      assess.year = assess.year,
                      project.years = NULL, 
                      subcriteria = c("A2"),
                      generation.time = gen.length,
                      exploitation = harvest)
-names(critA)[which(names(critA) %in% "category_A")] <- "A2"
+# names(critA)[which(names(critA) %in% "category_A")] <- "A2"
 ```
 
 ## Species geographic range (IUCN criterion B)
 
-We first combine all spatial metrics obtained in the previous section.
+The function `criterion_B()` help to obtain assessments based on the criterion B, as well as others parameters documenting the species geographic range.
 
 ```{r metrics-B, eval = TRUE, collapse = TRUE}
-critB <- data.frame(species = spp,
-                     Nbe_occs = nb.occs,
-                     EOO = EOO.hull$results$eoo,
-                     AOO = AOO$aoo,
-                     Nbe_subpops = sub$subpop,
-                     Nbe_locs = locs$locations$locations,
-                     declineB = declineB,
-                     sever.frag = sever.frag)
+
+critB <- criterion_B(
+  x = occs,
+  AOO = AOO,
+  EOO = EOO.hull$results,
+  locations = locs$locations,
+  severe.frag = sever.frag, 
+  subpops = sub
+)
+
+
 ```
 
-And now we actually compare the metrics against the IUCN criteria and
-thresholds, using the function `cat_criterion_b()`.
-
-
-```{r criterion-B, eval = TRUE, collapse = TRUE}
-cats_B <- cat_criterion_b(EOO = EOO.hull$results$eoo,
-                                  AOO = AOO$aoo,
-                                  locations = locs$locations$locations,
-                                  sever.frag = sever.frag,
-                                  decline = declineB,
-                                  protected.threshold = 100,
-                          all.cats = TRUE)
-critB$category_B <- cats_B$ranks_B
-critB$category_B_code <- cats_B$cats_code
-critB$B1 <- cats_B$all_cats$B1a
-critB$B2 <- cats_B$all_cats$B2a
-```
-
-<!-- NOTE: again, there is still a mismatch between the functions of criterion B 
-and thos of other criteria that already return the assessments themselves -->
 
 ## Small and declining populations (IUCN criterion C) 
 
@@ -433,14 +399,14 @@ est.decline <- critC$cont.decline
 The IUCN criterion D is assessed using the function `criterion_D()`. We have no
 spatially explicit information for future human activities or stochastic events
 for the Atlantic Forest. Therefore, here we assess the subcriterion D and not D2.
-However, function `criterion_D()` can be used to assess D2 if AOO and Number of
-locations are provided.
+However, function `criterion_D()` can be used to assess D2 only if the AOO and the 
+number of locations are provided.
 
 ```{r criterion-D, eval = TRUE, collapse = TRUE}
 p.mature.explo <- p.mature - harvest/100 # accounting for exploitation of commercial species
 #pop.sizes.assess <- mean.pop[id.assess]] # population sizes at the year of assessment
 critD <- criterion_D(pop.size = mean.pop[[28]], 
-                     Name_Sp = mean.pop[[1]], 
+                     name_sp = mean.pop[[1]], 
                      AOO = AOO$aoo,
                      n.Locs = locs$locations$locations,
                      prop.mature = p.mature.explo, 
@@ -458,16 +424,16 @@ Because we are assessing multiple criteria for the same set of species, we need
 to combine the results from all criteria. We try to avoid duplicated columns in the final object `all.crit`.
 
 ```{r all-criteria, eval = TRUE, collapse = TRUE}
-all.crit <- merge(critA, critB, by = "species", all = TRUE)
+all.crit <- merge(critA, critB, by = "tax", all = TRUE)
 
 rm.dup.columns <- which(names(critC) %in% c("assessment.year", "assessment.period"))
-all.crit <- merge(all.crit, critC[, -rm.dup.columns], by = "species", all = TRUE, 
+all.crit <- merge(all.crit, critC[, -rm.dup.columns], by = "tax", all = TRUE, 
                   suffixes = c(".A",".C"))
 
 rm.dup.columns <- which(names(critD) %in% c("AOO"))
-all.crit <- merge(all.crit, critD[, -rm.dup.columns], by = "species", all = TRUE)
+all.crit <- merge(all.crit, critD[, -rm.dup.columns], by = "tax", all = TRUE)
 
-all.crit <- all.crit[order(all.crit$species),]
+all.crit <- all.crit[order(all.crit$tax),]
 ```
 
 
