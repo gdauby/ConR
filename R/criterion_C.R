@@ -269,7 +269,7 @@ criterion_C = function(x,
       
     }
     
-    x <- cbind.data.frame(data.frame(species = "species 1"), x)
+    x <- cbind.data.frame(data.frame(tax = "species 1"), x)
     
   }
   
@@ -334,10 +334,11 @@ criterion_C = function(x,
         
         subpop.size <- split(x[ , which(names(x) == assess.year)], f = x[,1])
         
-        x <- cbind.data.frame(data.frame (species = x[,1]),
-                           rowsum(x[, which(names(x) %in% years)], x[,1], reorder = FALSE, row.names = FALSE))
+        x <- cbind.data.frame(data.frame(tax = x[,1]),
+                           rowsum(x[, which(names(x) %in% years)], x[,1], reorder = FALSE, row.names = FALSE), 
+                           row.names = NULL)
         
-        row.names(x) <- NULL 
+        # row.names(x) <- NULL
     
       } else {
       
@@ -361,7 +362,7 @@ criterion_C = function(x,
         stop("The overall population size provided in 'x' does not match the sum of the subpopulation sizes for one or more taxa. Please, double-check the input data")
       
       if (is.null(names(subpop.size)) & class(x[, 1]) %in% c("factor", "character")) {
-        names(subpop.size) = unique(x$species)
+        names(subpop.size) = unique(x$tax)
         warning("Taxon(a) name(s) of 'subpop.size' were not given and were taken from the input population data")
       }
       
@@ -370,7 +371,7 @@ criterion_C = function(x,
         warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
       }
       
-    }  
+    }
   }
   
   if(is.null(generation.time)) {
@@ -688,7 +689,7 @@ criterion_C = function(x,
 
   ## Small population size and continuing decline using IUCN criteria
   Results <- data.frame(
-    species = names(pop_data),
+    tax = names(pop_data),
     assessment.year = assess.year,
     assessment.period = as.character(unlist(assess.period)),
     assessment.pop.sizes = as.character(unlist(ps.interval)),

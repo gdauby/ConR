@@ -232,7 +232,7 @@ criterion_A = function(x,
       
     }
     
-    x <- cbind.data.frame(data.frame(species = "species 1"), x)
+    x <- cbind.data.frame(data.frame(tax = "species 1"), x)
     
   }
   
@@ -520,7 +520,7 @@ criterion_A = function(x,
   
   ## Population reduction using IUCN criteria
   Results = data.frame(
-    species = names(pop_data),
+    tax = names(pop_data),
     assessment.year = assess.year,
     assessment.period = as.character(unlist(assess.period)),
     assessment.pop.sizes = as.character(unlist(ps.interval)),

@@ -7,7 +7,7 @@
 #' @param pop.size a value (one species) or a vector (multiple species/
 #'   subpopulations) containing the population sizes (e.g. number of mature
 #'   individuals).
-#' @param Name_Sp a vector containing the name of the taxa to be assessed.
+#' @param name_sp a vector containing the name of the taxa to be assessed.
 #'   Default to "Species 1", "Species 2", ..., "Species n", where n is the
 #'   number of taxa.
 #' @param AOO a vector containing the Area of Occupancy of each taxon (in km2).  
@@ -84,7 +84,7 @@
 #'
 #' @export criterion_D
 criterion_D = function(pop.size = NULL,
-                       Name_Sp = NULL,
+                       name_sp = NULL,
                        AOO = NULL,
                        n.Locs = NULL,
                        prop.mature = NULL,
@@ -114,17 +114,18 @@ criterion_D = function(pop.size = NULL,
   if(is.null(pop.size) & all(subcriteria == "D2"))
     pop.size = rep(NA, max(length(AOO), length(n.Locs)))
   
-  if(is.null(Name_Sp)) {
+  # if(is.null(name_sp)) {
     
-    x = as.data.frame(matrix(pop.size, nrow = length(pop.size), dimnames = list(paste("Species",1:length(pop.size)), "pop.size")),
+    x <- as.data.frame(matrix(pop.size, nrow = length(pop.size), 
+                             dimnames = list(paste("Species",1:length(pop.size)), "pop.size")),
                       stringsAsFactors = FALSE)
     
-  } else {
-    
-    x = as.data.frame(matrix(pop.size, nrow = length(pop.size), dimnames = list(Name_Sp, "pop.size")),
-                      stringsAsFactors = FALSE)
-    
-  }
+  # } else {
+  #   
+  #   x <- as.data.frame(matrix(pop.size, nrow = length(pop.size), dimnames = list(name_sp, "pop.size")),
+  #                     stringsAsFactors = FALSE)
+  #   
+  # }
   
   if("D2" %in% subcriteria & (!is.null(AOO) | !is.null(n.Locs))) {
     
@@ -132,11 +133,11 @@ criterion_D = function(pop.size = NULL,
       stop("The number of values in AOO and n.Locs is not the same. Please check entry data")
     
     if(!is.null(AOO))  
-      x = cbind.data.frame(x, AOO = AOO,
-                           stringsAsFactors = FALSE)
+      x <-  cbind.data.frame(x, AOO = AOO,
+                           stringsAsFactors = FALSE, row.names = NULL)
     if(!is.null(n.Locs))  
-      x = cbind.data.frame(x, n.Locs = n.Locs,
-                           stringsAsFactors = FALSE)
+      x  <- cbind.data.frame(x, n.Locs = n.Locs,
+                           stringsAsFactors = FALSE, row.names = NULL)
   }
   
   if(is.null(prop.mature)) {
@@ -166,7 +167,7 @@ criterion_D = function(pop.size = NULL,
 
     ## Very small or restricted population using IUCN criteria
   Results <- data.frame(
-    species = row.names(x),
+    tax = if (!is.null(name_sp)) name_sp else paste("Species",1:length(pop.size)),
     stringsAsFactors = FALSE
   )
   
