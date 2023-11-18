@@ -102,7 +102,7 @@ provided within the internal object `example_tutorial`. We will name it
 ```{r pop-sizes, eval = TRUE, collapse = TRUE}
 pop.sizes <- example_tutorial$population.sizes
 years <- names(pop.sizes[,-1])
-pop.sizes[, 1:4]
+pop.sizes[, 1:6]
 ```
 
 
@@ -152,15 +152,7 @@ mean.pop <-
   matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, new.years))
 
 for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
-
-mean.pop <-
-  cbind.data.frame(data.frame(
-    tax = c(
-      "Araucaria angustifolia",
-      "Euterpe edulis",
-      "Paubrasilia echinata"
-    )
-  ), mean.pop)
+mean.pop <- cbind.data.frame(tax = spp, mean.pop, row.names = NULL)
 
 ```
 
@@ -254,10 +246,10 @@ Another condition to detect threat under the IUCN criterion B is whether the spe
 
 
 ```{r fragmentation, eval = TRUE, collapse = TRUE}
-
 sever.frag <- severe_frag(XY = occs, 
                           resol_sub_pop = radius[,c("tax", "radius")], 
-                          dist_isolated = radius$radius)
+                          dist_isolated = radius$radius,
+                          show_progress = FALSE)
 
 ```
 
@@ -267,29 +259,12 @@ sever.frag <- severe_frag(XY = occs,
 The area of habitat (AOH) is currently not an official population metric that is
 compared against the IUCN Criteria. However, it provides important information
 on the amount of habitat left for a given species within its EOO and more
-importantly how this amount changes through time.
+importantly how this amount is changing through time.
 
 Here, we compute AOH to infer the continuing declines of the species area of
 habitat, another important condition to assess the IUCN criterion B.
 
 ```{r area-of-habitat, eval = TRUE, collapse = TRUE}
-# toto <- read.csv("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESACCI-LC-Legend.csv", as.is=TRUE)
-# hab.class <- toto$NB_LAB[grepl("ForestCover", toto$LegendTreeCoSimp)]
-
-## Loading aggregated rasters and extracting the habitat loss/quality
-# ano1 = 2000
-# hab.map <- raster::stack(paste0("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESA_Land_Cover_map_", ano1, "_2015_AF_1km.tif"))
-# hab.map <- stars::read_stars(paste0("C:\\Users/renato/Documents/Artigo Extincao na MA/data analysis/data/ESA_Land_Cover_map_", ano1, "_2015_AF_1km.tif"))
-# names(hab.map) <- paste("ESA",c(ano1,2015), sep=".")
-# hab.map1 <- as(hab.map, "SpatRaster")
-# anos <- 2015 - ano1 
-# 
-# AOH <- AOH.estimation(XY = occs[, c(1:3),], 
-#                       hab.map = hab.map, 
-#                       hab.class = hab.class, 
-#                       # years = c(2000, 2015),
-#                       # years = anos,
-#                       parallel = TRUE, NbeCores = 5)
 AOH <- data.frame(tax = spp,
                   prop.EOO = c(18.80422, 18.74939, 16.89696), 
                   area.EOO = c(309588.7, 389226.0, 274717.6),
@@ -324,12 +299,13 @@ critA <- criterion_A(x = mean.pop,
                      subcriteria = c("A2"),
                      generation.time = gen.length,
                      exploitation = harvest)
-# names(critA)[which(names(critA) %in% "category_A")] <- "A2"
+names(critA)[which(names(critA) %in% "category_A")] <- "A2"
 ```
 
 ## Species geographic range (IUCN criterion B)
 
-The function `criterion_B()` help to obtain assessments based on the criterion B, as well as others parameters documenting the species geographic range.
+The function `criterion_B()` help to obtain assessments based on the criterion
+B, as well as others parameters documenting the species geographic range.
 
 ```{r metrics-B, eval = TRUE, collapse = TRUE}
 
@@ -443,20 +419,20 @@ Next, we try to tell apart the Least Concern (LC) from Near-Threatened (NT)
 species using the function `near.threatened()`:
 
 ```{r near-threatened, eval = TRUE, collapse = TRUE}
-subcriteria <- c("A2", "B1", "B2", "C1", "C2", "D")
+subcriteria <- c("A2", "category_B", "C1", "C2", "D")
 for(i in 1:length(subcriteria)) {
   all.crit[,subcriteria[i]] <- 
     near.threatened(cats = all.crit[,subcriteria[i]],
                     EOO = all.crit$EOO,
                     AOO = all.crit$AOO,
-                    decline = all.crit$declineB,
+                    decline = all.crit$any.decline,
                     pop.reduction = all.crit$reduction_A12,
                     pop.size = all.crit$pop.size,
                     pop.size.low = NULL,
-                    locations = all.crit$Nbe_locs,
-                    sever.frag = all.crit$sever.frag,
+                    locations = all.crit$locations,
+                    sever.frag = all.crit$severe_frag,
                     ext.fluct = NULL,
-                    subpop = all.crit$Nbe_subpops, 
+                    subpop = all.crit$subpop, 
                     subcriteria = subcriteria[i])
 }
 ```
@@ -470,7 +446,7 @@ restrictive category for each species prevails, the function returns the
 evaluation result using other criteria.
 
 ```{r consensus, eval = TRUE, collapse = TRUE}
-consensus <- cat_mult_criteria(all.crit[,c("species", subcriteria)])
+consensus <- cat_mult_criteria(all.crit[,c("tax", subcriteria)])
 all.crit <- cbind.data.frame(all.crit, consensus[,c("category","main.criteria","aux.criteria")])
 ```
 
