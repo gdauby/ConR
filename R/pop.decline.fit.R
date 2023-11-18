@@ -115,23 +115,24 @@
 #'
 #' @export pop.decline.fit
 #' 
-pop.decline.fit <- function(pop.size, 
-                            years,
+pop.decline.fit <- function(pop.size = NULL, 
+                            years = NULL,
                             models = "all", 
                             project.years = NULL,
                             plot.fit = TRUE,
                             max.count = 50,
                             ...) {
-  
+
+  if(is.null(pop.size))
+    stop("Please provide a vector of population sizes")
+
   if(is.null(years)) {
     
     anos <- as.numeric(gsub("[^0-9]", "", names(pop.size)[grepl("[0-9]", names(pop.size))]))
     
-    if(is.null(anos)) {
-      
+    if(is.null(anos))
       stop("Please provide at least two years with estimates of population sizes")
-      
-    }
+
   } else {
     
     anos <- years

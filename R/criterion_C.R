@@ -166,7 +166,7 @@
 #'   project.years = NULL,
 #'   generation.time = 10,
 #'   subpop.size = NULL,
-#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+#'   models = c("linear", "exponential", "logistic", "general_logistic"),
 #'   subcriteria = c("C1", "C2")
 #'   )
 #'   
@@ -178,7 +178,7 @@
 #'   generation.time = 10,
 #'   prop.mature = 0.85,
 #'   subpop.size = NULL,
-#'   models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+#'   models = c("linear", "exponential", "logistic", "general_logistic"),
 #'   subcriteria = c("C1", "C2")
 #'   )
 #'   
@@ -323,7 +323,6 @@ criterion_C = function(x,
     
   }
   
-  
   if("C2" %in% subcriteria) {
     
     if(is.null(subpop.size)) {
@@ -334,7 +333,8 @@ criterion_C = function(x,
         
         subpop.size <- split(x[ , which(names(x) == assess.year)], f = x[,1])
         
-        x <- cbind.data.frame(data.frame(tax = x[,1]),
+        #x <- cbind.data.frame(data.frame(tax = x[,1]),
+        x <- cbind.data.frame(data.frame(tax = unique(x[,1])),
                            rowsum(x[, which(names(x) %in% years)], x[,1], reorder = FALSE, row.names = FALSE), 
                            row.names = NULL)
         
@@ -372,6 +372,13 @@ criterion_C = function(x,
       }
       
     }
+  } else {
+
+    if(any(duplicated(x[,1])))
+      x <- cbind.data.frame(data.frame(tax = unique(x[,1])),
+                            rowsum(x[, which(names(x) %in% years)], x[,1], reorder = FALSE, row.names = FALSE), 
+                            row.names = NULL)
+    
   }
   
   if(is.null(generation.time)) {
@@ -494,7 +501,6 @@ criterion_C = function(x,
     }
   }
   
-  
   if ("C1" %in% subcriteria) {
     
     if (project) { 
@@ -532,9 +538,9 @@ criterion_C = function(x,
   
   pop_data.names <- names(pop_data)
   pop_data <- lapply(1:length(pop_data), function(i) {
-    df <- pop_data[[i]]
-    nomes <- names(df)
-    new.df <- as.data.frame(t(as.numeric(df) * prop.mature[i]), row.names = 1)
+    old.df <- pop_data[[i]]
+    nomes <- names(old.df)
+    new.df <- as.data.frame(t(as.numeric(old.df) * prop.mature[i]), row.names = 1)
     names(new.df) <- nomes
     pop_data[[i]] <- new.df
   })
@@ -563,7 +569,7 @@ criterion_C = function(x,
                           if(pv.yr %in% names(y)) {
                             
                             y1 <- as.numeric(y[which(names(y) == pv.yr):which(names(y) == assess.year)])
-                            
+
                           } else {
                             
                             avail.ys <- as.double(names(pop_data[[i]]))
