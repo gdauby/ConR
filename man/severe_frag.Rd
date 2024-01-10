@@ -43,11 +43,13 @@ subpopulations considered to be isolated. See details}
 
 \item{export_shp}{logical}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
 \item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 
 \item{threshold_severe}{numeric of one value indicates the threshold to identify severe fragmentation. By default is 50}
 }
@@ -58,9 +60,9 @@ Assess whether species populations are severely fragmented
 \details{
 This function evaluates the proportion of the total area of
 occupancy in habitat patches separated from others by a large distance. Based
-on IUCN guidelines page(48): "A taxon can be considered to be severely
+on IUCN guidelines page 48: "A taxon can be considered to be severely
 fragmented if most (>50\%) of its total area of occupancy is in habitat
-patches that are (...) (2) separated from other habitat patches by a large
+patches that are (...) separated from other habitat patches by a large
 distance."
 
 This function interpret subpopulations as obtained using

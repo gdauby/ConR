@@ -29,11 +29,13 @@ with the taxa names and a column 'radius' with the species-specific radius
 \item{export_shp}{logical. Whether the resulting shapefiles should be
 exported. FALSE by default.}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
 \item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 }
 \value{
 If \code{export_shp} is TRUE,

@@ -11,6 +11,7 @@ criterion_B(
   locations = NULL,
   severe.frag = NULL,
   subpops = NULL,
+  decline = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
@@ -46,13 +47,38 @@ criterion_B(
 \item{x}{a \code{dataframe} or an object of class \code{spgeoIN} see
 \url{https://github.com/azizka/speciesgeocodeR}. See Details}
 
-\item{EOO.threshold}{numeric vector indicating the thresholds used to categorize EOO in IUCN categories}
+\item{AOO}{a vector of species AOO, if available}
 
-\item{AOO.threshold}{numeric vector indicating the thresholds used to categorize AOO in IUCN categories}
+\item{EOO}{a vector of species EOO, if available}
 
-\item{Loc.threshold}{numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories}
+\item{locations}{a vector of species number of locations, if available}
 
-\item{comp_subpop}{logical if the number of sub-populations should be computed. By default is TRUE}
+\item{severe.frag}{a vector indicating if species is severely fragmented, if
+available}
+
+\item{subpops}{a vector of the number of subpopulations (sensu IUCN), if
+available}
+
+\item{decline}{a vector providing the status of the species continuing
+decline in EOO, AOO, habitat, locations or subpopulations or population
+size (i.e. condition 'b') to be passed on to function \code{cat_criterion_b()}.
+If different of 'Decreasing', the condition 'b' of criterion B will not be
+met.}
+
+\item{EOO.threshold}{numeric vector indicating the thresholds used to
+categorize EOO in IUCN categories}
+
+\item{AOO.threshold}{numeric vector indicating the thresholds used to
+categorize AOO in IUCN categories}
+
+\item{Loc.threshold}{numeric vector indicating the thresholds used to
+categorize the number of locations in IUCN categories}
+
+\item{comp_subpop}{logical if the number of sub-populations should be
+computed. By default is TRUE}
+
+\item{comp_severe.frag}{logical if severe fragmentation should be
+computed. By default is FALSE}
 
 \item{resol_sub_pop}{a value defining the radius of the circles around each
 occurrence (in kilometres) or data frame vector containing a column 'tax'
@@ -137,9 +163,6 @@ for criterion B.
 Preliminary assessment of species conservation status following
 IUCN Criterion B, which is based on species geographic distribution (i.e. extent
 of occurrence - EOO, and area of occupancy, AOO)
-}
-\details{
-The function ...
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and

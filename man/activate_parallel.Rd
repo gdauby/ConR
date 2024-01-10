@@ -7,9 +7,11 @@
 activate_parallel(parallel = FALSE, NbeCores = 2)
 }
 \arguments{
-\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 }
 \description{
 Activate paralle processing

@@ -25,9 +25,11 @@ subpopulations considered to be isolated}
 
 \item{export_shp}{logical}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
