@@ -6,21 +6,25 @@
 #'   2019). This function provide a comparison of five different models and
 #'   returns the predictions of the model with best fit to data.
 #'
-#' @param pop.size a vector containing the (estimated) number of mature
-#'   individuals of the species
-#' @param years a vector containing the years for which the population sizes is
-#'   available
+#' @param x a data frame containing in the first column a vector of (estimated)
+#'   population size and in the second column a vector of years for which the 
+#'   population sizes is available
 #' @param models a vector containing the names of the statistical models to be
 #'   fitted to species population data
 #' @param project.years a vector containing the years for which the number of
-#'   mature individuals should be predicted
+#'   mature individuals should be predicted using the best candidate statistical
+#'   model
 #' @param plot.fit logical. Should the fit of the best model be plotted against
 #'   the population data?
 #' @param max.count numerical. Maximum number of attempts to fit piece-wise
 #'   models. Default to 50.
-#' @param ... other parameters to be passed as arguments for function ```ICtab.mod.select```
+#' @param ... other parameters to be passed as arguments for 
+#'   function ```ICtab.mod.select```
 #'
 #' @details
+#' The names of the columns of the data frame ``x`` do not matter, as long as
+#' population sizes are in the first column and years in the second.
+#' 
 #' By default, the function compares the fit of six statistical models
 #' to the population trends, namely: linear, quadratic, exponential, logistic,
 #' generalized logistic and piece-wise. But, as stated in IUCN (2019), the
@@ -38,14 +42,14 @@
 #' existence of more "complex patterns of decline". To describe more complex
 #' patterns, ```pop.decline.fit``` provides fits to logistic and piece-wise
 #' patterns of decline. Despite the options of models provided by
-#' ```pop.decline.fit```, depending on the numbers of observations or the patterns
-#' of decline, many or none of the models may provide a good fit to data. This
-#' reinforces the role of the user in choosing the more appropriate pattern
-#' for the area or taxon considered.
+#' ```pop.decline.fit```, depending on the numbers of observations or the 
+#' patterns of decline, many or none of the models may provide a good fit to
+#' data. This reinforces the role of the user in choosing the more appropriate
+#' pattern for the area or taxon considered.
 #' 
 #' For simplicity, the population size data provided is transformed into
 #' proportions using the maximum population estimate provided. Therefore,
-#' models are fit to proportional data, but the projections are provided in
+#' models are fitted to proportional data, but the projections are returned in
 #' proportions and in the original scale. As suggested in IUCN (2019), no
 #' model fit is performed if only two estimates of population size are
 #' provided.
@@ -56,12 +60,12 @@
 #' projections depending on the population data or on the years chosen for the 
 #' projection (see example). Fitting piece-wise models can be unstable (model 
 #' fitting is quite sensitive to the start parameters) and may take a while to 
-#' converge; so, it should preferably be used when  many years of population 
+#' converge; so, it should preferably be used when many years of population size
 #' data are available. For simplicity, only piece-wise models with up to 3 
-#' breaks and linear functions between breaks are provided. For time intervals > 80, 
-#' the best model among the candidate models is chosen based on Akaike 
-#' Information Criterion, or AIC; the corrected AIC or the AICc (Burnham and 
-#' Anderson, 2004) is used for time intervals < 80.
+#' breaks and linear functions between breaks are provided. For time intervals >
+#' 80, the best model among the candidate models is chosen based on Akaike
+#' Information Criterion, or AIC; the corrected AIC or the AICc (Anderson and
+#' Burnham, 2004) is used for time intervals < 80.
 #' 
 #' 
 #' @author Renato A. Ferreira de Lima & Gilles Dauby
@@ -81,31 +85,20 @@
 #' #at: https://www.iucnredlist.org/resources/criterion-a)
 #' pop = c(10000, 9100, 8200, 7500, 7000)
 #' yrs = c(1970, 1975, 1980, 1985, 1990)
+#' pop.data <- cbind.data.frame(pop.size = pop, years = yrs)
 #' 
-#' ## Fitting data with different models and setting
-#' pop.decline.fit(pop.size = pop, years = yrs)
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("linear"))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("linear", "exponential","quadratic"))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("linear", "exponential"), project.years = c(1960, 2005))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("linear", "exponential"), project.years = c(1973, 2005))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("quadratic", "general_logistic"))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("general_logistic"))
-#' pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("quadratic"), project.years = c(1960, 2050))
 #' 
-#' ## Another examples, with less observations (warning or no model fit below 3 observations)
-#' pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), 
-#' models = "all", project.years = 2030)
+#' ## Fitting data with different models and settings
+#' # All models, without and with the plot of the model fit to data
+#' pop.decline.fit(pop.data, plot.fit = FALSE)
+#' pop.decline.fit(pop.data)
 #' 
-#' \dontrun{
-#' pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
-#' }
+#' # Different model combinations
+#' pop.decline.fit(pop.data, models = c("exponential","quadratic"))
+#' pop.decline.fit(pop.data, models = c("quadratic", "exponential"))
+#' 
+#' # Projecting/interpolating population size estimates
+#' pop.decline.fit(pop.data, models = "exponential", project.years = c(1960, 2005))
 #' 
 #' 
 #' @importFrom nls.multstart nls_multstart
@@ -115,57 +108,39 @@
 #'
 #' @export pop.decline.fit
 #' 
-pop.decline.fit <- function(pop.size = NULL, 
-                            years = NULL,
+pop.decline.fit <- function(x = NULL, 
                             models = "all", 
                             project.years = NULL,
                             plot.fit = TRUE,
                             max.count = 50,
                             ...) {
 
-  if(is.null(pop.size))
-    stop("Please provide a vector of population sizes")
+  if(is.null(x))
+    stop("Please provide a data frame with population sizes and years")
 
-  if(is.null(years)) {
-    
-    anos <- as.numeric(gsub("[^0-9]", "", names(pop.size)[grepl("[0-9]", names(pop.size))]))
-    
-    if(is.null(anos))
-      stop("Please provide at least two years with estimates of population sizes")
+  if(dim(x)[2] <2)
+    stop("Please provide a data frame with population sizes and years")
 
-  } else {
-    
-    anos <- years
-    
-  }
-  
-  if(length(as.numeric(pop.size)) > length(as.numeric(anos)))
-    pop.size <- pop.size[grepl(paste0(years, collapse = "|"), names(pop.size))]
-  
-  years <- anos
-  
-  if(length(as.numeric(pop.size)) < 3 | length(years) < 3)
+  if(dim(x)[1] < 3)
     stop("Too few time intervals to fit trends of population reduction")
   
   if(!is.null(project.years)) {
-    
-    proj <- project.years[!project.years %in% years]
-    years1 <- c(years, proj)
-    pop.size1 <- c(as.numeric(pop.size), rep(NA, length(proj)))
-    DATA <- cbind.data.frame(pop.size = as.numeric(pop.size1[order(years1)]), 
-                             years = as.numeric(years1[order(years1)]),
-                             stringsAsFactors = FALSE)
-    
+
+    proj <- project.years[!project.years %in% x[[2]]]
+    years1 <- c(x[[2]], proj)
+    pop.size1 <- c(as.numeric(x[[1]]), rep(NA, length(proj)))
+    DATA <- cbind.data.frame(pop.size = as.numeric(pop.size1[order(years1)]),
+                             years = as.numeric(years1[order(years1)]))
+
   } else {
-    
-    DATA <- cbind.data.frame(pop.size = as.numeric(pop.size), 
-                             years = as.numeric(years),
-                             stringsAsFactors = FALSE)
-    
+
+    DATA <- cbind.data.frame(pop.size = as.numeric(x[[1]]),
+                             years = as.numeric(x[[2]]))
+
   }
   
-  DATA$ps <- DATA$pop.size/max(as.double(pop.size), na.rm = TRUE)
-  DATA$ys <- DATA$years - min(DATA$years, na.rm = TRUE)
+  DATA$ps <- DATA[[1]]/max(as.double(DATA[[1]]), na.rm = TRUE)
+  DATA$ys <- DATA[[2]] - min(DATA[[2]], na.rm = TRUE)
   
   if(all(models == "all")) {
     
@@ -394,8 +369,8 @@ pop.decline.fit <- function(pop.size = NULL,
     xlim <- range(DATA$ys, na.rm=TRUE)
     preds <- predict(best, data.frame(ys = seq(range(DATA$ys)[1], range(DATA$ys)[2], by = 1)))
     
-    if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim)))) 
-      ylim <- range(c(ylim, preds), na.rm=TRUE)     
+    if(!is.null(project.years) & (any(min(preds) < min(ylim)) | any(max(preds) < max(ylim))))
+      ylim <- range(c(ylim, preds), na.rm=TRUE)
     
     graphics::par(mfrow= c(1, 1), mgp = c(2.8,0.6,0), mar= c(4,4,1,1))
     graphics::plot(DATA$ps ~ DATA$ys, pch=19, cex=1.2, #data = DATA, 
@@ -406,7 +381,7 @@ pop.decline.fit <- function(pop.size = NULL,
     ats <- pretty(seq(min(ylim), max(ylim), 0.1))
     axis(2, at = ats, labels = ats*100, las = 1, tcl = -0.3)
     
-    if(!is.null(project.years)) 
+    if(!is.null(project.years))
       graphics::points(est.prop ~ ys, cex=1.2, data = subset(DATA, is.na(DATA$ps)))
     
     range1 <- (range(stats::na.omit(DATA)$ys)[1] - 1)
@@ -418,7 +393,7 @@ pop.decline.fit <- function(pop.size = NULL,
       
       #mod <- model.ls[["linear"]]
       mod <- best
-      if(!is.null(project.years)) graphics::curve(stats::coef(mod)[1] + stats::coef(mod)[2]*x, 
+      if(!is.null(project.years)) graphics::curve(stats::coef(mod)[1] + stats::coef(mod)[2]*x,
                                         add= TRUE, lwd= 2, lty= 2, col = "#D55E00")
       graphics::curve(stats::coef(mod)[1] + stats::coef(mod)[2]*x, from = range1, to = range2,
             add= TRUE, lwd= 2, col = "#D55E00")
@@ -442,7 +417,7 @@ pop.decline.fit <- function(pop.size = NULL,
       
       #mod <- model.ls[["exponential"]]
       mod <- best
-      if(!is.null(project.years)) graphics::curve(stats::coef(mod)[1]*exp(stats::coef(mod)[2]*x), 
+      if(!is.null(project.years)) graphics::curve(stats::coef(mod)[1]*exp(stats::coef(mod)[2]*x),
                                         add= TRUE, lwd=2, lty= 2, col = "#009E73")
       graphics::curve(stats::coef(mod)[1]*exp(stats::coef(mod)[2]*x), from = range1, to = range2,
             add= TRUE, lwd=2, col = "#009E73")
@@ -486,24 +461,27 @@ pop.decline.fit <- function(pop.size = NULL,
   }
   
   if(!is.null(project.years)) {
-    
-    DATA1 <- DATA[,c("pop.size", "years", "ps", "est.prop","predicted")] 
+
+    DATA1 <- DATA[,c("pop.size", "years", "ps", "est.prop","predicted")]
     names(DATA1) <- c("Observed", "Year", "Obs_proportion", "Est_proportion", "Predicted")
-    
+
   } else {
-    
-    DATA1 <- DATA[,c("pop.size", "years", "ps")] 
+
+    DATA1 <- DATA[,c("pop.size", "years", "ps")]
     names(DATA1) <- c("Observed", "Year", "Obs_proportion")
-    
+
   }
   
   if(length(models) > 1 | all(models == "all")) {
     
-    res <- list(best.model = best, model.selection.result = AICs, data = DATA1)
+    res <- list(best.model = best, 
+                model.selection.result = AICs, 
+                predictions = DATA)
     
   } else { 
     
-    res <- list(best.model = best, data = DATA1)
+    res <- list(best.model = best, 
+                predictions = DATA)
     
   }
   

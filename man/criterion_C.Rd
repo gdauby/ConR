@@ -217,7 +217,7 @@ increase them.
   project.years = NULL,
   generation.time = 10,
   subpop.size = NULL,
-  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+  models = c("linear", "exponential", "logistic", "general_logistic"),
   subcriteria = c("C1", "C2")
   )
   
@@ -229,7 +229,7 @@ increase them.
   generation.time = 10,
   prop.mature = 0.85,
   subpop.size = NULL,
-  models = c("linear", "quadratic", "exponential", "logistic", "general_logistic"),
+  models = c("linear", "exponential", "logistic", "general_logistic"),
   subcriteria = c("C1", "C2")
   )
   

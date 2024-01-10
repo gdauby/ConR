@@ -210,7 +210,8 @@ criterion_C = function(x,
                        generation.time = NULL,
                        prop.mature = NULL,
                        subpop.size = NULL,
-                       models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
+                       models = c("linear", "quadratic", "exponential", "logistic", 
+                                  "general_logistic","piecewise"),
                        subcriteria = c("C1", "C2"),
                        correction = NULL,
                        #data.type = NULL,
@@ -367,7 +368,7 @@ criterion_C = function(x,
       }
       
       if (is.null(names(subpop.size)) & !class(x[, 1]) %in% c("factor", "character")) {
-        names(subpop.size) = paste("species", 1:dim(x)[1])
+        names(subpop.size) = paste0("species", 1:dim(x)[1])
         warning("Taxon(a) name(s) of 'subpop.size' were not given and were created by 'ConR'")
       }
       
@@ -531,7 +532,7 @@ criterion_C = function(x,
   } else {
     
     names(x) <- gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))])
-    nomes <- paste("species", 1:dim(x)[1])
+    nomes <- paste0("species", 1:dim(x)[1])
     pop_data <- split(x, f = nomes)
     
   }
@@ -546,24 +547,13 @@ criterion_C = function(x,
   })
   names(pop_data) <- pop_data.names
   
-  ## Continuing decline at any rate
-  
-  # any.decline <- sapply(pop_data,  ## old version -> all years
-  #                       function(y) {
-  #                         if(!is.null(ignore.years)) 
-  #                           y = y[,!names(y) %in% ignore.years]
-  #                         y1 = as.numeric(y[1:which(names(y) == assess.year)])
-  #                         y1 = y1[!is.na(y1)]
-  #                         mean(diff(y1), na.rm=TRUE) / 
-  #                           utils::head(y1, 1)})
-
-  any.decline <- sapply(1:length(pop_data), ## new version -> recent decline between assess.year and recent.year
+  ## Continuing decline at any rate (between assess.year and recent.year)
+  any.decline <- sapply(1:length(pop_data),
                         function(i) {
                           y <- pop_data[[i]]
                           if(!is.null(ignore.years)) 
                             y <- y[,!names(y) %in% ignore.years]
                           
-                          # pv.yr <- prev.year1[i]
                           pv.yr <- recent.year
                           
                           if(pv.yr %in% names(y)) {
@@ -591,53 +581,20 @@ criterion_C = function(x,
     if(length(x) < 3) 
       stop("Too few year intervals to fit a model to population trends")
     
-    #models.fit <- as.list(rep(NA, length(pop_data)))
-    
     cat("Computing the estimated continuing decline (subcriteria C1)...", sep= "\n")
     
-    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
-    `%d%` <- c_par(parallel = parallel)
+    proj.years1 <- sort(unique(unlist(yrs)))
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(pop_data))
-    opts <- pro_res$opts
-    pb <- pro_res$pb
+    models.fit <- pop.decline(pop.size = do.call(rbind, pop_data), 
+                              years = years, 
+                              taxa = names(pop_data),
+                              models = models,
+                              project.years = proj.years1,
+                              output = "all", by.taxon = TRUE,
+                              show_progress = show_progress)
     
-    models.fit <- foreach::foreach(
-        w = 1:length(pop_data),
-        .options.snow = opts
-      ) %d% {
-
-        if (!parallel & show_progress)
-          setTxtProgressBar(pb, w)
-        
-        pop.size.i <- pop_data[[w]]
-        years.i <- years
-        project.years.i <- yrs[[w]]
-        
-        if(!is.null(ignore.years)) {
-          pop.size.i <- pop.size.i[,!names(pop.size.i) %in% ignore.years]
-          years.i <- years.i[!years.i %in% ignore.years]
-          project.years.i <- project.years.i[!project.years.i %in% ignore.years]
-        }
-        
-        if(all(project.years.i %in% names(pop.size.i)))
-          project.years.i <- NULL
-        
-        res <- pop.decline.fit(pop.size = pop.size.i, 
-                               years = years.i, 
-                               models = models,
-                               project.years = project.years.i,
-                               plot.fit = FALSE
-                               ,...)
-        res
-      }
+    cont.decline <- sapply(models.fit, pop.decline.test)
     
-    if(parallel) parallel::stopCluster(cl)
-    if(show_progress) close(pb)
-    
-    cont.decline <- sapply(models.fit, pop.decline.test, 
-                           assess.year = assess.year)
-  
   }
   
   miss.years <- lapply(1:length(yrs), 
@@ -647,18 +604,19 @@ criterion_C = function(x,
   
   if (any(sapply(miss.years, any))) {   # Predictions based on the best model fit to population trends
     
-    best.models = as.list(rep(NA, length(pop_data)))
-    which.pred = which(sapply(miss.years, any))
+    best.models <- as.list(rep(NA, length(pop_data)))
+    which.pred <- which(sapply(miss.years, any))
     
     for(i in 1:length(which.pred)) {
       
       pred.sp <- models.fit[[which.pred[i]]]
-      pred.pop.size <- pred.sp$data$Observed
-      pred.pop.size[is.na(pred.sp$data$Observed)] <- 
-        pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
-      names(pred.pop.size) <- pred.sp$data$Year
+      pred.pop.size <- pred.sp$predictions$pop.size
+      pred.pop.size[is.na(pred.sp$predictions$pop.size)] <- 
+        pred.sp$predictions$predicted[is.na(pred.sp$predictions$pop.size)]
+      names(pred.pop.size) <- pred.sp$predictions$year
       pop_data[[which.pred[i]]] <- pred.pop.size
-      best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
+      best.models[[which.pred[i]]] <-  pred.sp$best.model
+      # best.models[[which.pred[i]]] <-  attributes(pred.sp$best.model)$best.model.name
       
     }
   }
@@ -686,10 +644,8 @@ criterion_C = function(x,
                             paste(unique(sort(
                               c(
                                 names(pop_data1[[i]])[which(names(pop_data1[[i]]) %in% prev.year3[i])],
-                                #min(names(pop_data1[[i]])),
                                 assess.year,
                                 names(pop_data1[[i]])[which(names(pop_data1[[i]]) %in% proj.year3[i])]
-                                #max(names(pop_data1[[i]]))
                                 )
                             )), collapse = "-"))
 
@@ -705,7 +661,8 @@ criterion_C = function(x,
   row.names(Results) <- NULL
   
   if(!is.null(best.models))
-    Results$predictive.model[which.pred] <- as.character(unlist(best.models))[which.pred]
+    Results$predictive.model[which.pred] <- 
+      as.character(unlist(best.models))[which.pred]
 
   ## Population size at the assessment
   Results$assess.pop.size <- sapply(1:length(pop_data), 
