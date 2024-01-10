@@ -150,7 +150,7 @@ AOO.computing <- function(XY,
     
     if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
-
+    
     res <- unlist(output[names(output) != "spatial"])
     
     res_df[res_df$tax %in% names(res), 2] <-
@@ -161,11 +161,11 @@ AOO.computing <- function(XY,
       "AOO could not computed because grid cells would overlap with antimeridian"
     
     if (export_shp) {
-
+      
       shapes <- output[names(output) == "spatial"]
       shapes <- do.call('rbind', shapes)
       row.names(shapes) <- 1:nrow(shapes)
-
+      
     }
     
   } else {
@@ -187,7 +187,7 @@ AOO.computing <- function(XY,
 
 #' @importFrom foreach %dopar% %do% foreach
 #' @keywords internal
-#' @export
+#' 
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,

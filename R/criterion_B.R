@@ -6,10 +6,28 @@
 #'
 #' @param x a `dataframe` or an object of class `spgeoIN` see
 #' <https://github.com/azizka/speciesgeocodeR>. See Details
-#' @param EOO.threshold numeric vector indicating the thresholds used to categorize EOO in IUCN categories
-#' @param AOO.threshold numeric vector indicating the thresholds used to categorize AOO in IUCN categories
-#' @param Loc.threshold numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories
-#' @param comp_subpop logical if the number of sub-populations should be computed. By default is TRUE
+#' @param AOO a vector of species AOO, if available
+#' @param EOO a vector of species EOO, if available
+#' @param locations a vector of species number of locations, if available
+#' @param severe.frag a vector indicating if species is severely fragmented, if
+#'   available
+#' @param subpops a vector of the number of subpopulations (sensu IUCN), if
+#'   available
+#' @param decline a vector providing the status of the species continuing
+#'   decline in EOO, AOO, habitat, locations or subpopulations or population
+#'   size (i.e. condition 'b') to be passed on to function `cat_criterion_b()`.
+#'   If different of 'Decreasing', the condition 'b' of criterion B will not be
+#'   met.
+#' @param EOO.threshold numeric vector indicating the thresholds used to
+#'   categorize EOO in IUCN categories
+#' @param AOO.threshold numeric vector indicating the thresholds used to
+#'   categorize AOO in IUCN categories
+#' @param Loc.threshold numeric vector indicating the thresholds used to
+#'   categorize the number of locations in IUCN categories
+#' @param comp_subpop logical if the number of sub-populations should be
+#'   computed. By default is TRUE
+#' @param comp_severe.frag logical if severe fragmentation should be
+#'   computed. By default is FALSE
 #' @param method_locations string, indicating the method used for estimating the number of locations. See Details
 #'  * `"fixed_grid"` (by default)
 #'  * `"sliding_scale"`
@@ -27,9 +45,7 @@
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
 #'   the IUCN categories associated with the sub-criteria and the consensus category
 #'   for criterion B.
-#' 
-#' @details The function ... 
-#' 
+#'  
 #' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
@@ -48,36 +64,37 @@ criterion_B <- function(x = NULL,
                         locations = NULL,
                         severe.frag = NULL,
                         subpops = NULL,
-                       #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
-                       EOO.threshold = c(20000, 5000, 100),
-                       AOO.threshold = c(2000, 500, 10),
-                       Loc.threshold = c(10, 5, 1),
-                       comp_subpop = TRUE,
-                       comp_severe.frag = FALSE,
-                       resol_sub_pop = 5,
-                       cell_size_locations = 10,
-                       method_locations = "fixed_grid",
-                       method_polygons = "no_more_than_one",
-                       rel_cell_size = 0.05,
-                       threat_list = NULL,
-                       names_threat = NULL,
-                       threat_weight = NULL,
-                       id_shape = "id_orig",
-                       country_map = NULL,
-                       method.range = "convex.hull",
-                       alpha = 1,
-                       buff.alpha = 0.1,
-                       exclude.area = FALSE,
-                       cell_size_AOO = 2,
-                       nbe.rep.rast.AOO = 0,
-                       threshold_severe = 50,
-                       parallel = FALSE,
-                       show_progress = TRUE,
-                       NbeCores = 2,
-                       proj_type = "cea",
-                       mode = "spheroid",
-                       DrawMap = FALSE,
-                       add.legend = TRUE) {
+                        decline = NULL,
+                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
+                        EOO.threshold = c(20000, 5000, 100),
+                        AOO.threshold = c(2000, 500, 10),
+                        Loc.threshold = c(10, 5, 1),
+                        comp_subpop = TRUE,
+                        comp_severe.frag = FALSE,
+                        resol_sub_pop = 5,
+                        cell_size_locations = 10,
+                        method_locations = "fixed_grid",
+                        method_polygons = "no_more_than_one",
+                        rel_cell_size = 0.05,
+                        threat_list = NULL,
+                        names_threat = NULL,
+                        threat_weight = NULL,
+                        id_shape = "id_orig",
+                        country_map = NULL,
+                        method.range = "convex.hull",
+                        alpha = 1,
+                        buff.alpha = 0.1,
+                        exclude.area = FALSE,
+                        cell_size_AOO = 2,
+                        nbe.rep.rast.AOO = 0,
+                        threshold_severe = 50,
+                        parallel = FALSE,
+                        show_progress = TRUE,
+                        NbeCores = 2,
+                        proj_type = "cea",
+                        mode = "spheroid",
+                        DrawMap = FALSE,
+                        add.legend = TRUE) {
   
   if (!requireNamespace("lwgeom", quietly = TRUE))
     stop("The 'lwgeom' package is required to run this function.",
@@ -324,7 +341,8 @@ criterion_B <- function(x = NULL,
     cat_criterion_b(EOO = EOO$eoo, 
                     AOO = AOO$aoo, 
                     locations = locations_res$locations, 
-                    sever.frag = if (any(c(comp_severe.frag, !is.null(severe.frag)))) severe.frag$severe_frag else NA)
+                    sever.frag = if (any(c(comp_severe.frag, !is.null(severe.frag)))) severe.frag$severe_frag else NA,
+                    decline = if (!is.null(decline)) decline else NA)
   
   if (!is.null(x)) list_data <- coord.check(XY = x)
   

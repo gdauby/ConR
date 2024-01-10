@@ -4,14 +4,19 @@
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #' 
-#' @param parallel a logical. Whether running in parallel. By default, it is FALSE
-#' @param NbeCores an integer. Register the number of cores for parallel execution. By default, it is 2
+#' @param parallel a logical. Whether running should be performed in parallel.
+#'   FALSE by default.
+#' @param NbeCores an integer. Register the number of cores for parallel
+#'   execution. Two by default.
 #' 
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom parallel makePSOCKcluster
 #' @importFrom foreach %dopar% %do% foreach
+#' 
 #' @keywords internal
+#' 
 #' @export
+#' 
 activate_parallel <- function(parallel = FALSE, NbeCores = 2) {
   if (parallel) {
     cl <- parallel::makePSOCKcluster(NbeCores)

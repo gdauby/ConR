@@ -23,9 +23,9 @@
 #' 
 #' @details This function evaluates the proportion of the total area of
 #' occupancy in habitat patches separated from others by a large distance. Based
-#' on IUCN guidelines page(48): "A taxon can be considered to be severely
+#' on IUCN guidelines page 48: "A taxon can be considered to be severely
 #' fragmented if most (>50%) of its total area of occupancy is in habitat
-#' patches that are (...) (2) separated from other habitat patches by a large
+#' patches that are (...) separated from other habitat patches by a large
 #' distance."
 #'
 #' This function interpret subpopulations as obtained using
@@ -204,8 +204,7 @@ severe_frag <- function(XY = NULL,
 #' 
 #' @importFrom sf st_as_sf st_transform st_coordinates st_distance st_geometry
 #' 
-get.patches <- function(
-                        subpop_poly = NULL,
+get.patches <- function(subpop_poly = NULL,
                         dist_isolated = NULL,
                         proj_type = "cea",
                         export_shp = FALSE,
