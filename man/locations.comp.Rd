@@ -30,15 +30,21 @@ locations.comp(
 \item \code{"sliding_scale"}
 }}
 
-\item{nbe_rep}{numeric, the number of raster with random starting position for estimating the number of locations By default, it is 0 but some minimal translation of the raster are still done}
+\item{nbe_rep}{numeric, the number of raster with random starting position
+for estimating the number of locations By default, it is 0 but some minimal
+translation of the raster are still done}
 
-\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
+\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting
+threats. If provided, this will be taken into account for calculating
+number of location (see Details and \code{method_polygons}). By default, no
+shapefile is provided}
 
 \item{names_threat}{character vector, indicating names of threats, optional}
 
 \item{threat_weight}{numeric vector, indicating weight given to each threat}
 
-\item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
+\item{cell_size_locations}{numeric, value indicating the grid size in
+kilometres used for estimating the number of location. By default, equal to 10}
 
 \item{method_polygons}{string. Used if \code{threat_list} is provided. See Details.
 \itemize{
@@ -48,14 +54,18 @@ locations.comp(
 
 \item{id_shape}{string}
 
-\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
-and the resolution is given by the maximum distance separating two occurrences multiplied by \code{rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"},
+\code{cell_size_locations} is ignored and the resolution is given by the maximum
+distance separating two occurrences multiplied by \code{rel_cell_size}. By
+default, it is 0.05}
 
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
-\item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{integer, register the number of cores for parallel execution.
+By default, it is 2}
 
-\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+\item{show_progress}{logical, whether a bar showing progress in computation
+should be shown. By default, it is TRUE}
 
 \item{proj_type}{string or numeric}
 }
@@ -84,23 +94,25 @@ taking into account spatial threats if provided.
 \item The third column is contains character value i.e. the names of the species
 }
 
-Locations are estimated by overlaying a grid of a given resolution (see \code{cell_size_locations} for
-specifying the resolution). The number of locations is  the number of
-occupied locations. Note that the grid position is overlaid in order to
-minimize the number of locations (several translation of the grid are
-performed and the one providing the minimum number of occupied cells is
+Locations are estimated by overlaying a grid of a given resolution (see
+\code{cell_size_locations} for specifying the resolution). The number of locations
+is  the number of occupied locations. Note that the grid position is overlaid
+in order to minimize the number of locations (several translation of the grid
+are performed and the one providing the minimum number of occupied cells is
 provided).
 
 If \code{threat_list} is provided, which means occurrences within polygon
 documenting threats (if provided) will not be taken into account for
 estimating the number of locations following the grid system,
 
-If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and determined
-by the argument \code{cell_size_locations}.
+If \code{method} is "fixed_grid" as it is by default, the resolution is fixed and
+determined by the argument \code{cell_size_locations}.
 
-If \code{method} is "sliding_scale", the resolution is defind as 1/x*max.dist where max.dist is the maximum distance between any pairs of occurrences
-and x is a defined parameter. 1/x is defined by \code{rel_cell_size} argument and is 0.05 by default.
-See Rivers M.C. et al. (2010) for more information on the methods.
+If \code{method} is "sliding_scale", the resolution is defined as 1/x*max.dist
+where max.dist is the maximum distance between any pairs of occurrences and x
+is a defined parameter. 1/x is defined by \code{rel_cell_size} argument and is
+0.05 by default. See Rivers M.C. et al. (2010) for more information on the
+methods.
 }
 }
 \examples{
@@ -117,7 +129,7 @@ locations <- locations.comp(dataset.ex, nbe_rep = 100)
 
 }
 \references{
-Gaston & Fuller (2009) The sizes of species'geographic ranges, Journal of
+Gaston & Fuller (2009) The sizes of species' geographic ranges, Journal of
 Applied Ecology: 49 1-9
 
 Rivers, Bachman, Meagher, Lughadha & Brummitt (2010) Subpopulations,

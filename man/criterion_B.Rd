@@ -86,7 +86,8 @@ with the taxa names and a column 'radius' with the species-specific radius
 (in kilometre as well). Typically, this data frame is the output of
 \code{ConR} function \code{subpop.radius}.}
 
-\item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
+\item{cell_size_locations}{numeric, value indicating the grid size in
+kilometres used for estimating the number of location. By default, equal to 10}
 
 \item{method_locations}{string, indicating the method used for estimating the number of locations. See Details
 \itemize{
@@ -100,10 +101,15 @@ with the taxa names and a column 'radius' with the species-specific radius
 \item \code{"grid"}: a grid of \code{cell_size_locations} size will be used to estimate the number of location within polygons
 }}
 
-\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
-and the resolution is given by the maximum distance separating two occurrences multiplied by \code{rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"},
+\code{cell_size_locations} is ignored and the resolution is given by the maximum
+distance separating two occurrences multiplied by \code{rel_cell_size}. By
+default, it is 0.05}
 
-\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
+\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting
+threats. If provided, this will be taken into account for calculating
+number of location (see Details and \code{method_polygons}). By default, no
+shapefile is provided}
 
 \item{names_threat}{character vector, indicating names of threats, optional}
 
@@ -141,13 +147,16 @@ to identify severe fragmentation. By default is 50}
 
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
-\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+\item{show_progress}{logical, whether a bar showing progress in computation
+should be shown. By default, it is TRUE}
 
-\item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{integer, register the number of cores for parallel execution.
+By default, it is 2}
 
 \item{proj_type}{string or numeric}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
 \item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created for each species
 in a directory of the working environment}

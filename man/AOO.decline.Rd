@@ -37,7 +37,8 @@ FALSE by default.}
 \item{NbeCores}{an integer. Register the number of cores for parallel
 execution. Two by default.}
 
-\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
+\item{show_progress}{logical. Whether progress informations should displayed.
+TRUE by default}
 
 \item{proj_type}{string or numeric}
 

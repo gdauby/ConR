@@ -49,6 +49,6 @@ A list
 Compute EOO given a data frame of coordinate in decimals degrees
 }
 \author{
-Gilles Dauby & Renato A. Ferreira de LimaA
+Gilles Dauby & Renato A. Ferreira de Lima
 }
 \keyword{internal}

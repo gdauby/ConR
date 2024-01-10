@@ -64,7 +64,7 @@
 #' 
 #' **Notes on computational time** The processing time depends on several
 #' factors, including the total number of occurrences, number of confidence
-#' levels rpovided and user's computer specifications. Using argument `parallel`
+#' levels provided and user's computer specifications. Using argument `parallel`
 #' equals `TRUE`, greatly increase the processing time, but the processing of
 #' large data sets (millions of occurrences) may take hours. On a Intel Core i5,
 #' CPU 1.70GHz, 64-bit OS and 16 GB RAM it took 20 min to process about 800

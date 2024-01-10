@@ -14,7 +14,7 @@ FALSE by default.}
 execution. Two by default.}
 }
 \description{
-Activate paralle processing
+Activate parallel processing
 }
 \author{
 Gilles Dauby, \email{gildauby@gmail.com}

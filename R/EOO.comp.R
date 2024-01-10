@@ -15,7 +15,7 @@
 #' @param proj_type crs
 #' @param reproject logical FALSE whether the polygon should be converted to geographic coordinates if mode is `planar`
 #'
-#' @author Gilles Dauby & Renato A. Ferreira de LimaA
+#' @author Gilles Dauby & Renato A. Ferreira de Lima
 #' 
 #' @return A list
 #' \enumerate{

@@ -78,7 +78,7 @@ By default, the proportion of mature individuals in the total population proport
 is taken as 1, but the user can provide one proportion for all species or species-
 specific proportions.
 
-Currenlty, the function does not supports data separated by subpopulation.
+Currently, the function does not supports data separated by subpopulation.
 }
 \examples{
 

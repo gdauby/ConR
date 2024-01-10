@@ -1,6 +1,6 @@
 #' @title Internal function
 #'
-#' @description Activate paralle processing
+#' @description Activate parallel processing
 #'
 #' @author Gilles Dauby, \email{gildauby@gmail.com}
 #' 

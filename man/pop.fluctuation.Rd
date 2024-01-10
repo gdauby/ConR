@@ -14,7 +14,8 @@ individuals) per year, from the oldest to the most recent estimate.}
 \item{years}{a vector containing the years for which the population sizes is
 available (i.e. time series).}
 
-\item{plot.test}{logical. Should the the results be plotted with the popuation data?}
+\item{plot.test}{logical. Should the the results be plotted with the
+population data?}
 }
 \value{
 A data frame containing the mean change of the population
@@ -49,7 +50,7 @@ evaluated if the declining or increasing tendencies are significant
 The same linear regression model is used to obtain the standard error of
 the estimate (SEE) of the linear regression fitted to the population trend,
 which can be used as a measure of the temporal variability in population
-size (Cuervo & Møller 2017).
+size (Cuervo & Moller 2017).
 }
 \examples{
 
@@ -63,7 +64,7 @@ IUCN 2019. Guidelines for Using the IUCN Red List Categories and Criteria.
 Version 14. Standards and Petitions Committee. Downloadable from:
 https://www.iucnredlist.org/resources/redlistguidelines.
 
-Cuervo, J.J. & Møller, A.P. (2017). Colonial, more widely distributed and
+Cuervo, J.J. & Moller, A.P. (2017). Colonial, more widely distributed and
 less abundant bird species undergo wider population fluctuations independent
 of their population trend. PloS one, 12(3): e0173220.
 }

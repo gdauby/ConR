@@ -52,7 +52,7 @@ that are separated from other patches by a large distance.}
 \item{ext.fluct}{numeric vector with the mean order of magnitude of the
 differences between population minima and maxima.}
 
-\item{subpop}{numeric vector with the number of sub-populationsfor the
+\item{subpop}{numeric vector with the number of sub-populations for the
 species}
 
 \item{subcriteria}{character string with the sub-criteria used to perform
@@ -101,7 +101,7 @@ details on this (IUCN 2019, pp 76-77).
 
 We added one extra case to the list of cases from IUCN (2019) where species
 should be classified as "LC" and not "NT". This case comes from an
-interpretation of the IUCN (2019) guidelines and it is unoficially used by
+interpretation of the IUCN (2019) guidelines and it is unofficially used by
 the IUCN/SSC Global Tree Specialist Group as an indication of low
 probability of triggering a threatened or NT categories, if the species is
 not cited as threatened based on other criteria (e.g. uses and threats):

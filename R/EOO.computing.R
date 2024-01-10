@@ -20,13 +20,15 @@
 #' If `exclude.area` is TRUE and country_map is not provided, 
 #' the world country polygons used comes from the package [rnaturalearth](https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries)
 #' 
-#' By default (`mode = "spheroid"`),the area of the polygon is based 
-#' on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.  
+#' By default (`mode = "spheroid"`), the area of the polygon is based on a
+#' polygon in longitude/latitude coordinates considering the earth as an
+#' ellipsoid.
 #' 
 #' To make a polygon more accurate, the function use the function `st_segmentize` 
 #' from the [sf](https://CRAN.R-project.org/package=sf) package.
-#' This adds vertices on the great circles (in order to make shortest distances between points, see example below) 
-#' which can make difference for species with large distribution.  
+#' This adds vertices on the great circles (in order to make shortest distances
+#' between points, see example below) which can make difference for species with
+#' large distribution.
 #' 
 #' An estimation of EOO based on projected data is also possible (`mode = "planar"`).
 #' This allow the user to use its own projection.
@@ -52,8 +54,9 @@
 #' 
 #' **Limitation**\cr
 #' 
-#' For a species whose occurrences span more than 180 degrees, EOO should not be considered. 
-#' This is the case for example for species whose distribution span the 180th meridian.
+#' For a species whose occurrences span more than 180 degrees, EOO should not be
+#' considered. This is the case for example for species whose distribution span
+#' the 180th meridian.
 #' 
 #' @param XY `dataframe` see Details
 #' @param exclude.area a logical, if TRUE, areas outside of `country_map`
@@ -79,9 +82,12 @@
 #' @param method.less.than3 a character string. If equal to "arbitrary", will
 #' give a value to species with two unique occurrences, see Details. By default
 #' is "not comp"
-#' @param file.name a character string. Name file for exported results in csv file. By default is "EOO.results"
-#' @param show_progress logical. Whether progress informations should displayed. TRUE by default
-#' @param mode character string either 'spheroid' or 'planar'. By default 'spheroid'
+#' @param file.name a character string. Name file for exported results in csv
+#'   file. By default is "EOO.results"
+#' @param show_progress logical. Whether progress informations should displayed.
+#'   TRUE by default
+#' @param mode character string either 'spheroid' or 'planar'. By default
+#'   'spheroid'
 #' @inheritParams proj_crs
 #' @inheritParams activate_parallel
 #'
@@ -102,7 +108,7 @@
 #' 
 #' <https://github.com/azizka/speciesgeocodeR>
 #' 
-#' @references Gaston & Fuller 2009 The sizes of species'geographic ranges,
+#' @references Gaston & Fuller 2009 The sizes of species' geographic ranges,
 #' Journal of Applied Ecology, 49 1-9
 #' 
 #' @examples

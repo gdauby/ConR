@@ -22,7 +22,7 @@
 #'   species occur (i.e. condition 'a')
 #' @param sever.frag numeric vector with the proportion AOO which is in patches
 #'   that are separated from other patches by a large distance.
-#' @param subpop numeric vector with the number of sub-populationsfor the
+#' @param subpop numeric vector with the number of sub-populations for the
 #'   species
 #' @param ext.fluct numeric vector with the mean order of magnitude of the
 #'   differences between population minima and maxima.
@@ -63,7 +63,7 @@
 #'  
 #'  We added one extra case to the list of cases from IUCN (2019) where species
 #'  should be classified as "LC" and not "NT". This case comes from an
-#'  interpretation of the IUCN (2019) guidelines and it is unoficially used by
+#'  interpretation of the IUCN (2019) guidelines and it is unofficially used by
 #'  the IUCN/SSC Global Tree Specialist Group as an indication of low
 #'  probability of triggering a threatened or NT categories, if the species is
 #'  not cited as threatened based on other criteria (e.g. uses and threats):

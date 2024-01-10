@@ -31,7 +31,8 @@ FALSE by default.}
 \item{NbeCores}{an integer. Register the number of cores for parallel
 execution. Two by default.}
 
-\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
+\item{show_progress}{logical. Whether progress informations should displayed.
+TRUE by default}
 
 \item{export_shp}{logical, by default is FALSE. Whether a shapefile of
 occupied cells should be exported.}
@@ -47,7 +48,8 @@ If \code{export_shp} if TRUE a list with two elements
 }
 }
 \description{
-Compute areas of occupancy (AOO) for multiple taxa in square kilometers
+Compute areas of occupancy (AOO) for multiple taxa in square
+kilometers
 }
 \section{Input data}{
 \strong{XY} as a \link[base:data.frame]{data.frame} should have the following structure:
@@ -89,7 +91,7 @@ AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 3)
 
 }
 \references{
-Gaston & Fuller 2009 The sizes of species'geographic ranges,
+Gaston & Fuller 2009 The sizes of species' geographic ranges,
 Journal of Applied Ecology, 49 1-9
 }
 \author{

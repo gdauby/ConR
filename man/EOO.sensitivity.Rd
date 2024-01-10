@@ -66,11 +66,13 @@ FALSE by default.}
 \item{NbeCores}{an integer. Register the number of cores for parallel
 execution. Two by default.}
 
-\item{show_progress}{logical. Whether progress informations should displayed. TRUE by default}
+\item{show_progress}{logical. Whether progress informations should displayed.
+TRUE by default}
 
 \item{proj_type}{string or numeric}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
 \item{min.dist}{minimum tolerated distance between polygons and points.
 Default to 0.1 m.}
@@ -144,7 +146,7 @@ localized on a straight line (in which case EOO would be null),
 
 \strong{Notes on computational time} The processing time depends on several
 factors, including the total number of occurrences, number of confidence
-levels rpovided and user's computer specifications. Using argument \code{parallel}
+levels provided and user's computer specifications. Using argument \code{parallel}
 equals \code{TRUE}, greatly increase the processing time, but the processing of
 large data sets (millions of occurrences) may take hours. On a Intel Core i5,
 CPU 1.70GHz, 64-bit OS and 16 GB RAM it took 20 min to process about 800

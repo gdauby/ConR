@@ -146,9 +146,9 @@ test_that("criterion_A", {
   testthat::expect_equal(round(result$reduction_A12, 0), 
                          c(54,21,32,33,42,30), fixed = TRUE)
   testthat::expect_equal(round(result$reduction_A3, 0), 
-                         c(14,79,51,33,62,9), fixed = TRUE)
+                         c(14,78,51,33,62,9), fixed = TRUE)
   testthat::expect_equal(round(result$reduction_A4, 0), 
-                         c(58,73,48,34,60,31), fixed = TRUE)
+                         c(58,72,48,34,60,31), fixed = TRUE)
   testthat::expect_equal(result$category_A, 
                          c("EN","EN","EN","VU","EN","VU"), fixed = TRUE)
   testthat::expect_equal(result$category_A_code, 

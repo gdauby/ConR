@@ -1,7 +1,8 @@
 
 #' @title Area of occupancy
 #'
-#' @description Compute areas of occupancy (AOO) for multiple taxa in square kilometers
+#' @description Compute areas of occupancy (AOO) for multiple taxa in square
+#'   kilometers
 #'
 #' @author Gilles Dauby \email{gilles.dauby@@ird.fr}
 #'
@@ -12,7 +13,8 @@
 #'   raster with random starting position used for estimating the AOO. If 0 but
 #'   some translation of the raster are still done.
 #' @inheritParams activate_parallel
-#' @param show_progress logical. Whether progress informations should displayed. TRUE by default
+#' @param show_progress logical. Whether progress informations should displayed.
+#'   TRUE by default
 #' @param export_shp logical, by default is FALSE. Whether a shapefile of
 #'   occupied cells should be exported.
 #' @inheritParams proj_crs
@@ -45,7 +47,7 @@
 #' See `proj_type`
 #' 
 #' 
-#' @references Gaston & Fuller 2009 The sizes of species'geographic ranges,
+#' @references Gaston & Fuller 2009 The sizes of species' geographic ranges,
 #'   Journal of Applied Ecology, 49 1-9
 #'
 #' @return 

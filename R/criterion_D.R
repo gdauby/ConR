@@ -49,7 +49,7 @@
 #'   specific proportions.
 
 #'
-#'   Currenlty, the function does not supports data separated by subpopulation.
+#'   Currently, the function does not supports data separated by subpopulation.
 #'   
 #' @author Renato A. Ferreira de Lima & Gilles Dauby
 #'

@@ -17,10 +17,10 @@
 #'   model
 #' @param output a character or vector containing the desired output from the
 #'   function. The options are: "predictions", "model.fit", "model.selection" 
-#'   and "best.model". By default, the function returns only the precitions.
+#'   and "best.model". By default, the function returns only the predictions.
 #' @param by.taxon logical. Should the output list be organized by the selected
 #'   output options (i.e. predictions, model.fit, model.selection and
-#'   best.model) for all taxa or should it cointain one taxon per taxon with
+#'   best.model) for all taxa or should it contain one taxon per taxon with
 #'   all selected outputs? Defaults to FALSE (list organized by outputs and not
 #'   taxa).
 #' @inheritParams activate_parallel
