@@ -1,6 +1,5 @@
 ---
 title: "Conservation assessments based on multiple-IUCN criteria using ConR"
-
 # date: "`r format(Sys.time(), '%B %Y')`"
 # author: 
 #   - Renato A. F. de Lima^[Universidade de São Paulo, https://github.com/LimaRAF] # and Gilles Dauby^[IRD, https://github.com/gdauby]
@@ -10,11 +9,10 @@ output:
         number_sections: true
     md_document:
       variant: gfm
-
 vignette: >
   %\VignetteIndexEntry{Introduction to ConR}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEngine{rmarkdown::render}
     \usepackage[utf8]{inputenc}
 ---
@@ -105,6 +103,7 @@ years <- names(pop.sizes[,-1])
 pop.sizes[, 1:6]
 ```
 
+<br/><br/>
 
 # Population metrics 
 
@@ -124,7 +123,7 @@ have information available. These estimates are produced using the fit of
 different statistical models (i.e. quadratic, exponential, logistic, general
 logistic) to the population size trends. Here, we will only
 estimate population sizes into the past, but one can also use the same `ConR`
-function `pop.decline.fit()` to estimate them into the future.
+function `pop.decline()` to estimate them into the future.
 
 
 ```{r est-pop-sizes, eval = TRUE, collapse = TRUE}
@@ -134,26 +133,18 @@ possible.years <-
 missing.years <- assess.year - possible.years
 
 # Estimating population sizes for the missing years
-results <- vector("list", length(spp))
-for (i in seq_along(spp)) {
-  res <- pop.decline.fit(pop.size = pop.sizes[i,],
-                  years = years,
-                  project.years = missing.years,
-                  models = c("quadratic", "exponential", 
-                             "logistic", "general_logistic"), 
-                  plot.fit = FALSE)
-  results[[i]] <- res$data[,c("Year", "Observed", "Predicted")]
-}
+est.pop.sizes <- pop.decline(pop.sizes[,-1], taxa = spp, output = "predictions",
+                             show_progress = FALSE)
 
-new.years <- results[[1]]$Year
+# Re-organizing the information for downstream analyses
+new.years <- est.pop.sizes[[1]][[1]]$years
 ncols <- length(new.years)
 nrows <- length(spp)
 mean.pop <- 
   matrix(NA, ncol = ncols, nrow = nrows, dimnames = list(spp, new.years))
 
-for(i in seq_along(spp)) mean.pop[i,] <- results[[i]]$Predicted
+for(i in seq_along(spp)) mean.pop[i,] <- est.pop.sizes[[1]][[i]]$predicted
 mean.pop <- cbind.data.frame(tax = spp, mean.pop, row.names = NULL)
-
 ```
 
 We now have a new object called `mean.pop` which stores both the input
@@ -256,15 +247,8 @@ sever.frag <- severe_frag(XY = occs,
 
 ## Area of habitat (AOH)
 
-The area of habitat (AOH) is currently not an official population metric that is
-compared against the IUCN Criteria. However, it provides important information
-on the amount of habitat left for a given species within its EOO and more
-importantly how this amount is changing through time.
-
-Here, we compute AOH to infer the continuing declines of the species area of
-habitat, another important condition to assess the IUCN criterion B.
-
-```{r area-of-habitat, eval = TRUE, collapse = TRUE}
+<!-- change the vignette text and code here after function AOH.estimation() is
+ready and returning a data frame with the columns below:
 AOH <- data.frame(tax = spp,
                   prop.EOO = c(18.80422, 18.74939, 16.89696), 
                   area.EOO = c(309588.7, 389226.0, 274717.6),
@@ -272,15 +256,40 @@ AOH <- data.frame(tax = spp,
                   recover = c(1.616235, 1.494770, 1.317942), 
                   rel.loss = c(8.456802, 8.143053, 8.971141),
                   rate.loss  = c(0.5637868, 0.5428702, 0.5980761), 
-                  rate.recover  = c(0.5730043, 0.5314911, 0.5199917))
-declineB <- AOH$rel.loss
-declineB[AOH$rel.loss >= 1] <- "Decreasing"
-declineB[AOH$rel.loss < 1 & AOH$rel.loss >= 0] <- "Not Decreasing"
+                  rate.recover  = c(0.5730043, 0.5314911, 0.5199917)) -->
+
+<!-- PREVIOUS COMMENTS/NOTES  -->
+<!-- CHECK HERE: error. In the first version of this function 'years' was the
+time interval between rasters (as described in the details of the function
+documentation). Now I got this error: "the number of years provided is different
+to the number of layers/polygon provided".
+In addition, the function must return the relative change in AOH if multiple
+raster are provide, so we can access decline for criterion B.
+The previous columns returned by the function (which were used to assess
+continuing decline) are in the data frame above -->
+
+The area of habitat (AOH) is currently not an official population metric that is
+compared against the IUCN Criteria. However, it provides important information
+on the amount of habitat left for a given species within its EOO and more
+importantly how this amount is changing through time.
+
+`ConR` computes AOH using the function `AOH.estimation()`. If habitat maps are
+available for different periods in time, the function can be used to infer the
+continuing declines of the species AOH, which is an important condition to
+assess the IUCN criterion B.
+
+For this example, we do not provide habitat maps for the area of study (i.e.
+rasters with the Atlantic Forest cover through time), which are demanding in
+terms of storage and computational time. So we will assume that we already have
+available a vector containing the relative losses (in %) of AOH previously
+estimated for each species between 2000 and 2018.
+
+
+```{r area-of-habitat, eval = TRUE, collapse = TRUE}
+rel.loss <- c(8.5, 8.1, 9.0)
+declineB <- ifelse(rel.loss >= 1, "Decreasing", "Not Decreasing")
 ```
 
-<!-- CHECK HERE: error. In the first version of this function 'years' was the time interval between rasters (as described in the details of the function documentation). Now I got this error: "the number of years provided is different to the number of layers/polygon provided".
-In addition, the function must return the relative change in AOH if multiple raster are provide,
-so we can access decline for criterion B. The previous columns returned by the function (which were used to assess continuing decline) are in the data frame above -->
 
 <br/><br/>
 
@@ -298,8 +307,7 @@ critA <- criterion_A(x = mean.pop,
                      project.years = NULL, 
                      subcriteria = c("A2"),
                      generation.time = gen.length,
-                     exploitation = harvest)
-names(critA)[which(names(critA) %in% "category_A")] <- "A2"
+                     exploitation = harvest, show_progress = FALSE)
 ```
 
 ## Species geographic range (IUCN criterion B)
@@ -308,17 +316,13 @@ The function `criterion_B()` help to obtain assessments based on the criterion
 B, as well as others parameters documenting the species geographic range.
 
 ```{r metrics-B, eval = TRUE, collapse = TRUE}
-
-critB <- criterion_B(
-  x = occs,
-  AOO = AOO,
-  EOO = EOO.hull$results,
-  locations = locs$locations,
-  severe.frag = sever.frag, 
-  subpops = sub
-)
-
-
+critB <- criterion_B(x = occs, 
+                     AOO = AOO, 
+                     EOO = EOO.hull$results, 
+                     locations = locs$locations,
+                     severe.frag = sever.frag,
+                     subpops = sub, 
+                     decline = declineB, show_progress = FALSE)
 ```
 
 
@@ -347,21 +351,15 @@ subpopulation sizes obtained above (`subpop.sizes`).
 
 ```{r criterion-C, eval = TRUE, collapse = TRUE}
 critC <- criterion_C(x = mean.pop,
-                       assess.year = assess.year,
-                       project = FALSE,
-                       recent.year = recent.year,
-                       # ignore.years = c(1808,1818,1823,1838),
-                       subcriteria = c("C1","C2"),
-                       generation.time = gen.length,
-                       prop.mature = p.mature,
-                       subpop.size = subpop.sizes,
-                       correction = early.sucession, 
-                     show_progress = TRUE)
+                     assess.year = assess.year,
+                     project = FALSE,
+                     recent.year = recent.year,
+                     subcriteria = c("C1","C2"),
+                     generation.time = gen.length,
+                     prop.mature = p.mature,
+                     subpop.size = subpop.sizes,
+                     correction = early.sucession, show_progress = FALSE)
 ```
-
-<!-- CHECK HERE: when I set show_progress = FALSE the function returs an error:
-Error in display_progress_bar(show_progress = show_progress, max_pb = length(list_data)) : 
-  object 'pb' not found -->
 
 If C1 is listed within the argument `subcriteria`, the function returns the
 estimated continuing decline:
@@ -379,9 +377,12 @@ However, function `criterion_D()` can be used to assess D2 only if the AOO and t
 number of locations are provided.
 
 ```{r criterion-D, eval = TRUE, collapse = TRUE}
-p.mature.explo <- p.mature - harvest/100 # accounting for exploitation of commercial species
-#pop.sizes.assess <- mean.pop[id.assess]] # population sizes at the year of assessment
-critD <- criterion_D(pop.size = mean.pop[[28]], 
+# accounting for exploitation of commercial species
+p.mature.explo <- p.mature - harvest/100
+# population sizes at the year of assessment
+pop.sizes.assess <- mean.pop[[18]]
+# assessing criterion D
+critD <- criterion_D(pop.size = pop.sizes.assess, 
                      name_sp = mean.pop[[1]], 
                      AOO = AOO$aoo,
                      n.Locs = locs$locations$locations,
@@ -391,8 +392,6 @@ critD <- criterion_D(pop.size = mean.pop[[28]],
                      Loc.threshold = 5)
 
 ```
-
-<!-- CHECK HERE: had an error we using only subcriteria D -->
 
 ## Combining the results from all criteria
 
@@ -417,6 +416,9 @@ all.crit <- all.crit[order(all.crit$tax),]
 
 Next, we try to tell apart the Least Concern (LC) from Near-Threatened (NT)
 species using the function `near.threatened()`:
+
+
+<!-- change "category_B" by "B1" and "B2" after fixing the output of criterion_B() -->
 
 ```{r near-threatened, eval = TRUE, collapse = TRUE}
 subcriteria <- c("A2", "category_B", "C1", "C2", "D")
@@ -446,8 +448,9 @@ restrictive category for each species prevails, the function returns the
 evaluation result using other criteria.
 
 ```{r consensus, eval = TRUE, collapse = TRUE}
-consensus <- cat_mult_criteria(all.crit[,c("tax", subcriteria)])
-all.crit <- cbind.data.frame(all.crit, consensus[,c("category","main.criteria","aux.criteria")])
+consensus <- cat_mult_criteria(all.crit[, c("tax", subcriteria)])
+all.crit <- cbind.data.frame(all.crit, 
+                             consensus[, c("category","main.criteria","aux.criteria")])
 ```
 
 The object `all.crit` now contains all relevant population metrics and the
