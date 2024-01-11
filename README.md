@@ -3,17 +3,9 @@
 
 # ConR package
 
-<!-- badges: start -->
-
-[![Travis build
-status](https://travis-ci.com/gdauby/ConR.svg?branch=master)](https://travis-ci.com/gdauby/ConR)
-[![CRAN RStudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/ConR)](https://www.r-pkg.org/pkg/ConR)
-<!-- badges: end -->
-
 <br/><br/>
 
-The `ConR` pacakge aims at assisting the preliminary assessment of
+The `ConR` package aims at assisting the preliminary assessment of
 species conservation status based on the International Union for
 Conservation of Nature (IUCN) Red List Categories and Criteria. More
 specifically, it helps users to calculate the population metrics related
@@ -26,11 +18,11 @@ institutes.
 
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
-The package it not anymore available on CRAN because of the recent
+The package it not available anymore on CRAN because of the recent
 retirement of various packages (rgdal, rgeos). The new version is
 nevertheless available on github and will soon be available on CRAN.
 
-To install the version from github :
+To install the github version :
 
     install.packages("devtools")
     devtools::install_github("gdauby/ConR")
@@ -58,6 +50,9 @@ be obtained by the following code:
     ?criterion_A
     ?EOO.sensitivity
 
+A manual for using the package is available
+[here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.html).
+
 ## Funding
 
 The development of this package was supported by:
@@ -75,9 +70,9 @@ The development of this package was supported by:
 
 ## Citation
 
-G. Dauby & R. A. F. de Lima (2022). ConR: Computation of Parameters Used
+G. Dauby & R. A. F. de Lima (2023). ConR: Computation of Parameters Used
 in Preliminary Assessment of Species Conservation Status. R package
-(version 2.0.0).
+(version 2.1.0).
 
 ## See Also
 
