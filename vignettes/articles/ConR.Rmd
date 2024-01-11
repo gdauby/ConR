@@ -4,7 +4,7 @@ title: "Conservation assessments based on multiple-IUCN criteria using ConR"
 # author: 
 #   - Renato A. F. de Lima^[Universidade de São Paulo, https://github.com/LimaRAF] # and Gilles Dauby^[IRD, https://github.com/gdauby]
 output:
-    rmarkdown::html_vignette:
+    rmarkdown::pdf_document:
         toc: true
         number_sections: true
     md_document:

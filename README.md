@@ -50,8 +50,8 @@ be obtained by the following code:
     ?criterion_A
     ?EOO.sensitivity
 
-A manual for using the package is available
-[here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.html).
+A mode detailed manual on how to use this package is available
+[here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.pdf).
 
 ## Funding
 
