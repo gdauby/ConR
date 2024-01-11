@@ -5,8 +5,7 @@
 \title{Fit Statistical Models to Population Reduction}
 \usage{
 pop.decline.fit(
-  pop.size,
-  years,
+  x = NULL,
   models = "all",
   project.years = NULL,
   plot.fit = TRUE,
@@ -15,17 +14,16 @@ pop.decline.fit(
 )
 }
 \arguments{
-\item{pop.size}{a vector containing the (estimated) number of mature
-individuals of the species}
-
-\item{years}{a vector containing the years for which the population sizes is
-available}
+\item{x}{a data frame containing in the first column a vector of (estimated)
+population size and in the second column a vector of years for which the
+population sizes is available}
 
 \item{models}{a vector containing the names of the statistical models to be
 fitted to species population data}
 
 \item{project.years}{a vector containing the years for which the number of
-mature individuals should be predicted}
+mature individuals should be predicted using the best candidate statistical
+model}
 
 \item{plot.fit}{logical. Should the fit of the best model be plotted against
 the population data?}
@@ -33,7 +31,8 @@ the population data?}
 \item{max.count}{numerical. Maximum number of attempts to fit piece-wise
 models. Default to 50.}
 
-\item{...}{other parameters to be passed as arguments for function \code{ICtab.mod.select}}
+\item{...}{other parameters to be passed as arguments for
+function \code{ICtab.mod.select}}
 }
 \description{
 Fitting statistical models to the decline on the number of
@@ -43,6 +42,9 @@ trends, so that a reduction of three generations can be calculated" (IUCN
 returns the predictions of the model with best fit to data.
 }
 \details{
+The names of the columns of the data frame \code{x} do not matter, as long as
+population sizes are in the first column and years in the second.
+
 By default, the function compares the fit of six statistical models
 to the population trends, namely: linear, quadratic, exponential, logistic,
 generalized logistic and piece-wise. But, as stated in IUCN (2019), the
@@ -60,14 +62,14 @@ Figure 4.2, pg. 33 of IUCN 2019). But IUCN (2019) also recognizes the
 existence of more "complex patterns of decline". To describe more complex
 patterns, \code{pop.decline.fit} provides fits to logistic and piece-wise
 patterns of decline. Despite the options of models provided by
-\code{pop.decline.fit}, depending on the numbers of observations or the patterns
-of decline, many or none of the models may provide a good fit to data. This
-reinforces the role of the user in choosing the more appropriate pattern
-for the area or taxon considered.
+\code{pop.decline.fit}, depending on the numbers of observations or the
+patterns of decline, many or none of the models may provide a good fit to
+data. This reinforces the role of the user in choosing the more appropriate
+pattern for the area or taxon considered.
 
 For simplicity, the population size data provided is transformed into
 proportions using the maximum population estimate provided. Therefore,
-models are fit to proportional data, but the projections are provided in
+models are fitted to proportional data, but the projections are returned in
 proportions and in the original scale. As suggested in IUCN (2019), no
 model fit is performed if only two estimates of population size are
 provided.
@@ -78,12 +80,12 @@ IUCN (2019), but note that the quadratic model can generate non-realistic
 projections depending on the population data or on the years chosen for the
 projection (see example). Fitting piece-wise models can be unstable (model
 fitting is quite sensitive to the start parameters) and may take a while to
-converge; so, it should preferably be used when  many years of population
+converge; so, it should preferably be used when many years of population size
 data are available. For simplicity, only piece-wise models with up to 3
-breaks and linear functions between breaks are provided. For time intervals > 80,
-the best model among the candidate models is chosen based on Akaike
-Information Criterion, or AIC; the corrected AIC or the AICc (Burnham and
-Anderson, 2004) is used for time intervals < 80.
+breaks and linear functions between breaks are provided. For time intervals >
+80, the best model among the candidate models is chosen based on Akaike
+Information Criterion, or AIC; the corrected AIC or the AICc (Anderson and
+Burnham, 2004) is used for time intervals < 80.
 }
 \examples{
 ## Creating vectors with the population data and time intervals 
@@ -91,31 +93,20 @@ Anderson, 2004) is used for time intervals < 80.
 #at: https://www.iucnredlist.org/resources/criterion-a)
 pop = c(10000, 9100, 8200, 7500, 7000)
 yrs = c(1970, 1975, 1980, 1985, 1990)
+pop.data <- cbind.data.frame(pop.size = pop, years = yrs)
 
-## Fitting data with different models and setting
-pop.decline.fit(pop.size = pop, years = yrs)
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("linear"))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("linear", "exponential","quadratic"))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("linear", "exponential"), project.years = c(1960, 2005))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("linear", "exponential"), project.years = c(1973, 2005))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("quadratic", "general_logistic"))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("general_logistic"))
-pop.decline.fit(pop.size = pop, years = yrs, 
-models = c("quadratic"), project.years = c(1960, 2050))
 
-## Another examples, with less observations (warning or no model fit below 3 observations)
-pop.decline.fit(pop.size = c(10000, 8200, 6000), years = c(1970, 1985, 2000), 
-models = "all", project.years = 2030)
+## Fitting data with different models and settings
+# All models, without and with the plot of the model fit to data
+pop.decline.fit(pop.data, plot.fit = FALSE)
+pop.decline.fit(pop.data)
 
-\dontrun{
-pop.decline.fit(pop.size = c(10000, 6000), years = c(1970, 2000))
-}
+# Different model combinations
+pop.decline.fit(pop.data, models = c("exponential","quadratic"))
+pop.decline.fit(pop.data, models = c("quadratic", "exponential"))
+
+# Projecting/interpolating population size estimates
+pop.decline.fit(pop.data, models = "exponential", project.years = c(1960, 2005))
 
 
 }

@@ -5,16 +5,23 @@
 \title{Assess IUCN Criterion B}
 \usage{
 criterion_B(
-  x,
+  x = NULL,
+  AOO = NULL,
+  EOO = NULL,
+  locations = NULL,
+  severe.frag = NULL,
+  subpops = NULL,
+  decline = NULL,
   EOO.threshold = c(20000, 5000, 100),
   AOO.threshold = c(2000, 500, 10),
   Loc.threshold = c(10, 5, 1),
-  SubPop = TRUE,
-  Resol_sub_pop = 5,
+  comp_subpop = TRUE,
+  comp_severe.frag = FALSE,
+  resol_sub_pop = 5,
   cell_size_locations = 10,
   method_locations = "fixed_grid",
   method_polygons = "no_more_than_one",
-  Rel_cell_size = 0.05,
+  rel_cell_size = 0.05,
   threat_list = NULL,
   names_threat = NULL,
   threat_weight = NULL,
@@ -26,6 +33,7 @@ criterion_B(
   exclude.area = FALSE,
   cell_size_AOO = 2,
   nbe.rep.rast.AOO = 0,
+  threshold_severe = 50,
   parallel = FALSE,
   show_progress = TRUE,
   NbeCores = 2,
@@ -39,25 +47,51 @@ criterion_B(
 \item{x}{a \code{dataframe} or an object of class \code{spgeoIN} see
 \url{https://github.com/azizka/speciesgeocodeR}. See Details}
 
-\item{EOO.threshold}{numeric vector indicating the thresholds used to categorize EOO in IUCN categories}
+\item{AOO}{a vector of species AOO, if available}
 
-\item{AOO.threshold}{numeric vector indicating the thresholds used to categorize AOO in IUCN categories}
+\item{EOO}{a vector of species EOO, if available}
 
-\item{Loc.threshold}{numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories}
+\item{locations}{a vector of species number of locations, if available}
 
-\item{SubPop}{logical if the number of sub-populations should be computed. By default is TRUE}
+\item{severe.frag}{a vector indicating if species is severely fragmented, if
+available}
 
-\item{Resol_sub_pop}{a value defining the radius of the circles around each
+\item{subpops}{a vector of the number of subpopulations (sensu IUCN), if
+available}
+
+\item{decline}{a vector providing the status of the species continuing
+decline in EOO, AOO, habitat, locations or subpopulations or population
+size (i.e. condition 'b') to be passed on to function \code{cat_criterion_b()}.
+If different of 'Decreasing', the condition 'b' of criterion B will not be
+met.}
+
+\item{EOO.threshold}{numeric vector indicating the thresholds used to
+categorize EOO in IUCN categories}
+
+\item{AOO.threshold}{numeric vector indicating the thresholds used to
+categorize AOO in IUCN categories}
+
+\item{Loc.threshold}{numeric vector indicating the thresholds used to
+categorize the number of locations in IUCN categories}
+
+\item{comp_subpop}{logical if the number of sub-populations should be
+computed. By default is TRUE}
+
+\item{comp_severe.frag}{logical if severe fragmentation should be
+computed. By default is FALSE}
+
+\item{resol_sub_pop}{a value defining the radius of the circles around each
 occurrence (in kilometres) or data frame vector containing a column 'tax'
 with the taxa names and a column 'radius' with the species-specific radius
 (in kilometre as well). Typically, this data frame is the output of
 \code{ConR} function \code{subpop.radius}.}
 
-\item{cell_size_locations}{numeric, value indicating the grid size in kilometres used for estimating the number of location. By default, equal to 10}
+\item{cell_size_locations}{numeric, value indicating the grid size in
+kilometres used for estimating the number of location. By default, equal to 10}
 
 \item{method_locations}{string, indicating the method used for estimating the number of locations. See Details
 \itemize{
-\item \code{"fixed_grid"} (the default)
+\item \code{"fixed_grid"} (by default)
 \item \code{"sliding_scale"}
 }}
 
@@ -67,10 +101,15 @@ with the taxa names and a column 'radius' with the species-specific radius
 \item \code{"grid"}: a grid of \code{cell_size_locations} size will be used to estimate the number of location within polygons
 }}
 
-\item{Rel_cell_size}{numeric, if \code{method_locations="sliding_scale"}, \code{cell_size_locations} is ignored
-and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method_locations="sliding_scale"},
+\code{cell_size_locations} is ignored and the resolution is given by the maximum
+distance separating two occurrences multiplied by \code{rel_cell_size}. By
+default, it is 0.05}
 
-\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting threats. If provided, this will be taken into account for calculating number of location (see Details and \code{method_polygons}). By default, no shapefile is provided}
+\item{threat_list}{list or sfc objects POLYGON or MULTIPOLYGON documenting
+threats. If provided, this will be taken into account for calculating
+number of location (see Details and \code{method_polygons}). By default, no
+shapefile is provided}
 
 \item{names_threat}{character vector, indicating names of threats, optional}
 
@@ -103,17 +142,24 @@ in kilometres used for estimating Area of Occupancy.}
 raster with random starting position used for estimating the AOO. If 0 but
 some translation of the raster are still done.}
 
+\item{threshold_severe}{numeric of one value indicates the threshold
+to identify severe fragmentation. By default is 50}
+
 \item{parallel}{logical, whether running in parallel. By default, it is FALSE}
 
-\item{show_progress}{logical, whether a bar showing progress in computation should be shown. By default, it is TRUE}
+\item{show_progress}{logical, whether a bar showing progress in computation
+should be shown. By default, it is TRUE}
 
-\item{NbeCores}{integer, register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{integer, register the number of cores for parallel execution.
+By default, it is 2}
 
 \item{proj_type}{string or numeric}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 
-\item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment}
+\item{DrawMap}{logical, by default is FALSE, if TRUE, a png map is created for each species
+in a directory of the working environment}
 
 \item{add.legend}{logical, whether legend should be added to map}
 }
@@ -126,9 +172,6 @@ for criterion B.
 Preliminary assessment of species conservation status following
 IUCN Criterion B, which is based on species geographic distribution (i.e. extent
 of occurrence - EOO, and area of occupancy, AOO)
-}
-\details{
-The function ...
 }
 \references{
 IUCN 2019. Guidelines for Using the IUCN Red List Categories and

@@ -7,7 +7,10 @@
 #' @param nbe_rep integer
 #' @param export_shp logical
 #' @param proj_type character string
-#' @param Rel_cell_size numeric, if `method ="sliding_scale"`, `Cell_size_locations` is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by `Rel_cell_size`. By default, it is 0.05
+#' @param rel_cell_size numeric, if `method ="sliding_scale"`,
+#'   `Cell_size_locations` is ignored and the resolution is given by the maximum
+#'   distance separating two occurrences multiplied by `rel_cell_size`. By
+#'   default, it is 0.05
 #' @param method character string
 #' 
 #' @return a list
@@ -21,7 +24,7 @@ locations.estimation <- function(coordEAC,
                                  export_shp = FALSE,
                                  proj_type = proj_type,
                                  method = "fixed_grid",
-                                 Rel_cell_size = 0.05
+                                 rel_cell_size = 0.05
                                  
 ) {
   
@@ -33,7 +36,7 @@ locations.estimation <- function(coordEAC,
       
       pairwise_dist <- stats::dist(coordEAC[, 1:2],  upper = F)
       
-      cell_size <- max(pairwise_dist) * Rel_cell_size / 1000
+      cell_size <- max(pairwise_dist) * rel_cell_size / 1000
       
     } else{
       

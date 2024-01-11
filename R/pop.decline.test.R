@@ -59,44 +59,67 @@
 #' yrs = c(1970, 1973, 1975, 1980, 1985, 1987, 1990)
 #' 
 #' ## Fitting data with different models and setting
-#' best.model = pop.decline.fit(pop.size = pop, years = yrs, 
-#' models = c("linear","exponential","logistic"))
+#' best.model = pop.decline(pop.size = pop, years = yrs, 
+#'  models = c("linear","exponential","logistic"), by.taxon = TRUE)
 #' pop.decline.test(x = best.model, assess.year = 1990)
 #' 
-#' best.model = pop.decline.fit(pop.size = pop, years = yrs, models = c("general_logistic"))
+#' best.model = pop.decline(pop.size = pop, years = yrs, 
+#'  models = c("general_logistic"), by.taxon = TRUE)
 #' pop.decline.test(x = best.model, assess.year = 1990)
 #' 
-#' best.model = pop.decline.fit(pop.size = pop, years = yrs, models = c("quadratic"))
+#' best.model = pop.decline(pop.size = pop, years = yrs, 
+#'  models = c("quadratic"), by.taxon = TRUE)
 #' pop.decline.test(x = best.model, assess.year = 1990)
 #' 
-#' best.model = pop.decline.fit(pop.size = pop, years = yrs, models = c("piecewise"))
+#' best.model = pop.decline(pop.size = pop, years = yrs, 
+#'  models = c("piecewise"), by.taxon = TRUE)
 #' pop.decline.test(x = best.model, assess.year = 1990)
 #' 
 pop.decline.test <- function(x, 
                             best.name = NULL,
                             assess.year = NULL) {
   
+  if(is.null(x))
+    stop("Please provide an non-empty object with model fits and predictions")
+  
+  if(length(x) == 1 & lengths(x)[1] > 1)
+    x <- x[[1]]
+  
+  if(!"best.model" %in% names(x))
+    stop("The input object does not contain the element with the model fits")
+  
+  if(!"predictions" %in% names(x))
+    stop("The input object does not contain the element with the model predictions")
+  
   if(is.null(best.name)) {
     
-    best.name <- attributes(x$best.model)$best.model.name[1]
+    #best.name <- attributes(x$best.model)$best.model.name[1]
+    best.name <- x$best.model
     
-    if(is.null(best.name)) {
-      
+    if(is.null(best.name))
       stop("Please provide one of the name of the model selected to fit population data")
       
-    }
   }
   
-  params <- stats::coef(x$best.model)
-  ys <- x$data$Year[1:which.min(assess.year - x$data$Year)] - 
-          min(x$data$Year[1:which.min(assess.year - x$data$Year)], na.rm = TRUE) 
-  CI <- suppressMessages(
-          try(stats::confint(x$best.model), TRUE))
+  if(is.null(assess.year)) {
+    
+    assess.year <- max(x$predictions$years, na.rm = TRUE)
+    
+    if(is.null(assess.year))
+      stop("Please provide the years of assessment")
+    
+  }
+  
+  params <- stats::coef(x$model.fit)
+  ys <- x$predictions$years[1:which.min(assess.year - x$predictions$years)] - 
+          min(x$predictions$years[1:which.min(assess.year - x$predictions$years)], 
+              na.rm = TRUE) 
+  CI <- suppressWarnings(suppressMessages(
+          try(stats::confint(x$model.fit), TRUE)))
   
   if(class(CI)[1] == "try-error") {
     CI <- suppressMessages(
-      # try(stats::confint(x$best.model), TRUE))
-      try(stats::confint(x$best.model, "b"), TRUE))
+      try(stats::confint(x$model.fit, "b"), TRUE))
     
     if(class(CI)[1] != "try-error")
       CI <- t(as.matrix(CI))
@@ -106,15 +129,17 @@ pop.decline.test <- function(x,
   if(class(CI)[1] == "try-error") {
     
     seq.ys <- seq(min(ys),  max(ys), by = 1)
-    preds <- stats::predict(x$best.model, newdata = data.frame(ys = seq.ys))
+    preds <- stats::predict(x$model.fit, newdata = data.frame(ys = seq.ys))
     mod <- stats::lm(I(diff(preds) / head(preds, 1)) ~ 1)
     ci.diff <- suppressMessages(stats::confint(mod))
     
     if(stats::coef(mod) < 0)
-      test <- if(ci.diff[1]<0 & ci.diff[2]<0) "decrease" else "not.decreasing"
+      test <- if(ci.diff[1]<0 & 
+                 ci.diff[2]<0) "decrease" else "not.decreasing"
     
     if(stats::coef(mod) >= 0)
-      test <- if(ci.diff[1]>0 & ci.diff[2]>0) "increase" else "not.increasing"
+      test <- if(ci.diff[1]>0 & 
+                 ci.diff[2]>0) "increase" else "not.increasing"
     
     
   } else {
@@ -128,8 +153,9 @@ pop.decline.test <- function(x,
         CI1 <- CI
         while(any(is.na(CI1["b",]))) {
           # CI1 <- stats::confint(x$best.model, level = p.values[i])
-          CI1 <- 
-            try(stats::confint(x$best.model, "b", level = p.values[i]), TRUE)
+          p.val.i <- p.values[i]
+          CI1 <- suppressMessages(
+            try(stats::confint(x$model.fit, "b", level = p.val.i), TRUE))
           
           if(class(CI1)[1] != "try-error") {
             CI1 <- t(as.matrix(CI1))
@@ -139,26 +165,32 @@ pop.decline.test <- function(x,
         }
         
         if(is.na(CI["b",][1])) 
-          CI["b",][1] <- CI1["b",][1]
+          CI["b",][1] <- CI1["b",][1] * p.val.i/0.95
+          # CI["b",][1] <- CI1["b",][1]
         
         if(is.na(CI["b",][2])) 
-          CI["b",][2] <- CI1["b",][2]
+          CI["b",][2] <- CI1["b",][2] * p.val.i/0.95
+          # CI["b",][2] <- CI1["b",][2] * p.val.i0.95
         
-      }
+    }
       
       if(params["b"] < 0)
-        test <- if(CI["b",][1]<0 & CI["b",][2]<0) "signif.decline" else "non.signif.decline"
+        test <- if(CI["b",][1]<0 & 
+                   CI["b",][2]<0) "signif.decline" else "non.signif.decline"
       
       if(params["b"] >= 0)
-        test <- if(CI["b",][1]>0 & CI["b",][2]>0) "signif.increase" else "non.signif.increase"
+        test <- if(CI["b",][1]>0 & 
+                   CI["b",][2]>0) "signif.increase" else "non.signif.increase"
       
     }
     
     if(best.name == "quadratic") { 
       
       f <- function(x) params["a"] + params["b"]*x + x*I(params["c"]^2)
-      decrease <- FuzzyNumbers.Ext.2::is.decreasing(fun = f, x.bound = range(ys), step = 1)
-      increase <- FuzzyNumbers.Ext.2::is.increasing(fun = f, x.bound = range(ys), step = 1)
+      decrease <- 
+        FuzzyNumbers.Ext.2::is.decreasing(fun = f, x.bound = range(ys), step = 1)
+      increase <- 
+        FuzzyNumbers.Ext.2::is.increasing(fun = f, x.bound = range(ys), step = 1)
       
       if(params["b"] < 0 & decrease)
         test <- if(CI["b",][1]<0 & CI["b",][2]<0) "signif.decline" else "non.signif.decline"
@@ -175,7 +207,7 @@ pop.decline.test <- function(x,
     if(best.name == "piecewise") { 
       
       ys.groups <- findInterval(ys, CI[,1])
-      params.CI <- segmented::slope(x$best.model)[[1]]
+      params.CI <- suppressWarnings(segmented::slope(x$model.fit)[[1]])
       tests <- vector("list", length(unique(ys.groups)))
       periods <- vector("list", length(unique(ys.groups)))
       
@@ -183,7 +215,9 @@ pop.decline.test <- function(x,
         
         for(i in 1:length(unique(ys.groups))) {
           grp <- unique(ys.groups)[i]
-          periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
+          periods[[i]] <- paste0(" (",
+                                 paste0(range(x$predictions$years[ys.groups %in% grp]), 
+                                        collapse="-"), ")")
           
           if(params.CI[,1][i] < 0)
             tests[[i]] <- "decrease"
@@ -195,15 +229,19 @@ pop.decline.test <- function(x,
         
         for(i in 1:length(unique(ys.groups))) {
           grp <- unique(ys.groups)[i]
-          periods[[i]] <- paste0(" (",paste0(range(x$data$Year[ys.groups %in% grp]), collapse="-"), ")")
+          periods[[i]] <- paste0(" (",
+                                 paste0(range(x$predictions$years[ys.groups %in% grp]), 
+                                        collapse="-"), ")")
           
           if(params.CI[,1][i] < 0)
             tests[[i]] <- 
-              if(params.CI[,4][i]<0 & params.CI[,5][i]<0) "signif.decline" else "non.signif.decline"
+              if(params.CI[,4][i]<0 & 
+                 params.CI[,5][i]<0) "signif.decline" else "non.signif.decline"
           
           if(params.CI[,1][i] > 0)
             tests[[i]] <- 
-              if(params.CI[,4][i]>0 & params.CI[,5][i]>0) "signif.increase" else "non.signif.increase"
+              if(params.CI[,4][i]>0 & 
+                 params.CI[,5][i]>0) "signif.increase" else "non.signif.increase"
         }
       }
       

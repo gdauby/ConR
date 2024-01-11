@@ -7,14 +7,14 @@
 activate_parallel(parallel = FALSE, NbeCores = 2)
 }
 \arguments{
-\item{XY}{data.frame}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
-
-\item{proj_type}{crs}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 }
 \description{
-Activate paralle processing
+Activate parallel processing
 }
 \author{
 Gilles Dauby, \email{gildauby@gmail.com}

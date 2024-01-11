@@ -12,7 +12,7 @@
 #'   category ('main.criteria'). It also returns the auxiliary category provided
 #'   by other criteria ('aux.criteria'), separated by a ';'
 #' 
-#' @details The definiton of the main category of threat, follows the
+#' @details The definition of the main category of threat, follows the
 #'   recommendations of IUCN (2019) that states "Only the criteria for the
 #'   highest category of threat that the taxon qualifies for should be listed".
 #'   Therefore, the consensus category is the highest category of threat among
@@ -40,10 +40,21 @@
 #' @export cat_mult_criteria
 cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   
+  assess.df$tmp.order.plantr <- 1:dim(assess.df)[1]
   tmp <- assess.df
   tax <- names(tmp)[1]
-  n.crits <- dim(tmp)[2]
-  assess.df$order <- 1:dim(tmp)[1]
+  
+  possible_crits <- c(LETTERS[1:5], paste0(LETTERS[1], 1:4),
+                     paste0(rep(LETTERS[2:4], each = 2), 1:2),
+                     paste0("category_", LETTERS[1:5]), "D2.Loc", "D.AOO")
+  if (!any(names(tmp) %in% possible_crits))
+    stop("Please provide a data frame with at least one of the following column names: ", 
+         paste0(possible_crits, collapse = ", "))
+  col.name.df <- names(tmp)[names(tmp) %in% possible_crits]
+  tmp0 <- tmp[, names(tmp) %in% possible_crits]
+  n.crits <- dim(tmp0)[2]
+  
+  tmp <- cbind.data.frame(tax = tmp[[1]], tmp0)
   
   ## Establishing an hierarchy of data availability
   hier <- c("Observed","Estimated","Projected","Inferred","Suspected")
@@ -92,16 +103,20 @@ cat_mult_criteria <- function(assess.df = NULL, evidence.df = NULL){
   tmp$aux.criteria <- gsub(": \\+", ": ", tmp$aux.criteria, perl = TRUE)
   tmp$aux.criteria <- gsub("\\+$", "", tmp$aux.criteria, perl = TRUE)
   tmp$aux.criteria <- gsub("\\+;", ";", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("category_B", "B1+B2", tmp$aux.criteria, perl = TRUE)
+  tmp$aux.criteria <- gsub("category_C", "C1+C2", tmp$aux.criteria, perl = TRUE)
   
   tmp$main.criteria[is.infinite(as.double(tmp$category))] <- ""
   tmp$category[is.infinite(as.double(tmp$category))] <- ""
   tmp$category <- stringr::str_replace_all(tmp$category,  rpl.cds)
+  tmp$category <- gsub("category_B", "B1+B2", tmp$category, perl = TRUE)
+  tmp$category <- gsub("category_C", "C1+C2", tmp$category, perl = TRUE)
   
   #Merging with the entry data.frame
   res <- merge(assess.df, tmp[,c(tax,"category","main.criteria","aux.criteria")], 
                by = tax)
-  res <- res[order(res$order),]
-  res <- res[,-which(names(res) %in% "order")]
+  res <- res[order(res$tmp.order.plantr),]
+  res <- res[,-which(names(res) %in% "tmp.order.plantr")]
   
   return(res)
 }

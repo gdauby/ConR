@@ -11,21 +11,16 @@
 #'
 #' @param XY a data frame containing the geographical coordinates for each taxon
 #'   (see Details).
-#' @param Resol_sub_pop a value defining the radius of the circles around each
+#' @param resol_sub_pop a value defining the radius of the circles around each
 #'   occurrence (in kilometres) or data frame vector containing a column 'tax' 
 #'   with the taxa names and a column 'radius' with the species-specific radius
 #'   (in kilometre as well). Typically, this data frame is the output of
 #'   ```ConR``` function ```subpop.radius```.
 #' @param export_shp logical. Whether the resulting shapefiles should be
 #'   exported. FALSE by default.
-#' @param parallel logical. Whether compute should run in parallel. FALSE by
-#'   default.
-#' @param NbeCores integer. Number of cores for parallel computation. Default to
-#'   2.
-#' @param show_progress logical. Whether a bar showing progress in computation
-#'   should be shown. TRUE by default.
-#' @param proj_type character string or numeric or object of CRS class, by
-#'   default is "cea"
+#' @inheritParams activate_parallel
+#' @param show_progress logical. Whether progress informations should displayed. TRUE by default
+#' @inheritParams proj_crs
 #' 
 #' @details 
 #' `XY` as a [data.frame][base::data.frame()] should have the following structure:
@@ -57,14 +52,14 @@
 #' @examples 
 #' data(dataset.ex)
 #'
-#' subpop.comp(dataset.ex, Resol_sub_pop = 5)
+#' subpop.comp(dataset.ex, resol_sub_pop = 5)
 #' rad.df <- data.frame(
 #'     tax = unique(dataset.ex$tax),
 #'     radius = seq(3,13, by=2),
 #'     stringsAsFactors = FALSE
 #'   )
-#' subpop.comp(dataset.ex, Resol_sub_pop = rad.df)
-#' subpop.comp(dataset.ex, Resol_sub_pop = rad.df, export_shp = TRUE)
+#' subpop.comp(dataset.ex, resol_sub_pop = rad.df)
+#' subpop.comp(dataset.ex, resol_sub_pop = rad.df, export_shp = TRUE)
 #' 
 #' @importFrom utils setTxtProgressBar
 #' @importFrom parallel stopCluster
@@ -72,25 +67,25 @@
 #' @export subpop.comp
 #' 
 subpop.comp <- function(XY, 
-                        Resol_sub_pop = NULL, 
+                        resol_sub_pop = NULL, 
                         proj_type = "cea",
                         export_shp = FALSE,
                         parallel = FALSE,
                         show_progress = TRUE,
                         NbeCores = 2) {
   
-  if (is.null(Resol_sub_pop)) 
-    stop("Radius is missing, please provide a value for all species or a data frame with species-specific values")
+  if (is.null(resol_sub_pop)) 
+    stop(" is missing, please provide a value for all species or a data frame with species-specific values")
   
   proj_type <- 
     proj_crs(proj_type = proj_type)
   
-  if ("data.frame" %in% class(Resol_sub_pop)) {
-    XY <- merge(XY, Resol_sub_pop, 
+  if ("data.frame" %in% class(resol_sub_pop)) {
+    XY <- merge(XY, resol_sub_pop, 
                 by = "tax", all.X = TRUE, sort = FALSE)
     XY <- XY[,c("ddlat", "ddlon", "tax", "radius")]
   } else {
-    XY$radius <- Resol_sub_pop   
+    XY$radius <- resol_sub_pop   
   }
 
   list_data <-
@@ -99,7 +94,7 @@ subpop.comp <- function(XY,
   cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
   `%d%` <- c_par(parallel = parallel)
   
-  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data))
+  pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(list_data[[1]]))
   opts <- pro_res$opts
   pb <- pro_res$pb
   
@@ -116,7 +111,7 @@ subpop.comp <- function(XY,
       res <- 
         subpop.estimation(
           XY = list_data[[1]][[x]], 
-          Resol_sub_pop = unique(list_data[[1]][[x]]$radius),
+          resol_sub_pop = unique(list_data[[1]][[x]]$radius),
           proj_type = proj_type,
           export_shp = export_shp
         )

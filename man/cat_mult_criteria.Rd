@@ -23,7 +23,7 @@ Provide the consensus IUCN category based on multiples IUCN
 sub-criteria.
 }
 \details{
-The definiton of the main category of threat, follows the
+The definition of the main category of threat, follows the
 recommendations of IUCN (2019) that states "Only the criteria for the
 highest category of threat that the taxon qualifies for should be listed".
 Therefore, the consensus category is the highest category of threat among

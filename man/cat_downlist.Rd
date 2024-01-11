@@ -13,14 +13,14 @@ cat_downlist(cats = NULL, down.by = 1, dd = FALSE, sign = TRUE)
 Default to 1.}
 
 \item{dd}{logical. Should the Data Deficient (DD) category be included in the
-downlisting? Defaut to FALSE.}
+downlisting? Default to FALSE.}
 
 \item{sign}{logical. Should the degrees sign be indicated in the downlisted
 category. Default to TRUE.}
 }
 \description{
 Perform the downlisting of threat categories which is often
-necessary for regional conservation assessmentes (IUCN 2012).
+necessary for regional conservation assessments (IUCN 2012).
 }
 \details{
 For regional conservation assessments, the IUCN recommends an
@@ -29,12 +29,12 @@ the same taxon in neighbouring regions on the regional population", and
 thus to the possibility of a possible rescue effect (IUCN 2012).
 
 Although the IUCN (2012) considers the exceptional possibility of
-uplisting, the function only performs downliting of the categories of
+uplisting, the function only performs downlisting of the categories of
 threat. Downlisting normally is a one-step change in the category (i.e.
 from EN to VU), but this can be controlled by the argument \code{down.by}
 (default to 1).
 
-By default, the Data Deficient category is excluded from the donwlisting.
+By default, the Data Deficient category is excluded from the downlisting.
 The Least Concern category remains unaltered as well.
 
 Note that "if it is unknown whether or not extra-regional populations

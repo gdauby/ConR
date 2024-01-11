@@ -5,61 +5,71 @@
 #' "LC or NT" (the standard output string in ConR).
 #'
 #' @param cats a character string containing the Red List categories.  
-#' @param EOO numeric vector with species extent of occurrence - EOO (i.e. sub-criterion B1)
-#' @param AOO numeric vector with species area of occupancy - AOO (i.e. sub-criterion B2)
-#' @param decline string vector providing the status of the species continuing decline in EOO, AOO, habitat,
-#'   locations or subpopulations or population size (i.e. condition 'b'). 
-#' @param pop.reduction numeric vector with the estimated percentage of population 
-#'   reduction in the last three generations.
-#' @param pop.size numeric vector with the mean estimate of population size in number 
-#'   of mature individuals.
-#' @param pop.size.low numeric vector with the lower bound of the confidence interval 
-#'   of the population size in number of mature individuals.
-#' @param locations numeric vector with the number of locations where the species occur (i.e. condition 'a')
-#' @param sever.frag numeric vector with the proportion AOO which is in patches that are separated from other patches by a large distance.
-#' @param subpop numeric vector with the number of sub-populationsfor the species
+#' @param EOO numeric vector with species extent of occurrence - EOO (i.e.
+#'   sub-criterion B1)
+#' @param AOO numeric vector with species area of occupancy - AOO (i.e.
+#'   sub-criterion B2)
+#' @param decline string vector providing the status of the species continuing
+#'   decline in EOO, AOO, habitat, locations or subpopulations or population
+#'   size (i.e. condition 'b').
+#' @param pop.reduction numeric vector with the estimated percentage of
+#'   population reduction in the last three generations.
+#' @param pop.size numeric vector with the mean estimate of population size in
+#'   number of mature individuals.
+#' @param pop.size.low numeric vector with the lower bound of the confidence
+#'   interval of the population size in number of mature individuals.
+#' @param locations numeric vector with the number of locations where the
+#'   species occur (i.e. condition 'a')
+#' @param sever.frag numeric vector with the proportion AOO which is in patches
+#'   that are separated from other patches by a large distance.
+#' @param subpop numeric vector with the number of sub-populations for the
+#'   species
 #' @param ext.fluct numeric vector with the mean order of magnitude of the
 #'   differences between population minima and maxima.
-#' @param subcriteria  character string with the sub-criteria used to perform the assessments (e.g. "A1")
+#' @param subcriteria  character string with the sub-criteria used to perform
+#'   the assessments (e.g. "A1")
 #' @param many.more numeric value to numerically express what "many more" means.
-#' @param extra.case logical. Should the extra case to detected probable "LC" be used?
-#'   Default to TRUE.
+#' @param extra.case logical. Should the extra case to detected probable "LC" be
+#'   used? Default to TRUE.
 #' 
-#' @return A vector of the same length as ```cats``` with NT separated from
-#'  the LC category. If the category provided is different than "LC" or "LC or NT"
-#'  the function returns the same category.
+#' @return A vector of the same length as ```cats``` with NT separated from the
+#'   LC category. If the category provided is different than "LC" or "LC or NT"
+#'   the function returns the same category.
 #' 
-#' @details This function automatically identify the Near Threatened (NT) category
-#'  among the "LC or NT" general category. A species qualify as NT if it is close 
-#'  to qualifying for the Vulnerable category (IUCN, 2019).
+#' @details 
+#' 
+#'  This function automatically identify the Near Threatened (NT) category among
+#'  the "LC or NT" general category. A species qualify as NT if it is close to
+#'  qualifying for the Vulnerable category (IUCN, 2019).
 #'  
-#'  The function try to translate the list of cases where NT applies and does not 
-#'  applies (IUCN 2019, pp 76-77). Not all the cases listed were translated here,
-#'  particularly those based on uncertainties of the estimates. To perform this 
-#'  translation some interpretation, adaptation or generalization was carried out, 
-#'  namely:
+#'  The function try to translate the list of cases where NT applies and does
+#'  not applies (IUCN 2019, pp 76-77). Not all the cases listed were translated
+#'  here, particularly those based on uncertainties of the estimates. To perform
+#'  this translation some interpretation, adaptation or generalization was
+#'  carried out, namely:
 #'  - "Population has declined by an estimated 20 - 25% in the last three generations: pop. reduction between 20 and 30%;
 #'  - "Population has declined by an estimated 10%": pop. reduction >10%;
 #'  - "many more": by default we use triple to numerically express many more;
 #'  - "(...) has about 15,000/1,500 mature individuals": mature individuals between 10000 and 16000/1000 and 1600, respectively; 
 #'  - "The population has more than 2,000 mature individuals": pop. size <2000 & 
 #'  
-#'  For many of the cases listed by IUCN (2019, pp 76 - 77), there is a minimum 
+#'  For many of the cases listed by IUCN (2019, pp 76 - 77), there is a minimum
 #'  number of arguments that should be provided so that the NT criteria can be
-#'  assigned. For instance, if only ```EOO``` and ```AOO``` is given no species will 
-#'  be classified as NT and the function will return "LC" for all "LC" or "LC or NT" 
-#'  provided as an input. On the other hand, if only ```pop.size``` species can be
-#'  classified as "NT". Please see all the IUCN cases for more details on this 
-#'  (IUCN 2019, pp 76-77).   
+#'  assigned. For instance, if only ```EOO``` and ```AOO``` is given no species
+#'  will be classified as NT and the function will return "LC" for all "LC" or
+#'  "LC or NT" provided as an input. On the other hand, if only ```pop.size```
+#'  species can be classified as "NT". Please see all the IUCN cases for more
+#'  details on this (IUCN 2019, pp 76-77).
 #'  
-#'  We added one extra case to the list of cases from IUCN (2019) where species should
-#'  be classified as "LC" and not "NT". This case comes from an interpretation of the 
-#'  IUCN (2019) guidelines and it is unoficially used by the IUCN/SSC Global Tree Specialist 
-#'  Group as an indication of low probability of triggering a threatened or NT categories,
-#'  if the species is not cited as threatened based on other criteria (e.g. uses and threats):
-#'  - EOO > 30000 km2 or AOO > 3000 km2, and number of locations > 30. This extra case can
-#'  be excluded from the separation between "LC" and "NT" by setting the argument 
-#'  ```extra.case``` to FALSE.
+#'  We added one extra case to the list of cases from IUCN (2019) where species
+#'  should be classified as "LC" and not "NT". This case comes from an
+#'  interpretation of the IUCN (2019) guidelines and it is unofficially used by
+#'  the IUCN/SSC Global Tree Specialist Group as an indication of low
+#'  probability of triggering a threatened or NT categories, if the species is
+#'  not cited as threatened based on other criteria (e.g. uses and threats):
+#'  - EOO > 30000 km2 or AOO > 3000 km2, and number of locations > 30. This 
+#'  extra case can be excluded from the separation between "LC" and "NT" by 
+#'  setting the argument ```extra.case``` to FALSE.
 #'  
 #' @author Renato A. Ferreira de Lima
 #'

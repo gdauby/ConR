@@ -6,7 +6,7 @@
 \usage{
 criterion_D(
   pop.size = NULL,
-  Name_Sp = NULL,
+  name_sp = NULL,
   AOO = NULL,
   n.Locs = NULL,
   prop.mature = NULL,
@@ -22,7 +22,7 @@ criterion_D(
 subpopulations) containing the population sizes (e.g. number of mature
 individuals).}
 
-\item{Name_Sp}{a vector containing the name of the taxa to be assessed.
+\item{name_sp}{a vector containing the name of the taxa to be assessed.
 Default to "Species 1", "Species 2", ..., "Species n", where n is the
 number of taxa.}
 
@@ -78,7 +78,7 @@ By default, the proportion of mature individuals in the total population proport
 is taken as 1, but the user can provide one proportion for all species or species-
 specific proportions.
 
-Currenlty, the function does not supports data separated by subpopulation.
+Currently, the function does not supports data separated by subpopulation.
 }
 \examples{
 

@@ -1,7 +1,8 @@
 
 #' @title Area of occupancy
 #'
-#' @description Compute areas of occupancy (AOO) for multiple taxa in square kilometers
+#' @description Compute areas of occupancy (AOO) for multiple taxa in square
+#'   kilometers
 #'
 #' @author Gilles Dauby \email{gilles.dauby@@ird.fr}
 #'
@@ -11,14 +12,12 @@
 #' @param nbe.rep.rast.AOO numeric, by default is 0. Indicate the number of
 #'   raster with random starting position used for estimating the AOO. If 0 but
 #'   some translation of the raster are still done.
-#' @param parallel logical, by default is FALSE. Whether running in parallel.
-#' @param NbeCores integer, by default is 2. Register the number of cores for
-#'   parallel execution. Only used if parallel is TRUE.
-#' @param show_progress logical, by default is TRUE. Whether a progress bar
-#'   during computation is shown.
+#' @inheritParams activate_parallel
+#' @param show_progress logical. Whether progress informations should displayed.
+#'   TRUE by default
 #' @param export_shp logical, by default is FALSE. Whether a shapefile of
 #'   occupied cells should be exported.
-#' @param proj_type character or numeric, by default is "cea", see Details.
+#' @inheritParams proj_crs
 #' 
 #' @details 
 #' # Input data
@@ -48,7 +47,7 @@
 #' See `proj_type`
 #' 
 #' 
-#' @references Gaston & Fuller 2009 The sizes of species'geographic ranges,
+#' @references Gaston & Fuller 2009 The sizes of species' geographic ranges,
 #'   Journal of Applied Ecology, 49 1-9
 #'
 #' @return 
@@ -66,9 +65,9 @@
 #'
 #'
 #'# This would estimate AOO for all taxa by overlaying randomly a 
-#'# grid 10 times. For each taxa, the minimum value is kept
+#'# grid 3 times. For each taxa, the minimum value is kept
 #'
-#' AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 10)
+#' AOO <- AOO.computing(dataset.ex, nbe.rep.rast.AO = 3)
 #'
 #'
 #' @importFrom utils txtProgressBar setTxtProgressBar
@@ -153,7 +152,7 @@ AOO.computing <- function(XY,
     
     if(parallel) parallel::stopCluster(cl)
     if(show_progress) close(pb)
-
+    
     res <- unlist(output[names(output) != "spatial"])
     
     res_df[res_df$tax %in% names(res), 2] <-
@@ -164,11 +163,11 @@ AOO.computing <- function(XY,
       "AOO could not computed because grid cells would overlap with antimeridian"
     
     if (export_shp) {
-
+      
       shapes <- output[names(output) == "spatial"]
       shapes <- do.call('rbind', shapes)
       row.names(shapes) <- 1:nrow(shapes)
-
+      
     }
     
   } else {
@@ -189,8 +188,8 @@ AOO.computing <- function(XY,
 
 
 #' @importFrom foreach %dopar% %do% foreach
-#' @keywords intenal
-#' @export
+#' @keywords internal
+#' 
 AOO.estimation <- function(coordEAC,
                            cell_size = 2,
                            nbe_rep = 0,

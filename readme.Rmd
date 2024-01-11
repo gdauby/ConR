@@ -77,6 +77,8 @@ following code:
 ?EOO.sensitivity
 ```
 
+A mode detailed manual on how to use this package is available [here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.pdf).
+
 
 ## Funding
 
@@ -90,9 +92,9 @@ The development of this package was supported by:
 
 ## Citation
 
-G. Dauby & R. A. F. de Lima (2022). ConR: Computation of Parameters Used in
+G. Dauby & R. A. F. de Lima (2023). ConR: Computation of Parameters Used in
 Preliminary Assessment of Species Conservation Status. R package (version
-2.0.0).
+2.1.0).
 
 ## See Also
 

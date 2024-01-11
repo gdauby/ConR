@@ -4,19 +4,18 @@
 \alias{subpop.estimation}
 \title{Internal function}
 \usage{
-subpop.estimation(XY, Resol_sub_pop, export_shp = FALSE, proj_type = "cea")
+subpop.estimation(XY, resol_sub_pop, export_shp = FALSE, proj_type = "cea")
 }
 \arguments{
 \item{XY}{data.frame with first two columns are projected coordinates (numeric)}
 
-\item{Resol_sub_pop}{numeric. Defines the radius of the circles
+\item{resol_sub_pop}{numeric. Defines the radius of the circles
 around each occurrence, in kilometres.}
 
 \item{export_shp}{logical. Whether the resulting shapefiles should be
 exported. FALSE by default.}
 
-\item{proj_type}{character string or numeric or object of CRS class, by
-default is "cea"}
+\item{proj_type}{string or numeric}
 }
 \description{
 Subpopulations estimation

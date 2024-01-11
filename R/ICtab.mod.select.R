@@ -27,7 +27,7 @@
 #'   For the process of selecting the best model, we followed some basic steps.
 #'   By default, if two or more models had delta-AIC smaller than the cutoff
 #'   provided, the more parsimonious model (i.e. the model with less parameters)
-#'   is selected. However, this decision can be changed (i.e. slect the model
+#'   is selected. However, this decision can be changed (i.e. select the model
 #'   with best fit) by setting the argument 'parsimony' to FALSE. Next, if more
 #'   than one model is selected (i.e. both have the same number of parameters),
 #'   the selection process give preference to models that are not linear or

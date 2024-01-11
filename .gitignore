@@ -6,3 +6,4 @@ inst/doc
 *.Rhistory
 test_data.R
 data-raw/
+data/data-raw

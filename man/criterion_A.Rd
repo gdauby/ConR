@@ -169,8 +169,7 @@ subcriterion (A1, A2, A3 and A4) with a warning.
   generation.time = 10)
   
 ## Another example: one species, more observations and subcriteria
-pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000,
-        "2030" = 4000)
+pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000, "2030" = 4000)
 criterion_A(x = pop,
   years = c(1970, 1980, 1990, 2000, 2030), 
   assess.year = 2000,
@@ -205,14 +204,6 @@ criterion_A(example_criterionA,
   project.years = seq(2002, 2030, by = 2),
   subcriteria = c("A1", "A2", "A3", "A4"),
   generation.time = c(2,5,10,15,30,50))
-  
-## Same data but with different options (need to use predictions from statistical models)
-criterion_A(example_criterionA,
-  years = NULL, 
-  assess.year = 2010,
-  project.years = NULL,
-  subcriteria = c("A1", "A2", "A3", "A4"),
-  generation.time = 10)
   
 }
 \references{

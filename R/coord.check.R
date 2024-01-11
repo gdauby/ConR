@@ -6,6 +6,7 @@
 #' @param listing logical, whether the dataset should be splitted in a list by taxa
 #' @param proj_type crs
 #' @param listing_by_valid logical
+#' @param cell_size numeric value
 #' @param check_eoo logical
 #' 
 #' 

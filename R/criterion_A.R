@@ -130,8 +130,7 @@
 #'   generation.time = 10)
 #'   
 #' ## Another example: one species, more observations and subcriteria
-#' pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000,
-#'         "2030" = 4000)
+#' pop = c("1970" = 10000, "1980" = 8900, "1990" = 7000, "2000" = 6000, "2030" = 4000)
 #' criterion_A(x = pop,
 #'   years = c(1970, 1980, 1990, 2000, 2030), 
 #'   assess.year = 2000,
@@ -167,24 +166,18 @@
 #'   subcriteria = c("A1", "A2", "A3", "A4"),
 #'   generation.time = c(2,5,10,15,30,50))
 #'   
-#' ## Same data but with different options (need to use predictions from statistical models)
-#' criterion_A(example_criterionA,
-#'   years = NULL, 
-#'   assess.year = 2010,
-#'   project.years = NULL,
-#'   subcriteria = c("A1", "A2", "A3", "A4"),
-#'   generation.time = 10)
-#'   
-#' @importFrom utils txtProgressBar setTxtProgressBar head
+#' @importFrom utils setTxtProgressBar head
 #' @importFrom parallel stopCluster
 #' 
 #' @export criterion_A
-criterion_A = function(x, 
+#' 
+criterion_A <- function(x, 
                        years = NULL, 
                        assess.year = NULL, 
                        project.years = NULL,
                        generation.time = NULL,
-                       models = c("linear", "quadratic", "exponential", "logistic", "general_logistic","piecewise"),
+                       models = c("linear", "quadratic", "exponential", "logistic", 
+                                  "general_logistic","piecewise"),
                        subcriteria = c("A1", "A2", "A3", "A4"),
                        exploitation = NULL,
                        correction = NULL,
@@ -232,7 +225,7 @@ criterion_A = function(x,
       
     }
     
-    x <- cbind.data.frame(data.frame(species = "species 1"), x)
+    x <- cbind.data.frame(data.frame(tax = "species 1"), x)
     
   }
   
@@ -409,10 +402,10 @@ criterion_A = function(x,
     
     if(any(miss.prev)) {
       
-      ids1 = which(miss.prev + min.prev == 1)
+      ids1 <- which(miss.prev + min.prev == 1)
       yrs[ids1] <- lapply(1:length(yrs[ids1]), 
                           function(i) sort(unique(c(prev.year[ids1[i]], yrs[[ids1[i]]]))))
-      ids2 = which(miss.prev + min.prev == 2)
+      ids2 <- which(miss.prev + min.prev == 2)
       yrs[ids2] <- lapply(1:length(yrs[ids2]), 
                           function(i) unique(c(prev.year[ids2[i]], 
                                                seq(prev.year[ids2[i]], min(yrs[[ids2[i]]]), by= int), 
@@ -449,7 +442,7 @@ criterion_A = function(x,
   } else {
     
     names(x) <- gsub("[^0-9]", "", names(x)[grepl("[0-9]", names(x))])
-    nomes <- paste("species", 1:dim(x)[1])
+    nomes <- paste0("species", 1:dim(x)[1])
     pop_data <- split(x, f = nomes)
     
   }
@@ -468,46 +461,44 @@ criterion_A = function(x,
     
     which.pred <- which(sapply(miss.years, any))
     
+    proj.years1 <- sort(unique(unlist(yrs)))
+    
     cat("Computing the predictions based on population trends...", sep= "\n")
     
-    cl <- activate_parallel(parallel = parallel, NbeCores = NbeCores)
-    `%d%` <- c_par(parallel = parallel)
+    models.fit <- pop.decline(pop.size = do.call(rbind, pop_data), 
+                           years = years, 
+                           taxa = names(pop_data),
+                           models = models, 
+                           project.years = proj.years1,
+                           output = c("predictions", "best.model"), 
+                           show_progress = show_progress)
     
-    pro_res <- display_progress_bar(show_progress = show_progress, max_pb = length(which.pred))
-    opts <- pro_res$opts
-    pb <- pro_res$pb
-    
-    x <- NULL
-    models.fit <- foreach::foreach(
-      x = which.pred,
-      .options.snow = opts
-    ) %d% {
+    for (i in 1:length(which.pred)) {
+
+      old.data <- pop_data[[which.pred[i]]]
+      if(inherits(models.fit$predictions, "data.frame")) {
+        new.data <- models.fit$predictions
+        best.models[[which.pred[i]]] <- models.fit[[2]]
+      }
+        
+      if(inherits(models.fit$predictions, "list")) {
+        new.data <- models.fit$predictions[[which.pred[i]]]
+        best.models[[which.pred[i]]] <- models.fit[[2]][[which.pred[i]]]
+      }
+        
+      new.data$pop.size[is.na(new.data$pop.size)] <-
+        new.data$predicted[is.na(new.data$pop.size)]
+      new.data1 <- matrix(new.data$pop.size, nrow =1, 
+                          dimnames = list(row.names(old.data), new.data$years))
+      new.data1 <- as.data.frame(new.data1)
       
-      if (!parallel & show_progress) setTxtProgressBar(pb, x)
-      
-      pred.sp <- pop.decline.fit(pop.size = pop_data[[x]], 
-                             years = years, 
-                             models = models,
-                             project.years = yrs[[x]],
-                             plot.fit = FALSE
-                             #)
-                             ,...)
-      
-      pred.pop.size <- pred.sp$data$Observed
-      pred.pop.size[is.na(pred.sp$data$Observed)] <- 
-        pred.sp$data$Predicted[is.na(pred.sp$data$Observed)]
-      names(pred.pop.size) <- pred.sp$data$Year
-      res <- list(pred.pop.size, attributes(pred.sp$best.model)$best.model.name)
-      res
+      pop_data[[which.pred[i]]] <- new.data1
     }
     
-    if(parallel) parallel::stopCluster(cl)
-    if(show_progress) close(pb)
-    
-    for (i in 1:length(which.pred)) { 
-      pop_data[[which.pred[i]]] <- models.fit[[i]][[1]]
-      best.models[[which.pred[i]]] <- models.fit[[i]][[2]]
-    }  
+    # for (i in 1:length(which.pred)) { 
+    #   pop_data[[which.pred[i]]] <- models.fit[[i]][[1]]
+    #   best.models[[which.pred[i]]] <- models.fit[[i]][[2]]
+    # }  
   }
   
   assess.period <- lapply(1:length(pop_data), 
@@ -520,7 +511,7 @@ criterion_A = function(x,
   
   ## Population reduction using IUCN criteria
   Results = data.frame(
-    species = names(pop_data),
+    tax = names(pop_data),
     assessment.year = assess.year,
     assessment.period = as.character(unlist(assess.period)),
     assessment.pop.sizes = as.character(unlist(ps.interval)),
@@ -535,7 +526,7 @@ criterion_A = function(x,
   row.names(Results) <- NULL
   
   if(!is.null(best.models))
-    Results$predictive.model <- as.character(unlist(best.models))
+    Results$predictive.model <- unlist(best.models)
   
   # criteria A1/A2
   if("A1" %in% subcriteria | "A2" %in% subcriteria) {
@@ -611,9 +602,10 @@ criterion_A = function(x,
       
       Results$reduction_A4 <-
         100 * sapply(1:length(pop_data), function(y)
-          max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])][!dup.yrs[[y]]]) /
+          #max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])][!dup.yrs[[y]]]) /
+          max(1 - (as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos2[[y]])]) /
                      as.numeric(pop_data[[y]][names(pop_data[[y]]) %in% as.character(anos1[[y]])][!dup.yrs[[y]]])), na.rm = TRUE))
-      
+
       if (any(Results$reduction_A4 > 100)) {
         Results$reduction_A4[Results$reduction_A4 > 100] <- 100
         warning("One or more values of pop. size reduction were above 100% for subcriterion A4")
@@ -672,5 +664,8 @@ criterion_A = function(x,
     Results[, apply(Results, MARGIN = 2, function(x)
       ! all(is.na(x)))]
   
+  if (length(subcriteria) == 1)
+    names(Results)[which(names(Results) %in% "category_A")] <- subcriteria
+
   return(Results)
 }    

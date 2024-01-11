@@ -6,26 +6,46 @@
 #'
 #' @param x a `dataframe` or an object of class `spgeoIN` see
 #' <https://github.com/azizka/speciesgeocodeR>. See Details
-#' @param EOO.threshold numeric vector indicating the thresholds used to categorize EOO in IUCN categories
-#' @param AOO.threshold numeric vector indicating the thresholds used to categorize AOO in IUCN categories
-#' @param Loc.threshold numeric vector indicating the thresholds used to categorize the number of locations in IUCN categories
-#' @param SubPop logical if the number of sub-populations should be computed. By default is TRUE
+#' @param AOO a vector of species AOO, if available
+#' @param EOO a vector of species EOO, if available
+#' @param locations a vector of species number of locations, if available
+#' @param severe.frag a vector indicating if species is severely fragmented, if
+#'   available
+#' @param subpops a vector of the number of subpopulations (sensu IUCN), if
+#'   available
+#' @param decline a vector providing the status of the species continuing
+#'   decline in EOO, AOO, habitat, locations or subpopulations or population
+#'   size (i.e. condition 'b') to be passed on to function `cat_criterion_b()`.
+#'   If different of 'Decreasing', the condition 'b' of criterion B will not be
+#'   met.
+#' @param EOO.threshold numeric vector indicating the thresholds used to
+#'   categorize EOO in IUCN categories
+#' @param AOO.threshold numeric vector indicating the thresholds used to
+#'   categorize AOO in IUCN categories
+#' @param Loc.threshold numeric vector indicating the thresholds used to
+#'   categorize the number of locations in IUCN categories
+#' @param comp_subpop logical if the number of sub-populations should be
+#'   computed. By default is TRUE
+#' @param comp_severe.frag logical if severe fragmentation should be
+#'   computed. By default is FALSE
 #' @param method_locations string, indicating the method used for estimating the number of locations. See Details
-#'  * `"fixed_grid"` (the default)
+#'  * `"fixed_grid"` (by default)
 #'  * `"sliding_scale"`
 #' @inheritParams locations.comp
 #' @inheritParams EOO.computing
 #' @inheritParams AOO.computing
 #' @inheritParams subpop.comp
-#' @param DrawMap logical, by default is FALSE, if TRUE, a png map is created in a diectory of the working environment
+#' @param threshold_severe numeric of one value indicates the threshold 
+#'    to identify severe fragmentation. By default is 50
+#' @param DrawMap logical, by default is FALSE, if TRUE, a png map is created for each species 
+#'    in a directory of the working environment
 #' @param add.legend logical, whether legend should be added to map
+#' @inheritParams activate_parallel
 #' 
 #' @return A data frame containing, for each of taxon, (EOO, AOO, n.locs, n.subpops?),
 #'   the IUCN categories associated with the sub-criteria and the consensus category
 #'   for criterion B.
-#' 
-#' @details The function ... 
-#' 
+#'  
 #' @author Gilles Dauby & Renato A. Ferreira de Lima
 #'
 #' @references IUCN 2019. Guidelines for Using the IUCN Red List Categories and
@@ -38,159 +58,264 @@
 #' @importFrom rnaturalearth ne_countries
 #' 
 #' @export criterion_B
-criterion_B <- function(x,
-                       #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
-                       EOO.threshold = c(20000, 5000, 100),
-                       AOO.threshold = c(2000, 500, 10),
-                       Loc.threshold = c(10, 5, 1),
-                       SubPop = TRUE,
-                       Resol_sub_pop = 5,
-                       cell_size_locations = 10,
-                       method_locations = "fixed_grid",
-                       method_polygons = "no_more_than_one",
-                       Rel_cell_size = 0.05,
-                       threat_list = NULL,
-                       names_threat = NULL,
-                       threat_weight = NULL,
-                       id_shape = "id_orig",
-                       country_map = NULL,
-                       method.range = "convex.hull",
-                       alpha = 1,
-                       buff.alpha = 0.1,
-                       exclude.area = FALSE,
-                       cell_size_AOO = 2,
-                       nbe.rep.rast.AOO = 0,
-                       parallel = FALSE,
-                       show_progress = TRUE,
-                       NbeCores = 2,
-                       proj_type = "cea",
-                       mode = "spheroid",
-                       DrawMap = FALSE,
-                       add.legend = TRUE) {
-  
-  if(identical(class(x)[1], "spgeoIN")) {
-    x <- cbind(x$species_coordinates, x$identifier)
-    x <- x[,c(2,1,3)]
-  }
-  colnames(x)[1:3] <- c("ddlat","ddlon","tax")
+criterion_B <- function(x = NULL,
+                        AOO = NULL,
+                        EOO = NULL,
+                        locations = NULL,
+                        severe.frag = NULL,
+                        subpops = NULL,
+                        decline = NULL,
+                        #add.legend = FALSE, DrawMap = FALSE, map_pdf = FALSE, draw.poly.EOO = FALSE, 
+                        EOO.threshold = c(20000, 5000, 100),
+                        AOO.threshold = c(2000, 500, 10),
+                        Loc.threshold = c(10, 5, 1),
+                        comp_subpop = TRUE,
+                        comp_severe.frag = FALSE,
+                        resol_sub_pop = 5,
+                        cell_size_locations = 10,
+                        method_locations = "fixed_grid",
+                        method_polygons = "no_more_than_one",
+                        rel_cell_size = 0.05,
+                        threat_list = NULL,
+                        names_threat = NULL,
+                        threat_weight = NULL,
+                        id_shape = "id_orig",
+                        country_map = NULL,
+                        method.range = "convex.hull",
+                        alpha = 1,
+                        buff.alpha = 0.1,
+                        exclude.area = FALSE,
+                        cell_size_AOO = 2,
+                        nbe.rep.rast.AOO = 0,
+                        threshold_severe = 50,
+                        parallel = FALSE,
+                        show_progress = TRUE,
+                        NbeCores = 2,
+                        proj_type = "cea",
+                        mode = "spheroid",
+                        DrawMap = FALSE,
+                        add.legend = TRUE) {
   
   if (!requireNamespace("lwgeom", quietly = TRUE))
-    stop(
-      "The 'lwgeom' package is required to run this function.",
-      "Please install it first."
-    )
+    stop("The 'lwgeom' package is required to run this function.",
+         "Please install it first.")
   
   if (is.null(country_map)) {
-    
     country_map <-
       rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
     country_map <- sf::st_make_valid(country_map)
   } else {
-    
     if (any(!st_is_valid(country_map)))
       country_map <- sf::st_make_valid(country_map)
+  }
+  
+  if (is.null(AOO) | is.null(EOO) | is.null(locations) | is.null(severe.frag) | ifelse(comp_subpop, is.null(subpops), FALSE))
+    if (is.null(x)) stop("The argument 'x' is needed because at least one of AOO, EOO, locations, severe.frag and subpops is not provided")
+  
+  if (!is.null(x)) {
+    if (identical(class(x)[1], "spgeoIN")) {
+      x <- cbind(x$species_coordinates, x$identifier)
+      x <- x[, c(2, 1, 3)]
+    }
+    colnames(x)[1:3] <- c("ddlat", "ddlon", "tax")    
   }
   
   ##########################################################################################
   ##############################  Sub-populations estimations ############################## 
   
-  if(SubPop) {
-    
-    if (show_progress) message("Subpopulations computation")
-    
-    subpop_stats <-
-      subpop.comp(
-        XY = x,
-        Resol_sub_pop = 10,
-        parallel = parallel,
-        show_progress = show_progress,
-        NbeCores = NbeCores,
-        proj_type = proj_type, 
-        export_shp = ifelse(DrawMap, TRUE, FALSE)
-      )
-    
-    if (DrawMap) {
+  if (comp_subpop) {
+  
+    if(!is.null(x) & is.null(subpops)) {
       
-      SubPopPoly <- subpop_stats$poly_subpop
-      NbeSubPop <- subpop_stats$number_subpop
+      if (show_progress) message("Subpopulations computation")
       
+      subpop_stats <-
+        subpop.comp(
+          XY = x,
+          resol_sub_pop = resol_sub_pop,
+          parallel = parallel,
+          show_progress = show_progress,
+          NbeCores = NbeCores,
+          proj_type = proj_type, 
+          export_shp = any(c(DrawMap, comp_severe.frag))
+        )
+      
+      if (DrawMap | comp_severe.frag) {
+        
+        SubPopPoly <- subpop_stats$poly_subpop
+        NbeSubPop <- subpop_stats$number_subpop
+        
+      } else {
+        
+        NbeSubPop <- subpop_stats
+        
+      }
     } else {
       
-      NbeSubPop <- subpop_stats
+      NbeSubPop <- subpops
+      
+      if (!identical(class(NbeSubPop), "data.frame"))
+        stop("subpops should be a data.frame similar to the results of the function 'subpop.comp'")
+      
+      if (!all(colnames(NbeSubPop[,c(1:2)]) == c("tax", "subpop")))
+        stop("subpops data.frame first two columns should be named as tax, subpop")
+      
+      if (DrawMap) {
+        DrawMap <- FALSE
+        message("Cannot draw map if subpops is provided")
+      }
       
     }
+      
   }
+  
+  
   
   ##########################################################################################
   ##############################  Estimations of number of Locations ####################### 
   
-  if (show_progress) message("Locations computation")
-  
-  locations_res <-
-    locations.comp(
-      XY = x,
-      method = method_locations, 
-      threat_list = threat_list, 
-      threat_weight = threat_weight,
-      names_threat = names_threat,
-      cell_size_locations = cell_size_locations, 
-      method_polygons = method_polygons, 
-      id_shape = id_shape,
-      show_progress = show_progress,
-      Rel_cell_size = Rel_cell_size,
-      parallel = parallel,
-      NbeCores = NbeCores, 
-      proj_type = proj_type
-    )
-  
-  ##########################################################################################
-  ##############################  EOO ####################### 
-  if (show_progress) message("Extent of occurrences computation")
-  EOO <-
-    EOO.computing(
-      XY = x,
-      exclude.area = exclude.area,
-      country_map = country_map,
-      export_shp = ifelse(DrawMap, TRUE, FALSE),
-      alpha = alpha,
-      buff.alpha = buff.alpha,
-      method.range = method.range,
-      parallel = parallel,
-      show_progress = show_progress,
-      NbeCores = NbeCores, 
-      proj_type = proj_type, 
-      mode = mode
-    ) # , verbose=FALSE
-  
-  if (DrawMap) {
+  if (!is.null(x) & is.null(locations)) {
     
-    eoo_poly <- EOO$spatial
-    EOO <- EOO$results
+    if (show_progress) message("Locations computation")
+    
+    locations_res <-
+      locations.comp(
+        XY = x,
+        method = method_locations, 
+        threat_list = threat_list, 
+        threat_weight = threat_weight,
+        names_threat = names_threat,
+        cell_size_locations = cell_size_locations, 
+        method_polygons = method_polygons, 
+        id_shape = id_shape,
+        show_progress = show_progress,
+        rel_cell_size = rel_cell_size,
+        parallel = parallel,
+        NbeCores = NbeCores, 
+        proj_type = proj_type
+      )
+    
+    if (DrawMap) locations_poly <- locations_res$locations_poly
+    locations_res <- locations_res$locations
+    
+  } else {
+    
+    locations_res <- locations
+    
+    if (!identical(class(locations_res), "data.frame"))
+      stop("locations should be a data.frame similar to the results of the function 'locations.comp'")
+    
+    if (!all(colnames(locations_res[,c(1:3)]) == c("tax", "locations", "issue_locations")))
+      stop("locations data.frame first three columns should be named as tax, locations, issue_locations")
+    
+    if (DrawMap) {
+      DrawMap <- FALSE
+      message("Cannot draw map if locations is provided")
+    }
     
   }
   
   
-  ################### AOO estimation #######################################################
-  if (show_progress) message("Area of occupancy computation")
-  AOO <-
-    AOO.computing(
-      XY = x,
-      cell_size_AOO = cell_size_AOO,
-      nbe.rep.rast.AOO = nbe.rep.rast.AOO,
-      export_shp = ifelse(DrawMap, TRUE, FALSE),
-      parallel = parallel,
-      show_progress = show_progress,
-      NbeCores = NbeCores,
-      proj_type = proj_type
-    )
   
-  if (DrawMap) {
+  ##########################################################################################
+  ##############################  EOO ####################### 
+  
+  if (!is.null(x) & is.null(EOO)) {
+    if (show_progress) message("Extent of occurrences computation")
+    EOO <-
+      EOO.computing(
+        XY = x,
+        exclude.area = exclude.area,
+        country_map = country_map,
+        export_shp = DrawMap,
+        alpha = alpha,
+        buff.alpha = buff.alpha,
+        method.range = method.range,
+        parallel = parallel,
+        show_progress = show_progress,
+        NbeCores = NbeCores, 
+        proj_type = proj_type, 
+        mode = mode
+      ) # , verbose=FALSE
     
-    aoo_poly <- AOO$AOO_poly
+    if (DrawMap) {
+      EOO <- EOO$results
+      eoo_poly <- EOO$spatial
+    }
     
+  } else {
     
-    AOO <- AOO$AOO
+    if (!identical(class(EOO), "data.frame"))
+      stop("EOO should be a data.frame similar to the results of the function 'EOO.computing'")
     
+    if (!all(colnames(EOO[,c(1:3)]) == c("tax", "eoo", "issue_eoo")))
+      stop("EOO data.frame first three columns should be named as tax, eoo, issue_eoo")
+    
+    if (DrawMap) {
+      DrawMap <- FALSE
+      message("Cannot draw map if EOO is provided")
+    }
+    
+  }
+  
+  ################### AOO estimation #######################################################
+  if (!is.null(x) & is.null(AOO)) {
+    if (show_progress) message("Area of occupancy computation")
+    AOO <-
+      AOO.computing(
+        XY = x,
+        cell_size_AOO = cell_size_AOO,
+        nbe.rep.rast.AOO = nbe.rep.rast.AOO,
+        export_shp = any(c(DrawMap, comp_severe.frag)),
+        parallel = parallel,
+        show_progress = show_progress,
+        NbeCores = NbeCores,
+        proj_type = proj_type
+      )
+    
+    if (DrawMap | comp_severe.frag) {
+      
+      aoo_poly <- AOO$AOO_poly
+      AOO <- AOO$AOO
+      
+    }
+  } else {
+    
+    if (!identical(class(AOO), "data.frame"))
+      stop("AOO should be a data.frame similar to the results of the function 'AOO.computing'")
+    
+    if (!all(colnames(AOO[,c(1:3)]) == c("tax", "aoo", "issue_aoo")))
+      stop("AOO data.frame first three columns should be named as tax, aoo, issue_aoo")
+    
+    if (DrawMap) {
+      DrawMap <- FALSE
+      message("Cannot draw map if AOO is provided")
+    }
+  }
+  
+  if (comp_severe.frag & !is.null(x)) {
+    
+    if (is.null(severe.frag)) {
+      if (show_progress) message("Assessment of severe fragmentation")
+      
+      radius <- subpop.radius(XY = x[, c(1:3)], 
+                              quant.max = 0.9)
+      
+      severe.frag <- 
+        severe_frag(AOO_poly = aoo_poly, 
+                    habitat_poly = SubPopPoly, 
+                    dist_isolated = radius, 
+                    show_progress = show_progress, 
+                    threshold_severe = threshold_severe)
+      
+    } else {
+      
+      if (!identical(class(severe.frag), "data.frame"))
+        stop("severe.frag should be a data.frame similar to the results of the function 'severe_frag'")
+      
+      if (!all(colnames(AOO[,c(1:3)]) == c("tax", "frac", "severe_frag")))
+        stop("AOO data.frame first three columns should be named as tax, aoo, issue_aoo")
+    }
   }
   
   if (any(EOO$eoo - AOO$aoo < 0) || any(is.na(EOO$eoo))) {
@@ -212,66 +337,74 @@ criterion_B <- function(x,
     
   }
   
-  
   categories <- 
     cat_criterion_b(EOO = EOO$eoo, 
                     AOO = AOO$aoo, 
-                    locations = locations_res$locations$locations)
+                    locations = locations_res$locations, 
+                    sever.frag = if (any(c(comp_severe.frag, !is.null(severe.frag)))) severe.frag$severe_frag else NA,
+                    decline = if (!is.null(decline)) decline else NA)
+  
+  if (!is.null(x)) list_data <- coord.check(XY = x)
   
   results_full <-
     data.frame(
       tax = AOO$tax,
       EOO = EOO$eoo,
       AOO = AOO$aoo,
-      locations = locations_res$locations$locations,
+      locations = locations_res$locations,
+      nbe_unique_occs = if (!is.null(x)) list_data$unique_occs else NA_integer_,
       category_B = categories$ranks_B,
       category_B_code = categories$cats_code,
-      subpop = if (SubPop) NbeSubPop$subpop else NA,
+      subpop = if (comp_subpop) NbeSubPop$subpop else NA_real_,
+      severe_frag = if (any(c(comp_severe.frag, !is.null(severe.frag)))) severe.frag$severe_frag else NA,
       issue_aoo = AOO$issue_aoo,
       issue_eoo = EOO$issue_eoo,
-      issue_locations = locations_res$locations$issue_locations,
-      main_threat = if (any(colnames(locations_res$locations) == "main_threat")) locations_res$locations$main_threat else NA,
-      locations_res$locations[colnames(locations_res$locations) %in% names(threat_list)]
+      issue_locations = locations_res$issue_locations,
+      main_threat = if (any(colnames(locations_res) == "main_threat")) locations_res$main_threat else NA_character_,
+      locations_res[colnames(locations_res) %in% names(threat_list)]
     )
   
-  list_data <- coord.check(XY = x)
+  row.names(results_full) <- NULL
   
-  if (DrawMap) {
+  if (!is.null(x)) {
     
-    poly_borders <- 
-      suppressWarnings(sf::st_crop(country_map, c(xmin = min(x[,2]), ymin = min(x[,1]), xmax = max(x[,2]), ymax = max(x[,1]))))
-    poly_borders <- st_make_valid(poly_borders)
-    
-    for (i in 1:length(list_data$list_data)) {
+    if (DrawMap) {
       
-      name_sp = results_full$tax[i]
+      poly_borders <- 
+        suppressWarnings(sf::st_crop(country_map, c(xmin = min(x[,2]), ymin = min(x[,1]), xmax = max(x[,2]), ymax = max(x[,1]))))
+      poly_borders <- st_make_valid(poly_borders)
       
-      draw_map_cb(XY = list_data$list_data[[i]], 
-                  name_sp = name_sp, 
-                  eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
-                  aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
-                  locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),], 
-                  subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
-                  proj_type = proj_crs(proj_type = proj_type), 
-                  results = results_full[which(results_full$tax == name_sp),], 
-                  add.legend = add.legend,
-                  poly_borders = poly_borders)
+      for (i in 1:length(list_data$list_data)) {
+        
+        name_sp = results_full$tax[i]
+        
+        draw_map_cb(XY = list_data$list_data[[i]], 
+                    name_sp = name_sp, 
+                    eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+                    aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+                    locations_poly = locations_poly[which(locations_poly$tax == name_sp),], 
+                    subpop = SubPopPoly[which(SubPopPoly$tax == name_sp),], 
+                    proj_type = proj_crs(proj_type = proj_type), 
+                    results = results_full[which(results_full$tax == name_sp),], 
+                    add.legend = add.legend,
+                    poly_borders = poly_borders)
+        
+      }
+      
+      # name_sp <- results_full$tax[1]
+      # eoo_poly <- eoo_poly[which(eoo_poly$tax == name_sp),]
+      # aoo_poly <- aoo_poly[which(aoo_poly$tax == name_sp),]
+      # locations_poly <- locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),]
+      # XY <- x[which(x[,3] == name_sp),]
+      # SubPopPoly <- SubPopPoly[which(SubPopPoly$tax == name_sp),]
+      # 
+      # draw_map_cb(XY = x[which(x[,3] == name_sp),], 
+      #             name_sp = results_full$tax[1], 
+      #             eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
+      #             aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
+      #             locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),])
       
     }
-    
-    # name_sp <- results_full$tax[1]
-    # eoo_poly <- eoo_poly[which(eoo_poly$tax == name_sp),]
-    # aoo_poly <- aoo_poly[which(aoo_poly$tax == name_sp),]
-    # locations_poly <- locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),]
-    # XY <- x[which(x[,3] == name_sp),]
-    # SubPopPoly <- SubPopPoly[which(SubPopPoly$tax == name_sp),]
-    # 
-    # draw_map_cb(XY = x[which(x[,3] == name_sp),], 
-    #             name_sp = results_full$tax[1], 
-    #             eoo_poly = eoo_poly[which(eoo_poly$tax == name_sp),], 
-    #             aoo_poly = aoo_poly[which(aoo_poly$tax == name_sp),], 
-    #             locations_poly = locations_res$locations_poly[which(locations_res$locations_poly$tax == name_sp),])
-    
   }
   
   return(results_full)
@@ -295,7 +428,8 @@ criterion_B <- function(x,
 #' @param add.legend logical
 #' 
 #' @importFrom grDevices rgb
-#' @importFrom graphics mtext
+#' @importFrom graphics mtext layout legend box
+#' @import sf
 #' 
 #' @return a plot
 #' 
@@ -340,7 +474,7 @@ draw_map_cb <- function(XY,
                 las = 1)
   
   if (add.legend) nf <-
-    layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE), c(4, 1.5), c(4, 1.5))
+    graphics::layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE), c(4, 1.5), c(4, 1.5))
   
   XY_sf <- st_as_sf(XY, coords = c("ddlon", "ddlat"))
   st_crs(XY_sf) <- 4326
@@ -423,13 +557,13 @@ draw_map_cb <- function(XY,
   #             type = "bar", 
   #             below = "kilometers", 
   #             cex=2.5, xy = "bottomright")
-  mtext(name_sp, side=3, cex=3, line=3)
+  graphics::mtext(name_sp, side=3, cex=3, line=3)
   
   if (add.legend) {
     graphics::par(mar=c(1,1,1,1), xpd=T)
     plot(1:10, 1:10, type="n", bty='n', xaxt='n', yaxt='n')
 
-    legend(1,10,  c(paste("EOO=", ifelse(!is.na(results$EOO), format(round(as.numeric(results$EOO),1), scientific = 5), NA), "km2"),
+    graphics::legend(1,10,  c(paste("EOO=", ifelse(!is.na(results$EOO), format(round(as.numeric(results$EOO),1), scientific = 5), NA), "km2"),
                       paste("AOO=", format(results$AOO, scientific = 5),"km2"),
                       # paste("Number of unique occurrences=", results$),
                       paste("Number of sub-populations=", results$subpop),
@@ -440,9 +574,6 @@ draw_map_cb <- function(XY,
     # plot(full_poly_borders, lty=1, lwd=1,axes=FALSE)
     # graphics::points(XY[,1],XY[,2], pch=8, cex=2, col="red")
   }
-  
-  
-  
   
   
   

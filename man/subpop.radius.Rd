@@ -22,8 +22,7 @@ the maximum distance. Default to 10.}
 be considered as a threshold of maximum distance. Can vary between 0 and 1.
 Default to 1.}
 
-\item{mode}{a character. Type of coordinate projection: "spheroid" or
-"planar". Defualts to "spheroid".}
+\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
 
 \item{proj_type}{string or numeric}
 }

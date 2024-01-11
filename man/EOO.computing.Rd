@@ -58,17 +58,22 @@ default is "convex.hull"}
 give a value to species with two unique occurrences, see Details. By default
 is "not comp"}
 
-\item{file.name}{a character string. Name file for exported results in csv file. By default is "EOO.results"}
+\item{file.name}{a character string. Name file for exported results in csv
+file. By default is "EOO.results"}
 
-\item{parallel}{a logical. Whether running in parallel. By default, it is FALSE}
+\item{parallel}{a logical. Whether running should be performed in parallel.
+FALSE by default.}
 
-\item{NbeCores}{an integer. Register the number of cores for parallel execution. By default, it is 2}
+\item{NbeCores}{an integer. Register the number of cores for parallel
+execution. Two by default.}
 
-\item{show_progress}{logical. Whether a progress bar should displayed. TRUE by default}
+\item{show_progress}{logical. Whether progress informations should displayed.
+TRUE by default}
 
 \item{proj_type}{string or numeric}
 
-\item{mode}{character string either 'spheroid' or 'planar'. By default 'spheroid'}
+\item{mode}{character string either 'spheroid' or 'planar'. By default
+'spheroid'}
 }
 \value{
 If \code{export_shp} is FALSE, a \code{dataframe} with one field
@@ -98,13 +103,15 @@ matter}
 If \code{exclude.area} is TRUE and country_map is not provided,
 the world country polygons used comes from the package \href{https://www.rdocumentation.org/packages/rnaturalearth/versions/0.1.0/topics/ne_countries}{rnaturalearth}
 
-By default (\code{mode = "spheroid"}),the area of the polygon is based
-on a polygon in longitude/latitude coordinates considering the earth as an ellipsoid.
+By default (\code{mode = "spheroid"}), the area of the polygon is based on a
+polygon in longitude/latitude coordinates considering the earth as an
+ellipsoid.
 
 To make a polygon more accurate, the function use the function \code{st_segmentize}
 from the \href{https://CRAN.R-project.org/package=sf}{sf} package.
-This adds vertices on the great circles (in order to make shortest distances between points, see example below)
-which can make difference for species with large distribution.
+This adds vertices on the great circles (in order to make shortest distances
+between points, see example below) which can make difference for species with
+large distribution.
 
 An estimation of EOO based on projected data is also possible (\code{mode = "planar"}).
 This allow the user to use its own projection.
@@ -128,8 +135,9 @@ constant across multiple estimation (although the variation should be small)
 
 \strong{Limitation}\cr
 
-For a species whose occurrences span more than 180 degrees, EOO should not be considered.
-This is the case for example for species whose distribution span the 180th meridian.
+For a species whose occurrences span more than 180 degrees, EOO should not be
+considered. This is the case for example for species whose distribution span
+the 180th meridian.
 }
 \examples{
 
@@ -206,7 +214,7 @@ plot(p1, lwd = 2, col = 'red', add = TRUE)
 
 }
 \references{
-Gaston & Fuller 2009 The sizes of species'geographic ranges,
+Gaston & Fuller 2009 The sizes of species' geographic ranges,
 Journal of Applied Ecology, 49 1-9
 }
 \seealso{

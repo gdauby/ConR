@@ -11,7 +11,7 @@ locations.estimation(
   export_shp = FALSE,
   proj_type = proj_type,
   method = "fixed_grid",
-  Rel_cell_size = 0.05
+  rel_cell_size = 0.05
 )
 }
 \arguments{
@@ -27,7 +27,10 @@ locations.estimation(
 
 \item{method}{character string}
 
-\item{Rel_cell_size}{numeric, if \code{method ="sliding_scale"}, \code{Cell_size_locations} is ignored and the resolution is given by the maximum distance separating two occurrences multiplied by \code{Rel_cell_size}. By default, it is 0.05}
+\item{rel_cell_size}{numeric, if \code{method ="sliding_scale"},
+\code{Cell_size_locations} is ignored and the resolution is given by the maximum
+distance separating two occurrences multiplied by \code{rel_cell_size}. By
+default, it is 0.05}
 }
 \value{
 a list
