@@ -41,7 +41,8 @@ habitat spatial information}
 hab.map is suitable for species, if FALSE unsuitable}
 
 \item{hab.class}{classes of values in \code{hab.map} to be considered as
-'habitat'.}
+'habitat'. If numeric, pixels equal to each value are habitat and one AOH
+column is returned per value.}
 
 \item{years}{numeric. Time interval between the first and last \code{hab.map}
 if more than one SpatRaster is provided (e.g. if \code{hab.map} is a SpatRaster

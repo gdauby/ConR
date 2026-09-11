@@ -24,7 +24,8 @@
 #' @param hab.map.type logical, vector of same length of hab.map, if TRUE means
 #'   hab.map is suitable for species, if FALSE unsuitable
 #' @param hab.class classes of values in ```hab.map``` to be considered as
-#'   'habitat'.
+#'   'habitat'. If numeric, pixels equal to each value are habitat and one AOH
+#'   column is returned per value.
 #' @param years numeric. Time interval between the first and last ```hab.map```
 #'   if more than one SpatRaster is provided (e.g. if ```hab.map``` is a SpatRaster
 #'   object).
@@ -127,7 +128,14 @@ AOH.estimation <- function(XY,
   ### checking arguments validity
   if (is.null(hab.map))
     stop("Please provide hab.map (a sf polygon object or a raster or a SpatRaster)")
-  
+
+  if (inherits(hab.map, "sf"))
+    hab.map <- list(hab.map)
+
+  # length() of a SpatRaster is not its number of layers
+  n_maps <-
+    if (inherits(hab.map, "SpatRaster")) terra::nlyr(hab.map) else length(hab.map)
+
   if (is.null(country_map)) {
     
     country_map <-
@@ -209,7 +217,7 @@ AOH.estimation <- function(XY,
   
   
   if (!is.null(years)) {
-    if (length(hab.map) != length(years))
+    if (n_maps != length(years))
       stop ("the number of years provided is different to the number of layers/polygon provided")
     
     names(hab.map) <- years
@@ -222,8 +230,8 @@ AOH.estimation <- function(XY,
   # hab.map <- terra::project(hab.map, proj_type_$wkt)
   
   # loop across hab.map provided
-  AOH.poly <- vector('list', length(hab.map) + 1)
-  for (i in 1:length(hab.map)) {
+  AOH.poly <- vector('list', n_maps + 1)
+  for (i in 1:n_maps) {
     
     hab.map.selected <- hab.map[[i]]
     
@@ -233,7 +241,9 @@ AOH.estimation <- function(XY,
       if (paste(terra::crs(hab.map.selected, describe = T)[,c("authority", "code")], collapse = ":") !=
           proj_type_$input) {
 
-        hab.map.selected <- terra::project(hab.map.selected, proj_type_$wkt)
+        # nearest neighbour: interpolating would blend habitat classes
+        hab.map.selected <-
+          terra::project(hab.map.selected, proj_type_$wkt, method = "near")
         
       }
       
@@ -244,9 +254,9 @@ AOH.estimation <- function(XY,
       ## masking input raster given hab.class
       if (!is.null(hab.class)) {
         
-        if (any(class(hab.class) == "numeric")) {
-          
-          hab.map_masked <- vector('list', dim(hab.map.selected)[3])
+        if (is.numeric(hab.class)) {
+
+          hab.map_masked <- vector('list', length(hab.class))
           
           # system.time(
           #   for (j in 1:dim(hab.map.selected)[3]) {
@@ -257,7 +267,7 @@ AOH.estimation <- function(XY,
               terra::app(
                 hab.map.selected,
                 fun = function(x) {
-                  x[x >=  as.numeric(hab.class[j])] <- NA
+                  x[!x %in% as.numeric(hab.class[j])] <- NA
                   return(x)
                 }
               )
@@ -470,7 +480,7 @@ AOH.estimation <- function(XY,
         # EOO.shp.proj.hab.map <- cbind(EOO.shp.proj.hab.map, tax = EOO.shp.proj$tax)
       }
         
-      if (any(class(hab.class) == "numeric")) {
+      if (is.numeric(hab.class)) {
         message("intersection with EOO polygons")
         
         EOO.shp.hab.map_list <- vector('list', length(hab.class))
@@ -552,8 +562,12 @@ AOH.estimation <- function(XY,
            
            EOO.res.all <- 
              merge(EOO.res.all, res.,
-                   by = "species", 
+                   by = "species",
                    all.x = T)
+
+           # species with an EOO but no habitat in it
+           EOO.res.all[, ncol(EOO.res.all)][which(!is.na(EOO.res.all[, 2]) &
+                                                    is.na(EOO.res.all[, ncol(EOO.res.all)]))] <- 0
          }
         
       } else {
@@ -625,7 +639,7 @@ AOH.estimation <- function(XY,
   # all hab.map together
   
   if (is.data.frame(hab.class) &&
-      any(vapply(seq_len(length(hab.map)),
+      any(vapply(seq_len(n_maps),
                  function(k) inherits(hab.map[[k]], "SpatRaster"),
                  logical(1)))) {
     
