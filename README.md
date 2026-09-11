@@ -1,4 +1,8 @@
 
+<!-- README.md is generated from README.Rmd. Please edit README.Rmd and then
+     regenerate README.md with devtools::build_readme(). Do not edit README.md
+     by hand: your changes will be overwritten. -->
+
 <img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker4.png" align="right" alt="" width="120" />
 
 # ConR package
@@ -24,8 +28,10 @@ nevertheless available on github and will soon be available on CRAN.
 
 To install the github version :
 
-    install.packages("devtools")
-    devtools::install_github("gdauby/ConR")
+``` r
+install.packages("devtools")
+devtools::install_github("gdauby/ConR")
+```
 
 ## Install R, ConR and dependent packages
 
@@ -38,20 +44,82 @@ To install the github version :
 **Attach ConR package** This should be done everytime you open an R
 session.
 
-    library(ConR)
+``` r
+library(ConR)
+```
 
 **Help files** Any function in R is documented by a help file which can
 be obtained by the following code:
 
-    ?EOO.computing
-    ?AOO.computing
-    ?subpop.comp
-    ?locations.comp
-    ?criterion_A
-    ?EOO.sensitivity
+``` r
+?EOO.computing
+?AOO.computing
+?subpop.comp
+?locations.comp
+?criterion_A
+?EOO.sensitivity
+```
 
 A mode detailed manual on how to use this package is available
 [here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.pdf).
+
+## A quick example
+
+Occurrence data are given as a `data.frame` whose first three columns
+are, in this order, latitude, longitude and taxon name. Column names do
+not matter, but their positions do. The package ships a small example
+dataset:
+
+``` r
+data(dataset.ex)
+MyData <- dataset.ex[!dataset.ex$tax %in% c("species_1", "species_2"), ]
+MyData$tax <- as.character(MyData$tax)
+str(MyData)
+#> 'data.frame':    316 obs. of  3 variables:
+#>  $ ddlat: num  0.75 3.57 1.18 3.24 4.09 ...
+#>  $ ddlon: num  29.75 16.12 9.87 10.58 9.05 ...
+#>  $ tax  : chr  "Psychotria minuta" "Psychotria minuta" "Psychotria minuta" "Psychotria minuta" ...
+```
+
+The extent of occurrence (EOO, in km<sup>2</sup>) is computed for every
+taxon at once:
+
+``` r
+EOO.computing(MyData, show_progress = FALSE)
+#>                      tax     eoo issue_eoo
+#> 1     Berlinia bruneelii 2646614        NA
+#> 2     Oncocalamus mannii  660638        NA
+#> 3 Platycoryne guingangae 3437198        NA
+#> 4      Psychotria minuta  763732        NA
+```
+
+So is the area of occupancy (AOO, in km<sup>2</sup>), here on the 2 km
+grid recommended by IUCN:
+
+``` r
+AOO.computing(MyData, show_progress = FALSE)
+#>                      tax aoo issue_aoo
+#> 1     Berlinia bruneelii 404        NA
+#> 2     Oncocalamus mannii 172        NA
+#> 3 Platycoryne guingangae 148        NA
+#> 4      Psychotria minuta  40        NA
+```
+
+And the number of subpopulations, using a 5 km circular buffer around
+each occurrence:
+
+``` r
+subpop.comp(MyData, resol_sub_pop = 5, show_progress = FALSE)
+#>                      tax subpop
+#> 1     Berlinia bruneelii     88
+#> 2     Oncocalamus mannii     29
+#> 3 Platycoryne guingangae     34
+#> 4      Psychotria minuta     10
+```
+
+These metrics, along with the number of locations, feed the assessment
+functions `criterion_A()`, `criterion_B()`, `criterion_C()` and
+`criterion_D()`. See the manual linked above for the full workflow.
 
 ## Funding
 
@@ -72,7 +140,7 @@ The development of this package was supported by:
 
 G. Dauby & R. A. F. de Lima (2023). ConR: Computation of Parameters Used
 in Preliminary Assessment of Species Conservation Status. R package
-(version 2.1.0).
+(version 2.1).
 
 ## See Also
 

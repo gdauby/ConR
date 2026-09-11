@@ -1,14 +1,25 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: false
 ---
 
+<!-- README.md is generated from README.Rmd. Please edit README.Rmd and then
+     regenerate README.md with devtools::build_readme(). Do not edit README.md
+     by hand: your changes will be overwritten. -->
 
-```{r, echo = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-"
 )
+# Attach sf here, quietly, so that its GEOS/GDAL/PROJ linking message is absorbed
+# by this hidden chunk instead of appearing in the middle of the examples below.
+# It is a packageStartupMessage, so suppressMessages() is not enough.
+suppressPackageStartupMessages(library(sf))
+# Taken from the source DESCRIPTION, so the citation below cannot go stale.
+pkg_version <- read.dcf("DESCRIPTION", fields = "Version")[1, 1]
 ```
 <img src="https://raw.githubusercontent.com/gdauby/ConR/devel/inst/figures/conr_sticker4.png" align="right" alt="" width="120" />
 
@@ -31,12 +42,12 @@ institutes.
 
 <!-- See the original paper published in [Ecology and Evolution](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.3704). -->
 
-The package it not available anymore on CRAN because of the recent retirement of various packages (rgdal, rgeos). 
+The package it not available anymore on CRAN because of the recent retirement of various packages (rgdal, rgeos).
 The new version is nevertheless available on github and will soon be available on CRAN.
 
 To install the github version :
 
-```
+```{r install, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("gdauby/ConR")
 ```
@@ -54,21 +65,16 @@ devtools::install_github("gdauby/ConR")
 
 **Attach ConR package**
 This should be done everytime you open an R session.
-```
+
+```{r attach, message = FALSE}
 library(ConR)
-```
-```{r loadData, include=FALSE}
-library(ConR)
-data(dataset.ex)
-MyData <- dataset.ex
-MyData <- MyData[which(!MyData[,3] %in% c("species_1", "species_2")),]
-MyData$tax <- as.character(MyData$tax)
 ```
 
 **Help files**
 Any function in R is documented by a help file which can be obtained by the
 following code:
-```
+
+```{r help, eval = FALSE}
 ?EOO.computing
 ?AOO.computing
 ?subpop.comp
@@ -80,12 +86,51 @@ following code:
 A mode detailed manual on how to use this package is available [here](https://raw.githubusercontent.com/gdauby/ConR/devel/vignettes/articles/ConR.pdf).
 
 
+## A quick example
+
+Occurrence data are given as a `data.frame` whose first three columns are, in
+this order, latitude, longitude and taxon name. Column names do not matter, but
+their positions do. The package ships a small example dataset:
+
+```{r example-data}
+data(dataset.ex)
+MyData <- dataset.ex[!dataset.ex$tax %in% c("species_1", "species_2"), ]
+MyData$tax <- as.character(MyData$tax)
+str(MyData)
+```
+
+The extent of occurrence (EOO, in km<sup>2</sup>) is computed for every taxon at
+once:
+
+```{r example-eoo}
+EOO.computing(MyData, show_progress = FALSE)
+```
+
+So is the area of occupancy (AOO, in km<sup>2</sup>), here on the 2 km grid
+recommended by IUCN:
+
+```{r example-aoo}
+AOO.computing(MyData, show_progress = FALSE)
+```
+
+And the number of subpopulations, using a 5 km circular buffer around each
+occurrence:
+
+```{r example-subpop}
+subpop.comp(MyData, resol_sub_pop = 5, show_progress = FALSE)
+```
+
+These metrics, along with the number of locations, feed the assessment functions
+`criterion_A()`, `criterion_B()`, `criterion_C()` and `criterion_D()`. See the
+manual linked above for the full workflow.
+
+
 ## Funding
 
-The development of this package was supported by: 
+The development of this package was supported by:
 
   - the European Union’s Horizon 2020 research and innovation program under the Marie Skłodowska-Curie grant agreement No 795114 ([THREAT project](https://cordis.europa.eu/project/id/795114))
-  
+
   - CESAB (Centre for the Synthesis and Analysis of Biodiversity). Research program of the FRB (Foundation for Research on Biodiversity) under the [RAINBIO project](https://gdauby.github.io/rainbio/index.html).
 
 <!-- ## Acknowledgements -->
@@ -94,19 +139,14 @@ The development of this package was supported by:
 
 G. Dauby & R. A. F. de Lima (2023). ConR: Computation of Parameters Used in
 Preliminary Assessment of Species Conservation Status. R package (version
-2.1.0).
+`r pkg_version`).
 
 ## See Also
 
 Other R packages related to IUCN assessments:
 
   - [`rredlist`](https://cran.r-project.org/web/packages/rredlist/rredlist.pdf)
-  
+
   - [`red`](https://cran.r-project.org/web/packages/red/red.pdf)
-  
+
   - [`redlistr`](https://cran.r-project.org/web/packages/redlistr/redlistr.pdf)
-
-
-
-
-

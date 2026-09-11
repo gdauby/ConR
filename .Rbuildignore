@@ -1,8 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README.Rmd
-^README.md
-^cran-comments.md
+^README\.Rmd$
+^README\.md$
+^cran-comments\.md$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
@@ -10,7 +10,9 @@
 ^vignettes/
 ^\.travis\.yml$
 ^tic\.R$
-^EOO.results.csv
+^EOO\.results\.csv$
 ^CRAN-RELEASE$
 ^IUCN_criterion_b_map$
-^readme.html
+^readme\.html$
+^inst/dev$
+^CLAUDE\.md$
