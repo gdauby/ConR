@@ -36,8 +36,6 @@ import(sf)
 import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 import(terra, except = c(points, median, na.omit, quantile, head, tail, predict))
 
-importFrom(FuzzyNumbers.Ext.2,is.decreasing)
-importFrom(FuzzyNumbers.Ext.2,is.increasing)
 importFrom(data.table,data.table)
 importFrom(data.table,setDT)
 importFrom(data.table,setkeyv)

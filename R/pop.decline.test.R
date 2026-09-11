@@ -45,8 +45,6 @@
 #' Version 14. Standards and Petitions Committee. Downloadable from:
 #' http://www.iucnredlist.org/documents/RedListGuidelines.pdf.
 #'
-#' @importFrom FuzzyNumbers.Ext.2 is.decreasing
-#' @importFrom FuzzyNumbers.Ext.2 is.increasing
 #' @importFrom segmented slope
 #' 
 #' @export pop.decline.test
@@ -186,18 +184,28 @@ pop.decline.test <- function(x,
     
     if(best.name == "quadratic") { 
       
-      f <- function(x) params["a"] + params["b"]*x + x*I(params["c"]^2)
-      decrease <- 
-        FuzzyNumbers.Ext.2::is.decreasing(fun = f, x.bound = range(ys), step = 1)
-      increase <- 
-        FuzzyNumbers.Ext.2::is.increasing(fun = f, x.bound = range(ys), step = 1)
+      f <- function(x) params["a"] + params["b"]*x + params["c"]*x^2
+      decrease <-
+        is_monotone(fun = f, x.bound = range(ys), step = 1, decreasing = TRUE)
+      increase <-
+        is_monotone(fun = f, x.bound = range(ys), step = 1, decreasing = FALSE)
       
-      if(params["b"] < 0 & decrease)
+      if(params["b"] < 0 & decrease) {
         test <- if(CI["b",][1]<0 & CI["b",][2]<0) "signif.decline" else "non.signif.decline"
-      
-      if(params["b"] > 0 & increase)
+
+      } else if(params["b"] > 0 & increase) {
         test <- if(CI["b",][1]>0 & CI["b",][2]>0) "signif.increase" else "non.signif.increase"
-      
+
+      } else {
+        ## The fitted parabola is not monotone over the assessment window, i.e.
+        ## its vertex falls inside the window, so the population declines over
+        ## part of the period and increases over the rest. No single direction
+        ## can be claimed as significant, so the trend is classified from the
+        ## net change across the window and flagged as non-significant.
+        test <- if(f(max(ys)) - f(min(ys)) <= 0)
+          "non.signif.decline" else "non.signif.increase"
+      }
+
       # vertex <- (-params["b"]/(2*params["c"]))
       # root1 <- (-params["b"] - sqrt(params["b"]^2 + 4*params["c"]*params["a"]))/(2*params["c"]) 
       # root2 <- (-params["b"] + sqrt(params["b"]^2 + 4*params["c"]*params["a"]))/(2*params["c"]) 

@@ -28,3 +28,26 @@ test_that("pop.decline.test", {
   
 
 })
+
+test_that("pop.decline.test handles a non-monotone quadratic fit", {
+
+  # A U-shaped trajectory: the population declines, bottoms out inside the
+  # assessment window, then recovers. The fitted parabola therefore has its
+  # vertex inside the window and is monotone in neither direction.
+  # Regression test: this used to leave the object 'test' unassigned in the
+  # quadratic branch of pop.decline.test(), so the function errored with
+  # "object 'test' not found".
+  pop.u <- c(10000, 8500, 7400, 7000, 7300, 8400, 9900)
+  yrs.u <- c(1970, 1975, 1980, 1985, 1990, 1995, 2000)
+
+  fit.u <- suppressWarnings(pop.decline(pop.size = pop.u, years = yrs.u,
+                                        models = "quadratic",
+                                        by.taxon = TRUE, show_progress = FALSE))
+
+  res.u <- pop.decline.test(fit.u)
+
+  testthat::expect_type(res.u, "character")
+  testthat::expect_length(res.u, 1)
+  # Not monotone over the window, so no direction can be claimed as significant
+  testthat::expect_true(res.u %in% c("non.signif.decline", "non.signif.increase"))
+})

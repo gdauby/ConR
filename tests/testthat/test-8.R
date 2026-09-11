@@ -119,8 +119,12 @@ test_that("criterion_C", {
                            c(rep("Decreasing", 6),"Increasing","Decreasing",
                              "Increasing"), fixed = TRUE)
     testthat::expect_equal(result$cont.decline, 
-                           c(rep("Decreasing", 6),"Increasing","Decreasing",
-                             "Stable"), fixed = TRUE)
+                           # species 1 and 7 are the quadratic fits. Their
+                           # fitted parabola has its vertex inside the
+                           # assessment window, so it is monotone in neither
+                           # direction and no trend is significant.
+                           c("Stable", rep("Decreasing", 5), "Stable",
+                             "Decreasing", "Stable"), fixed = TRUE)
     testthat::expect_equal(round(result$reduction_3gen,1), 
                            c(8.5,35.1,63.7,13.0,51.1,94.4,-9.0,39.6,35.3))
     testthat::expect_equal(result$C1, 

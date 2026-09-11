@@ -23,7 +23,6 @@ Imports:
     nls.multstart,
     segmented,
     lifecycle,
-    FuzzyNumbers.Ext.2,
     stringr,
     dplyr,
     graphics,
