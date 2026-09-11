@@ -1,0 +1,6 @@
+pandoc: '3.10'
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  articles/ConR: ConR.html
+last_built: 2026-09-11T15:30Z
