@@ -624,7 +624,10 @@ AOH.estimation <- function(XY,
   
   # all hab.map together
   
-  if (any(classes.hab.map$rast) & is.data.frame(hab.class)) {
+  if (is.data.frame(hab.class) &&
+      any(vapply(seq_len(length(hab.map)),
+                 function(k) inherits(hab.map[[k]], "SpatRaster"),
+                 logical(1)))) {
     
     all_poly <- bind_rows(AOH.poly)
     
