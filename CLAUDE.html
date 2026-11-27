@@ -75,7 +75,7 @@
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>R CMD INSTALL .</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>pkgdown<span class="sc">::</span><span class="fu">build_site</span>()                        <span class="co"># -&gt; docs/ (deployed by .github/workflows/pkgdown.yaml on push to master)</span></span></code></pre></div>
 <p>There is no <code>tests/testthat.R</code> driver, so <code>R CMD check</code> does <strong>not</strong> run the test suite — use <code>devtools::test()</code> explicitly.</p>
-<p>Tests are numbered, not named after the function they cover: test-1 EOO.computing, test-2 subpop.comp, test-3 criterion_B, test-4 locations.comp, test-5 pop.decline.fit, test-6 pop.decline, test-7 criterion_A, test-8 criterion_C, test-9 pop.decline.test. Several use <code>context()</code> (deprecated in testthat 3e); the package is not on testthat edition 3.</p>
+<p>Tests are numbered, not named after the function they cover: test-1 EOO.computing, test-2 subpop.comp, test-3 criterion_B, test-4 locations.comp, test-5 pop.decline.fit, test-6 pop.decline, test-7 criterion_A, test-8 criterion_C, test-9 pop.decline.test, test-10 AOH.estimation, test-11 criterion_D. Several use <code>context()</code> (deprecated in testthat 3e); the package is not on testthat edition 3.</p>
 <p><code>git</code> may fail here with “detected dubious ownership” — fix once with <code>git config --global --add safe.directory D:/MonDossierR/ConR_orig</code>.</p>
 </div>
 <div class="section level2">

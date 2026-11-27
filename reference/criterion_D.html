@@ -116,12 +116,14 @@ the IUCN.</p></dd>
 
 <dt id="arg-aoo-threshold">AOO.threshold<a class="anchor" aria-label="anchor" href="#arg-aoo-threshold"></a></dt>
 <dd><p>numeric vector containing the threshold of the Area of
-Occupancy (AOO) in km2. Default to NULL.</p></dd>
+Occupancy (AOO) in km2: taxa with an AOO below it qualify under D2. Default
+to NULL.</p></dd>
 
 
 <dt id="arg-loc-threshold">Loc.threshold<a class="anchor" aria-label="anchor" href="#arg-loc-threshold"></a></dt>
 <dd><p>numeric vector containing the threshold of the Number of
-Locations. Default to NULL.</p></dd>
+Locations: taxa with this many locations or fewer qualify under D2. Default
+to NULL.</p></dd>
 
 
 <dt id="arg-all-cats">all.cats<a class="anchor" aria-label="anchor" href="#arg-all-cats"></a></dt>
@@ -182,7 +184,7 @@ http://www.iucnredlist.org/documents/RedListGuidelines.pdf.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 Species 3      200   5              2       EN       VU       VU         EN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 Species 4      250  10              3       VU       VU       VU         VU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 Species 5      500  15              4       VU       VU       VU         VU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Species 6     1000  20              5 LC or NT LC or NT LC or NT   LC or NT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Species 6     1000  20              5 LC or NT       VU LC or NT         VU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7 Species 7     1500  25              6 LC or NT LC or NT LC or NT   LC or NT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   category_D_code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1               D</span>
@@ -190,7 +192,7 @@ http://www.iucnredlist.org/documents/RedListGuidelines.pdf.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3               D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  D+D2.Loc+D.AOO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  D+D2.Loc+D.AOO</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          D2.Loc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7                </span>
 <span class="r-in"><span>            </span></span>
 <span class="r-in"><span><span class="co">## Only sub-criterion D</span></span></span>
@@ -218,7 +220,7 @@ http://www.iucnredlist.org/documents/RedListGuidelines.pdf.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 Species 3   5              2       VU       VU         VU    D2.Loc+D.AOO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 Species 4  10              3       VU       VU         VU    D2.Loc+D.AOO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 Species 5  15              4       VU       VU         VU    D2.Loc+D.AOO</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Species 6  20              5 LC or NT LC or NT   LC or NT                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Species 6  20              5       VU LC or NT         VU          D2.Loc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7 Species 7  25              6 LC or NT LC or NT   LC or NT                </span>
 <span class="r-in"><span>            </span></span>
 </code></pre></div>
