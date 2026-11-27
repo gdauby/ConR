@@ -51,7 +51,7 @@ use `devtools::test()` explicitly.
 
 Tests are numbered, not named after the function they cover: test-1 EOO.computing,
 test-2 subpop.comp, test-3 criterion_B, test-4 locations.comp, test-5 pop.decline.fit,
-test-6 pop.decline, test-7 criterion_A, test-8 criterion_C, test-9 pop.decline.test.
+test-6 pop.decline, test-7 criterion_A, test-8 criterion_C, test-9 pop.decline.test, test-10 AOH.estimation, test-11 criterion_D.
 Several use `context()` (deprecated in testthat 3e); the package is not on testthat edition 3.
 
 `git` may fail here with "detected dubious ownership" — fix once with
