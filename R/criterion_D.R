@@ -20,9 +20,11 @@
 #'   small population sizes. Default values are the thresholds recommended by
 #'   the IUCN.
 #' @param AOO.threshold numeric vector containing the threshold of the Area of
-#'   Occupancy (AOO) in km2. Default to NULL.
+#'   Occupancy (AOO) in km2: taxa with an AOO below it qualify under D2. Default
+#'   to NULL.
 #' @param Loc.threshold numeric vector containing the threshold of the Number of
-#'   Locations. Default to NULL.
+#'   Locations: taxa with this many locations or fewer qualify under D2. Default
+#'   to NULL.
 #' @param all.cats logical. Should the categories from all criteria be returned
 #'   and not just the consensus categories?
 #'
@@ -129,7 +131,7 @@ criterion_D = function(pop.size = NULL,
   
   if("D2" %in% subcriteria & (!is.null(AOO) | !is.null(n.Locs))) {
     
-    if(length(AOO) != length(n.Locs))
+    if(!is.null(AOO) && !is.null(n.Locs) && length(AOO) != length(n.Locs))
       stop("The number of values in AOO and n.Locs is not the same. Please check entry data")
     
     if(!is.null(AOO))  
@@ -208,7 +210,7 @@ criterion_D = function(pop.size = NULL,
       
       Results$Numb.Locations <- x$n.Locs
       obj = list(ranks = rep(3, length(x$n.Locs)), cats = NULL, codes = rep("", length(x$n.Locs)))
-      obj[[1]][x$AOO < AOO.threshold] <- 2
+      obj[[1]][x$n.Locs <= Loc.threshold] <- 2
       obj[[2]] <- stringr::str_replace_all(obj[[1]], rpl.cds)
       obj[[3]][obj[[2]] == "VU"] <- "D2"
       assess_D[["D2.Loc"]] <- obj

@@ -27,6 +27,10 @@
 * `criterion_C()` no longer fails with "subscript out of bounds" when
   `generation.time` is not given and more than one taxon is assessed. The
   IUCN default periods (3, 5 and 10 years) are now applied to every taxon.
+* `criterion_D()` now uses `Loc.threshold` for the number of locations under
+  D2: a taxon qualifies when it has `Loc.threshold` locations or fewer.
+  Previously the locations branch reused the AOO test, so `Loc.threshold` was
+  ignored. `n.Locs` can now also be given without `AOO`.
 
 
 # ConR 2.1.0

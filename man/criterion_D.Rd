@@ -41,10 +41,12 @@ small population sizes. Default values are the thresholds recommended by
 the IUCN.}
 
 \item{AOO.threshold}{numeric vector containing the threshold of the Area of
-Occupancy (AOO) in km2. Default to NULL.}
+Occupancy (AOO) in km2: taxa with an AOO below it qualify under D2. Default
+to NULL.}
 
 \item{Loc.threshold}{numeric vector containing the threshold of the Number of
-Locations. Default to NULL.}
+Locations: taxa with this many locations or fewer qualify under D2. Default
+to NULL.}
 
 \item{all.cats}{logical. Should the categories from all criteria be returned
 and not just the consensus categories?}
