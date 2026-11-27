@@ -328,6 +328,9 @@ pop.decline.fit <- function(x = NULL,
     piece.mds <- list(piece1, piece2, piece3)
     piece.mds <- piece.mds[!sapply(piece.mds, function(x) class(x)[1] %in% "try-error")]
     piece.mds <- piece.mds[!sapply(piece.mds, function(x) is.null(x$psi))]
+    # drop saturated fits (no residual df): they interpolate the data exactly
+    # and would otherwise always win the AIC/AICc comparison
+    piece.mds <- piece.mds[vapply(piece.mds, function(x) isTRUE(stats::df.residual(x) > 0), logical(1))]
     
     
     if(length(piece.mds) > 0) {

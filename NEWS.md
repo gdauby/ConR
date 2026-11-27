@@ -18,6 +18,12 @@
   A declining taxon with fewer than 10,000 mature individuals, all of them in a
   single subpopulation, was previously returned as "LC or NT"; EN and CR under
   C2a(ii) were not affected.
+* `pop.decline.fit()` no longer selects saturated piecewise models. With recent
+  versions of `segmented`, a piecewise model with two breakpoints could be fitted
+  to as few as six observations with no residual degrees of freedom, passing
+  exactly through every point and always winning the AICc comparison. Such fits
+  are now discarded, which affects `pop.decline()`, `criterion_A()` and
+  `criterion_C()` for taxa with few population estimates.
 
 
 # ConR 2.1.0
