@@ -60,6 +60,8 @@
 <code><a href="../reference/criterion_C.html">criterion_C()</a></code> (via <code><a href="../reference/cat_criterion_c.html">cat_criterion_c()</a></code>) can now assign VU under C2a(ii). A declining taxon with fewer than 10,000 mature individuals, all of them in a single subpopulation, was previously returned as “LC or NT”; EN and CR under C2a(ii) were not affected.</li>
 <li>
 <code><a href="../reference/pop.decline.fit.html">pop.decline.fit()</a></code> no longer selects saturated piecewise models. With recent versions of <code>segmented</code>, a piecewise model with two breakpoints could be fitted to as few as six observations with no residual degrees of freedom, passing exactly through every point and always winning the AICc comparison. Such fits are now discarded, which affects <code><a href="../reference/pop.decline.html">pop.decline()</a></code>, <code><a href="../reference/criterion_A.html">criterion_A()</a></code> and <code><a href="../reference/criterion_C.html">criterion_C()</a></code> for taxa with few population estimates.</li>
+<li>
+<code><a href="../reference/criterion_C.html">criterion_C()</a></code> no longer fails with “subscript out of bounds” when <code>generation.time</code> is not given and more than one taxon is assessed. The IUCN default periods (3, 5 and 10 years) are now applied to every taxon.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.1.0" id="conr-210">ConR 2.1.0<a class="anchor" aria-label="anchor" href="#conr-210"></a></h2>
