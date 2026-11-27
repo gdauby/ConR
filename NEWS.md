@@ -14,6 +14,10 @@
   from the net change over the period as a non-significant decline or increase.
   This changes the estimated continuing decline (and therefore `criterion_C()`
   results) for taxa whose population trend is best described by such a model.
+* `criterion_C()` (via `cat_criterion_c()`) can now assign VU under C2a(ii).
+  A declining taxon with fewer than 10,000 mature individuals, all of them in a
+  single subpopulation, was previously returned as "LC or NT"; EN and CR under
+  C2a(ii) were not affected.
 
 
 # ConR 2.1.0

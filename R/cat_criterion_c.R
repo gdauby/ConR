@@ -119,7 +119,7 @@ cat_criterion_c <- function(C1_df = NULL,
     tmp$pop <- 3 - findInterval(tmp$assess.pop.size, sort(C.threshold))
     tmp$each <- 3 - findInterval(tmp$max.subpop.size, sort(C2ai.threshold))
     tmp$prop <- 0
-    tmp$prop[tmp$pop == 1 & tmp$prop.subpop.size >= C2aii.threshold[3]] <- 2
+    tmp$prop[tmp$pop == 1 & tmp$prop.subpop.size >= C2aii.threshold[3]] <- 1
     tmp$prop[tmp$pop == 2 & tmp$prop.subpop.size >= C2aii.threshold[2]] <- 2
     tmp$prop[tmp$pop == 3 & tmp$prop.subpop.size >= C2aii.threshold[1]] <- 3
     
