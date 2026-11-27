@@ -24,6 +24,9 @@
   exactly through every point and always winning the AICc comparison. Such fits
   are now discarded, which affects `pop.decline()`, `criterion_A()` and
   `criterion_C()` for taxa with few population estimates.
+* `criterion_C()` no longer fails with "subscript out of bounds" when
+  `generation.time` is not given and more than one taxon is assessed. The
+  IUCN default periods (3, 5 and 10 years) are now applied to every taxon.
 
 
 # ConR 2.1.0

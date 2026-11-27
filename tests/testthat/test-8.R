@@ -150,3 +150,20 @@ test_that("cat_criterion_c assigns VU under C2a(ii)", {
   testthat::expect_equal(res$ranks_C, c("VU", "LC or NT", "EN", "LC or NT"))
   testthat::expect_equal(res$cats_code, c("C2aii", "", "C2aii", ""))
 })
+
+test_that("criterion_C works without generation.time for several taxa", {
+
+  args <- list(x = example_criterionC, years = NULL, assess.year = assess.yr,
+               project.years = NULL, subpop.size = NULL,
+               models = c("linear", "exponential"), subcriteria = "C1",
+               show_progress = FALSE)
+
+  testthat::expect_error(
+    res <- suppressWarnings(do.call(criterion_C, args)), NA)
+  testthat::expect_equal(nrow(res), 9)
+
+  # a generation length below 3 years falls back on the same 3, 5 and 10
+  # years used when no generation length is given
+  res1 <- suppressWarnings(do.call(criterion_C, c(args, generation.time = 1)))
+  testthat::expect_equal(res, res1)
+})

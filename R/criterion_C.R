@@ -384,12 +384,14 @@ criterion_C = function(x,
   
   if(is.null(generation.time)) {
     
-    prev.year1 <- assess.year - 3
-    prev.year2 <- assess.year - 5
-    prev.year3 <- assess.year - 10
-    proj.year1 <- assess.year + 3
-    proj.year2 <- assess.year + 5
-    proj.year3 <- assess.year + 10
+    # one value per taxon, as when generation.time is given
+    n.tax <- dim(x)[1]
+    prev.year1 <- rep(assess.year - 3, n.tax)
+    prev.year2 <- rep(assess.year - 5, n.tax)
+    prev.year3 <- rep(assess.year - 10, n.tax)
+    proj.year1 <- rep(assess.year + 3, n.tax)
+    proj.year2 <- rep(assess.year + 5, n.tax)
+    proj.year3 <- rep(assess.year + 10, n.tax)
     warning("Generation length not given: assuming the IUCN defaults (3, 5 and 10 years). Please, check if this is accurate for your species")
     
   } else {
