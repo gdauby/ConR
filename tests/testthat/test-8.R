@@ -135,3 +135,18 @@ test_that("criterion_C", {
                            c("","C1","C1","C1",rep("", 5)))
   
 })
+
+test_that("cat_criterion_c assigns VU under C2a(ii)", {
+
+  C2_df <- data.frame(tax = c("sp1", "sp2", "sp3", "sp4"),
+                      assess.pop.size = c(5000, 5000, 1000, 5000),
+                      any.decline = c("Decreasing", "Decreasing", "Decreasing", "Increasing"),
+                      max.subpop.size = c(5000, 3000, 1000, 5000),
+                      prop.subpop.size = c(100, 60, 100, 100),
+                      mean.fluctuation = 0)
+
+  res <- suppressWarnings(cat_criterion_c(C2_df = C2_df))
+
+  testthat::expect_equal(res$ranks_C, c("VU", "LC or NT", "EN", "LC or NT"))
+  testthat::expect_equal(res$cats_code, c("C2aii", "", "C2aii", ""))
+})
